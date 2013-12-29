@@ -10,7 +10,6 @@ ScalarOperatorNode::ScalarOperatorNode()
     m_scalarOperationList.insert('x',MULTIPLICATION);
     m_scalarOperationList.insert('*',MULTIPLICATION);
     m_scalarOperationList.insert('/',DIVIDE);
-    m_scalarOperationList.insert('÷',DIVIDE);
 }
 
 void ScalarOperatorNode::run(ExecutionNode* previous)
