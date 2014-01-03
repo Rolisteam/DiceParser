@@ -5,6 +5,20 @@
 #include <QMap>
 #include "node/executionnode.h"
 
+/**
+ * @mainpage DiceParser
+ *
+ * the grammar is something like this:
+ *
+ * Command =: Expression | ScalarOperator Expression
+ * Expression =: number | number Dice | Command
+ * Dice =: DiceOperator Number(faces)
+ * DiceOperator =: D
+ * ScalarOperator =: [x,-,*,x,/]
+ * number =: [0-9]+
+ *
+ */
+
 class Dice;
 /**
  * @brief The DiceParser class facade class, it receives a command and return a DiceResult class (not yet implemented).
@@ -75,6 +89,9 @@ private:
     ExecutionNode* m_current;
 };
 
+/**
+ * @brief The Dice class is a basic class to store dice. (May not be required any more).
+ */
 class Dice
 {
 public:

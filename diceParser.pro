@@ -25,3 +25,5 @@ SOURCES += main.cpp \
 HEADERS += \
     diceparser.h \
     diceresult.h \
+
+OTHER_FILES += README.md
