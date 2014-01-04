@@ -4,7 +4,10 @@ HEADERS += \
     node/rerolldicenode.h \
     node/startingnode.h \
     node/scalaroperatornode.h \
-    node/numbernode.h
+    node/numbernode.h \
+    node/sortresult.h \
+    node/keepdiceexecnode.h \
+    node/countexecutenode.h
 
 SOURCES += \
     node/dicerollernode.cpp \
@@ -12,4 +15,7 @@ SOURCES += \
     node/startingnode.cpp \
     node/rerolldicenode.cpp \
     node/scalaroperatornode.cpp \
-    node/numbernode.cpp
+    node/numbernode.cpp \
+    node/sortresult.cpp \
+    node/keepdiceexecnode.cpp \
+    node/countexecutenode.cpp

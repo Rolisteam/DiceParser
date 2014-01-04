@@ -4,6 +4,9 @@
 #include <QString>
 #include <QMap>
 #include "node/executionnode.h"
+#include "validator.h"
+#include "range.h"
+#include "booleancondition.h"
 
 /**
  * @mainpage DiceParser
@@ -28,13 +31,16 @@ class DiceParser
 
 public:
     /**
-     * @brief The DiceOperator enum gathering all dice operator
+     * @brief The DiceOperator enum gathering all dice operators
      */
     enum DiceOperator {D};
+
+
+
     /**
-     * @brief The MathOperator enum gathering all dice option/math operator such as keep k, reroll r, explode e.
+     * @brief The OptionOperator enum gathering all options  availables for result.
      */
-    enum MathOperator {K,k,r,e};
+    enum OptionOperator {KeepAndReRoll,keep,Reroll,Explosing,Sort,Count};
 
     /**
      * @brief DiceParser default constructor
@@ -83,8 +89,32 @@ private:
      */
     void setCurrentNode(ExecutionNode* node);
 
+    /**
+     * @brief readOption
+     */
+    bool readOption(QString&);
+
+    /**
+     * @brief addSort
+     * @param b
+     */
+    void addSort(bool b);
+
+    /**
+     * @brief readValidator
+     * @param str
+     * @param validator
+     * @return
+     */
+    Validator* readValidator(QString& str);
+
+
+    bool readLogicOperator(QString& str,BooleanCondition::LogicOperator& condition);
+
 private:
     QMap<QString,DiceOperator>* m_mapDiceOp;
+    QMap<QString,OptionOperator>* m_OptionOp;
+    QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
     ExecutionNode* m_start;
     ExecutionNode* m_current;
 };

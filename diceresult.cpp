@@ -22,3 +22,8 @@ qint64  DiceResult::getSum()
     return sum;
 }
 
+void DiceResult::setResultList(QList<qint64> list)
+{
+    m_diceValues.clear();
+    m_diceValues << list;
+}

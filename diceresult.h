@@ -11,6 +11,8 @@ public:
     QList<qint64>& getResultList();
     void insertResult(qint64);
 
+    void setResultList(QList<qint64> list);
+
 
 private:
     QList<qint64> m_diceValues;

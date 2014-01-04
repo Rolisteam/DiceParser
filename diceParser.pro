@@ -20,10 +20,19 @@ TEMPLATE = app
 SOURCES += main.cpp \
     diceparser.cpp \
     diceresult.cpp \
+    range.cpp \
+    booleancondition.cpp \
+    validator.cpp
 
 
 HEADERS += \
     diceparser.h \
     diceresult.h \
+    range.h \
+    booleancondition.h \
+    validator.h
 
 OTHER_FILES += README.md
+
+
+#QMAKE_CXXFLAGS += -O0
