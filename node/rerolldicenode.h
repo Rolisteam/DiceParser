@@ -12,11 +12,11 @@ class RerollDiceNode : public ExecutionNode
 
 public:
     enum ReRollMode {EQUAL,LESSER,GREATER};
-    RerollDiceNode(ExecutionNode* previous);
+    RerollDiceNode();
 
-    virtual void run();
+    virtual void run(ExecutionNode* previous);
 private:
-    ExecutionNode* m_previous;
+    qint64 m_value;
 };
 
 #endif // REROLLDICENODE_H

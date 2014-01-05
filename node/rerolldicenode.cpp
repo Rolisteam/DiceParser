@@ -1,21 +1,27 @@
 #include "rerolldicenode.h"
+#include "dicerollernode.h"
 
-RerollDiceNode::RerollDiceNode(ExecutionNode* previous)
-    : m_previous(previous)
+RerollDiceNode::RerollDiceNode()
 {
 
 }
-void RerollDiceNode::run()
+void RerollDiceNode::run(ExecutionNode* previous)
 {
-    if((NULL!=m_previous)&&(NULL!=m_previous->getResult()))
+    if((NULL!=previous)&&(NULL!=previous->getResult()))
     {
-        QList<qint64> list = m_previous->getResult()->getResultList();
+        QList<Die> list = previous->getResult()->getResultList();
 
 
-        for(qint64 i=0; i < list.size() ; ++i)
+        foreach(Die die, list)
         {
-           // m_result.insertResult(rollDice());
+            if(m_value == die.getValue())
+            {
+/*
+                DiceRollerNode roller;
+                roller.run(this);*/
+            }
         }
+
         if(NULL!=m_nextNode)
         {
             m_nextNode->run(this);

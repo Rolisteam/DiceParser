@@ -1,4 +1,6 @@
 #include "dicerollernode.h"
+#include "die.h"
+
 
 #include <QDateTime>
 #include <QDebug>
@@ -16,7 +18,9 @@ void DiceRollerNode::run(ExecutionNode* previous)
         m_diceCount = previous->getResult()->getSum();
         for(quint64 i=0; i < m_diceCount ; ++i)
         {
-            m_result.insertResult(rollDice());
+            Die die;
+            die.setValue(rollDice());
+            m_result.insertResult(die);
         }
         if(NULL!=m_nextNode)
         {

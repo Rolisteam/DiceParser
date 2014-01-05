@@ -12,8 +12,8 @@ void SortResultNode::run(ExecutionNode* node)
     {
         return;
     }
-    QList<qint64> diceList=node->getResult()->getResultList();
-    QList<qint64> diceList2=m_result.getResultList();
+    QList<Die> diceList=node->getResult()->getResultList();
+    QList<Die> diceList2=m_result.getResultList();
 
     diceList2 = diceList;
     if(!m_ascending)

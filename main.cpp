@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     myParser->parseLine("D25");
     myParser->parseLine("8+8");
     myParser->parseLine("88-1D20");
-    myParser->parseLine("100*1D20");
+    myParser->parseLine("100*1D20*2D6");
     myParser->parseLine("100/28");
     myParser->parseLine("100/8");
     myParser->parseLine("100*3");

@@ -22,7 +22,8 @@ SOURCES += main.cpp \
     diceresult.cpp \
     range.cpp \
     booleancondition.cpp \
-    validator.cpp
+    validator.cpp \
+    die.cpp
 
 
 HEADERS += \
@@ -30,7 +31,8 @@ HEADERS += \
     diceresult.h \
     range.h \
     booleancondition.h \
-    validator.h
+    validator.h \
+    die.h
 
 OTHER_FILES += README.md
 

@@ -48,6 +48,7 @@ void DiceParser::setCurrentNode(ExecutionNode* node)
 
 void DiceParser::parseLine(QString str)
 {
+    QString command = str;
     m_start = new StartingNode();
     m_current = m_start;
     bool keepParsing = true;
@@ -71,7 +72,7 @@ void DiceParser::parseLine(QString str)
     {
         next = next->getNextNode();
     }
-    qDebug() << "list:" <<next->getResult()->getResultList() << "sum" <<next->getResult()->getSum() ;
+    qDebug() << "list:" <<next->getResult()->getResultList() << " sum:" <<next->getResult()->getSum() << " command:" << command;
 }
 bool DiceParser::readNumber(QString& str, int& myNumber)
 {

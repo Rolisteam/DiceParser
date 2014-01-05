@@ -2,20 +2,22 @@
 #define DICERESULT_H
 #include <QList>
 
+#include "die.h"
+
 class DiceResult
 {
 public:
     DiceResult();
 
     qint64 getSum();
-    QList<qint64>& getResultList();
-    void insertResult(qint64);
+    QList<Die>& getResultList();
+    void insertResult(Die);
 
-    void setResultList(QList<qint64> list);
+    void setResultList(QList<Die> list);
 
 
 private:
-    QList<qint64> m_diceValues;
+    QList<Die> m_diceValues;
 };
 
 #endif // DICERESULT_H
