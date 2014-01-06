@@ -17,3 +17,11 @@ void DiceResult::setResultList(QList<Die> list)
     m_diceValues.clear();
     m_diceValues << list;
 }
+bool DiceResult::isScalar() const
+{
+    return false;
+}
+qint64 DiceResult::getScalar()
+{
+    return 0;
+}
