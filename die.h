@@ -15,10 +15,12 @@ public:
     bool isSelected() const;
     qint64 getValue() const;
     QList<qint64> getListValue() const;
+
 private:
     qint64 m_value;
     QList<qint64> m_rollResult;
     bool m_selected;
 };
+
 
 #endif // DIE_H
