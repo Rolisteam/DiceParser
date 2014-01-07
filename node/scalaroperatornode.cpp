@@ -1,15 +1,19 @@
 #include "scalaroperatornode.h"
 
 #include <QDebug>
+#include "diceresult.h"
+
 
 ScalarOperatorNode::ScalarOperatorNode()
-    : m_internalNode(NULL)
+    : m_internalNode(NULL),m_myScalarResult(new ScalarResult())
 {
     m_scalarOperationList.insert('+',PLUS);
     m_scalarOperationList.insert('-',MINUS);
     m_scalarOperationList.insert('x',MULTIPLICATION);
     m_scalarOperationList.insert('*',MULTIPLICATION);
     m_scalarOperationList.insert('/',DIVIDE);
+
+    m_result = m_myScalarResult;
 }
 
 void ScalarOperatorNode::run(ExecutionNode* previous)
@@ -20,36 +24,39 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
     }
     if(NULL!=previous)
     {
-        DiceResult* previousResult = previous->getResult();
-        ExecutionNode* internal = m_internalNode;
-        while(NULL != internal->getNextNode() )
+        DiceResult* previousResult = static_cast<DiceResult*>(previous->getResult());
+        if(NULL!=previousResult)
         {
-            internal = internal->getNextNode();
-        }
-         DiceResult* internalResult = internal->getResult();
+            ExecutionNode* internal = m_internalNode;
+            while(NULL != internal->getNextNode() )
+            {
+                internal = internal->getNextNode();
+            }
+            Result* internalResult = internal->getResult();
 
-         switch(m_myOperator)
-         {
-         case PLUS:
-             m_result.insertResult(add(previousResult->getSum(),internalResult->getSum()));
-             break;
-         case MINUS:
-             m_result.insertResult(substract(previousResult->getSum(),internalResult->getSum()));
-             break;
-         case MULTIPLICATION:
-             m_result.insertResult(multiple(previousResult->getSum(),internalResult->getSum()));
-             break;
-         case DIVIDE:
-             m_result.insertResult(divide(previousResult->getSum(),internalResult->getSum()));
-             break;
-         default:
-             break;
+            switch(m_myOperator)
+            {
+                case PLUS:
+                    m_myScalarResult->setValue(add(previousResult->getScalar(),internalResult->getScalar()));
+                    break;
+                case MINUS:
+                    m_myScalarResult->setValue(substract(previousResult->getScalar(),internalResult->getScalar()));
+                    break;
+                case MULTIPLICATION:
+                    m_myScalarResult->setValue(multiple(previousResult->getScalar(),internalResult->getScalar()));
+                    break;
+                case DIVIDE:
+                    m_myScalarResult->setValue(divide(previousResult->getScalar(),internalResult->getScalar()));
+                    break;
+                default:
+                    break;
 
-         }
+            }
 
-        if(NULL!=m_nextNode)
-        {
-            m_nextNode->run(this);
+            if(NULL!=m_nextNode)
+            {
+                m_nextNode->run(this);
+            }
         }
     }
 
