@@ -9,23 +9,26 @@ void RerollDiceNode::run(ExecutionNode* previous)
 {
     if((NULL!=previous)&&(NULL!=previous->getResult()))
     {
-        QList<Die> list = previous->getResult()->getResultList();
-
-
-        foreach(Die die, list)
+        DiceResult* previous_result = static_cast<DiceResult*>(previous->getResult());
+        if(NULL!=previous_result)
         {
-            if(m_value == die.getValue())
+            QList<Die> list = previous_result->getResultList();
+
+
+            foreach(Die die, list)
             {
-/*
-                DiceRollerNode roller;
-                roller.run(this);*/
+                if(m_value == die.getValue())
+                {
+    /*
+                    DiceRollerNode roller;
+                    roller.run(this);*/
+                }
             }
-        }
 
-        if(NULL!=m_nextNode)
-        {
-            m_nextNode->run(this);
+            if(NULL!=m_nextNode)
+            {
+                m_nextNode->run(this);
+            }
         }
     }
 }
-
