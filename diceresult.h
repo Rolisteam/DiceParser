@@ -3,8 +3,9 @@
 #include <QList>
 
 #include "die.h"
+#include "result.h"
 
-class DiceResult
+class DiceResult : public Result
 {
 public:
     DiceResult();
@@ -15,7 +16,8 @@ public:
 
     void setResultList(QList<Die> list);
 
-
+    bool isScalar() const;
+    virtual qint64 getScalar();
 private:
     QList<Die> m_diceValues;
 };
