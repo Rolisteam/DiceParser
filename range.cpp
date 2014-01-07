@@ -11,9 +11,9 @@ void Range::setValue(qint64 s,qint64 e)
     m_end=e;
 }
 
-bool Range::isValid(qint64 m) const
+bool Range::isValid(Die m) const
 {
-    if((m>=m_start)&&(m<=m_end))
+    if((m.getValue()>=m_start)&&(m.getValue()<=m_end))
     {
         return true;
     }
