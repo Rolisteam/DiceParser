@@ -19,9 +19,18 @@ void DiceResult::setResultList(QList<Die> list)
 }
 bool DiceResult::isScalar() const
 {
+    if(m_diceValues.size()==1)
+    {
+        return true;
+    }
     return false;
 }
 qint64 DiceResult::getScalar()
 {
+
+    if(m_diceValues.size()==1)
+    {
+        return m_diceValues[0].getValue();
+    }
     return 0;
 }
