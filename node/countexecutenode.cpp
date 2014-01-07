@@ -1,7 +1,12 @@
 #include "countexecutenode.h"
+#include "diceresult.h"
+
+
 
 CountExecuteNode::CountExecuteNode()
+    : m_scalarResult(new ScalarResult())
 {
+    m_result = m_scalarResult;
 }
 void CountExecuteNode::setValidator(Validator* validator)
 {
@@ -14,20 +19,24 @@ void CountExecuteNode::run(ExecutionNode *previous)
     {
         return;
     }
-    QList<qint64> diceList=previous->getResult()->getResultList();
-   qint64 sum = 0;
-    foreach(qint64 dice,diceList)
+    DiceResult* previous_result = static_cast<DiceResult*>(previous->getResult());
+    if(NULL!=previous_result)
     {
-        if(m_validator->isValid(dice))
+        QList<Die> diceList=previous_result->getResultList();
+        qint64 sum = 0;
+        foreach(Die dice,diceList)
         {
-            ++sum;
+            if(m_validator->isValid(dice))
+            {
+                ++sum;
+            }
         }
-    }
-    m_result.insertResult(sum);
+        m_scalarResult->setValue(sum);
 
 
-    if(NULL!=m_nextNode)
-    {
-        m_nextNode->run(this);
+        if(NULL!=m_nextNode)
+        {
+            m_nextNode->run(this);
+        }
     }
 }
