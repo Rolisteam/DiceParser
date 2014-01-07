@@ -77,7 +77,7 @@ private:
      * @param node
      * @return
      */
-    bool readDiceExpression(QString&,ExecutionNode* & node);
+    bool readDiceExpression(QString&,ExecutionNode*  & node);
     /**
      * @brief readOperator
      * @return
@@ -92,13 +92,13 @@ private:
     /**
      * @brief readOption
      */
-    bool readOption(QString&);
+    bool readOption(QString&,ExecutionNode* node);
 
     /**
      * @brief addSort
      * @param b
      */
-    void addSort(bool b);
+    ExecutionNode* addSort(ExecutionNode*, bool b);
 
     /**
      * @brief readValidator
