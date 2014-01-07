@@ -23,7 +23,9 @@ SOURCES += main.cpp \
     range.cpp \
     booleancondition.cpp \
     validator.cpp \
-    die.cpp
+    die.cpp \
+    result.cpp \
+    scalarresult.cpp
 
 
 HEADERS += \
@@ -32,7 +34,9 @@ HEADERS += \
     range.h \
     booleancondition.h \
     validator.h \
-    die.h
+    die.h \
+    result.h \
+    scalarresult.h
 
 OTHER_FILES += README.md
 
