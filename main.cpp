@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     myParser->parseLine("3D100");
    // myParser->parseLine("100291D66666666");
     myParser->parseLine("10D10K3");
-    myParser->parseLine("10k3");
+    //myParser->parseLine("10k3");
 
     /// roll 10 dice of 10 slices and sort them
     myParser->parseLine("10D10s");
