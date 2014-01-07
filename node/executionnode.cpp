@@ -1,7 +1,7 @@
 #include "executionnode.h"
 
 ExecutionNode::ExecutionNode()
-    : m_nextNode(NULL)
+    : m_nextNode(NULL),m_result(NULL)
 {
 
 }
@@ -10,9 +10,9 @@ ExecutionNode::~ExecutionNode()
 
 }
 
-DiceResult* ExecutionNode::getResult()
+Result* ExecutionNode::getResult()
 {
-    return &m_result;
+    return m_result;
 }
 void ExecutionNode::setNextNode(ExecutionNode* node)
 {
