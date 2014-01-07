@@ -4,20 +4,20 @@
 BooleanCondition::BooleanCondition()
 {
 }
-bool BooleanCondition::isValid(qint64 b) const
+bool BooleanCondition::isValid(Die b) const
 {
     switch(m_operator)
     {
     case Equal:
-        return (b==m_value);
+        return (b.getValue()==m_value);
     case GreaterThan:
-        return (b>m_value);
+        return (b.getValue()>m_value);
     case LesserThan:
-        return (b<m_value);
+        return (b.getValue()<m_value);
     case GreaterOrEqual:
-        return (b>=m_value);
+        return (b.getValue()>=m_value);
     case LesserOrEqual:
-        return (b<=m_value);
+        return (b.getValue()<=m_value);
 
 
     }
