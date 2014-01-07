@@ -5,7 +5,7 @@
 #include <QChar>
 
 #include "executionnode.h"
-
+#include "scalarresult.h"
 
 class ScalarOperatorNode : public ExecutionNode
 {
@@ -27,6 +27,7 @@ private:
     ScalarOperator m_myOperator;
     ExecutionNode* m_internalNode;
     QMap<QChar,ScalarOperator> m_scalarOperationList;
+    ScalarResult* m_myScalarResult;
 };
 
 #endif // SCALAROPERATORNODE_H
