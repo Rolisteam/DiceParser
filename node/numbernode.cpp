@@ -1,8 +1,9 @@
 #include "numbernode.h"
 
 NumberNode::NumberNode()
+    : m_scalarResult(new ScalarResult())
 {
-
+    m_result = m_scalarResult;
 }
 void NumberNode::run(ExecutionNode* )
 {
@@ -14,6 +15,6 @@ void NumberNode::run(ExecutionNode* )
 
 void NumberNode::setNumber(qint64 a)
 {
-    m_result.insertResult(a);
+    m_scalarResult->setValue(a);
     m_number = a;
 }
