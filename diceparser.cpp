@@ -63,7 +63,7 @@ void DiceParser::parseLine(QString str)
     while(keepParsing)
     {
         keepParsing = readOperator(str);
-        keepParsing = readOption(str);
+        //keepParsing = readOption(str);
     }
 
     m_start->run();
@@ -72,7 +72,45 @@ void DiceParser::parseLine(QString str)
     {
         next = next->getNextNode();
     }
-    qDebug() << "list:" <<next->getResult()->getResultList() << " sum:" <<next->getResult()->getSum() << " command:" << command;
+
+
+
+
+
+    //////////////////////////////////
+    //
+    //  Display
+    //
+    //////////////////////////////////
+
+    if(next->getResult()->isScalar())
+    {
+        qDebug() << "you get " << next->getResult()->getScalar() << " and you roll:" << command;
+    }
+    else
+    {
+        DiceResult* myDiceResult = static_cast<DiceResult*>(next->getResult());
+        if(NULL==myDiceResult)
+        {
+
+            QString resulStr="{";
+            foreach(Die die, myDiceResult->getResultList())
+            {
+                resulStr="[";
+                foreach(qint64 i, die.getListValue())
+                {
+                    resulStr+=QString("%1,").arg(i);
+                }
+                resulStr+="]";
+            }
+            resulStr.remove(resulStr.size()-1,1);
+            resulStr+="}";
+
+
+            qDebug() << "you get " << resulStr  << " and you roll:" << command;
+        }
+    }
+    //qDebug() << "list:" << << " sum:" << << " command:" << command;
 }
 bool DiceParser::readNumber(QString& str, int& myNumber)
 {
@@ -149,6 +187,9 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
         numberNode->setNextNode(next);
 
         node = numberNode;
+
+        while(readOption(str));
+
 
         return true;
     }
