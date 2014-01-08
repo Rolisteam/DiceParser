@@ -2,14 +2,13 @@
 #include "die.h"
 
 
-#include <QDateTime>
+
 #include <QDebug>
 
 DiceRollerNode::DiceRollerNode(quint64 faces)
     : m_faces(faces),m_myDiceResult(new DiceResult())
 {
-    uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
-    qsrand(seed);
+
     m_result=m_myDiceResult;
 
 }
@@ -20,8 +19,9 @@ void DiceRollerNode::run(ExecutionNode* previous)
         m_diceCount = previous->getResult()->getScalar();
         for(quint64 i=0; i < m_diceCount ; ++i)
         {
-            Die die;
-            die.insertRollValue(rollDice());
+            Die* die = new Die();
+            die->setFaces(m_faces);
+            die->roll();
             m_myDiceResult->insertResult(die);
         }
         if(NULL!=m_nextNode)
@@ -30,7 +30,8 @@ void DiceRollerNode::run(ExecutionNode* previous)
         }
     }
 }
-quint64 DiceRollerNode::rollDice()
+
+quint64 DiceRollerNode::getFaces()
 {
-    return (qrand()%m_faces)+1;
+    return m_faces;
 }
