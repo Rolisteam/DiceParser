@@ -8,7 +8,7 @@ class Validator
 {
 public:
     Validator();
-    virtual bool isValid(Die b) const = 0 ;
+    virtual bool isValid(Die* b) const = 0 ;
 };
 
 #endif // VALIDATOR_H
