@@ -3,7 +3,8 @@
 
 
 #include "executionnode.h"
-
+#include "diceresult.h"
+#include "validator.h"
 /**
  * @brief The RerollDiceNode class reroll dice given a condition and replace(or add) the result.
  */
@@ -15,8 +16,12 @@ public:
     RerollDiceNode();
 
     virtual void run(ExecutionNode* previous);
+
+    virtual void setValidator(Validator* );
+
 private:
-    qint64 m_value;
+    Validator* m_validator;
+    DiceResult* m_myDiceResult;
 };
 
 #endif // REROLLDICENODE_H
