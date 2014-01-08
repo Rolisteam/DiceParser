@@ -22,9 +22,9 @@ void CountExecuteNode::run(ExecutionNode *previous)
     DiceResult* previous_result = static_cast<DiceResult*>(previous->getResult());
     if(NULL!=previous_result)
     {
-        QList<Die> diceList=previous_result->getResultList();
+        QList<Die*> diceList=previous_result->getResultList();
         qint64 sum = 0;
-        foreach(Die dice,diceList)
+        foreach(Die* dice,diceList)
         {
             if(m_validator->isValid(dice))
             {
