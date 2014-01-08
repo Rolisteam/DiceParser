@@ -9,6 +9,7 @@ public:
     Die();
 
     void setValue(qint64 r);
+    void setFaces(quint64 face);
     void insertRollValue(qint64 r);
     void setSelected(bool b);
 
@@ -19,6 +20,9 @@ public:
     bool hasChildrenValue();
 
 
+    void roll(bool adding = false);
+    void replaceLastValue(qint64 value);
+
 
 
 
@@ -27,6 +31,7 @@ private:
     QList<qint64> m_rollResult;
     bool m_selected;
     bool m_hasValue;
+    quint64 m_faces;
 };
 
 
