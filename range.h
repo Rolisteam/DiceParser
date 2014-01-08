@@ -10,7 +10,7 @@ public:
     Range();
     void setValue(qint64,qint64);
 
-    virtual bool isValid(Die b) const;
+    virtual bool isValid(Die* b) const;
 
 private:
     qint64 m_start;
