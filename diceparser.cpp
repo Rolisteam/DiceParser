@@ -3,13 +3,14 @@
 #include <QStringList>
 #include <QObject>
 
-#include "node/dicerollernode.h"
+
 #include "node/startingnode.h"
 #include "node/scalaroperatornode.h"
 #include "node/numbernode.h"
 #include "node/keepdiceexecnode.h"
 #include "node/sortresult.h"
 #include "node/countexecutenode.h"
+#include "node/rerolldicenode.h"
 
 DiceParser::DiceParser()
 {
@@ -18,9 +19,10 @@ DiceParser::DiceParser()
 
     m_OptionOp = new QMap<QString,OptionOperator>();
     m_OptionOp->insert(QObject::tr("k"),keep);
-    m_OptionOp->insert(QObject::tr("K"),KeepAndReRoll);
+    m_OptionOp->insert(QObject::tr("K"),KeepAndExplose);
     m_OptionOp->insert(QObject::tr("s"),Sort);
     m_OptionOp->insert(QObject::tr("c"),Count);
+    m_OptionOp->insert(QObject::tr("r"),Reroll);
 
 
 
@@ -96,15 +98,15 @@ void DiceParser::parseLine(QString str)
             {
 
                 QString resulStr="{";
-                foreach(Die die, myDiceResult->getResultList())
+                foreach(Die* die, myDiceResult->getResultList())
                 {
-                    resulStr+=QString("%1").arg(die.getValue());
+                    resulStr+=QString("%1").arg(die->getValue());
 
 
-                    if(die.hasChildrenValue())
+                    if(die->hasChildrenValue())
                     {
                         resulStr+=" [";
-                        foreach(qint64 i, die.getListValue())
+                        foreach(qint64 i, die->getListValue())
                         {
 
                             resulStr+=QString("%1 ").arg(i);
@@ -206,7 +208,7 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
 
 
 
-        while(readOption(str,next));
+        while(readOption(str,next,next));
 
 
         returnVal = true;
@@ -251,7 +253,7 @@ bool DiceParser::readOperator(QString& str)
     }
     return false;
 }
-bool DiceParser::readOption(QString& str,ExecutionNode* previous)
+bool DiceParser::readOption(QString& str,ExecutionNode* previous,DiceRollerNode* diceNode)
 {
 
 
@@ -263,18 +265,21 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)
     ExecutionNode* node = NULL;
     bool isFine=false;
 
-    foreach(QString tmp, m_OptionOp->keys())
+
+    for(int i = 0; ((i<m_OptionOp->keys().size())&&(!isFine));++i )
     {
+        QString tmp =m_OptionOp->keys().at(i);
 
         if(str.startsWith(tmp))
         {
 
             str=str.remove(0,tmp.size());
-            int myNumber=0;
+
             switch(m_OptionOp->value(tmp))
             {
-                case KeepAndReRoll:
+                case KeepAndExplose:
                 {
+                    int myNumber=0;
                     if(readNumber(str,myNumber))
                     {
                         node = addSort(previous,false);
@@ -308,6 +313,22 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)
                         node = countNode;
                         isFine = true;
                     }
+                }
+                    break;
+                case Reroll:
+                {
+                    Validator* validator = readValidator(str);
+                    if(NULL!=validator)
+                    {
+                        RerollDiceNode* rerollNode = new RerollDiceNode();
+                        rerollNode->setValidator(validator);
+                        previous->setNextNode(rerollNode);
+                        node = rerollNode;
+                        isFine = true;
+
+
+                    }
+
                 }
                     break;
             }
