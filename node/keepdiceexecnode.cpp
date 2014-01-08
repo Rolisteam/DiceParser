@@ -19,8 +19,8 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
     DiceResult* previousDiceResult = static_cast<DiceResult*>(previous->getResult());
     if(NULL!=previousDiceResult)
     {
-        QList<Die> diceList=previousDiceResult->getResultList();
-        QList<Die> diceList2=m_diceResult->getResultList();
+        QList<Die*> diceList=previousDiceResult->getResultList();
+        QList<Die*> diceList2=m_diceResult->getResultList();
 
 
         diceList2 = diceList.mid(0,m_numberOfDice);
