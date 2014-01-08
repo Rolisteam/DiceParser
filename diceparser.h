@@ -3,7 +3,10 @@
 
 #include <QString>
 #include <QMap>
+
 #include "node/executionnode.h"
+#include "node/dicerollernode.h"
+
 #include "validator.h"
 #include "range.h"
 #include "booleancondition.h"
@@ -40,7 +43,7 @@ public:
     /**
      * @brief The OptionOperator enum gathering all options  availables for result.
      */
-    enum OptionOperator {KeepAndReRoll,keep,Reroll,Explosing,Sort,Count};
+    enum OptionOperator {KeepAndExplose,keep,Reroll,Explosing,Sort,Count};
 
     /**
      * @brief DiceParser default constructor
@@ -92,7 +95,7 @@ private:
     /**
      * @brief readOption
      */
-    bool readOption(QString&,ExecutionNode* node);
+    bool readOption(QString&,ExecutionNode* node, DiceRollerNode* diceNode);
 
     /**
      * @brief addSort
