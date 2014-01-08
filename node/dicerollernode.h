@@ -12,10 +12,7 @@ public:
     DiceRollerNode(quint64 faces);
 
     virtual void run(ExecutionNode*);
-
-    //private method
-private:
-    quint64 rollDice();
+    quint64 getFaces();
 
 
 //private members
