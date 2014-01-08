@@ -4,20 +4,20 @@
 BooleanCondition::BooleanCondition()
 {
 }
-bool BooleanCondition::isValid(Die b) const
+bool BooleanCondition::isValid(Die* b) const
 {
     switch(m_operator)
     {
     case Equal:
-        return (b.getValue()==m_value);
+        return (b->getValue()==m_value);
     case GreaterThan:
-        return (b.getValue()>m_value);
+        return (b->getValue()>m_value);
     case LesserThan:
-        return (b.getValue()<m_value);
+        return (b->getValue()<m_value);
     case GreaterOrEqual:
-        return (b.getValue()>=m_value);
+        return (b->getValue()>=m_value);
     case LesserOrEqual:
-        return (b.getValue()<=m_value);
+        return (b->getValue()<=m_value);
 
 
     }
