@@ -1,9 +1,10 @@
 #include "rerolldicenode.h"
-#include "dicerollernode.h"
+
 
 RerollDiceNode::RerollDiceNode()
+    : m_myDiceResult(new DiceResult())
 {
-
+    m_result=m_myDiceResult;
 }
 void RerollDiceNode::run(ExecutionNode* previous)
 {
@@ -12,18 +13,17 @@ void RerollDiceNode::run(ExecutionNode* previous)
         DiceResult* previous_result = static_cast<DiceResult*>(previous->getResult());
         if(NULL!=previous_result)
         {
-            QList<Die> list = previous_result->getResultList();
+            QList<Die*> list = previous_result->getResultList();
 
 
-            foreach(Die die, list)
+            foreach(Die* die, list)
             {
-                if(m_value == die.getValue())
+                if(m_validator->isValid(die))
                 {
-    /*
-                    DiceRollerNode roller;
-                    roller.run(this);*/
+                    die->roll();
                 }
             }
+            m_myDiceResult->setResultList(list);
 
             if(NULL!=m_nextNode)
             {
@@ -31,4 +31,8 @@ void RerollDiceNode::run(ExecutionNode* previous)
             }
         }
     }
+}
+void RerollDiceNode::setValidator(Validator* val)
+{
+      m_validator = val;
 }
