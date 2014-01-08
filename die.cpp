@@ -1,9 +1,16 @@
+#include <QDateTime>
+
 #include "die.h"
+
+#include <QDebug>
 
 Die::Die()
     : m_hasValue(false)
 {
+    uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
+    qsrand(seed);
 }
+
 
 void Die::setValue(qint64 r)
 {
@@ -47,4 +54,29 @@ QList<qint64> Die::getListValue() const
 bool Die::hasChildrenValue()
 {
     return m_rollResult.size()>1?true:false;
+}
+void Die::replaceLastValue(qint64 value)
+{
+    m_rollResult.removeLast();
+   insertRollValue(value);
+}
+
+void Die::roll(bool adding)
+{
+    quint64 value=(qrand()%m_faces)+1;
+
+    if((adding)||(m_rollResult.isEmpty()))
+    {
+        insertRollValue(value);
+    }
+    else
+    {
+        replaceLastValue(value);
+    }
+}
+
+
+void Die::setFaces(quint64 face)
+{
+    m_faces=face;
 }
