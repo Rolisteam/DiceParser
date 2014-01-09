@@ -22,36 +22,49 @@ void SortResultNode::run(ExecutionNode* node)
         QList<Die*> diceList=previousDiceResult->getResultList();
         QList<Die*> diceList2=m_diceResult->getResultList();
 
-        /*diceList2 = diceList;
 
-        if(!m_ascending)
-        {
-            qSort(diceList2.begin(), diceList2.end(), qGreater<Die*>());
-        }
-        else
-        {
-            qSort(diceList2.begin(), diceList2.end(), qLess<Die*>());
-        }*/
-
-
+        // dichotomy sorting
         for(int i = 0; i<diceList.size();++i)
         {
             Die* tmp1 = diceList[i];
             int j =0;
             bool found = false;
-            for(; ((j < diceList2.size())&&(!found)); ++j)
+            //for(; ((j < diceList2.size())&&(!found)); ++j)
+            int start = 0;
+            int end = diceList2.size();
+            int distance = 0;
+            Die* tmp2 = NULL;
+            while(!found)
             {
-                Die* tmp2 = diceList2[j];
-//                qDebug() << tmp1->getValue() << tmp2->getValue()  << j;
-                if(tmp1->getValue() < tmp2->getValue())
+                distance = end-start;
+                j = (start+end)/2;
+
+
+                if(distance == 0)
                 {
-                    found = true;
+                    j=end;
+                    found=true;
                 }
+                else
+                {
+                    tmp2 = diceList2[j];
+                    if(tmp1->getValue() < tmp2->getValue())
+                    {
+                            end=j;
+                    }
+                    else
+                    {
+                            start=j+1;
+                    }
+
+                }
+
             }
-            if(found)
-                diceList2.insert(j-1,tmp1);
-            else
-                diceList2.append(tmp1);
+            //qDebug() << tmp1->getValue() << j  << found;
+            //if(found)
+                diceList2.insert(j,tmp1);
+            /*else
+                diceList2.append(tmp1);*/
 
         }
 
