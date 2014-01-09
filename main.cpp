@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 
     myParser->parseLine("3D100");
     myParser->parseLine("3D100");
-   // myParser->parseLine("100291D66666666");
+    myParser->parseLine("100291D66666666s");
     myParser->parseLine("10D10r[=1]K3");
     //myParser->parseLine("10k3");
 
