@@ -11,6 +11,7 @@
 #include "node/sortresult.h"
 #include "node/countexecutenode.h"
 #include "node/rerolldicenode.h"
+#include "node/explosedicenode.h"
 
 DiceParser::DiceParser()
 {
@@ -23,6 +24,7 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QObject::tr("s"),Sort);
     m_OptionOp->insert(QObject::tr("c"),Count);
     m_OptionOp->insert(QObject::tr("r"),Reroll);
+    m_OptionOp->insert(QObject::tr("e"),Explosing);
 
 
 
@@ -66,7 +68,7 @@ void DiceParser::parseLine(QString str)
         keepParsing =!str.isEmpty();
         while(keepParsing)
         {
-            keepParsing = readOperator(str);
+            keepParsing = readOperator(str,m_current);
             //keepParsing = readOption(str);
         }
 
@@ -228,7 +230,7 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
     node = numberNode;
     return returnVal;
 }
-bool DiceParser::readOperator(QString& str)
+bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
 {
     if(str.isEmpty())
     {
@@ -245,7 +247,8 @@ bool DiceParser::readOperator(QString& str)
         {
 
             node->setInternalNode(nodeExec);
-            //previous->setNextNode(node);
+            previous->setNextNode(node);
+            setCurrentNode(node);
 
 
             return true;
@@ -331,6 +334,18 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous,DiceRollerNode*
 
                 }
                     break;
+                case Explosing:
+                {
+                    Validator* validator = readValidator(str);
+                    if(NULL!=validator)
+                    {
+                        ExploseDiceNode* explosedNode = new ExploseDiceNode();
+                        explosedNode->setValidator(validator);
+                        previous->setNextNode(explosedNode);
+                        node = explosedNode;
+                        isFine = true;
+                    }
+                }
             }
         }
     }
@@ -370,10 +385,14 @@ Validator* DiceParser::readValidator(QString& str)
             int value=0;
             if(readNumber(str,value))
             {
+                if(str.startsWith("]"))
+                {
+                    str=str.remove(0,1);
                 BooleanCondition* condition = new BooleanCondition();
                 condition->setValue(value);
                 condition->setOperator(myLogicOp);
                 returnVal = condition;
+                }
 
             }
         }
