@@ -86,6 +86,7 @@ void DiceParser::parseLine(QString str)
         //////////////////////////////////
         //
         //  Display
+        // @todo : manage it in another class.
         //
         //////////////////////////////////
 
