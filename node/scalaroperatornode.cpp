@@ -25,6 +25,7 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
     if(NULL!=previous)
     {
         DiceResult* previousResult = static_cast<DiceResult*>(previous->getResult());
+
         if(NULL!=previousResult)
         {
             ExecutionNode* internal = m_internalNode;
@@ -32,7 +33,10 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
             {
                 internal = internal->getNextNode();
             }
+
             Result* internalResult = internal->getResult();
+            m_result->setPrevious(internalResult);
+            internalResult->setPrevious(previousResult);
 
             switch(m_myOperator)
             {
