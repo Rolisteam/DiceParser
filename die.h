@@ -24,6 +24,10 @@ public:
     void replaceLastValue(qint64 value);
 
 
+    qint64 getLastRolledValue();
+    quint64 getFaces();
+
+
 
 
 private:
