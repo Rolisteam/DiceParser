@@ -17,13 +17,14 @@ void SortResultNode::run(ExecutionNode* node)
         return;
     }
     DiceResult* previousDiceResult = static_cast<DiceResult*>(node->getResult());
+    m_diceResult->setPrevious(previousDiceResult);
     if(NULL!=previousDiceResult)
     {
         QList<Die*> diceList=previousDiceResult->getResultList();
         QList<Die*> diceList2=m_diceResult->getResultList();
 
 
-        // dichotomy sorting
+        // Dichotomic sorting
         for(int i = 0; i<diceList.size();++i)
         {
             Die* tmp1 = diceList[i];
