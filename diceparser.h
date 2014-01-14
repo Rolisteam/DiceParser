@@ -85,7 +85,7 @@ private:
      * @brief readOperator
      * @return
      */
-    bool readOperator(QString&);
+    bool readOperator(QString&,ExecutionNode* previous);
     /**
      * @brief setCurrentNode
      * @param node
@@ -114,12 +114,15 @@ private:
 
     bool readLogicOperator(QString& str,BooleanCondition::LogicOperator& condition);
 
+    void displayResult();
+
 private:
     QMap<QString,DiceOperator>* m_mapDiceOp;
     QMap<QString,OptionOperator>* m_OptionOp;
     QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
     ExecutionNode* m_start;
     ExecutionNode* m_current;
+    QString m_command;
 };
 
 /**
