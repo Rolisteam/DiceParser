@@ -16,17 +16,23 @@ void DiceRollerNode::run(ExecutionNode* previous)
 {
     if(NULL!=previous)
     {
-        m_diceCount = previous->getResult()->getScalar();
-        for(quint64 i=0; i < m_diceCount ; ++i)
+        Result* result=previous->getResult();
+        if(NULL!=result)
         {
-            Die* die = new Die();
-            die->setFaces(m_faces);
-            die->roll();
-            m_myDiceResult->insertResult(die);
-        }
-        if(NULL!=m_nextNode)
-        {
-            m_nextNode->run(this);
+            m_diceCount = result->getScalar();
+            m_result->setPrevious(result);
+
+            for(quint64 i=0; i < m_diceCount ; ++i)
+            {
+                Die* die = new Die();
+                die->setFaces(m_faces);
+                die->roll();
+                m_myDiceResult->insertResult(die);
+            }
+            if(NULL!=m_nextNode)
+            {
+                m_nextNode->run(this);
+            }
         }
     }
 }
