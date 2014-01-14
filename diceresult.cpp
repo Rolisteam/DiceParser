@@ -32,5 +32,15 @@ qint64 DiceResult::getScalar()
     {
         return m_diceValues[0]->getValue();
     }
+    else
+    {
+       qint64 scalarSum = 0;
+       foreach(Die* die,m_diceValues)
+       {
+           scalarSum+=die->getValue();
+       }
+       return scalarSum;
+    }
+
     return 0;
 }
