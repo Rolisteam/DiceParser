@@ -75,8 +75,21 @@ void Die::roll(bool adding)
     }
 }
 
+quint64 Die::getFaces()
+{
+    return m_faces;
+}
 
 void Die::setFaces(quint64 face)
 {
     m_faces=face;
+}
+qint64 Die::getLastRolledValue()
+{
+    if(!m_rollResult.isEmpty())
+    {
+        return m_rollResult.last();
+    }
+    else
+        return 0;
 }
