@@ -1,6 +1,7 @@
 #include "result.h"
 
 Result::Result()
+    : m_previous(NULL)
 {
 }
 
