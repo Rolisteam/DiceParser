@@ -417,6 +417,7 @@ Validator* DiceParser::readValidator(QString& str)
                     if(str.startsWith("]"))
                     {
                         str=str.remove(0,1);
+                        isOk=true;
                     }
                     else
                     {
@@ -435,24 +436,23 @@ Validator* DiceParser::readValidator(QString& str)
 
             }
         }
-        else if(expectSquareBrasket)
+        else
         {
-            if(str.startsWith("]"))
+            if((expectSquareBrasket)&&(str.startsWith("]")))
             {
                 str=str.remove(0,1);
+                isOk=true;
             }
-            else
-            {
-                   isOk=false;
-            }
-        }
 
-        if(isOk)
-        {
-            BooleanCondition* condition = new BooleanCondition();
-            condition->setValue(value);
-            condition->setOperator(myLogicOp);
-            returnVal = condition;
+
+
+            if(isOk)
+            {
+                BooleanCondition* condition = new BooleanCondition();
+                condition->setValue(value);
+                condition->setOperator(myLogicOp);
+                returnVal = condition;
+            }
         }
 
 
