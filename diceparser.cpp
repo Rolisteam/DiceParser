@@ -29,11 +29,12 @@ DiceParser::DiceParser()
 
 
     m_logicOp = new QMap<QString,BooleanCondition::LogicOperator>();
+    m_logicOp->insert(">=",BooleanCondition::GreaterOrEqual);
+    m_logicOp->insert("<=",BooleanCondition::LesserOrEqual);
     m_logicOp->insert("<",BooleanCondition::LesserThan);
     m_logicOp->insert("=",BooleanCondition::Equal);
-    m_logicOp->insert("<=",BooleanCondition::LesserOrEqual);
     m_logicOp->insert(">",BooleanCondition::GreaterThan);
-    m_logicOp->insert(">=",BooleanCondition::GreaterOrEqual);
+
 
 
 
@@ -104,7 +105,7 @@ void DiceParser::displayResult()
     QString dieValue("D%1 : {%2} ");
 
     bool scalarDone=false;
-
+    bool vectorDone=false;
 
     while(NULL!=myResult)
     {
@@ -116,7 +117,7 @@ void DiceParser::displayResult()
         }
 
         DiceResult* myDiceResult = dynamic_cast<DiceResult*>(myResult);
-        if(NULL!=myDiceResult)
+        if((NULL!=myDiceResult)&&(!vectorDone))
         {
 
             QString resulStr;
@@ -142,7 +143,7 @@ void DiceParser::displayResult()
 
             }
             resulStr.remove(resulStr.size()-2,2);
-
+            vectorDone = true;
 
              stream << dieValue.arg(face).arg(resulStr);
 
@@ -237,8 +238,14 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
 
 
 
-
-        while(readOption(str,next,next));
+        ExecutionNode* latest = next;
+        while(readOption(str,latest,next))
+        {
+            while(NULL!=latest->getNextNode())
+            {
+                latest = latest->getNextNode();
+            }
+        }
 
 
         returnVal = true;
@@ -457,15 +464,24 @@ Validator* DiceParser::readValidator(QString& str)
 }
 bool DiceParser::readLogicOperator(QString& str,BooleanCondition::LogicOperator& op)
 {
+    QString longKey;
     foreach(QString tmp, m_logicOp->keys())
     {
         if(str.startsWith(tmp))
         {
-            str=str.remove(0,tmp.size());
-            op = m_logicOp->value(tmp);
-            return true;
+            if(longKey.size()<tmp.size())
+            {
+                longKey = tmp;
+            }
         }
     }
+    if(longKey.size()>0)
+    {
+        str=str.remove(0,longKey.size());
+        op = m_logicOp->value(longKey);
+        return true;
+    }
+
     return false;
 }
 
