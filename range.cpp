@@ -11,11 +11,23 @@ void Range::setValue(qint64 s,qint64 e)
     m_end=e;
 }
 
-bool Range::isValid(Die* m) const
+qint64 Range::hasValid(Die* m,bool recursive) const
 {
-    if((m->getLastRolledValue()>=m_start)&&(m->getLastRolledValue()<=m_end))
+    if(recursive)
     {
-        return true;
+        qint64 i = 0;
+        foreach(qint64 value, m->getListValue())
+        {
+            if((value>=m_start)&&(value<=m_end))
+            {
+                ++i;
+            }
+        }
+        return i;
     }
-    return false;
+    else if((m->getLastRolledValue()>=m_start)&&(m->getLastRolledValue()<=m_end))
+    {
+        return 1;
+    }
+    return 0;
 }
