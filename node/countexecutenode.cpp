@@ -27,10 +27,7 @@ void CountExecuteNode::run(ExecutionNode *previous)
         qint64 sum = 0;
         foreach(Die* dice,diceList)
         {
-            if(m_validator->isValid(dice))
-            {
-                ++sum;
-            }
+            sum+=m_validator->hasValid(dice,true);
         }
         m_scalarResult->setValue(sum);
 
