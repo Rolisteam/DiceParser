@@ -19,7 +19,7 @@ void RerollDiceNode::run(ExecutionNode* previous)
 
             foreach(Die* die, list)
             {
-                if(m_validator->isValid(die))
+                if(m_validator->hasValid(die,false))
                 {
                     die->roll();
                 }
