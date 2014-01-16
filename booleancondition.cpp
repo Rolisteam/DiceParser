@@ -4,24 +4,45 @@
 BooleanCondition::BooleanCondition()
 {
 }
-bool BooleanCondition::isValid(Die* b) const
+qint64 BooleanCondition::hasValid(Die* b,bool recursive) const
 {
-    switch(m_operator)
+    QList<qint64> listValues;
+    if(recursive)
     {
-    case Equal:
-        return (b->getLastRolledValue()==m_value);
-    case GreaterThan:
-        return (b->getLastRolledValue()>m_value);
-    case LesserThan:
-        return (b->getLastRolledValue()<m_value);
-    case GreaterOrEqual:
-        return (b->getLastRolledValue()>=m_value);
-    case LesserOrEqual:
-        return (b->getLastRolledValue()<=m_value);
-
-
+        listValues = b->getListValue();
     }
-    return false;
+    else
+    {
+        listValues.append(b->getLastRolledValue());
+    }
+
+    qint64 sum= 0;
+    foreach(qint64 value, listValues)
+    {
+
+        switch(m_operator)
+        {
+            case Equal:
+                sum+=(value==m_value)?1:0;
+                break;
+            case GreaterThan:
+                sum+= (value>m_value)?1:0;
+                break;
+            case LesserThan:
+                sum+= (value<m_value)?1:0;
+                break;
+            case GreaterOrEqual:
+                sum+= (value>=m_value)?1:0;
+                break;
+            case LesserOrEqual:
+                sum+= (value<=m_value)?1:0;
+                break;
+
+
+        }
+    }
+
+    return sum;
 }
 
 void BooleanCondition::setOperator(LogicOperator m)
