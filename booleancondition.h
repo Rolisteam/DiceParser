@@ -10,7 +10,7 @@ public:
     enum LogicOperator { Equal, GreaterThan, LesserThan, GreaterOrEqual, LesserOrEqual};
     BooleanCondition();
 
-    virtual bool isValid(Die* b) const;
+    virtual qint64 hasValid(Die* b,bool recursive) const;
 
     void setOperator(LogicOperator m);
     void setValue(qint64);
