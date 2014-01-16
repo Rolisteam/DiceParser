@@ -18,7 +18,7 @@ void ExploseDiceNode::run(ExecutionNode* previous)
 
             foreach(Die* die, list)
             {
-                while(m_validator->isValid(die))
+                while(m_validator->hasValid(die,false))
                 {
                     die->roll(true);
                 }
