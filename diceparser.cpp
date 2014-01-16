@@ -381,6 +381,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous,DiceRollerNode*
                         isFine = true;
                     }
                 }
+                case KeepAndExplose:
+                    break;
             }
         }
     }
