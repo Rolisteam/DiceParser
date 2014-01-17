@@ -1,5 +1,7 @@
 #include <QCoreApplication>
 
+
+#include <QStringList>
 #include "diceparser.h"
 
 int main(int argc, char *argv[])
@@ -7,30 +9,37 @@ int main(int argc, char *argv[])
     // QCoreApplication a(argc, argv);
     DiceParser* myParser = new DiceParser();
 
-    myParser->parseLine("3D100");
-    myParser->parseLine("3D100");
-    myParser->parseLine("100291D66666666s");
-    myParser->parseLine("10D10r[=1]K3");
-    //myParser->parseLine("10k3");
+    QStringList commands;
 
-    /// roll 10 dice of 10 slices and sort them
-    myParser->parseLine("10D10s");
+    commands << "3D100"
+             << "3D100"
+             << "10D10e[>=6]s"
+             << "100190D6666666s"
+             << "10D10e10s"
+             << "10D10s"
+             << "15D10e10c[8-10]"
+             << "15D10c[>7]"
+             << "1D8+2D6+7"
+             << "D25"
+             << "8+8+8"
+             << "1D20-88"
+             << "100*1D20*2D6"
+             << "100/28*3"
+             << "100/8"
+             << "100*3*8"
+             << "100*3*8";
 
-    /// roll 15 dice of 10 slices and count above 7
-    myParser->parseLine("15D10c[8-10]");
-
-    /// roll 15 dice of 10 slices condition count above 7
-    myParser->parseLine("15D10c[>7]");
 
 
-    myParser->parseLine("1D8+2D6+7");
-    myParser->parseLine("D25");
-    myParser->parseLine("8+8");
-    myParser->parseLine("88-1D20");
-    myParser->parseLine("100*1D20*2D6");
-    myParser->parseLine("100/28");
-    myParser->parseLine("100/8");
-    myParser->parseLine("100*3");
+    foreach(QString cmd, commands)
+    {
+        if(myParser->parseLine(cmd))
+        {
+            myParser->Start();
+            myParser->displayResult();
+        }
+    }
+
     //return a.exec();
     return 0;
 }
