@@ -53,8 +53,21 @@ public:
     /**
      * @brief parseLine, method to call for starting the dice roll. It will parse the command and run the execution tree.
      * @param str dice command
+     * @return bool every thing is fine or not
      */
-    void parseLine(QString str);
+    bool parseLine(QString str);
+
+
+    /**
+     * @brief Start running the execution tree
+     *
+     */
+    void Start();
+
+    /**
+     * @brief displayResult
+     */
+    void displayResult();
 
 private:
     /**
@@ -114,7 +127,7 @@ private:
 
     bool readLogicOperator(QString& str,BooleanCondition::LogicOperator& condition);
 
-    void displayResult();
+
 
 private:
     QMap<QString,DiceOperator>* m_mapDiceOp;
