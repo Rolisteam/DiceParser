@@ -51,7 +51,7 @@ void DiceParser::setCurrentNode(ExecutionNode* node)
     m_current = next;
 }
 
-void DiceParser::parseLine(QString str)
+bool DiceParser::parseLine(QString str)
 {
      m_command = str;
     m_start = new StartingNode();
@@ -73,15 +73,20 @@ void DiceParser::parseLine(QString str)
             //keepParsing = readOption(str);
         }
 
-        m_start->run();
+    //    m_start->run();
 
-        displayResult();
+//        displayResult();
+        return true;
     }
 
+    return false;
 
 
 
-
+}
+void DiceParser::Start()
+{
+     m_start->run();
 }
 void DiceParser::displayResult()
 {
