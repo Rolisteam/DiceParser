@@ -225,6 +225,13 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
 {
     int number=1;
     bool returnVal=false;
+    if(readParantheses(str))
+    {
+        str=str.remove(0,number.size());
+
+        readDiceExpression();
+
+    }
     bool hasRead = readNumber(str,number);
 
 
@@ -490,6 +497,16 @@ bool DiceParser::readLogicOperator(QString& str,BooleanCondition::LogicOperator&
     }
 
     return false;
+}
+bool DiceParser::readParentheses(QString& str)
+{
+    if(str.startsWith("("))
+    {
+        str=str.remove(0,1);
+           return true;
+    }
+    else
+        return false;
 }
 
 ExecutionNode* DiceParser::addSort(ExecutionNode* e,bool b)

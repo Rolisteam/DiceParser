@@ -8,7 +8,8 @@ HEADERS += \
     node/sortresult.h \
     node/keepdiceexecnode.h \
     node/countexecutenode.h \
-    node/explosedicenode.h
+    node/explosedicenode.h \
+    node/parenthesesnode.h
 
 SOURCES += \
     node/dicerollernode.cpp \
@@ -20,4 +21,5 @@ SOURCES += \
     node/sortresult.cpp \
     node/keepdiceexecnode.cpp \
     node/countexecutenode.cpp \
-    node/explosedicenode.cpp
+    node/explosedicenode.cpp \
+    node/parenthesesnode.cpp

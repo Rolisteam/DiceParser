@@ -127,7 +127,7 @@ private:
 
     bool readLogicOperator(QString& str,BooleanCondition::LogicOperator& condition);
 
-
+    bool readParentheses(QString& str);
 
 private:
     QMap<QString,DiceOperator>* m_mapDiceOp;
