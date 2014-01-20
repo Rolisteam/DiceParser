@@ -18,6 +18,7 @@ ScalarOperatorNode::ScalarOperatorNode()
 
 void ScalarOperatorNode::run(ExecutionNode* previous)
 {
+
     if(NULL!=m_internalNode)
     {
         m_internalNode->run(this);
@@ -37,6 +38,8 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
             Result* internalResult = internal->getResult();
             m_result->setPrevious(internalResult);
             internalResult->setPrevious(previousResult);
+
+            qDebug() << "ScalarOperatorNode node" << m_myOperator;
 
             switch(m_myOperator)
             {
