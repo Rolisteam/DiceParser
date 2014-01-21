@@ -1,7 +1,3 @@
-#ifndef PARENTHESESNODE_H
-#define PARENTHESESNODE_H
-
-#include "executionnode.h"
 #include "parenthesesnode.h"
 
 ParenthesesNode::ParenthesesNode()
