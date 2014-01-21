@@ -4,6 +4,7 @@
 #include "executionnode.h"
 #include "diceresult.h"
 #include "validator.h"
+#include <QDebug>
 
 /**
  * @brief The ExploseDiceNode class explose dice while is valid by the validator.
@@ -16,6 +17,8 @@ public:
 
     virtual void setValidator(Validator* );
 
+    virtual QString toString()const;
+
 
 protected:
     DiceResult* m_diceResult;
@@ -23,3 +26,4 @@ protected:
 };
 
 #endif // EXPLOSEDICENODE_H
+
