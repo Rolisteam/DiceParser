@@ -12,9 +12,12 @@
 #include "node/countexecutenode.h"
 #include "node/rerolldicenode.h"
 #include "node/explosedicenode.h"
+#include "node/parenthesesnode.h"
 
 DiceParser::DiceParser()
 {
+    m_parsingToolbox = new ParsingToolBox();
+
     m_mapDiceOp = new QMap<QString,DiceOperator>();
     m_mapDiceOp->insert("D",D);
 
@@ -27,13 +30,11 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QObject::tr("e"),Explosing);
 
 
-
-    m_logicOp = new QMap<QString,BooleanCondition::LogicOperator>();
-    m_logicOp->insert(">=",BooleanCondition::GreaterOrEqual);
-    m_logicOp->insert("<=",BooleanCondition::LesserOrEqual);
-    m_logicOp->insert("<",BooleanCondition::LesserThan);
-    m_logicOp->insert("=",BooleanCondition::Equal);
-    m_logicOp->insert(">",BooleanCondition::GreaterThan);
+    m_aliasMap = new QMap<QString,QString>;
+    m_aliasMap->insert("l5r","D10k");
+    m_aliasMap->insert("l5R","D10e10k");
+    m_aliasMap->insert("nwod","D10e10c[>7]");
+    m_aliasMap->insert("nwod","D10e10c[>7]");
 
 
 
@@ -41,49 +42,88 @@ DiceParser::DiceParser()
 
 }
 
-void DiceParser::setCurrentNode(ExecutionNode* node)
+ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
 {
     ExecutionNode* next = node;
     while(NULL != next->getNextNode() )
     {
         next = next->getNextNode();
     }
-    m_current = next;
+    return next;
 }
 
 bool DiceParser::parseLine(QString str)
 {
      m_command = str;
-    m_start = new StartingNode();
-    m_current = m_start;
-    bool keepParsing = true;
-    ExecutionNode* execNode=NULL;
-    keepParsing = readDiceExpression(str,execNode);
+     m_start = new StartingNode();
+     ExecutionNode* newNode = NULL;
+
+   bool keepParsing = readExpression(str,newNode);
+
 
     if(keepParsing)
     {
-        m_current->setNextNode(execNode);
-        setCurrentNode(execNode);
+        m_start->setNextNode(newNode);
+//        if(NULL==m_start)
+//        {
+//            m_start = m_current;
+//        }
 
+
+
+        ExecutionNode* current = getLatestNode(m_start);
+
+        qDebug() << "current" << current << " start"<< m_start << newNode;
 
         keepParsing =!str.isEmpty();
-        while(keepParsing)
+        if(keepParsing)
         {
-            keepParsing = readOperator(str,m_current);
-            //keepParsing = readOption(str);
+            keepParsing = readOperator(str,current);
+            qDebug() << "2 current" << current << " start"<< m_start << newNode;
+            current = getLatestNode(current);
         }
-
-    //    m_start->run();
-
-//        displayResult();
         return true;
     }
-
     return false;
 
-
-
 }
+
+bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
+{
+    if(m_parsingToolbox->readOpenParentheses(str))
+    {
+        ExecutionNode* internalNode=NULL;
+        if(readExpression(str,internalNode))
+        {
+                ParenthesesNode* parentheseNode  = new ParenthesesNode();
+                parentheseNode->setInternelNode(internalNode);
+                node = parentheseNode;
+                //node->setNextNode(parentheseNode);
+                if(m_parsingToolbox->readCloseParentheses(str))
+                {
+                    return true;
+                }
+
+
+        }
+    }
+
+    bool keepParsing = true;
+    ExecutionNode* execNode=NULL;
+    keepParsing = readDiceExpression(str,execNode);
+    node = execNode;
+    execNode = getLatestNode(execNode);
+    while(keepParsing)
+    {
+        keepParsing = readOperator(str,execNode);
+        execNode = getLatestNode(execNode);
+    }
+
+
+
+    return true;
+}
+
 void DiceParser::Start()
 {
      m_start->run();
@@ -163,32 +203,7 @@ void DiceParser::displayResult()
 //qDebug() << "list:" << << " sum:" << << " command:" << command;
 }
 
-bool DiceParser::readNumber(QString& str, int& myNumber)
-{
-    if(str.isEmpty())
-        return false;
 
-    QString number;
-    int i=0;
-
-    while(i<str.length() && str[i].isNumber())
-    {
-        number+=str[i];
-        ++i;
-    }
-
-    if(number.isEmpty())
-        return false;
-
-    bool ok;
-    myNumber = number.toInt(&ok);
-    if(ok)
-    {
-        str=str.remove(0,number.size());
-        return true;
-    }
-    return false;
-}
 
 bool DiceParser::readDice(QString&  str,Dice& dice)
 {
@@ -196,7 +211,7 @@ bool DiceParser::readDice(QString&  str,Dice& dice)
     if(readDiceOperator(str,myOperator))
     {
         int num;
-        if(readNumber(str,num))
+        if(m_parsingToolbox->readNumber(str,num))
         {
             dice.m_diceOp = myOperator;
             dice.m_faces = num;
@@ -225,56 +240,60 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
 {
     int number=1;
     bool returnVal=false;
-    if(readParantheses(str))
-    {
-        str=str.remove(0,number.size());
 
-        readDiceExpression();
 
-    }
-    bool hasRead = readNumber(str,number);
+        bool hasRead = m_parsingToolbox->readNumber(str,number);
 
 
 
 
-    NumberNode* numberNode = new NumberNode();
-    numberNode->setNumber(number);
+        NumberNode* numberNode = new NumberNode();
+        numberNode->setNumber(number);
 
 
-    Dice myDice;
-    if(readDice(str,myDice))
-    {
-        DiceRollerNode* next = new DiceRollerNode(myDice.m_faces);
-        numberNode->setNextNode(next);
-
-
-
-
-        ExecutionNode* latest = next;
-        while(readOption(str,latest,next))
+        Dice myDice;
+        if(readDice(str,myDice))
         {
-            while(NULL!=latest->getNextNode())
+            DiceRollerNode* next = addRollDiceNode(myDice.m_faces,numberNode);
+    //        numberNode->setNextNode(next); already done in addRollDiceNode method
+
+
+
+
+            ExecutionNode* latest = next;
+            while(readOption(str,latest))
             {
-                latest = latest->getNextNode();
+                while(NULL!=latest->getNextNode())
+                {
+                    latest = latest->getNextNode();
+                }
             }
+
+
+            returnVal = true;
+        }
+        else if(hasRead)
+        {
+            //setCurrentNode(numberNode);
+            returnVal = true;
+            ExecutionNode* latest = numberNode;
+            while(readOption(str,latest,false))
+            {
+                while(NULL!=latest->getNextNode())
+                {
+                    latest = latest->getNextNode();
+                }
+            }
+        }
+        else
+        {
+            qDebug() << "error" << number << str;
+            returnVal = false;
         }
 
 
-        returnVal = true;
-    }
-    else if(hasRead)
-    {
-        //setCurrentNode(numberNode);
-        returnVal = true;
-    }
-    else
-    {
-        qDebug() << "error" << number << str;
-        returnVal = false;
-    }
+        node = numberNode;
 
-
-    node = numberNode;
     return returnVal;
 }
 bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
@@ -290,12 +309,12 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
 
         ExecutionNode* nodeExec = NULL;
         str=str.remove(0,1);//removal of one character
-        if(readDiceExpression(str,nodeExec))
+        if(readExpression(str,nodeExec))
         {
 
             node->setInternalNode(nodeExec);
             previous->setNextNode(node);
-            setCurrentNode(node);
+            //node = getLatestNode(node);
 
 
             return true;
@@ -303,7 +322,14 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
     }
     return false;
 }
-bool DiceParser::readOption(QString& str,ExecutionNode* previous,DiceRollerNode* diceNode)
+DiceRollerNode* DiceParser::addRollDiceNode(qint64 faces,ExecutionNode* previous)
+{
+    DiceRollerNode* mydiceRoller= new DiceRollerNode(faces);
+    previous->setNextNode(mydiceRoller);
+    return mydiceRoller;
+}
+
+bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
 {
 
 
@@ -314,6 +340,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous,DiceRollerNode*
 
     ExecutionNode* node = NULL;
     bool isFine=false;
+
 
 
     for(int i = 0; ((i<m_OptionOp->keys().size())&&(!isFine));++i )
@@ -330,9 +357,15 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous,DiceRollerNode*
                 case keep:
                 {
                     int myNumber=0;
-                    if(readNumber(str,myNumber))
+                    if(m_parsingToolbox->readNumber(str,myNumber))
                     {
-                        node = addSort(previous,false);
+                        if(!hasDice)
+                        {
+                            previous = addRollDiceNode(10,previous);
+                        }
+
+
+                        node = m_parsingToolbox->addSort(previous,false);
 
                         KeepDiceExecNode* nodeK = new KeepDiceExecNode();
                         nodeK->setDiceKeepNumber(myNumber);
@@ -344,16 +377,40 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous,DiceRollerNode*
                     }
                 }
                     break;
+                case KeepAndExplose:
+            {
+                int myNumber=0;
+                if(m_parsingToolbox->readNumber(str,myNumber))
+                {
+                    if(!hasDice)
+                    {
+                        previous = addRollDiceNode(10,previous);
+                    }
+
+
+                    node = m_parsingToolbox->addSort(previous,false);
+
+                    KeepDiceExecNode* nodeK = new KeepDiceExecNode();
+                    nodeK->setDiceKeepNumber(myNumber);
+
+                    node->setNextNode(nodeK);
+                    node = nodeK;
+                    isFine = true;
+
+                }
+            }
+                break;
+                    break;
                 case Sort:
                 {
-                    node = addSort(previous,false);
+                    node = m_parsingToolbox->addSort(previous,false);
 
                     isFine = true;
                 }
                     break;
                 case Count:
                 {
-                    Validator* validator = readValidator(str);
+                    Validator* validator = m_parsingToolbox->readValidator(str);
                     if(NULL!=validator)
                     {
                         CountExecuteNode* countNode = new CountExecuteNode();
@@ -367,7 +424,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous,DiceRollerNode*
                     break;
                 case Reroll:
                 {
-                    Validator* validator = readValidator(str);
+                    Validator* validator = m_parsingToolbox->readValidator(str);
                     if(NULL!=validator)
                     {
                         RerollDiceNode* rerollNode = new RerollDiceNode();
@@ -383,7 +440,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous,DiceRollerNode*
                     break;
                 case Explosing:
                 {
-                    Validator* validator = readValidator(str);
+                    Validator* validator = m_parsingToolbox->readValidator(str);
                     if(NULL!=validator)
                     {
                         ExploseDiceNode* explosedNode = new ExploseDiceNode();
@@ -393,126 +450,14 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous,DiceRollerNode*
                         isFine = true;
                     }
                 }
-                case KeepAndExplose:
-                    break;
+
             }
         }
     }
+
+
 
 
     return isFine;
 }
-Validator* DiceParser::readValidator(QString& str)
-{
-    Validator* returnVal=NULL;
-    bool expectSquareBrasket=false;
-    bool isOk = true;
-    if((str.startsWith("[")))
-    {
-        str=str.remove(0,1);
-        expectSquareBrasket = true;
-    }
 
-    BooleanCondition::LogicOperator myLogicOp = BooleanCondition::Equal;
-    bool hasReadLogicOperator = readLogicOperator(str,myLogicOp);
-
-    int value=0;
-
-    if(readNumber(str,value))
-    {
-        if(str.startsWith("-"))
-        {
-            str=str.remove(0,1);
-            int end=0;
-            if(readNumber(str,end))
-            {
-                if(expectSquareBrasket)
-                {
-                    if(str.startsWith("]"))
-                    {
-                        str=str.remove(0,1);
-                        isOk=true;
-                    }
-                    else
-                    {
-                           isOk=false;
-                    }
-                }
-
-                if(isOk)
-                {
-                    str=str.remove(0,1);
-                    Range* range = new Range();
-                    range->setValue(value,end);
-                    returnVal = range;
-                }
-
-
-            }
-        }
-        else
-        {
-            if((expectSquareBrasket)&&(str.startsWith("]")))
-            {
-                str=str.remove(0,1);
-                isOk=true;
-            }
-
-
-
-            if(isOk)
-            {
-                BooleanCondition* condition = new BooleanCondition();
-                condition->setValue(value);
-                condition->setOperator(myLogicOp);
-                returnVal = condition;
-            }
-        }
-
-
-    }
-
-
-
-        return returnVal;
-}
-bool DiceParser::readLogicOperator(QString& str,BooleanCondition::LogicOperator& op)
-{
-    QString longKey;
-    foreach(QString tmp, m_logicOp->keys())
-    {
-        if(str.startsWith(tmp))
-        {
-            if(longKey.size()<tmp.size())
-            {
-                longKey = tmp;
-            }
-        }
-    }
-    if(longKey.size()>0)
-    {
-        str=str.remove(0,longKey.size());
-        op = m_logicOp->value(longKey);
-        return true;
-    }
-
-    return false;
-}
-bool DiceParser::readParentheses(QString& str)
-{
-    if(str.startsWith("("))
-    {
-        str=str.remove(0,1);
-           return true;
-    }
-    else
-        return false;
-}
-
-ExecutionNode* DiceParser::addSort(ExecutionNode* e,bool b)
-{
-    SortResultNode* nodeSort = new SortResultNode();
-    nodeSort->setSortAscending(b);
-    e->setNextNode(nodeSort);
-    return nodeSort;
-}
