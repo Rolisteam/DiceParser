@@ -11,6 +11,7 @@ public:
 
     virtual void run(ExecutionNode *previous);
     virtual void setDiceKeepNumber(quint64 );
+    virtual QString toString()const;
 private:
     quint64 m_numberOfDice;
     DiceResult* m_diceResult;
