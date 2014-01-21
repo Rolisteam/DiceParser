@@ -10,6 +10,7 @@
 #include "validator.h"
 #include "range.h"
 #include "booleancondition.h"
+#include "parsingtoolbox.h"
 
 /**
  * @mainpage DiceParser
@@ -69,14 +70,10 @@ public:
      */
     void displayResult();
 
+    bool readExpression(QString& str,ExecutionNode* & node);
+
 private:
-    /**
-     * @brief readNumber read number in the given str and remove from the string the read character.
-     * @param str the command line
-     * @param myNumber reference to the found number
-     * @return true, succeed to read number, false otherwise.
-     */
-    bool readNumber(QString&  str, int& myNumber);
+
     /**
      * @brief readDice
      * @param str
@@ -103,39 +100,24 @@ private:
      * @brief setCurrentNode
      * @param node
      */
-    void setCurrentNode(ExecutionNode* node);
+    ExecutionNode* getLatestNode(ExecutionNode* node);
 
     /**
      * @brief readOption
      */
-    bool readOption(QString&,ExecutionNode* node, DiceRollerNode* diceNode);
+    bool readOption(QString&,ExecutionNode* node, bool hasDice = true);
 
-    /**
-     * @brief addSort
-     * @param b
-     */
-    ExecutionNode* addSort(ExecutionNode*, bool b);
-
-    /**
-     * @brief readValidator
-     * @param str
-     * @param validator
-     * @return
-     */
-    Validator* readValidator(QString& str);
-
-
-    bool readLogicOperator(QString& str,BooleanCondition::LogicOperator& condition);
-
-    bool readParentheses(QString& str);
+    DiceRollerNode* addRollDiceNode(qint64 faces,ExecutionNode*);
 
 private:
     QMap<QString,DiceOperator>* m_mapDiceOp;
     QMap<QString,OptionOperator>* m_OptionOp;
-    QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
+    QMap<QString,QString>* m_aliasMap;
+
     ExecutionNode* m_start;
     ExecutionNode* m_current;
     QString m_command;
+    ParsingToolBox* m_parsingToolbox;
 };
 
 /**
