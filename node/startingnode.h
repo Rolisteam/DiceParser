@@ -9,6 +9,7 @@ public:
     StartingNode();
 
     virtual void run(ExecutionNode*);
+    virtual QString toString()const;
 };
 
 #endif // STARTINGNODE_H
