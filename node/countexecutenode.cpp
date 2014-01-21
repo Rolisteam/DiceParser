@@ -15,6 +15,7 @@ void CountExecuteNode::setValidator(Validator* validator)
 
 void CountExecuteNode::run(ExecutionNode *previous)
 {
+         qDebug() << "CountExecuteNode node";
     if(NULL==previous)
     {
         return;
@@ -37,4 +38,8 @@ void CountExecuteNode::run(ExecutionNode *previous)
             m_nextNode->run(this);
         }
     }
+}
+QString CountExecuteNode::toString() const
+{
+    return "CountExecuteNode";
 }
