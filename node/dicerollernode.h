@@ -14,7 +14,7 @@ public:
     virtual void run(ExecutionNode*);
     quint64 getFaces();
 
-
+virtual QString toString()const;
 //private members
 private:
     quint64 m_diceCount;
