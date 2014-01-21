@@ -25,7 +25,8 @@ SOURCES += main.cpp \
     validator.cpp \
     die.cpp \
     result.cpp \
-    scalarresult.cpp
+    scalarresult.cpp \
+    parsingtoolbox.cpp
 
 
 HEADERS += \
@@ -36,7 +37,8 @@ HEADERS += \
     validator.h \
     die.h \
     result.h \
-    scalarresult.h
+    scalarresult.h \
+    parsingtoolbox.h
 
 OTHER_FILES += README.md
 
