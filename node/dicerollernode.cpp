@@ -14,6 +14,7 @@ DiceRollerNode::DiceRollerNode(quint64 faces)
 }
 void DiceRollerNode::run(ExecutionNode* previous)
 {
+       qDebug() << "DiceRollerNode node";
     if(NULL!=previous)
     {
         Result* result=previous->getResult();
@@ -40,4 +41,8 @@ void DiceRollerNode::run(ExecutionNode* previous)
 quint64 DiceRollerNode::getFaces()
 {
     return m_faces;
+}
+QString DiceRollerNode::toString() const
+{
+    return QString("DiceRollerNode");
 }
