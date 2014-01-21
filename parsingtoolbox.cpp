@@ -130,3 +130,23 @@ bool ParsingToolBox::readNumber(QString& str, int& myNumber)
     }
     return false;
 }
+bool ParsingToolBox::readOpenParentheses(QString& str)
+{
+    if(str.startsWith("("))
+    {
+        str=str.remove(0,1);
+           return true;
+    }
+    else
+        return false;
+}
+bool ParsingToolBox::readCloseParentheses(QString& str)
+{
+    if(str.startsWith(")"))
+    {
+        str=str.remove(0,1);
+           return true;
+    }
+    else
+        return false;
+}
