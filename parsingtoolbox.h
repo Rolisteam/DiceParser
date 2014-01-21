@@ -24,6 +24,10 @@ public:
      */
     bool readNumber(QString&  str, int& myNumber);
 
+
+    bool readOpenParentheses(QString& str);
+    bool readCloseParentheses(QString& str);
+
 private:
         QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
 };
