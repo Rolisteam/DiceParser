@@ -7,9 +7,10 @@ class ParenthesesNode : public ExecutionNode
 {
 public:
     ParenthesesNode();
-    virtual void run(ExecutionNode* previous = NULL)=0;
+    virtual void run(ExecutionNode* previous = NULL);
 
     void setInternelNode(ExecutionNode* node);
+    virtual QString toString()const;
 private:
     ExecutionNode* m_internalNode;
 };
