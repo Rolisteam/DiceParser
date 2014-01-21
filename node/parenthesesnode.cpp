@@ -1,3 +1,7 @@
+#ifndef PARENTHESESNODE_H
+#define PARENTHESESNODE_H
+
+#include "executionnode.h"
 #include "parenthesesnode.h"
 
 ParenthesesNode::ParenthesesNode()
@@ -10,6 +14,7 @@ void ParenthesesNode::setInternelNode(ExecutionNode* node)
 }
 void ParenthesesNode::run(ExecutionNode* /*previous*/)
 {
+    qDebug() << "ParenthesesNode node";
     if(NULL!=m_internalNode)
     {
         m_internalNode->run(this);
@@ -18,7 +23,7 @@ void ParenthesesNode::run(ExecutionNode* /*previous*/)
        {
             temp=temp->getNextNode();
        }
-       m_result = m_internalNode->getResult();
+       m_result = temp->getResult();
     }
 
 
@@ -26,4 +31,8 @@ void ParenthesesNode::run(ExecutionNode* /*previous*/)
     {
         m_nextNode->run(this);
     }
+}
+QString ParenthesesNode::toString() const
+{
+    return "ParenthesesNode";
 }
