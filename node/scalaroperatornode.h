@@ -16,6 +16,8 @@ public:
     bool setOperatorChar(QChar c);
     void setInternalNode(ExecutionNode* node);
 
+    virtual QString toString()const;
+
 
 private:
     qint64 add(qint64,qint64);
@@ -31,3 +33,4 @@ private:
 };
 
 #endif // SCALAROPERATORNODE_H
+
