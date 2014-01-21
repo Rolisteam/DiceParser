@@ -12,6 +12,7 @@ KeepDiceExecNode::KeepDiceExecNode()
 
 void KeepDiceExecNode::run(ExecutionNode* previous)
 {
+     qDebug() << "KeepDiceExecNode node";
     if(NULL==previous)
     {
         return;
@@ -35,4 +36,8 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
 void KeepDiceExecNode::setDiceKeepNumber(quint64 n)
 {
     m_numberOfDice = n;
+}
+QString KeepDiceExecNode::toString() const
+{
+    return QString("KeepDiceExecNode");
 }
