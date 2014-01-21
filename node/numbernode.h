@@ -10,7 +10,7 @@ public:
     NumberNode();
     void run(ExecutionNode* previous);
     void setNumber(qint64);
-
+virtual QString toString()const;
 private:
     qint64 m_number;
     ScalarResult* m_scalarResult;
