@@ -12,6 +12,7 @@ SortResultNode::SortResultNode()
 }
 void SortResultNode::run(ExecutionNode* node)
 {
+    qDebug() << "SortResultNode node";
     if(NULL==node)
     {
         return;
@@ -30,7 +31,6 @@ void SortResultNode::run(ExecutionNode* node)
             Die* tmp1 = diceList[i];
             int j =0;
             bool found = false;
-            //for(; ((j < diceList2.size())&&(!found)); ++j)
             int start = 0;
             int end = diceList2.size();
             int distance = 0;
@@ -91,4 +91,8 @@ void SortResultNode::run(ExecutionNode* node)
 void SortResultNode::setSortAscending(bool asc)
 {
     m_ascending = asc;
+}
+QString SortResultNode::toString() const
+{
+    return "SortResultNode";
 }
