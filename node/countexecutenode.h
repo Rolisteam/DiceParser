@@ -15,6 +15,8 @@ public:
 
     virtual void setValidator(Validator* );
 
+    virtual QString toString()const;
+
 private:
     Validator* m_validator;
     ScalarResult* m_scalarResult;
