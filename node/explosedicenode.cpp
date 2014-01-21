@@ -7,6 +7,8 @@ ExploseDiceNode::ExploseDiceNode()
 }
 void ExploseDiceNode::run(ExecutionNode* previous)
 {
+
+    qDebug() << "ExploseDiceNode node";
     if((NULL!=previous)&&(NULL!=previous->getResult()))
     {
         DiceResult* previous_result = static_cast<DiceResult*>(previous->getResult());
@@ -35,4 +37,8 @@ void ExploseDiceNode::run(ExecutionNode* previous)
 void ExploseDiceNode::setValidator(Validator* val)
 {
       m_validator = val;
+}
+QString ExploseDiceNode::toString() const
+{
+    return QString("ExploseDiceNode");
 }
