@@ -102,3 +102,7 @@ qint64 ScalarOperatorNode::multiple(qint64 a,qint64 b)
 {
     return a*b;
 }
+QString ScalarOperatorNode::toString() const
+{
+    return "ScalarOperatorNode";
+}
