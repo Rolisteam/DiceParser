@@ -18,6 +18,7 @@ public:
     virtual void run(ExecutionNode* previous);
 
     virtual void setValidator(Validator* );
+    virtual QString toString()const;
 
 private:
     Validator* m_validator;
