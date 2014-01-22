@@ -35,11 +35,6 @@ DiceParser::DiceParser()
     m_aliasMap->insert("l5R","D10e10k");
     m_aliasMap->insert("nwod","D10e10c[>7]");
     m_aliasMap->insert("nwod","D10e10c[>7]");
-
-
-
-
-
 }
 
 ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
@@ -73,13 +68,13 @@ bool DiceParser::parseLine(QString str)
 
         ExecutionNode* current = getLatestNode(m_start);
 
-        qDebug() << "current" << current << " start"<< m_start << newNode;
+
 
         keepParsing =!str.isEmpty();
         if(keepParsing)
         {
             keepParsing = readOperator(str,current);
-            qDebug() << "2 current" << current << " start"<< m_start << newNode;
+
             current = getLatestNode(current);
         }
         return true;
@@ -169,35 +164,41 @@ void DiceParser::displayResult()
             quint64 face=0;
             foreach(Die* die, myDiceResult->getResultList())
             {
-                resulStr+=QString("%1").arg(die->getValue());
-                face = die->getFaces();
-
-
-                if(die->hasChildrenValue())
+                if(!die->hasBeenDisplayed())
                 {
-                    resulStr+=" [";
-                    foreach(qint64 i, die->getListValue())
+                    resulStr+=QString("%1").arg(die->getValue());
+                    die->displayed();
+                    face = die->getFaces();
+
+
+                    if(die->hasChildrenValue())
                     {
+                        resulStr+=" [";
+                        foreach(qint64 i, die->getListValue())
+                        {
 
-                        resulStr+=QString("%1 ").arg(i);
+                            resulStr+=QString("%1 ").arg(i);
+                        }
+                        resulStr.remove(resulStr.size()-1,1);
+                        resulStr+="]";
                     }
-                    resulStr.remove(resulStr.size()-1,1);
-                    resulStr+="]";
+                    resulStr+=", ";
                 }
-                resulStr+=", ";
-
             }
             resulStr.remove(resulStr.size()-2,2);
-            vectorDone = true;
 
+            if(!resulStr.isEmpty())
+            {
              stream << dieValue.arg(face).arg(resulStr);
+            }
 
         }
 
         myResult = myResult->getPrevious();
     }
 
-    qDebug() << str << "you rolled: " <<m_command << endl;
+    QTextStream out(stdout);
+    out << str << "you rolled: " <<m_command << endl;
 
 
 //qDebug() << "list:" << << " sum:" << << " command:" << command;
