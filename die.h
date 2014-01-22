@@ -27,14 +27,15 @@ public:
     qint64 getLastRolledValue();
     quint64 getFaces();
 
-
-
+    bool hasBeenDisplayed();
+    void displayed();
 
 private:
     qint64 m_value;
     QList<qint64> m_rollResult;
     bool m_selected;
     bool m_hasValue;
+    bool m_displayStatus;
     quint64 m_faces;
 };
 
