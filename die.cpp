@@ -5,7 +5,7 @@
 #include <QDebug>
 
 Die::Die()
-    : m_hasValue(false)
+    : m_hasValue(false),m_displayStatus(false)
 {
     uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
     qsrand(seed);
@@ -92,4 +92,12 @@ qint64 Die::getLastRolledValue()
     }
     else
         return 0;
+}
+bool Die::hasBeenDisplayed()
+{
+    return m_displayStatus;
+}
+void Die::displayed()
+{
+    m_displayStatus = true;
 }
