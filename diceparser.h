@@ -79,7 +79,7 @@ private:
      * @param str
      * @return
      */
-    bool readDice(QString&  str,Dice&);
+    bool readDice(QString&  str,ExecutionNode* & node);
     /**
      * @brief readDiceOperator
      * @return
@@ -108,6 +108,8 @@ private:
     bool readOption(QString&,ExecutionNode* node, bool hasDice = true);
 
     DiceRollerNode* addRollDiceNode(qint64 faces,ExecutionNode*);
+
+    bool readOperand(QString&,ExecutionNode* & node);
 
 private:
     QMap<QString,DiceOperator>* m_mapDiceOp;

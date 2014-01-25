@@ -494,7 +494,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
     return isFine;
 }
 
-bool DiceParser::readOperand(QString&,ExecutionNode* & node)
+bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
 {
     int myNumber=1;
     if(m_parsingToolbox->readNumber(str,myNumber))
