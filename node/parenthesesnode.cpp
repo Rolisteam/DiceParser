@@ -10,7 +10,7 @@ void ParenthesesNode::setInternelNode(ExecutionNode* node)
 }
 void ParenthesesNode::run(ExecutionNode* /*previous*/)
 {
-    qDebug() << "ParenthesesNode node";
+//    qDebug() << "ParenthesesNode node";
     if(NULL!=m_internalNode)
     {
         m_internalNode->run(this);

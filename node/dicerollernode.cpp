@@ -14,7 +14,7 @@ DiceRollerNode::DiceRollerNode(quint64 faces)
 }
 void DiceRollerNode::run(ExecutionNode* previous)
 {
-       qDebug() << "DiceRollerNode node";
+//       qDebug() << "DiceRollerNode node";
     if(NULL!=previous)
     {
         Result* result=previous->getResult();

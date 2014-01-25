@@ -12,7 +12,7 @@ KeepDiceExecNode::KeepDiceExecNode()
 
 void KeepDiceExecNode::run(ExecutionNode* previous)
 {
-     qDebug() << "KeepDiceExecNode node";
+//     qDebug() << "KeepDiceExecNode node";
     if(NULL==previous)
     {
         return;

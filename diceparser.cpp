@@ -49,33 +49,24 @@ ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
 
 bool DiceParser::parseLine(QString str)
 {
-     m_command = str;
-     m_start = new StartingNode();
-     ExecutionNode* newNode = NULL;
+    m_command = str;
+    m_start = new StartingNode();
+    ExecutionNode* newNode = NULL;
+    m_current = m_start;
 
-   bool keepParsing = readExpression(str,newNode);
+    bool keepParsing = readExpression(str,newNode);
 
 
-    if(keepParsing)
+    while(keepParsing)
     {
-        m_start->setNextNode(newNode);
-//        if(NULL==m_start)
-//        {
-//            m_start = m_current;
-//        }
-
-
-
-        ExecutionNode* current = getLatestNode(m_start);
-
-
-
+        m_current->setNextNode(newNode);
+        m_current = getLatestNode(m_current);
         keepParsing =!str.isEmpty();
         if(keepParsing)
         {
-            keepParsing = readOperator(str,current);
+            keepParsing = readOperator(str,m_current);
 
-            current = getLatestNode(current);
+            m_current = getLatestNode(m_current);
         }
         return true;
     }
@@ -85,56 +76,97 @@ bool DiceParser::parseLine(QString str)
 
 bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
 {
-    int myNumber = 1;
-    bool hasReadNumber=false;
+
+
+
+
+
+
+
+
+    //    int myNumber = 1;
+    //    bool hasReadNumber=false;
+    ExecutionNode* operandNode=NULL;
     if(m_parsingToolbox->readOpenParentheses(str))
     {
         ExecutionNode* internalNode=NULL;
         if(readExpression(str,internalNode))
         {
-                ParenthesesNode* parentheseNode  = new ParenthesesNode();
-                parentheseNode->setInternelNode(internalNode);
-                node = parentheseNode;
-                //node->setNextNode(parentheseNode);
-                if(m_parsingToolbox->readCloseParentheses(str))
+            ParenthesesNode* parentheseNode  = new ParenthesesNode();
+            parentheseNode->setInternelNode(internalNode);
+            node = parentheseNode;
+            if(m_parsingToolbox->readCloseParentheses(str))
+            {
+
+                ExecutionNode* diceNode=NULL;
+                if(readDice(str,diceNode))
                 {
-                    return true;
+                    parentheseNode->setNextNode(diceNode);
                 }
+
+                return true;
+            }
 
 
         }
     }
-    NumberNode* myNumberNode = NULL;
-    if(NULL==node)
+    else if(readOperand(str,operandNode))
     {
-        hasReadNumber= m_parsingToolbox->readNumber(str,myNumber);
+        ExecutionNode* diceNode=NULL;
+        if(readDice(str,diceNode))
+        {
+            operandNode->setNextNode(diceNode);
+        }
+        node = operandNode;
 
-        myNumberNode = new NumberNode();
-        myNumberNode->setNumber(myNumber);
-    }
+        operandNode= getLatestNode(operandNode);
+        while(readOperator(str,operandNode));
 
 
-    bool keepParsing = true;
-    ExecutionNode* execNode=NULL;
-    keepParsing = readDiceExpression(str,execNode);
-    if(NULL!=myNumberNode)
-    {
-        myNumberNode->setNextNode(execNode);
-        node = myNumberNode;
+
     }
     else
     {
-        node = execNode;
-    }
-    if(NULL!=execNode)
-    {
-        execNode = getLatestNode(execNode);
-        while(keepParsing)
+         ExecutionNode* diceNode=NULL;
+        if(readDice(str,diceNode))
         {
-            keepParsing = readOperator(str,execNode);
-            execNode = getLatestNode(execNode);
+            NumberNode* numberNode=new NumberNode();
+            numberNode->setNumber(1);
+            numberNode->setNextNode(diceNode);
+            node = numberNode;
         }
     }
+    //    NumberNode* myNumberNode = NULL;
+    //    if(NULL==node)
+    //    {
+    //        hasReadNumber= m_parsingToolbox->readNumber(str,myNumber);
+
+    //        myNumberNode = new NumberNode();
+    //        myNumberNode->setNumber(myNumber);
+    //    }
+
+
+    //    bool keepParsing = true;
+    //    ExecutionNode* execNode=NULL;
+    //    keepParsing = readDiceExpression(str,execNode);
+    //    if(NULL!=myNumberNode)
+    //    {
+    //        myNumberNode->setNextNode(execNode);
+    //        node = myNumberNode;
+    //    }
+    //    else
+    //    {
+    //        node = execNode;
+    //    }
+    //    if(NULL!=execNode)
+    //    {
+    //        execNode = getLatestNode(execNode);
+    //        while(keepParsing)
+    //        {
+    //            keepParsing = readOperator(str,execNode);
+    //            execNode = getLatestNode(execNode);
+    //        }
+    //    }
 
 
 
@@ -146,7 +178,7 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
 
 void DiceParser::Start()
 {
-     m_start->run();
+    m_start->run();
 }
 void DiceParser::displayResult()
 {
@@ -214,7 +246,7 @@ void DiceParser::displayResult()
 
             if(!resulStr.isEmpty())
             {
-             stream << dieValue.arg(face).arg(resulStr);
+                stream << dieValue.arg(face).arg(resulStr);
             }
 
         }
@@ -224,9 +256,9 @@ void DiceParser::displayResult()
 
     QTextStream out(stdout);
     out << str << "you rolled: " <<m_command << endl;
+    out <<  endl;
 
-
-//qDebug() << "list:" << << " sum:" << << " command:" << command;
+    //qDebug() << "list:" << << " sum:" << << " command:" << command;
 }
 
 
@@ -241,9 +273,16 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
         if(m_parsingToolbox->readNumber(str,num))
         {
             DiceRollerNode* drNode = new DiceRollerNode(num);
-//            dice.m_diceOp = myOperator;
-//            dice.m_faces = num;
+            //            dice.m_diceOp = myOperator;
+            //            dice.m_faces = num;
             node = drNode;
+            ExecutionNode* current = drNode;
+            while(readOption(str,current))
+            {
+                current = getLatestNode(current);
+            }
+
+
             return true;
         }
     }
@@ -271,41 +310,41 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
     bool returnVal=false;
 
 
-        /*ExecutionNode* operandeNode = NULL;
+    /*ExecutionNode* operandeNode = NULL;
         if(readExpression(str,operandeNode))
         {*/
-               // bool hasRead = m_parsingToolbox->readNumber(str,number);
+    // bool hasRead = m_parsingToolbox->readNumber(str,number);
 
 
 
 
-            /*NumberNode* numberNode = new NumberNode();
+    /*NumberNode* numberNode = new NumberNode();
             numberNode->setNumber(number);*/
 
 
 
-            ExecutionNode* next = NULL;
-            if(readDice(str,next))
+    ExecutionNode* next = NULL;
+    if(readDice(str,next))
+    {
+        //DiceRollerNode* next = addRollDiceNode(myDice.m_faces,operandeNode);
+        //numberNode->setNextNode(next); already done in addRollDiceNode method
+
+
+
+
+        ExecutionNode* latest = next;
+        while(readOption(str,latest))
+        {
+            while(NULL!=latest->getNextNode())
             {
-            //DiceRollerNode* next = addRollDiceNode(myDice.m_faces,operandeNode);
-            //numberNode->setNextNode(next); already done in addRollDiceNode method
-
-
-
-
-                ExecutionNode* latest = next;
-                while(readOption(str,latest))
-                {
-                    while(NULL!=latest->getNextNode())
-                    {
-                        latest = latest->getNextNode();
-                    }
-                }
-
-                node = next;
-                returnVal = true;
+                latest = latest->getNextNode();
             }
-        /*    else if(NULL!=operandeNode)
+        }
+
+        node = next;
+        returnVal = true;
+    }
+    /*    else if(NULL!=operandeNode)
             {
                 //setCurrentNode(numberNode);
                 returnVal = true;
@@ -318,13 +357,13 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
                     }
                 }
             }*/
-            else
-            {
-                qDebug() << "error" << number << str;
-                returnVal = false;
-            }
+    else
+    {
+        qDebug() << "error" << number << str;
+        returnVal = false;
+    }
 
-      //  }
+    //  }
 
 
     return returnVal;
@@ -387,30 +426,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
 
             switch(m_OptionOp->value(tmp))
             {
-                case keep:
-                {
-                    int myNumber=0;
-                    if(m_parsingToolbox->readNumber(str,myNumber))
-                    {
-                        if(!hasDice)
-                        {
-                            previous = addRollDiceNode(10,previous);
-                        }
-
-
-                        node = m_parsingToolbox->addSort(previous,false);
-
-                        KeepDiceExecNode* nodeK = new KeepDiceExecNode();
-                        nodeK->setDiceKeepNumber(myNumber);
-
-                        node->setNextNode(nodeK);
-                        node = nodeK;
-                        isFine = true;
-
-                    }
-                }
-                    break;
-                case KeepAndExplose:
+            case keep:
             {
                 int myNumber=0;
                 if(m_parsingToolbox->readNumber(str,myNumber))
@@ -433,56 +449,79 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                 }
             }
                 break;
-                    break;
-                case Sort:
+            case KeepAndExplose:
+            {
+                int myNumber=0;
+                if(m_parsingToolbox->readNumber(str,myNumber))
                 {
+                    if(!hasDice)
+                    {
+                        previous = addRollDiceNode(10,previous);
+                    }
+
+
                     node = m_parsingToolbox->addSort(previous,false);
 
+                    KeepDiceExecNode* nodeK = new KeepDiceExecNode();
+                    nodeK->setDiceKeepNumber(myNumber);
+
+                    node->setNextNode(nodeK);
+                    node = nodeK;
+                    isFine = true;
+
+                }
+            }
+                break;
+                break;
+            case Sort:
+            {
+                node = m_parsingToolbox->addSort(previous,false);
+
+                isFine = true;
+            }
+                break;
+            case Count:
+            {
+                Validator* validator = m_parsingToolbox->readValidator(str);
+                if(NULL!=validator)
+                {
+                    CountExecuteNode* countNode = new CountExecuteNode();
+                    countNode->setValidator(validator);
+
+                    previous->setNextNode(countNode);
+                    node = countNode;
                     isFine = true;
                 }
-                    break;
-                case Count:
+            }
+                break;
+            case Reroll:
+            {
+                Validator* validator = m_parsingToolbox->readValidator(str);
+                if(NULL!=validator)
                 {
-                    Validator* validator = m_parsingToolbox->readValidator(str);
-                    if(NULL!=validator)
-                    {
-                        CountExecuteNode* countNode = new CountExecuteNode();
-                        countNode->setValidator(validator);
+                    RerollDiceNode* rerollNode = new RerollDiceNode();
+                    rerollNode->setValidator(validator);
+                    previous->setNextNode(rerollNode);
+                    node = rerollNode;
+                    isFine = true;
 
-                        previous->setNextNode(countNode);
-                        node = countNode;
-                        isFine = true;
-                    }
-                }
-                    break;
-                case Reroll:
-                {
-                    Validator* validator = m_parsingToolbox->readValidator(str);
-                    if(NULL!=validator)
-                    {
-                        RerollDiceNode* rerollNode = new RerollDiceNode();
-                        rerollNode->setValidator(validator);
-                        previous->setNextNode(rerollNode);
-                        node = rerollNode;
-                        isFine = true;
-
-
-                    }
 
                 }
-                    break;
-                case Explosing:
+
+            }
+                break;
+            case Explosing:
+            {
+                Validator* validator = m_parsingToolbox->readValidator(str);
+                if(NULL!=validator)
                 {
-                    Validator* validator = m_parsingToolbox->readValidator(str);
-                    if(NULL!=validator)
-                    {
-                        ExploseDiceNode* explosedNode = new ExploseDiceNode();
-                        explosedNode->setValidator(validator);
-                        previous->setNextNode(explosedNode);
-                        node = explosedNode;
-                        isFine = true;
-                    }
+                    ExploseDiceNode* explosedNode = new ExploseDiceNode();
+                    explosedNode->setValidator(validator);
+                    previous->setNextNode(explosedNode);
+                    node = explosedNode;
+                    isFine = true;
                 }
+            }
 
             }
         }
@@ -497,17 +536,34 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
 bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
 {
     int myNumber=1;
+    ExecutionNode* myNode=NULL;
+
     if(m_parsingToolbox->readNumber(str,myNumber))
     {
+        NumberNode* myNumberNode = new NumberNode();
+        myNumberNode->setNumber(myNumber);
 
+        node = myNumberNode;
+        return true;
     }
-    if(readOperator(str,node))
-    {
+//    else if(readExpression(str,myNode))
+//    {
 
-       m_parsingToolbox->readNumber(str,myNumber);
-        /// @todo implements this
+//        if(readOperator(str,myNode))
+//        {
 
-    }
+//            if(readExpression(str,myNode))
+//            {
+
+//                m_parsingToolbox->readNumber(str,myNumber);
+//                /// @todo implements this
+//            }
+
+//        }
+
+//    }
 
 
+
+        return false;
 }

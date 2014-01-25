@@ -7,7 +7,7 @@ StartingNode::StartingNode()
 }
 void StartingNode::run(ExecutionNode*)
 {
-    qDebug() << "starting node";
+//    qDebug() << "starting node";
     if(NULL!=m_nextNode)
     {
         m_nextNode->run(this);

@@ -8,7 +8,7 @@ NumberNode::NumberNode()
 void NumberNode::run(ExecutionNode* )
 {
 
-    qDebug() << "NumberNode node";
+//    qDebug() << "NumberNode node";
     if(NULL!=m_nextNode)
     {
         m_nextNode->run(this);
