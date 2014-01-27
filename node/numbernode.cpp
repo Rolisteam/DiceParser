@@ -5,10 +5,14 @@ NumberNode::NumberNode()
 {
     m_result = m_scalarResult;
 }
-void NumberNode::run(ExecutionNode* )
+void NumberNode::run(ExecutionNode* previous)
 {
 
 //    qDebug() << "NumberNode node";
+    if(NULL!=previous)
+    {
+        m_result->setPrevious(previous->getResult());
+    }
     if(NULL!=m_nextNode)
     {
         m_nextNode->run(this);
