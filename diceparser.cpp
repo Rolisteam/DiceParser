@@ -76,14 +76,6 @@ bool DiceParser::parseLine(QString str)
 
 bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
 {
-
-
-
-
-
-
-
-
     //    int myNumber = 1;
     //    bool hasReadNumber=false;
     ExecutionNode* operandNode=NULL;
@@ -136,43 +128,6 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
             node = numberNode;
         }
     }
-    //    NumberNode* myNumberNode = NULL;
-    //    if(NULL==node)
-    //    {
-    //        hasReadNumber= m_parsingToolbox->readNumber(str,myNumber);
-
-    //        myNumberNode = new NumberNode();
-    //        myNumberNode->setNumber(myNumber);
-    //    }
-
-
-    //    bool keepParsing = true;
-    //    ExecutionNode* execNode=NULL;
-    //    keepParsing = readDiceExpression(str,execNode);
-    //    if(NULL!=myNumberNode)
-    //    {
-    //        myNumberNode->setNextNode(execNode);
-    //        node = myNumberNode;
-    //    }
-    //    else
-    //    {
-    //        node = execNode;
-    //    }
-    //    if(NULL!=execNode)
-    //    {
-    //        execNode = getLatestNode(execNode);
-    //        while(keepParsing)
-    //        {
-    //            keepParsing = readOperator(str,execNode);
-    //            execNode = getLatestNode(execNode);
-    //        }
-    //    }
-
-
-
-
-
-
     return true;
 }
 
@@ -184,10 +139,14 @@ void DiceParser::displayResult()
 {
 
     ExecutionNode* next = m_start;
+    int nodeCount=0;
+    int resulCount=0;
     while(NULL != next->getNextNode() )
     {
         next = next->getNextNode();
+        ++nodeCount;
     }
+//    qDebug() << "node count"<< nodeCount;
     //////////////////////////////////
     //
     //  Display
@@ -202,19 +161,17 @@ void DiceParser::displayResult()
     QString dieValue("D%1 : {%2} ");
 
     bool scalarDone=false;
-    bool vectorDone=false;
-
     while(NULL!=myResult)
     {
-
-        if((!scalarDone)&&(myResult->isScalar()))
+        ++resulCount;
+        if((myResult->isScalar())&&(!scalarDone))
         {
             stream << totalValue.arg(myResult->getScalar()) << endl; //.arg(m_command)
             scalarDone=true;
         }
 
         DiceResult* myDiceResult = dynamic_cast<DiceResult*>(myResult);
-        if((NULL!=myDiceResult)&&(!vectorDone))
+        if(NULL!=myDiceResult)
         {
 
             QString resulStr;
@@ -258,7 +215,7 @@ void DiceParser::displayResult()
     out << str << "you rolled: " <<m_command << endl;
     out <<  endl;
 
-    //qDebug() << "list:" << << " sum:" << << " command:" << command;
+//    qDebug() << "result count:" << resulCount;
 }
 
 
