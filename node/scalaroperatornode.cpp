@@ -37,7 +37,7 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
 
             Result* internalResult = internal->getResult();
             m_result->setPrevious(internalResult);
-            internalResult->setPrevious(previousResult);
+            m_internalNode->getResult()->setPrevious(previousResult);
 
             //qDebug() << "ScalarOperatorNode node" << m_myOperator;
 
