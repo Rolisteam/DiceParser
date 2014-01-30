@@ -22,12 +22,14 @@ DiceParser::DiceParser()
     m_mapDiceOp->insert("D",D);
 
     m_OptionOp = new QMap<QString,OptionOperator>();
-    m_OptionOp->insert(QObject::tr("k"),keep);
+    m_OptionOp->insert(QObject::tr("k"),Keep);
     m_OptionOp->insert(QObject::tr("K"),KeepAndExplose);
     m_OptionOp->insert(QObject::tr("s"),Sort);
     m_OptionOp->insert(QObject::tr("c"),Count);
     m_OptionOp->insert(QObject::tr("r"),Reroll);
     m_OptionOp->insert(QObject::tr("e"),Explosing);
+    m_OptionOp->insert(QObject::tr("a"),RerollAndAdd);
+
 
 
     m_aliasMap = new QMap<QString,QString>;
@@ -266,30 +268,10 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
     int number=1;
     bool returnVal=false;
 
-
-    /*ExecutionNode* operandeNode = NULL;
-        if(readExpression(str,operandeNode))
-        {*/
-    // bool hasRead = m_parsingToolbox->readNumber(str,number);
-
-
-
-
-    /*NumberNode* numberNode = new NumberNode();
-            numberNode->setNumber(number);*/
-
-
-
     ExecutionNode* next = NULL;
     if(readDice(str,next))
     {
-        //DiceRollerNode* next = addRollDiceNode(myDice.m_faces,operandeNode);
-        //numberNode->setNextNode(next); already done in addRollDiceNode method
-
-
-
-
-        ExecutionNode* latest = next;
+         ExecutionNode* latest = next;
         while(readOption(str,latest))
         {
             while(NULL!=latest->getNextNode())
@@ -301,28 +283,11 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
         node = next;
         returnVal = true;
     }
-    /*    else if(NULL!=operandeNode)
-            {
-                //setCurrentNode(numberNode);
-                returnVal = true;
-                ExecutionNode* latest = operandeNode;
-                while(readOption(str,latest,false))
-                {
-                    while(NULL!=latest->getNextNode())
-                    {
-                        latest = latest->getNextNode();
-                    }
-                }
-            }*/
     else
     {
         qDebug() << "error" << number << str;
         returnVal = false;
     }
-
-    //  }
-
-
     return returnVal;
 }
 bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
@@ -340,14 +305,20 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
         str=str.remove(0,1);//removal of one character
         if(readExpression(str,nodeExec))
         {
-
             node->setInternalNode(nodeExec);
+            if(node->getPriority()>nodeExec->getPriority())
+            {
+                node->setNextNode(nodeExec->getNextNode());
+                nodeExec->setNextNode(NULL);
+            }
             previous->setNextNode(node);
-            //node = getLatestNode(node);
-
 
             return true;
         }
+    }
+    else
+    {
+        delete node;
     }
     return false;
 }
@@ -383,7 +354,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
 
             switch(m_OptionOp->value(tmp))
             {
-            case keep:
+            case Keep:
             {
                 int myNumber=0;
                 if(m_parsingToolbox->readNumber(str,myNumber))
@@ -452,11 +423,16 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
             }
                 break;
             case Reroll:
+            case RerollAndAdd:
             {
                 Validator* validator = m_parsingToolbox->readValidator(str);
                 if(NULL!=validator)
                 {
                     RerollDiceNode* rerollNode = new RerollDiceNode();
+                    if(m_OptionOp->value(tmp)==RerollAndAdd)
+                    {
+                        rerollNode->setAddingMode(true);
+                    }
                     rerollNode->setValidator(validator);
                     previous->setNextNode(rerollNode);
                     node = rerollNode;
@@ -483,10 +459,6 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
             }
         }
     }
-
-
-
-
     return isFine;
 }
 
@@ -503,24 +475,5 @@ bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
         node = myNumberNode;
         return true;
     }
-//    else if(readExpression(str,myNode))
-//    {
-
-//        if(readOperator(str,myNode))
-//        {
-
-//            if(readExpression(str,myNode))
-//            {
-
-//                m_parsingToolbox->readNumber(str,myNumber);
-//                /// @todo implements this
-//            }
-
-//        }
-
-//    }
-
-
-
         return false;
 }
