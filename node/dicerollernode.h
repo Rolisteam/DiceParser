@@ -15,6 +15,7 @@ public:
     quint64 getFaces();
 
 virtual QString toString()const;
+     virtual qint64 getPriority() const;
 //private members
 private:
     quint64 m_diceCount;
