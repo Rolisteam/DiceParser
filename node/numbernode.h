@@ -11,6 +11,7 @@ public:
     void run(ExecutionNode* previous);
     void setNumber(qint64);
 virtual QString toString()const;
+    virtual qint64 getPriority() const;
 private:
     qint64 m_number;
     ScalarResult* m_scalarResult;
