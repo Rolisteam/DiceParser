@@ -46,3 +46,14 @@ QString DiceRollerNode::toString() const
 {
     return QString("DiceRollerNode");
 }
+qint64 DiceRollerNode::getPriority() const
+{
+    qint64 priority=0;
+    if(NULL!=m_nextNode)
+    {
+        priority = m_nextNode->getPriority();
+    }
+
+
+    return priority;
+}
