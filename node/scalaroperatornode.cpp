@@ -18,10 +18,9 @@ ScalarOperatorNode::ScalarOperatorNode()
 
 void ScalarOperatorNode::run(ExecutionNode* previous)
 {
-
     if(NULL!=m_internalNode)
     {
-        m_internalNode->run(this);
+            m_internalNode->run(this);
     }
     if(NULL!=previous)
     {
@@ -30,16 +29,15 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
         if(NULL!=previousResult)
         {
             ExecutionNode* internal = m_internalNode;
-            while(NULL != internal->getNextNode() )
-            {
-                internal = internal->getNextNode();
-            }
+             while(NULL != internal->getNextNode() )
+             {
+                    internal = internal->getNextNode();
+             }
+
 
             Result* internalResult = internal->getResult();
             m_result->setPrevious(internalResult);
             m_internalNode->getResult()->setPrevious(previousResult);
-
-            //qDebug() << "ScalarOperatorNode node" << m_myOperator;
 
             switch(m_myOperator)
             {
@@ -105,4 +103,11 @@ qint64 ScalarOperatorNode::multiple(qint64 a,qint64 b)
 QString ScalarOperatorNode::toString() const
 {
     return "ScalarOperatorNode";
+}
+qint64 ScalarOperatorNode::getPriority() const
+{
+    if((m_myOperator==PLUS)||(m_myOperator==MINUS))
+        return 1;
+    else
+        return 2;
 }
