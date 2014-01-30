@@ -11,6 +11,7 @@ public:
 
     void setInternelNode(ExecutionNode* node);
     virtual QString toString()const;
+    virtual qint64 getPriority() const;
 private:
     ExecutionNode* m_internalNode;
 };
