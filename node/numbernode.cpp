@@ -28,3 +28,14 @@ QString NumberNode::toString() const
 {
     return QString("NumberNode:%1").arg(m_number);
 }
+qint64 NumberNode::getPriority() const
+{
+    qint64 priority=0;
+    if(NULL!=m_nextNode)
+    {
+        priority = m_nextNode->getPriority();
+    }
+
+
+    return priority;
+}
