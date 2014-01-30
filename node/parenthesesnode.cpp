@@ -32,3 +32,8 @@ QString ParenthesesNode::toString() const
 {
     return "ParenthesesNode";
 }
+qint64 ParenthesesNode::getPriority() const
+{
+    qint64 priority=3;
+    return priority;
+}
