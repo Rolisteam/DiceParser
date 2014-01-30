@@ -42,3 +42,14 @@ QString ExploseDiceNode::toString() const
 {
     return QString("ExploseDiceNode");
 }
+qint64 ExploseDiceNode::getPriority() const
+{
+    qint64 priority=0;
+    if(NULL!=m_nextNode)
+    {
+        priority = m_nextNode->getPriority();
+    }
+
+
+    return priority;
+}
