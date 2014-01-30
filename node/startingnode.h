@@ -10,6 +10,7 @@ public:
 
     virtual void run(ExecutionNode*);
     virtual QString toString()const;
+    virtual qint64 getPriority() const;
 };
 
 #endif // STARTINGNODE_H
