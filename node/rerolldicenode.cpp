@@ -2,7 +2,7 @@
 
 
 RerollDiceNode::RerollDiceNode()
-    : m_myDiceResult(new DiceResult())
+    : m_myDiceResult(new DiceResult()),m_adding(false)
 {
     m_result=m_myDiceResult;
 }
@@ -22,7 +22,7 @@ void RerollDiceNode::run(ExecutionNode* previous)
             {
                 if(m_validator->hasValid(die,false))
                 {
-                    die->roll();
+                    die->roll(m_adding);
                 }
             }
             m_myDiceResult->setResultList(list);
@@ -41,4 +41,19 @@ void RerollDiceNode::setValidator(Validator* val)
 QString RerollDiceNode::toString() const
 {
     return "RerollDiceNode";
+}
+void RerollDiceNode::setAddingMode(bool b)
+{
+    m_adding = b;
+}
+qint64 RerollDiceNode::getPriority() const
+{
+    qint64 priority=0;
+    if(NULL!=m_nextNode)
+    {
+        priority = m_nextNode->getPriority();
+    }
+
+
+    return priority;
 }
