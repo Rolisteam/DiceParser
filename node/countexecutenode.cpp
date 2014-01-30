@@ -43,3 +43,14 @@ QString CountExecuteNode::toString() const
 {
     return "CountExecuteNode";
 }
+qint64 CountExecuteNode::getPriority() const
+{
+    qint64 priority=0;
+    if(NULL!=m_nextNode)
+    {
+        priority = m_nextNode->getPriority();
+    }
+
+
+    return priority;
+}
