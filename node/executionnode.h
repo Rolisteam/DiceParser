@@ -13,6 +13,7 @@ public:
     void setNextNode(ExecutionNode*);
     ExecutionNode* getNextNode();
     virtual QString toString()const=0;
+    virtual qint64 getPriority() const=0;
 protected:
     Result* m_result;
     ExecutionNode* m_nextNode;
