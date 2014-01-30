@@ -96,3 +96,14 @@ QString SortResultNode::toString() const
 {
     return "SortResultNode";
 }
+qint64 SortResultNode::getPriority() const
+{
+    qint64 priority=0;
+    if(NULL!=m_nextNode)
+    {
+        priority = m_nextNode->getPriority();
+    }
+
+
+    return priority;
+}
