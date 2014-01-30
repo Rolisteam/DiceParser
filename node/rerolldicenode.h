@@ -20,9 +20,14 @@ public:
     virtual void setValidator(Validator* );
     virtual QString toString()const;
 
+
+    virtual void setAddingMode(bool);
+    virtual qint64 getPriority() const;
+
 private:
     Validator* m_validator;
     DiceResult* m_myDiceResult;
+    bool m_adding;
 };
 
 #endif // REROLLDICENODE_H
