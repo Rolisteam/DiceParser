@@ -14,11 +14,9 @@ class ExploseDiceNode : public ExecutionNode
 public:
     ExploseDiceNode();
     virtual void run(ExecutionNode* previous = NULL);
-
     virtual void setValidator(Validator* );
-
     virtual QString toString()const;
-
+    virtual qint64 getPriority() const;
 
 protected:
     DiceResult* m_diceResult;
@@ -26,4 +24,3 @@ protected:
 };
 
 #endif // EXPLOSEDICENODE_H
-
