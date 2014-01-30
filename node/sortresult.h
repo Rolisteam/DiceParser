@@ -13,6 +13,7 @@ public:
 
     void setSortAscending(bool asc);
     virtual QString toString()const;
+    virtual qint64 getPriority() const;
 
 private:
     bool m_ascending;
