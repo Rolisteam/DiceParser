@@ -41,3 +41,14 @@ QString KeepDiceExecNode::toString() const
 {
     return QString("KeepDiceExecNode");
 }
+qint64 KeepDiceExecNode::getPriority() const
+{
+    qint64 priority=0;
+    if(NULL!=m_nextNode)
+    {
+        priority = m_nextNode->getPriority();
+    }
+
+
+    return priority;
+}
