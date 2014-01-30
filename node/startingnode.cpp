@@ -17,3 +17,14 @@ QString StartingNode::toString() const
 {
     return "Starting node";
 }
+qint64 StartingNode::getPriority() const
+{
+    qint64 priority=0;
+    if(NULL!=m_nextNode)
+    {
+        priority = m_nextNode->getPriority();
+    }
+
+
+    return priority;
+}
