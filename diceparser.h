@@ -44,7 +44,7 @@ public:
     /**
      * @brief The OptionOperator enum gathering all options  availables for result.
      */
-    enum OptionOperator {KeepAndExplose,keep,Reroll,Explosing,Sort,Count};
+    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd};
 
     /**
      * @brief DiceParser default constructor
