@@ -306,7 +306,7 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
         if(readExpression(str,nodeExec))
         {
             node->setInternalNode(nodeExec);
-            if(node->getPriority()>nodeExec->getPriority())
+            if(node->getPriority()>=nodeExec->getPriority())
             {
                 node->setNextNode(nodeExec->getNextNode());
                 nodeExec->setNextNode(NULL);
