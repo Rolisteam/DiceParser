@@ -14,6 +14,8 @@
 #include "node/explosedicenode.h"
 #include "node/parenthesesnode.h"
 
+#define DEFAULT_FACES_NUMBER 10
+
 DiceParser::DiceParser()
 {
     m_parsingToolbox = new ParsingToolBox();
@@ -319,6 +321,24 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
     else
     {
         delete node;
+        ExecutionNode* nodeExec = new  DiceRollerNode(DEFAULT_FACES_NUMBER);
+        ExecutionNode* nodeExec2 = nodeExec;
+        bool readOptionSuccessed=false;
+        while(readOption(str,nodeExec))
+        {
+           nodeExec = getLatestNode(nodeExec);
+           readOptionSuccessed = true;
+        }
+        if(readOptionSuccessed)
+        {
+            previous->setNextNode(nodeExec2);
+        }
+        else
+        {
+            delete nodeExec;
+            nodeExec = NULL;
+            nodeExec2 = NULL;
+        }
     }
     return false;
 }
