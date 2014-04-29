@@ -7,18 +7,22 @@
 int main(int argc, char *argv[])
 {
     // QCoreApplication a(argc, argv);
+
+
+
     DiceParser* myParser = new DiceParser();
 
     QStringList commands;
 
     commands << "2*(4+4)"
-             << "1+(4*3)D10"
+            << "1+(4*3)D10"
              << "2+4/4"
             << "2D10*2D20*8"
             <<"1+(4*3)D10"
+              <<"(4D6)D10"
            << "1D100a[>=95]a[>=96]a[>=97]a[>=98]a[>=99]e[>=100]"
              << "3D100"
-             << "3k3"
+             << "4k3"
              << "10D10e[>=6]s"
              //<< "100190D6666666s"
              << "10D10e10s"
@@ -35,6 +39,14 @@ int main(int argc, char *argv[])
              << "100*3*8"
              << "100*3*8";
 
+    if(argc>1)
+    {
+        for(int i=1;i<argc;++i)
+        {
+
+            commands << QString::fromAscii(argv[i]);
+        }
+    }
 
 
     foreach(QString cmd, commands)
