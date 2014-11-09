@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
            << "1D100a[>=95]a[>=96]a[>=97]a[>=98]a[>=99]e[>=100]"
              << "3D100"
              << "4k3"
-             << "10D10e[>=6]s"
-             //<< "100190D6666666s"
+             << "10D10e[>=6]sc[>=6]"
+             << "100190D6666666s"
              << "10D10e10s"
             << "10D10s"
              << "15D10e10c[8-10]"
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
         for(int i=1;i<argc;++i)
         {
 
-            commands << QString::fromAscii(argv[i]);
+            commands << QString::fromLatin1(argv[i]);
         }
     }
 

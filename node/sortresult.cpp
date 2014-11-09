@@ -17,7 +17,7 @@ void SortResultNode::run(ExecutionNode* node)
     {
         return;
     }
-    DiceResult* previousDiceResult = static_cast<DiceResult*>(node->getResult());
+    DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(node->getResult());
     m_diceResult->setPrevious(previousDiceResult);
     if(NULL!=previousDiceResult)
     {
@@ -61,12 +61,7 @@ void SortResultNode::run(ExecutionNode* node)
                 }
 
             }
-            //qDebug() << tmp1->getValue() << j  << found;
-            //if(found)
-                diceList2.insert(j,tmp1);
-            /*else
-                diceList2.append(tmp1);*/
-
+            diceList2.insert(j,tmp1);
         }
 
         if(!m_ascending)
@@ -85,6 +80,10 @@ void SortResultNode::run(ExecutionNode* node)
         {
             m_nextNode->run(this);
         }
+    }
+    else
+    {
+            m_errors.append(DIE_RESULT_EXPECTED);
     }
 
 }

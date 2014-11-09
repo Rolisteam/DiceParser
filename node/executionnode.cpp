@@ -22,3 +22,7 @@ ExecutionNode* ExecutionNode::getNextNode()
 {
     return m_nextNode;
 }
+QList<ExecutionNode::ERROR_CODE> ExecutionNode::getErrorList()
+{
+    return m_errors;
+}
