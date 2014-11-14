@@ -23,7 +23,7 @@ public:
 private:
     qint64 add(qint64,qint64);
     qint64 substract(qint64,qint64);
-    qint64 divide(qint64,qint64);
+    qreal divide(qint64,qint64);
     qint64 multiple(qint64,qint64);
 
 private:

@@ -14,7 +14,7 @@ public:
     virtual void run(ExecutionNode*);
     quint64 getFaces();
 
-virtual QString toString()const;
+     virtual QString toString()const;
      virtual qint64 getPriority() const;
 //private members
 private:

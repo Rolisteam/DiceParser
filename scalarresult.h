@@ -32,12 +32,12 @@ public:
     ScalarResult();
 
     virtual bool isScalar() const;
-    virtual qint64 getScalar();
+    virtual qreal getScalar();
 
-    void setValue(qint64 i);
+    void setValue(qreal i);
 
 private:
-    qint64 m_value;
+    qreal m_value;
 };
 
 #endif // SCALARRESULT_H

@@ -91,9 +91,9 @@ qint64 ScalarOperatorNode::substract(qint64 a,qint64 b)
     return a-b;
 }
 
-qint64 ScalarOperatorNode::divide(qint64 a,qint64 b)
+qreal ScalarOperatorNode::divide(qint64 a,qint64 b)
 {
-    return a/b;
+    return (qreal)a/b;
 }
 
 qint64 ScalarOperatorNode::multiple(qint64 a,qint64 b)

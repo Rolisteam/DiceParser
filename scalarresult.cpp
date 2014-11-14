@@ -26,11 +26,11 @@ ScalarResult::ScalarResult()
 }
 
 
-void ScalarResult::setValue(qint64 i)
+void ScalarResult::setValue(qreal i)
 {
     m_value=i;
 }
-qint64 ScalarResult::getScalar()
+qreal ScalarResult::getScalar()
 {
     return m_value;
 }

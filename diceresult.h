@@ -38,7 +38,7 @@ public:
     void setResultList(QList<Die*> list);
 
     bool isScalar() const;
-    virtual qint64 getScalar();
+    virtual qreal getScalar();
 private:
     QList<Die*> m_diceValues;
 };

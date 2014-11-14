@@ -46,7 +46,7 @@ bool DiceResult::isScalar() const
     }
     return false;
 }
-qint64 DiceResult::getScalar()
+qreal DiceResult::getScalar()
 {
 
     if(m_diceValues.size()==1)

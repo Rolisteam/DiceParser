@@ -30,7 +30,7 @@ public:
     Result();
 
     virtual bool isScalar() const = 0;
-    virtual qint64 getScalar() = 0;
+    virtual qreal getScalar() = 0;
 
     virtual Result* getPrevious();
     virtual void setPrevious(Result*);
