@@ -89,7 +89,7 @@ public:
     /**
      * @brief displayResult
      */
-    void displayResult();
+    QString displayResult();
 
     bool readExpression(QString& str,ExecutionNode* & node);
 

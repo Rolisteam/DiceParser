@@ -81,7 +81,6 @@ bool DiceParser::parseLine(QString str)
 
     bool keepParsing = readExpression(str,newNode);
 
-
     while(keepParsing)
     {
         m_current->setNextNode(newNode);
@@ -94,6 +93,7 @@ bool DiceParser::parseLine(QString str)
             m_current = getLatestNode(m_current);
         }
         return true;
+
     }
     return false;
 
@@ -152,6 +152,10 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
             numberNode->setNextNode(diceNode);
             node = numberNode;
         }
+        else
+        {
+            return false;
+        }
     }
     return true;
 }
@@ -160,7 +164,8 @@ void DiceParser::Start()
 {
     m_start->run();
 }
-void DiceParser::displayResult()
+
+QString DiceParser::displayResult()
 {
 
     ExecutionNode* next = m_start;
@@ -239,6 +244,9 @@ void DiceParser::displayResult()
     QTextStream out(stdout);
     out << str << "you rolled: " <<m_command << endl;
     out <<  endl;
+
+
+    return QString("%1, you rolled:%3").arg(str.simplified()).arg(m_command) ;
 
 //    qDebug() << "result count:" << resulCount;
 }
@@ -329,6 +337,10 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
         if(readExpression(str,nodeExec))
         {
             node->setInternalNode(nodeExec);
+            if(NULL==nodeExec)
+            {
+                return false;
+            }
             if(node->getPriority()>=nodeExec->getPriority())
             {
                 node->setNextNode(nodeExec->getNextNode());
