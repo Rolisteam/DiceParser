@@ -9,6 +9,7 @@ QT       += core
 QT       -= gui
 
 include(node/node.pri)
+include(irc/irc.pri)
 
 TARGET = diceParser
 CONFIG   += console
