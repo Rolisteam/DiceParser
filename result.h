@@ -23,7 +23,9 @@
 #define RESULT_H
 
 #include <Qt>
-
+/**
+ * @brief The Result class
+ */
 class Result
 {
 public:

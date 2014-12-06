@@ -25,7 +25,9 @@
 
 #include "die.h"
 #include "result.h"
-
+/**
+ * @brief The DiceResult class
+ */
 class DiceResult : public Result
 {
 public:

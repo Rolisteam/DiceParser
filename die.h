@@ -24,31 +24,87 @@
 
 #include <QList>
 
+/**
+ * @brief The Die class
+ */
 class Die
 {
 public:
+    /**
+     * @brief Die
+     */
     Die();
 
+    /**
+     * @brief setValue
+     * @param r
+     */
     void setValue(qint64 r);
+    /**
+     * @brief setFaces
+     * @param face
+     */
     void setFaces(quint64 face);
+    /**
+     * @brief insertRollValue
+     * @param r
+     */
     void insertRollValue(qint64 r);
+    /**
+     * @brief setSelected
+     * @param b
+     */
     void setSelected(bool b);
-
+    /**
+     * @brief isSelected
+     * @return
+     */
     bool isSelected() const;
+    /**
+     * @brief getValue
+     * @return
+     */
     qint64 getValue() const;
+    /**
+     * @brief getListValue
+     * @return
+     */
     QList<qint64> getListValue() const;
-
+    /**
+     * @brief hasChildrenValue
+     * @return
+     */
     bool hasChildrenValue();
 
-
+    /**
+     * @brief roll
+     * @param adding
+     */
     void roll(bool adding = false);
+    /**
+     * @brief replaceLastValue
+     * @param value
+     */
     void replaceLastValue(qint64 value);
 
-
+    /**
+     * @brief getLastRolledValue
+     * @return
+     */
     qint64 getLastRolledValue();
+    /**
+     * @brief getFaces
+     * @return
+     */
     quint64 getFaces();
-
+    /**
+     * @brief hasBeenDisplayed
+     * @return
+     */
     bool hasBeenDisplayed();
+    /**
+     * @brief displayed
+     */
     void displayed();
 
 private:
