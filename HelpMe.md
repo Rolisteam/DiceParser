@@ -9,15 +9,19 @@ The first number is the count of dice you want to roll. The second number should
 
 ### Example
 > 1d6
+
 Roll one six-faced die.
 
 > 1d10
+
 Roll one ten-faced die.
 
 > 5d10
+
 Roll five ten-faced die.
 
 > 777d6
+
 Roll five ten-faced die.
 
 
