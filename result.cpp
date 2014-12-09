@@ -36,12 +36,8 @@ void Result::setPrevious(Result* p)
     m_previous = p;
 }
 
-bool Result::isStringResult()
-{
-    return false;
-}
 
-QString Result::getStringResult()
+bool Result::hasResultOfType(RESULT_TYPE type) const
 {
-    return QString();
+    return (m_resultTypes & type);
 }

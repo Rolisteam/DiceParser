@@ -23,6 +23,7 @@
 
 ScalarResult::ScalarResult()
 {
+    m_resultTypes = Result::SCALAR;
 }
 
 
@@ -30,12 +31,8 @@ void ScalarResult::setValue(qreal i)
 {
     m_value=i;
 }
-qreal ScalarResult::getScalar()
+QVariant ScalarResult::getResult(Result::RESULT_TYPE type)
 {
     return m_value;
 }
 
-bool ScalarResult::isScalar() const
-{
-    return true;
-}

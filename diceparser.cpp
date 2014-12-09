@@ -34,6 +34,7 @@
 #include "node/rerolldicenode.h"
 #include "node/explosedicenode.h"
 #include "node/parenthesesnode.h"
+#include "node/helpnode.h"
 
 #define DEFAULT_FACES_NUMBER 10
 
@@ -64,6 +65,7 @@ DiceParser::DiceParser()
 
     m_commandList = new QList<QString>();
     m_commandList->append("help");
+
 }
 
 ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
@@ -202,9 +204,9 @@ QString DiceParser::displayResult()
     while(NULL!=myResult)
     {
         ++resulCount;
-        if((myResult->isScalar())&&(!scalarDone))
+        if((myResult->hasResultOfType(Result::SCALAR))&&(!scalarDone))
         {
-            stream << totalValue.arg(myResult->getScalar()) << endl; //.arg(m_command)
+            stream << totalValue.arg(myResult->getResult(Result::SCALAR).toReal()) << endl; //.arg(m_command)
             scalarDone=true;
         }
 
@@ -306,7 +308,7 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
 {
     if(m_commandList->contains(str))
     {
-       // node = new HelpNode();
+       node = new HelpNode();
     }
 }
 

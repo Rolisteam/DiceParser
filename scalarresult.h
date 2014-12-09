@@ -31,8 +31,7 @@ class ScalarResult : public Result
 public:
     ScalarResult();
 
-    virtual bool isScalar() const;
-    virtual qreal getScalar();
+    virtual QVariant getResult(Result::RESULT_TYPE);
 
     void setValue(qreal i);
 

@@ -31,16 +31,35 @@
 class DiceResult : public Result
 {
 public:
+    /**
+     * @brief DiceResult
+     */
     DiceResult();
 
-    qint64 getSum();
+    /**
+     * @brief getResultList
+     * @return
+     */
     QList<Die*>& getResultList();
+    /**
+     * @brief insertResult
+     */
     void insertResult(Die*);
 
+    /**
+     * @brief setResultList
+     * @param list
+     */
     void setResultList(QList<Die*> list);
 
-    bool isScalar() const;
-    virtual qreal getScalar();
+    /**
+     * @brief getScalar
+     * @return
+     */
+    virtual QVariant getResult(RESULT_TYPE);
+
+private:
+    qreal getScalarResult();
 private:
     QList<Die*> m_diceValues;
 };

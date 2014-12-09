@@ -22,15 +22,19 @@
 #ifndef RESULT_H
 #define RESULT_H
 
-#include <Qt>
+//#include <Qt>
 #include <QString>
-
+#include <QVariant>
 /**
  * @brief The Result class
  */
 class Result
 {
 public:
+    /**
+     * @brief The RESULT_TYPE enum or combinaison
+     */
+    enum RESULT_TYPE {SCALAR=1,STRING=2,DICE_LIST=4};
     /**
      * @brief Result
      */
@@ -39,12 +43,12 @@ public:
      * @brief isScalar
      * @return
      */
-    virtual bool isScalar() const = 0;
+    virtual bool hasResultOfType(RESULT_TYPE) const;
     /**
      * @brief getScalar
      * @return
      */
-    virtual qreal getScalar() = 0;
+    virtual QVariant getResult(RESULT_TYPE) = 0;
     /**
      * @brief getPrevious
      * @return
@@ -55,11 +59,11 @@ public:
      */
     virtual void setPrevious(Result*);
 
-    virtual bool isStringResult();
-    virtual QString getStringResult();
-
+protected:
+     int m_resultTypes;/// @brief
 private:
     Result* m_previous;/// @brief
+
 };
 
 #endif // RESULT_H

@@ -23,7 +23,7 @@
 
 DiceResult::DiceResult()
 {
-
+    m_resultTypes= (DICE_LIST | SCALAR);
 }
 void DiceResult::insertResult(Die* die)
 {
@@ -38,17 +38,36 @@ void DiceResult::setResultList(QList<Die*> list)
     m_diceValues.clear();
     m_diceValues << list;
 }
-bool DiceResult::isScalar() const
-{
-    if(m_diceValues.size()==1)
-    {
-        return true;
-    }
-    return false;
-}
-qreal DiceResult::getScalar()
+//bool DiceResult::isScalar() const
+//{
+//    if(m_diceValues.size()==1)
+//    {
+//        return true;
+//    }
+//    return false;
+//}
+QVariant DiceResult::getResult(RESULT_TYPE type)
 {
 
+    switch (type)
+    {
+    case SCALAR:
+            return getScalarResult();
+        break;
+    case DICE_LIST:
+    {
+
+        return QVariant();
+        break;
+    }
+    default:
+        break;
+    }
+    return QVariant();
+
+}
+qreal DiceResult::getScalarResult()
+{
     if(m_diceValues.size()==1)
     {
         return m_diceValues[0]->getValue();
