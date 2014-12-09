@@ -28,7 +28,37 @@ Roll five ten-faced die.
 Thanks of several operations and option, you can tune a bit you rolling command.
 
 ## List of operator
-*
+* k : Keep
+* K : Keep And Explose
+* s : Sort
+* c : Count
+* r : Reroll
+* e : Explose
+* a : Reroll and add
+
+### Keep
+
+> kX
+
+The option sorts the resulting die list and select the X better.
+
+### Keep And Explose
+
+> KX
+
+Dice explose if their value are at the die maximum, the option sorts the resulting die list, the it selects the X better.
+
+> 3D10s
+
+The dice list is sorted in descending order.
+
+
+> 3D10c[condition]
+
+Count how many dice respect the condition. And display the number. (See boolean condition and range for more details about the condition)
+
+> 3D10rX
+
 
 ### 3D100
 Roll 3 dice with 100 faces
