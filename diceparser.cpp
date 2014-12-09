@@ -60,6 +60,10 @@ DiceParser::DiceParser()
     m_aliasMap->insert("l5R","D10e10k");
     m_aliasMap->insert("nwod","D10e10c[>7]");
     m_aliasMap->insert("nwod","D10e10c[>7]");
+
+
+    m_commandList = new QList<QString>();
+    m_commandList->append("help");
 }
 
 ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
@@ -141,6 +145,10 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
 
 
 
+    }
+    else if(readCommand(str,operandNode))
+    {
+         return true;
     }
     else
     {
@@ -294,6 +302,14 @@ bool DiceParser::readDiceOperator(QString& str,DiceOperator& op)
     }
     return false;
 }
+bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
+{
+    if(m_commandList->contains(str))
+    {
+       // node = new HelpNode();
+    }
+}
+
 bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
 {
     int number=1;

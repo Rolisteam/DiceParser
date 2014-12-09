@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
     QStringList commands;
 
-    commands<< "2*(4+4)"
+    commands<< "help";/*
             << "1+(4*3)D10"
             << "2+4/4"
             << "2D10*2D20*8"
@@ -59,7 +59,8 @@ int main(int argc, char *argv[])
             << "100/28*3"
             << "100/8"
             << "100*3*8"
-            << "100*3*8";
+            << "help"
+            << "100*3*8";*/
 
     if(argc>1)
     {
@@ -79,7 +80,7 @@ int main(int argc, char *argv[])
             myParser->displayResult();
         }
     }
-    main.show();
-    return a.exec();
+    //main.show();
+    //return a.exec();
 
 }

@@ -36,7 +36,7 @@
 /**
  * @mainpage DiceParser
  *
- * the grammar is something like this:
+ * The grammar is something like this:
  *
  * Command =: Expression | ScalarOperator Expression
  * Expression =: number | number Dice | Command
@@ -122,6 +122,13 @@ private:
      * @param node
      */
     ExecutionNode* getLatestNode(ExecutionNode* node);
+    /**
+     * @brief DiceParser::readCommand
+     * @param str
+     * @param node
+     * @return
+     */
+    bool readCommand(QString& str,ExecutionNode* & node);
 
     /**
      * @brief readOption
@@ -136,6 +143,7 @@ private:
     QMap<QString,DiceOperator>* m_mapDiceOp;
     QMap<QString,OptionOperator>* m_OptionOp;
     QMap<QString,QString>* m_aliasMap;
+    QList<QString>* m_commandList;
 
     ExecutionNode* m_start;
     ExecutionNode* m_current;
