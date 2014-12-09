@@ -5,7 +5,7 @@
 
 
 ScalarOperatorNode::ScalarOperatorNode()
-    : m_internalNode(NULL),m_myScalarResult(new ScalarResult())
+    : m_internalNode(NULL),m_scalarResult(new ScalarResult())
 {
     m_scalarOperationList.insert('+',PLUS);
     m_scalarOperationList.insert('-',MINUS);
@@ -13,7 +13,7 @@ ScalarOperatorNode::ScalarOperatorNode()
     m_scalarOperationList.insert('*',MULTIPLICATION);
     m_scalarOperationList.insert('/',DIVIDE);
 
-    m_result = m_myScalarResult;
+    m_result = m_scalarResult;
 }
 
 void ScalarOperatorNode::run(ExecutionNode* previous)
@@ -42,16 +42,16 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
             switch(m_myOperator)
             {
                 case PLUS:
-                    m_myScalarResult->setValue(add(previousResult->getScalar(),internalResult->getScalar()));
+                    m_scalarResult->setValue(add(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
                 case MINUS:
-                    m_myScalarResult->setValue(substract(previousResult->getScalar(),internalResult->getScalar()));
+                    m_scalarResult->setValue(substract(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
                 case MULTIPLICATION:
-                    m_myScalarResult->setValue(multiple(previousResult->getScalar(),internalResult->getScalar()));
+                    m_scalarResult->setValue(multiple(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
                 case DIVIDE:
-                    m_myScalarResult->setValue(divide(previousResult->getScalar(),internalResult->getScalar()));
+                    m_scalarResult->setValue(divide(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
                 default:
                     break;

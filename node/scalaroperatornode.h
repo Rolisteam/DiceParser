@@ -30,7 +30,7 @@ private:
     ScalarOperator m_myOperator;
     ExecutionNode* m_internalNode;
     QMap<QChar,ScalarOperator> m_scalarOperationList;
-    ScalarResult* m_myScalarResult;
+    ScalarResult* m_scalarResult;
 };
 
 #endif // SCALAROPERATORNODE_H

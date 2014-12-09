@@ -47,7 +47,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
         Result* result=previous->getResult();
         if(NULL!=result)
         {
-            m_diceCount = result->getScalar();
+            m_diceCount = result->getResult(Result::SCALAR).toReal();
             m_result->setPrevious(result);
 
             for(quint64 i=0; i < m_diceCount ; ++i)
