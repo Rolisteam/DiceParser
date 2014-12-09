@@ -16,7 +16,7 @@ private:
     QMutex* m_mutex;
     DiceResult* m_sharedDiceResult;
     int m_faces;
-    int m_diceCount;
+    quint64 m_diceCount;
 };
 
 /**

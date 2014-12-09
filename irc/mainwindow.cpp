@@ -45,7 +45,7 @@ void MainWindow::readData()
     {
 
        // qDebug()<< "in /dice";
-        QString dice=".*PRIVMSG.*\!(.*)";
+        QString dice=".*PRIVMSG.*!(.*)";
         QRegExp exp(dice);
         exp.indexIn(readLine);
 
