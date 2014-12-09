@@ -32,6 +32,7 @@ public:
      * @return
      */
     virtual qint64 getPriority() const;
+
 };
 
 #endif // HELPNODE_H
