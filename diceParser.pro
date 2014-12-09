@@ -27,7 +27,8 @@ SOURCES += main.cpp \
     die.cpp \
     result.cpp \
     scalarresult.cpp \
-    parsingtoolbox.cpp
+    parsingtoolbox.cpp \
+    stringresult.cpp
 
 
 HEADERS += \
@@ -39,9 +40,11 @@ HEADERS += \
     die.h \
     result.h \
     scalarresult.h \
-    parsingtoolbox.h
+    parsingtoolbox.h \
+    stringresult.h
 
-OTHER_FILES += README.md
+OTHER_FILES += README.md \
+    HelpMe.md
 
 
 #QMAKE_CXXFLAGS += -O0
