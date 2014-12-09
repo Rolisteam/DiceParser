@@ -30,8 +30,18 @@ Die::Die()
 {
     uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
     qsrand(seed);
-}
 
+
+}
+Die::Die(const Die& die)
+{
+    m_value = die.m_value;
+    m_rollResult = die.m_rollResult;
+    m_selected = die.m_selected;
+    m_hasValue = die.m_hasValue;
+    m_displayStatus = die.m_displayStatus;
+    m_faces = die.m_faces;
+}
 
 void Die::setValue(qint64 r)
 {
