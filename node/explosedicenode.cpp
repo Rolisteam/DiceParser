@@ -7,8 +7,6 @@ ExploseDiceNode::ExploseDiceNode()
 }
 void ExploseDiceNode::run(ExecutionNode* previous)
 {
-
-//    qDebug() << "ExploseDiceNode node";
     if((NULL!=previous)&&(NULL!=previous->getResult()))
     {
         DiceResult* previous_result = static_cast<DiceResult*>(previous->getResult());
