@@ -52,6 +52,12 @@ public:
      * @return
      */
     virtual QList<ExecutionNode::ERROR_CODE> getErrorList();
+
+    /**
+     * @brief getHelp
+     * @return
+     */
+    virtual QString getHelp();
 protected:
     /**
      * @brief m_result

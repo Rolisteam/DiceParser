@@ -26,3 +26,7 @@ QList<ExecutionNode::ERROR_CODE> ExecutionNode::getErrorList()
 {
     return m_errors;
 }
+QString ExecutionNode::getHelp()
+{
+    return QString();
+}

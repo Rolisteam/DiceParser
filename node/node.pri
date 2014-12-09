@@ -9,7 +9,8 @@ HEADERS += \
     node/keepdiceexecnode.h \
     node/countexecutenode.h \
     node/explosedicenode.h \
-    node/parenthesesnode.h
+    node/parenthesesnode.h \
+    node/helpnode.h
 
 SOURCES += \
     node/dicerollernode.cpp \
@@ -22,4 +23,5 @@ SOURCES += \
     node/keepdiceexecnode.cpp \
     node/countexecutenode.cpp \
     node/explosedicenode.cpp \
-    node/parenthesesnode.cpp
+    node/parenthesesnode.cpp \
+    node/helpnode.cpp
