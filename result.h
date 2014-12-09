@@ -23,22 +23,43 @@
 #define RESULT_H
 
 #include <Qt>
+#include <QString>
+
 /**
  * @brief The Result class
  */
 class Result
 {
 public:
+    /**
+     * @brief Result
+     */
     Result();
-
+    /**
+     * @brief isScalar
+     * @return
+     */
     virtual bool isScalar() const = 0;
+    /**
+     * @brief getScalar
+     * @return
+     */
     virtual qreal getScalar() = 0;
-
+    /**
+     * @brief getPrevious
+     * @return
+     */
     virtual Result* getPrevious();
+    /**
+     * @brief setPrevious
+     */
     virtual void setPrevious(Result*);
 
+    virtual bool isStringResult();
+    virtual QString getStringResult();
+
 private:
-    Result* m_previous;
+    Result* m_previous;/// @brief
 };
 
 #endif // RESULT_H
