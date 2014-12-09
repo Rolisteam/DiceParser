@@ -36,3 +36,12 @@ void Result::setPrevious(Result* p)
     m_previous = p;
 }
 
+bool Result::isStringResult()
+{
+    return false;
+}
+
+QString Result::getStringResult()
+{
+    return QString();
+}
