@@ -48,22 +48,31 @@ The option sorts the resulting die list and select the X better.
 
 Dice explose if their value are at the die maximum, the option sorts the resulting die list, the it selects the X better.
 
+### Sorting
+
 > 3D10s
 
 The dice list is sorted in descending order.
 
+### Counter
 
 > 3D10c[Validator]
 
 Count how many dice respect the condition and display the number (See Validator for more details about syntax)
 
+### Reroll
+
 > 3D10r[Validator]
 
 Reroll the die if the previous value fits the validator (See Validator for more details about syntax).
 
+### Explose
+
 > 3D10e[Validator]
 
 Explose while the value fits the Validator (See Validator for more details about syntax).
+
+### Add
 
 > 3D10a[Validator]
 
