@@ -56,7 +56,7 @@ void MainWindow::readData()
             if(list.size()==2)
             {
                 QString cmd = list[1];
-                if(m_parser->parseLine(cmd))
+                if(m_parser->parseLine(cmd.simplified()))
                 {
                     m_parser->Start();
                     QString result = m_parser->displayResult();
