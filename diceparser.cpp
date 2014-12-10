@@ -150,6 +150,7 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
     }
     else if(readCommand(str,operandNode))
     {
+        node = operandNode;
          return true;
     }
     else
@@ -209,43 +210,50 @@ QString DiceParser::displayResult()
             stream << totalValue.arg(myResult->getResult(Result::SCALAR).toReal()) << endl; //.arg(m_command)
             scalarDone=true;
         }
-
-        DiceResult* myDiceResult = dynamic_cast<DiceResult*>(myResult);
-        if(NULL!=myDiceResult)
+        else if(myResult->hasResultOfType(Result::DICE_LIST))
         {
 
-            QString resulStr;
-            quint64 face=0;
-            foreach(Die* die, myDiceResult->getResultList())
+            DiceResult* myDiceResult = dynamic_cast<DiceResult*>(myResult);
+            if(NULL!=myDiceResult)
             {
-                if(!die->hasBeenDisplayed())
+
+                QString resulStr;
+                quint64 face=0;
+                foreach(Die* die, myDiceResult->getResultList())
                 {
-                    resulStr+=QString("%1").arg(die->getValue());
-                    die->displayed();
-                    face = die->getFaces();
-
-
-                    if(die->hasChildrenValue())
+                    if(!die->hasBeenDisplayed())
                     {
-                        resulStr+=" [";
-                        foreach(qint64 i, die->getListValue())
+                        resulStr+=QString("%1").arg(die->getValue());
+                        die->displayed();
+                        face = die->getFaces();
+
+
+                        if(die->hasChildrenValue())
                         {
+                            resulStr+=" [";
+                            foreach(qint64 i, die->getListValue())
+                            {
 
-                            resulStr+=QString("%1 ").arg(i);
+                                resulStr+=QString("%1 ").arg(i);
+                            }
+                            resulStr.remove(resulStr.size()-1,1);
+                            resulStr+="]";
                         }
-                        resulStr.remove(resulStr.size()-1,1);
-                        resulStr+="]";
+                        resulStr+=", ";
                     }
-                    resulStr+=", ";
                 }
-            }
-            resulStr.remove(resulStr.size()-2,2);
+                resulStr.remove(resulStr.size()-2,2);
 
-            if(!resulStr.isEmpty())
-            {
-                stream << dieValue.arg(face).arg(resulStr);
-            }
+                if(!resulStr.isEmpty())
+                {
+                    stream << dieValue.arg(face).arg(resulStr);
+                }
 
+            }
+        }
+        else if(myResult->hasResultOfType(Result::STRING))
+        {
+           stream << myResult->getResult(Result::STRING).toString();
         }
 
         myResult = myResult->getPrevious();
@@ -309,6 +317,7 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
     if(m_commandList->contains(str))
     {
        node = new HelpNode();
+       return true;
     }
 }
 
