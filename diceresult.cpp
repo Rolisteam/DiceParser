@@ -23,7 +23,7 @@
 
 DiceResult::DiceResult()
 {
-    m_resultTypes= (DICE_LIST | SCALAR);
+    m_resultTypes= (DICE_LIST);
 }
 void DiceResult::insertResult(Die* die)
 {
