@@ -145,7 +145,7 @@ There are three kind of Validator:
 
 Any operator which requires validator (such as `a,r,e,c') can use those three kind.
 
-# Scalar 
+### Scalar 
 
 The scalar value sets the validator on eguality between the dice value and the validator
 
