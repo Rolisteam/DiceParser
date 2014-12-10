@@ -40,13 +40,13 @@ Thanks of several operations and option, you can tune a bit you rolling command.
 
 > kX
 
-The option sorts the resulting die list and select the X better.
+The option sorts the resulting die list and select the X best dice.
 
 ### Keep And Explose
 
 > KX
 
-Dice explose if their value are at the die maximum, the option sorts the resulting die list, the it selects the X better.
+Dice explose if their value are at the die maximum, the option sorts the resulting die list, the it selects the X best dice.
 
 ### Sorting
 
