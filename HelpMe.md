@@ -168,11 +168,11 @@ The command counts how many dice are aboved 7.
 #### Logic Operator
 
 The Rolisteam Dice Parser allows you to use several logic operator:
-> Egual : =
-> Greater or egual :  >=
-> Lesser or egual : <=
-> Lesser : <
-> Greater : >
+* Egual : =
+* Greater or egual :  >=
+* Lesser or egual : <=
+* Lesser : <
+* Greater : >
 
 ## Examples
 
