@@ -7,19 +7,30 @@ HelpNode::HelpNode()
 void HelpNode::run(ExecutionNode* previous)
 {
     StringResult* txtResult = dynamic_cast<StringResult*>(m_result);
+
+    qDebug() << m_result->hasResultOfType(Result::SCALAR) << m_result->hasResultOfType(Result::STRING);
     if(NULL != previous)
     {
+        if(previous->getResult() == NULL)
+        {
+            txtResult->setText(toString());
 
-        txtResult->setText(toString());
+        }
+        else
+        {
+            txtResult->setText(previous->getHelp());
+        }
+        m_result->setPrevious(previous->getResult());
     }
-    else
+
+    if(NULL!=m_nextNode)
     {
-        txtResult->setText(previous->getHelp());
+        m_nextNode->run(this);
     }
 }
 QString HelpNode::toString()const
 {
-    return QObject::tr("Rolisteam Dice Parser: Full documentation at: <a href=\"https://github.com/obiwankennedy/DiceParser/blob/master/HelpMe.md\">https://github.com/obiwankennedy/DiceParser/blob/master/HelpMe.md</a>");
+    return QObject::tr("Rolisteam Dice Parser: Full documentation at: https://github.com/obiwankennedy/DiceParser/blob/master/HelpMe.md");
 }
 
 qint64 HelpNode::getPriority() const
