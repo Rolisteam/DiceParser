@@ -1,5 +1,9 @@
 # Documentation:
 
+## Irc and Chat
+
+Please, remember it is important to preffix all you command by `!`. This will allow the system to identify your command. To clarify the documentation, the `!` is not repeated before all commands.
+
 ## How to roll a die 
 
 It is real simple. you have to call:
@@ -99,7 +103,12 @@ Result: 14
 
 Result: 3.5
 
-## 
+> (3+2D6)D10
+
+Roll 2 dice and add 3 to the sum of those dice. Then the result is used for rolling dice.
+
+
+## Arithmetic and Dice
 
 It is possible to use arithmetic opearation on dice. Please pay attention that the default operation to translate a 
 dice list to scalar is the sum. So if you roll `3d6`, the result will be a list with 3 values {2, 5 ,1}. Now, we 
@@ -125,6 +134,45 @@ Substract 4 to 6 and then roll two dice.
 
 Divide by 2 the result of 1 die.
 
+
+## Validator
+
+There are three kind of Validator:
+-Scalar
+-Range
+-Boolean expression
+
+
+Any operator which requires validator (such as `a,r,e,c') can use those three kind.
+
+# Scalar 
+
+The scalar value sets the validator on eguality between the dice value and the validator
+
+> 4d10e10
+
+This command means : roll 4 dice and they explose on 10.
+
+### Range
+
+The range is defined as two bound. You have to use square brackets and the two bound are separated by `-`.
+
+> 4d10c[8-10]
+
+The command counts how many dice have values between >=8 and <=10.
+
+> 4d10c[>7]
+
+The command counts how many dice are aboved 7.
+
+#### Logic Operator
+
+The Rolisteam Dice Parser allows you to use several logic operator:
+> Egual : =
+> Greater or egual :  >=
+> Lesser or egual : <=
+> Lesser : <
+> Greater : >
 
 ## Examples
 
