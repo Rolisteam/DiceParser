@@ -159,6 +159,8 @@ The range is defined as two bound. You have to use square brackets and the two b
 
 > 4d10c[8-10]
 
+### Boolean Condition
+
 The command counts how many dice have values between >=8 and <=10.
 
 > 4d10c[>7]
