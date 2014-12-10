@@ -91,6 +91,39 @@ Result: 24
 
 Result: 20
 
+> (3+4)*2
+
+Result: 14
+
+> 7/2
+
+Result: 3.5
+
+## 
+
+It is possible to use arithmetic opearation on dice. Please pay attention that the default operation to translate a 
+dice list to scalar is the sum. So if you roll `3d6`, the result will be a list with 3 values {2, 5 ,1}. Now, we 
+change a bit the command `3d6+4`: It is resolved like this: {2, 5 ,1} = 8; 8+4 = 12. The final result is 12.
+
+> 3d6+4
+
+Roll 3 dice; sum the result; and add 4
+
+> 10D10-2
+
+Roll 10 dice; sum the result; and then substract 2
+
+> 87-1D20
+
+Substract the result of 1 die to 87
+
+> (6-4)D10
+
+Substract 4 to 6 and then roll two dice. 
+
+> 1D10/2
+
+Divide by 2 the result of 1 die.
 
 
 ## Examples
