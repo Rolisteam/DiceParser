@@ -134,6 +134,15 @@ Substract 4 to 6 and then roll two dice.
 
 Divide by 2 the result of 1 die.
 
+## Roll two (or more) kind of dice at once.
+
+To make it, you have to separate all dice command by `;`
+
+> 1d10;1d6
+
+or
+
+> 5d6;1d10;4d100;3d20
 
 ## Validator
 
