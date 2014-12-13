@@ -7,8 +7,6 @@ NumberNode::NumberNode()
 }
 void NumberNode::run(ExecutionNode* previous)
 {
-
-//    qDebug() << "NumberNode node";
     if(NULL!=previous)
     {
         m_result->setPrevious(previous->getResult());
