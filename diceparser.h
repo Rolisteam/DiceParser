@@ -139,6 +139,8 @@ private:
 
     bool readOperand(QString&,ExecutionNode* & node);
 
+    bool readInstructionOperator(QChar c);
+
 private:
     QMap<QString,DiceOperator>* m_mapDiceOp;
     QMap<QString,OptionOperator>* m_OptionOp;

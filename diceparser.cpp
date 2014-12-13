@@ -343,11 +343,20 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
     }
     else
     {
-        qDebug() << "error" << number << str;
         returnVal = false;
     }
     return returnVal;
 }
+bool DiceParser::readInstructionOperator(QChar c)
+{
+    if(c == ';')
+    {
+        return true;
+    }
+    return false;
+
+}
+
 bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
 {
     if(str.isEmpty())
@@ -377,6 +386,28 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
 
             return true;
         }
+    }
+    else if(readInstructionOperator(str[0]))
+    {
+        str=str.remove(0,1);
+        delete node;
+       ExecutionNode* nodeExec = NULL;
+       if(readExpression(str,nodeExec))
+       {
+
+          // nodeExec = getLatestNode(nodeExec);
+
+           if(NULL==nodeExec)
+           {
+               return false;
+           }
+           previous->setNextNode(nodeExec);
+
+           return true;
+       }
+
+
+
     }
     else
     {
