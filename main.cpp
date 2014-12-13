@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
     QStringList commands;
 
-    commands<< "help";/*
+    commands<< "1d6;1d10";/*
             << "1+(4*3)D10"
             << "2+4/4"
             << "2D10*2D20*8"
