@@ -28,7 +28,7 @@ Roll five ten-faced die.
 
 > 777d6
 
-Roll five ten-faced die.
+Roll 777 six-faced die.
 
 
 Thanks of several operations and option, you can tune a bit you rolling command.
