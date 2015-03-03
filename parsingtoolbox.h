@@ -28,12 +28,32 @@
 #include "booleancondition.h"
 #include "range.h"
 
+/**
+ * @brief The ParsingToolBox class - gathering tools
+ */
 class ParsingToolBox
 {
 public:
     ParsingToolBox();
+	/**
+	 * @brief addSort
+	 * @param e
+	 * @param b
+	 * @return
+	 */
     ExecutionNode* addSort(ExecutionNode* e,bool b);
+	/**
+	 * @brief readLogicOperator
+	 * @param str
+	 * @param op
+	 * @return
+	 */
     bool readLogicOperator(QString& str,BooleanCondition::LogicOperator& op);
+	/**
+	 * @brief readValidator
+	 * @param str
+	 * @return
+	 */
     Validator* readValidator(QString& str);
 
 
@@ -46,7 +66,17 @@ public:
     bool readNumber(QString&  str, int& myNumber);
 
 
+	/**
+	 * @brief readOpenParentheses
+	 * @param str
+	 * @return
+	 */
     bool readOpenParentheses(QString& str);
+	/**
+	 * @brief readCloseParentheses
+	 * @param str
+	 * @return
+	 */
     bool readCloseParentheses(QString& str);
 
 private:

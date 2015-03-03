@@ -27,7 +27,7 @@ public:
      * @brief getResult
      * @return
      */
-    Result* getResult();
+	virtual Result* getResult();
     /**
      * @brief setNextNode
      */
@@ -37,6 +37,11 @@ public:
      * @return
      */
     ExecutionNode* getNextNode();
+	/**
+	 * @brief getPreviousNode
+	 * @return
+	 */
+	virtual ExecutionNode* getPreviousNode() const;
     /**
      * @brief toString
      * @return
@@ -59,6 +64,10 @@ public:
      */
     virtual QString getHelp();
 protected:
+	/**
+	 * @brief m_nextNode
+	 */
+	ExecutionNode* m_previousNode;
     /**
      * @brief m_result
      */

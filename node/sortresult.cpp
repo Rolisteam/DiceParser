@@ -12,7 +12,7 @@ SortResultNode::SortResultNode()
 }
 void SortResultNode::run(ExecutionNode* node)
 {
-//    qDebug() << "SortResultNode node";
+	m_previousNode = node;
     if(NULL==node)
     {
         return;

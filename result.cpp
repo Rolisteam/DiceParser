@@ -36,6 +36,10 @@ void Result::setPrevious(Result* p)
     m_previous = p;
 }
 
+bool Result::isStringResult()
+{
+    return false;
+}
 
 bool Result::hasResultOfType(RESULT_TYPE type) const
 {

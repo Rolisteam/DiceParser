@@ -30,3 +30,7 @@ QString ExecutionNode::getHelp()
 {
     return QString();
 }
+ExecutionNode* ExecutionNode::getPreviousNode() const
+{
+	return m_previousNode;
+}

@@ -8,7 +8,7 @@ RerollDiceNode::RerollDiceNode()
 }
 void RerollDiceNode::run(ExecutionNode* previous)
 {
-//        qDebug() << "RerollDiceNode node";
+m_previousNode = previous;
     if((NULL!=previous)&&(NULL!=previous->getResult()))
     {
         DiceResult* previous_result = static_cast<DiceResult*>(previous->getResult());

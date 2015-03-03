@@ -15,7 +15,7 @@ void CountExecuteNode::setValidator(Validator* validator)
 
 void CountExecuteNode::run(ExecutionNode *previous)
 {
-//         qDebug() << "CountExecuteNode node";
+	m_previousNode = previous;
     if(NULL==previous)
     {
         return;

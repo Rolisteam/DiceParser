@@ -7,6 +7,7 @@ NumberNode::NumberNode()
 }
 void NumberNode::run(ExecutionNode* previous)
 {
+	m_previousNode = previous;
     if(NULL!=previous)
     {
         m_result->setPrevious(previous->getResult());

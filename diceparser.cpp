@@ -53,6 +53,7 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QObject::tr("r"),Reroll);
     m_OptionOp->insert(QObject::tr("e"),Explosing);
     m_OptionOp->insert(QObject::tr("a"),RerollAndAdd);
+	m_OptionOp->insert(QObject::tr("@"),JumpBackward);
 
 
 
@@ -77,6 +78,17 @@ ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
     }
     return next;
 }
+QString DiceParser::convertAlias(QString str)
+{
+	foreach(QString cmd, m_aliasMap->keys())
+	{
+		if(str.contains(cmd))
+		{
+			str.replace(cmd,m_aliasMap->value(cmd));
+		}
+	}
+	return str;
+}
 
 bool DiceParser::parseLine(QString str)
 {
@@ -85,6 +97,7 @@ bool DiceParser::parseLine(QString str)
     ExecutionNode* newNode = NULL;
     m_current = m_start;
 
+	str = convertAlias(str);
     bool keepParsing = readExpression(str,newNode);
 
     while(keepParsing)
@@ -566,11 +579,20 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                     isFine = true;
                 }
             }
+			case JumpBackward:
+			{
+
+			}
 
             }
         }
     }
     return isFine;
+}
+
+QList<ExecutionNode::ERROR_CODE>  DiceParser::getErrorList()
+{
+	return m_start->getErrorList();
 }
 
 bool DiceParser::readOperand(QString& str,ExecutionNode* & node)

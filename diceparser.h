@@ -58,14 +58,14 @@ public:
     /**
      * @brief The DiceOperator enum gathering all dice operators
      */
-    enum DiceOperator {D};
+	enum DiceOperator {D,L};
 
 
 
     /**
      * @brief The OptionOperator enum gathering all options  availables for result.
      */
-    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd};
+	enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd,JumpBackward};
 
     /**
      * @brief DiceParser default constructor
@@ -135,9 +135,31 @@ private:
      */
     bool readOption(QString&,ExecutionNode* node, bool hasDice = true);
 
+	/**
+	 * @brief addRollDiceNode
+	 * @param faces
+	 * @return
+	 */
     DiceRollerNode* addRollDiceNode(qint64 faces,ExecutionNode*);
 
+	/**
+	 * @brief readOperand
+	 * @param node
+	 * @return
+	 */
     bool readOperand(QString&,ExecutionNode* & node);
+	/**
+	 * @brief DiceParser::convertAlias
+	 * @param str
+	 * @return
+	 */
+	QString convertAlias(QString str);
+
+	/**
+	 * @brief getErrorList
+	 * @return
+	 */
+	QList<ExecutionNode::ERROR_CODE>  getErrorList();
 
     bool readInstructionOperator(QChar c);
 

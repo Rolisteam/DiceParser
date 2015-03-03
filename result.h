@@ -58,6 +58,9 @@ public:
      * @brief setPrevious
      */
     virtual void setPrevious(Result*);
+	bool isStringResult();
+
+	QString getStringResult();
 
 protected:
      int m_resultTypes;/// @brief

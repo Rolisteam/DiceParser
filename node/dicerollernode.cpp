@@ -41,6 +41,7 @@ DiceRollerNode::DiceRollerNode(quint64 faces)
 }
 void DiceRollerNode::run(ExecutionNode* previous)
 {
+	m_previousNode = previous;
     if(NULL!=previous)
     {
         Result* result=previous->getResult();

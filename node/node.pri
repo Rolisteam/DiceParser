@@ -10,7 +10,8 @@ HEADERS += \
     node/countexecutenode.h \
     node/explosedicenode.h \
     node/parenthesesnode.h \
-    node/helpnode.h
+    node/helpnode.h \
+    $$PWD/jumpbackwardnode.h
 
 SOURCES += \
     node/dicerollernode.cpp \
@@ -24,4 +25,5 @@ SOURCES += \
     node/countexecutenode.cpp \
     node/explosedicenode.cpp \
     node/parenthesesnode.cpp \
-    node/helpnode.cpp
+    node/helpnode.cpp \
+    $$PWD/jumpbackwardnode.cpp
