@@ -35,28 +35,28 @@ DEFINES+= HAVE_GUI
 
 SOURCES += main.cpp \
     diceparser.cpp \
-    diceresult.cpp \
+    result/diceresult.cpp \
     range.cpp \
     booleancondition.cpp \
     validator.cpp \
     die.cpp \
-    result.cpp \
-    scalarresult.cpp \
+    result/result.cpp \
+    result/scalarresult.cpp \
     parsingtoolbox.cpp \
-    stringresult.cpp
+    result/stringresult.cpp
 
 
 HEADERS += \
     diceparser.h \
-    diceresult.h \
+    result/diceresult.h \
     range.h \
     booleancondition.h \
     validator.h \
     die.h \
-    result.h \
-    scalarresult.h \
-    parsingtoolbox.h \
-    stringresult.h
+    result/result.h \
+    result/scalarresult.h \
+    result/parsingtoolbox.h \
+    result/stringresult.h
 
 OTHER_FILES += README.md \
     HelpMe.md

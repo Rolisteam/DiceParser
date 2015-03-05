@@ -6,7 +6,7 @@
 #include <QMutex>
 
 #include "executionnode.h"
-#include "diceresult.h"
+#include "result/diceresult.h"
 class DiceRoller : public QRunnable
 {
 public:

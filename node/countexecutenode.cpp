@@ -1,5 +1,5 @@
 #include "countexecutenode.h"
-#include "diceresult.h"
+#include "result/diceresult.h"
 
 
 

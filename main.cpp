@@ -39,7 +39,8 @@ int main(int argc, char *argv[])
 
     QStringList commands;
 
-    commands << "10d10c[>=6]-@c[=1]"
+    commands << "1L[cheminée,chocolat,épée,arc,chute de pierre]" ;
+            /*<< "10d10c[>=6]-@c[=1]"
              << "10d10c[>=6]-@c[=1]-@c[=1]"
              << "10d10c[>6]+@c[=10]"
              << "1+1D10"
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
             << "100/8"
             << "100*3*8"
             << "help"
-            << "100*3*8";
+            << "100*3*8";*/
 
     if(argc>1)
     {

@@ -3,7 +3,7 @@
 
 
 #include "executionnode.h"
-#include "diceresult.h"
+#include "result/diceresult.h"
 #include "validator.h"
 /**
  * @brief The RerollDiceNode class reroll dice given a condition and replace(or add) the result.

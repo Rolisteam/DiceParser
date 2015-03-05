@@ -2,7 +2,7 @@
 #define KEEPDICEEXECNODE_H
 
 #include "executionnode.h"
-#include "diceresult.h"
+#include "result/diceresult.h"
 
 class KeepDiceExecNode : public ExecutionNode
 {

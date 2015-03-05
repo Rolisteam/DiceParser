@@ -2,7 +2,7 @@
 #define SORTRESULT_H
 
 #include "executionnode.h"
-#include "diceresult.h"
+#include "result/diceresult.h"
 
 class SortResultNode : public ExecutionNode
 {

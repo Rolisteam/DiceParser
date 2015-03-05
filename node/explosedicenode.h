@@ -2,7 +2,7 @@
 #define EXPLOSEDICENODE_H
 
 #include "executionnode.h"
-#include "diceresult.h"
+#include "result/diceresult.h"
 #include "validator.h"
 #include <QDebug>
 

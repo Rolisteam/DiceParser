@@ -2,7 +2,7 @@
 #define JUMPBACKWARDNODE_H
 
 #include "executionnode.h"
-#include "diceresult.h"
+#include "result/diceresult.h"
 class JumpBackwardNode : public ExecutionNode
 {
 public:

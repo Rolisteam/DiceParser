@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QString>
 
-#include "stringresult.h"
+#include "result/stringresult.h"
 
 /**
  * @brief The HelpNode class

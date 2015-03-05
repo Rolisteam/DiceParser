@@ -2,7 +2,7 @@
 #define NUMBERNODE_H
 
 #include "node/executionnode.h"
-#include "scalarresult.h"
+#include "result/scalarresult.h"
 
 class NumberNode : public ExecutionNode
 {

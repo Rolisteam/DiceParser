@@ -1,7 +1,7 @@
 #ifndef EXECUTIONNODE_H
 #define EXECUTIONNODE_H
 
-#include "result.h"
+#include "result/result.h"
 #include <QDebug>
 /**
  * @brief The ExecutionNode class

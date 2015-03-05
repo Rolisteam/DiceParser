@@ -1,7 +1,7 @@
 #include "scalaroperatornode.h"
 
 #include <QDebug>
-#include "diceresult.h"
+#include "result/diceresult.h"
 
 
 ScalarOperatorNode::ScalarOperatorNode()

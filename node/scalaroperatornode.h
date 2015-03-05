@@ -5,7 +5,7 @@
 #include <QChar>
 
 #include "executionnode.h"
-#include "scalarresult.h"
+#include "result/scalarresult.h"
 
 class ScalarOperatorNode : public ExecutionNode
 {
