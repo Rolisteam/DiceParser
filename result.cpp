@@ -45,3 +45,12 @@ bool Result::hasResultOfType(RESULT_TYPE type) const
 {
     return (m_resultTypes & type);
 }
+void Result::generateDotTree(QString& s)
+{
+    s.append(toString());
+
+}
+QString Result::toString()
+{
+    QString();
+}

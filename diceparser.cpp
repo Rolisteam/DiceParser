@@ -35,6 +35,7 @@
 #include "node/explosedicenode.h"
 #include "node/parenthesesnode.h"
 #include "node/helpnode.h"
+#include "node/jumpbackwardnode.h"
 
 #define DEFAULT_FACES_NUMBER 10
 
@@ -44,6 +45,7 @@ DiceParser::DiceParser()
 
     m_mapDiceOp = new QMap<QString,DiceOperator>();
     m_mapDiceOp->insert("D",D);
+    m_mapDiceOp->insert("L",L);
 
     m_OptionOp = new QMap<QString,OptionOperator>();
     m_OptionOp->insert(QObject::tr("k"),Keep);
@@ -53,7 +55,7 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QObject::tr("r"),Reroll);
     m_OptionOp->insert(QObject::tr("e"),Explosing);
     m_OptionOp->insert(QObject::tr("a"),RerollAndAdd);
-	m_OptionOp->insert(QObject::tr("@"),JumpBackward);
+    //m_OptionOp->insert(QObject::tr("@"),JumpBackward);
 
 
 
@@ -62,6 +64,9 @@ DiceParser::DiceParser()
     m_aliasMap->insert("l5R","D10e10k");
     m_aliasMap->insert("nwod","D10e10c[>7]");
     m_aliasMap->insert("nwod","D10e10c[>7]");
+
+    m_nodeActionMap = new QMap<QString,NodeAction>();
+    m_nodeActionMap->insert("@",JumpBackward);
 
 
     m_commandList = new QList<QString>();
@@ -166,6 +171,11 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         node = operandNode;
          return true;
     }
+    else if(readNode(str,operandNode))
+    {
+        node = operandNode;
+        return true;
+    }
     else
     {
          ExecutionNode* diceNode=NULL;
@@ -182,6 +192,26 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         }
     }
     return true;
+}
+bool DiceParser::readNode(QString& str,ExecutionNode* & node)
+{
+    /*k			case JumpBackward:
+            {
+                JumpBackwardNode* jumpNode = new JumpBackwardNode();
+                previous->setNextNode(jumpNode);
+                node = jumpNode;
+                isFine=true;
+            }*/
+     QString key= str.left(1);
+    if(m_nodeActionMap->contains(key))
+    {
+        JumpBackwardNode* jumpNode = new JumpBackwardNode();
+        node = jumpNode;
+        str=str.remove(0,1);
+        readOption(str,jumpNode,true);
+        return true;
+    }
+    return false;
 }
 
 void DiceParser::Start()
@@ -332,11 +362,11 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
        node = new HelpNode();
        return true;
     }
+    return false;
 }
 
 bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
 {
-    int number=1;
     bool returnVal=false;
 
     ExecutionNode* next = NULL;
@@ -579,10 +609,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                     isFine = true;
                 }
             }
-			case JumpBackward:
-			{
 
-			}
 
             }
         }
@@ -598,7 +625,6 @@ QList<ExecutionNode::ERROR_CODE>  DiceParser::getErrorList()
 bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
 {
     int myNumber=1;
-    ExecutionNode* myNode=NULL;
 
     if(m_parsingToolbox->readNumber(str,myNumber))
     {
@@ -609,4 +635,13 @@ bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
         return true;
     }
         return false;
+}
+void DiceParser::displayDotTree()
+{
+    QString str("digraph ExecutionTree {\n");
+    m_start->generateDotTree(str);
+    str.append("}");
+
+    qDebug()<< str;
+
 }

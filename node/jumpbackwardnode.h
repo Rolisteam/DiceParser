@@ -2,7 +2,7 @@
 #define JUMPBACKWARDNODE_H
 
 #include "executionnode.h"
-
+#include "diceresult.h"
 class JumpBackwardNode : public ExecutionNode
 {
 public:
@@ -20,7 +20,8 @@ public:
 	 * @return
 	 */
 	virtual qint64 getPriority() const;
-
+private:
+    DiceResult* m_diceResult;
 
 };
 

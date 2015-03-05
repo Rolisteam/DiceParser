@@ -19,6 +19,7 @@ public:
     virtual QString toString()const;
     virtual qint64 getPriority() const;
 
+    void generateDotTree(QString& s);
 
 private:
     qint64 add(qint64,qint64);

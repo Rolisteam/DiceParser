@@ -20,7 +20,7 @@ void CountExecuteNode::run(ExecutionNode *previous)
     {
         return;
     }
-    DiceResult* previous_result = static_cast<DiceResult*>(previous->getResult());
+    DiceResult* previous_result = dynamic_cast<DiceResult*>(previous->getResult());
     if(NULL!=previous_result)
     {
         m_result->setPrevious(previous_result);
@@ -41,7 +41,7 @@ void CountExecuteNode::run(ExecutionNode *previous)
 }
 QString CountExecuteNode::toString() const
 {
-    return "CountExecuteNode";
+    return "CountExecuteNode"+m_validator->toString();
 }
 qint64 CountExecuteNode::getPriority() const
 {

@@ -59,6 +59,11 @@ public:
     virtual QList<ExecutionNode::ERROR_CODE> getErrorList();
 
     /**
+     * @brief generateDotTree
+     */
+    virtual void generateDotTree(QString&);
+
+    /**
      * @brief getHelp
      * @return
      */

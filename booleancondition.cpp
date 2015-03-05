@@ -75,3 +75,7 @@ void BooleanCondition::setValue(qint64 v)
 {
     m_value=v;
 }
+QString BooleanCondition::toString()
+{
+    return QString("BooleanCondition_op_%1_value_%2").arg(m_operator).arg(m_value);
+}

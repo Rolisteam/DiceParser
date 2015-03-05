@@ -35,6 +35,7 @@ public:
 
     void setOperator(LogicOperator m);
     void setValue(qint64);
+    QString toString();
 
 private:
     LogicOperator m_operator;

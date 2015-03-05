@@ -24,12 +24,15 @@
 
 #include <Qt>
 #include "die.h"
+#include <QString>
 
 class Validator
 {
 public:
     Validator();
     virtual qint64 hasValid(Die* b,bool recursive) const = 0 ;
+
+    virtual QString toString()=0;
 };
 
 #endif // VALIDATOR_H

@@ -52,3 +52,7 @@ qint64 Range::hasValid(Die* m,bool recursive) const
     }
     return 0;
 }
+QString Range::toString()
+{
+    return QString("Range_%1_%2").arg(m_start).arg(m_end);
+}

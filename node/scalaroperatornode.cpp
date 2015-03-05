@@ -38,7 +38,10 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
 
             Result* internalResult = internal->getResult();
             m_result->setPrevious(internalResult);
-            m_internalNode->getResult()->setPrevious(previousResult);
+            if(NULL!=m_internalNode->getResult())
+            {
+                m_internalNode->getResult()->setPrevious(previousResult);
+            }
 
             switch(m_myOperator)
             {
@@ -111,4 +114,32 @@ qint64 ScalarOperatorNode::getPriority() const
         return 1;
     else
         return 2;
+}
+void ScalarOperatorNode::generateDotTree(QString& s)
+{
+    s.append(toString());
+    if(NULL!=m_nextNode)
+    {
+        s.append(" -> ");
+        s.append(m_nextNode->toString());
+        s.append(" [label=\"nextNode\"];\n");
+        m_nextNode->generateDotTree(s);
+    }
+    else
+    {
+        s.append(" -> ");
+        s.append("NULL");
+        s.append(" [label=\"nextNode\"];\n");
+    }
+    QString str;
+    str.append("\n");
+    if(NULL!=m_internalNode)
+    {
+        str.append(toString());
+        str.append(" -> ");
+        str.append(m_internalNode->toString());
+        str.append(" [label=\"internalNode\"];\n");
+        m_internalNode->generateDotTree(str);
+    }
+    s.append(str);
 }

@@ -33,6 +33,8 @@ public:
 
     virtual qint64 hasValid(Die* b,bool recursive) const;
 
+    virtual QString toString();
+
 private:
     qint64 m_start;
     qint64 m_end;

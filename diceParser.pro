@@ -9,14 +9,28 @@ QT       += core
 QT       -= gui
 
 include(node/node.pri)
-include(gui/gui.pri)
-include(irc/irc.pri)
 
 TARGET = diceParser
 CONFIG   += console
 CONFIG   -= app_bundle
 
 TEMPLATE = app
+
+#CONFIG+= IRC
+#CONFIG+= GUI
+
+
+IRC {
+include(irc/irc.pri)
+QT       += gui widgets
+DEFINES+= HAVE_IRC
+message("test")
+}
+GUI {
+include(gui/gui.pri)
+QT       += gui widgets
+DEFINES+= HAVE_GUI
+}
 
 
 SOURCES += main.cpp \

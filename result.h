@@ -58,10 +58,26 @@ public:
      * @brief setPrevious
      */
     virtual void setPrevious(Result*);
+    /**
+     * @brief isStringResult
+     * @return
+     */
 	bool isStringResult();
 
+    /**
+     * @brief getStringResult
+     * @return
+     */
 	QString getStringResult();
-
+    /**
+     * @brief generateDotTree
+     */
+    void generateDotTree(QString&);
+    /**
+     * @brief toString
+     * @return
+     */
+    QString toString();
 protected:
      int m_resultTypes;/// @brief
 private:

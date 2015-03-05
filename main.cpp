@@ -19,28 +19,32 @@
 * Free Software Foundation, Inc.,                                          *
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
+#ifdef HAVE_IRC
 #include <QApplication>
-
+#include "irc/mainwindow.h"
+#endif
 
 #include <QStringList>
 #include "diceparser.h"
-#include "irc/mainwindow.h"
 
 int main(int argc, char *argv[])
 {
+    #ifdef HAVE_IRC
      QApplication a(argc, argv);
 
 
     MainWindow main;
+#endif
     DiceParser* myParser = new DiceParser();
 
     QStringList commands;
 
-	commands<< "3d10c[>=6]-@c[=1]"
-			<< "3d10-@c[>1]"
-			<< "3d10c[>=6]-c[=1]"
-			<< "3d10c[>=5]";
-			/*<< "3nwod"
+    commands << "10d10c[>=6]-@c[=1]"
+             << "10d10c[>=6]-@c[=1]-@c[=1]"
+             << "10d10c[>6]+@c[=10]"
+             << "1+1D10"
+             << "3d10c[>=5]"
+            << "3nwod"
             << "1+(4*3)D10"
             << "2+4/4"
             << "2D10*2D20*8"
@@ -64,7 +68,7 @@ int main(int argc, char *argv[])
             << "100/8"
             << "100*3*8"
             << "help"
-            << "100*3*8";*/
+            << "100*3*8";
 
     if(argc>1)
     {
@@ -81,6 +85,7 @@ int main(int argc, char *argv[])
         if(myParser->parseLine(cmd))
         {
             myParser->Start();
+           // myParser->displayDotTree();
             myParser->displayResult();
         }
 		else
@@ -88,7 +93,8 @@ int main(int argc, char *argv[])
 			qDebug() << "echec";
 		}
     }
+        #ifdef HAVE_IRC
     main.show();
     return a.exec();
-
+#endif
 }

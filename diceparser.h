@@ -60,12 +60,17 @@ public:
      */
 	enum DiceOperator {D,L};
 
+    /**
+     * @brief The DiceSymbol enum
+     */
+    enum NodeAction {JumpBackward};
+
 
 
     /**
      * @brief The OptionOperator enum gathering all options  availables for result.
      */
-	enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd,JumpBackward};
+    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd};
 
     /**
      * @brief DiceParser default constructor
@@ -93,6 +98,7 @@ public:
 
     bool readExpression(QString& str,ExecutionNode* & node);
 
+    void displayDotTree();
 private:
 
     /**
@@ -163,11 +169,16 @@ private:
 
     bool readInstructionOperator(QChar c);
 
+    bool readNode(QString& str,ExecutionNode* & node);
+
+
 private:
     QMap<QString,DiceOperator>* m_mapDiceOp;
     QMap<QString,OptionOperator>* m_OptionOp;
+    QMap<QString,NodeAction>* m_nodeActionMap;
     QMap<QString,QString>* m_aliasMap;
     QList<QString>* m_commandList;
+
 
     ExecutionNode* m_start;
     ExecutionNode* m_current;

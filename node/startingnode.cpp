@@ -15,7 +15,7 @@ void StartingNode::run(ExecutionNode*)
 }
 QString StartingNode::toString() const
 {
-    return "Starting node";
+    return "StartingNode";
 }
 qint64 StartingNode::getPriority() const
 {
