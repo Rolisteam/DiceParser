@@ -36,6 +36,7 @@
 #include "node/parenthesesnode.h"
 #include "node/helpnode.h"
 #include "node/jumpbackwardnode.h"
+#include "node/listsetrollnode.h"
 
 #define DEFAULT_FACES_NUMBER 10
 
@@ -316,26 +317,42 @@ QString DiceParser::displayResult()
 
 bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
 {
-    DiceOperator myOperator;
+    DiceOperator currentOperator;
 
-    if(readDiceOperator(str,myOperator))
+    if(readDiceOperator(str,currentOperator))
     {
         int num;
-        if(m_parsingToolbox->readNumber(str,num))
+        if(currentOperator==D)
         {
-            DiceRollerNode* drNode = new DiceRollerNode(num);
-            //            dice.m_diceOp = myOperator;
-            //            dice.m_faces = num;
-            node = drNode;
-            ExecutionNode* current = drNode;
-            while(readOption(str,current))
+            if(m_parsingToolbox->readNumber(str,num))
             {
-                current = getLatestNode(current);
+                DiceRollerNode* drNode = new DiceRollerNode(num);
+                //            dice.m_diceOp = myOperator;
+                //            dice.m_faces = num;
+                node = drNode;
+                ExecutionNode* current = drNode;
+                while(readOption(str,current))
+                {
+                    current = getLatestNode(current);
+                }
+
+
+                return true;
             }
-
-
-            return true;
         }
+        else if(currentOperator ==L)
+        {
+            QStringList list;
+            if(m_parsingToolbox->readList(str,list))
+            {
+                qDebug() << list;
+                ListSetRollNode* lsrNode = new ListSetRollNode();
+                lsrNode->setListValue(list);
+                node = lsrNode;
+                return true;
+            }
+        }
+
     }
 
     return false;

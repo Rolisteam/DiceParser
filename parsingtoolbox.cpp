@@ -171,3 +171,18 @@ bool ParsingToolBox::readCloseParentheses(QString& str)
     else
         return false;
 }
+bool ParsingToolBox::readList(QString& str,QStringList& list)
+{
+    if(str.startsWith("["))
+    {
+        str=str.remove(0,1);
+        int pos = str.indexOf("]");
+        if(-1!=pos)
+        {
+            QString liststr = str.left(pos);
+            list = liststr.split(",");
+            return true;
+        }
+    }
+    return false;
+}

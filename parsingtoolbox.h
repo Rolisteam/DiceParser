@@ -79,6 +79,14 @@ public:
 	 */
     bool readCloseParentheses(QString& str);
 
+    /**
+     * @brief readList
+     * @param str
+     * @param list
+     * @return
+     */
+    bool readList(QString& str,QStringList& list);
+
 private:
         QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
 };
