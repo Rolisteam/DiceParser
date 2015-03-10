@@ -58,3 +58,5 @@ compute: 24
 compute: 100/28 = 3
 3*3 = 9
 
+
+More examples at : https://github.com/obiwankennedy/DiceParser/blob/master/HelpMe.md
