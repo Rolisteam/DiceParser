@@ -177,7 +177,7 @@ private:
     QMap<QString,OptionOperator>* m_OptionOp;
     QMap<QString,NodeAction>* m_nodeActionMap;
     QMap<QString,QString>* m_aliasMap;
-    QList<QString>* m_commandList;
+	QStringList* m_commandList;
 
 
     ExecutionNode* m_start;

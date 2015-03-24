@@ -12,7 +12,8 @@ HEADERS += \
     node/parenthesesnode.h \
     node/helpnode.h \
     $$PWD/jumpbackwardnode.h \
-    node/listsetrollnode.h
+    node/listsetrollnode.h \
+    $$PWD/listaliasnode.h
 
 SOURCES += \
     node/dicerollernode.cpp \
@@ -28,4 +29,5 @@ SOURCES += \
     node/parenthesesnode.cpp \
     node/helpnode.cpp \
     $$PWD/jumpbackwardnode.cpp \
-    node/listsetrollnode.cpp
+    node/listsetrollnode.cpp \
+    $$PWD/listaliasnode.cpp

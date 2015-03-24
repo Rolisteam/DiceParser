@@ -9,7 +9,6 @@ void HelpNode::run(ExecutionNode* previous)
 	m_previousNode = previous;
     StringResult* txtResult = dynamic_cast<StringResult*>(m_result);
 
-    qDebug() << m_result->hasResultOfType(Result::SCALAR) << m_result->hasResultOfType(Result::STRING);
     if(NULL != previous)
     {
         if(previous->getResult() == NULL)
