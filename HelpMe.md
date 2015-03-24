@@ -137,7 +137,7 @@ Divide by 2 the result of 1 die.
 
 ## Roll two (or more) kind of dice at once.
 
-To make it, you have to separate all dice command by `;`
+To make it, you have to separate all dice commands by `;`
 
 > 1d10;1d6
 
