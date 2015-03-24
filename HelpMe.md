@@ -165,7 +165,7 @@ This command means : roll 4 dice and they explose on 10.
 
 ### Range
 
-The range is defined as two bound. You have to use square brackets and the two bound are separated by `-`.
+The range is defined as two bounds. You have to use square brackets and the two bounds are separated by `-`.
 
 > 4d10c[8-10]
 
