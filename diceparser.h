@@ -38,12 +38,16 @@
  *
  * The grammar is something like this:
  *
- * Command =: Expression | ScalarOperator Expression
+ * Line =: Command | Command;Command
+ * Command =: Expression | ScalarOperator Expression | ScalarOperator NodeAction Expression
  * Expression =: number | number Dice | Command
- * Dice =: DiceOperator Number(faces)
- * DiceOperator =: D
+ * Dice =: DiceOperator Number(faces) | DiceOperator List
+ * List =: [Word,Number,',']+
+ * NodeAction =: @
+ * DiceOperator =: [D,L]
  * ScalarOperator =: [x,-,*,x,/]
  * number =: [0-9]+
+ * Word =: [A-z]+
  *
  */
 
@@ -64,13 +68,12 @@ public:
      * @brief The DiceSymbol enum
      */
     enum NodeAction {JumpBackward};
-
-
-
     /**
      * @brief The OptionOperator enum gathering all options  availables for result.
      */
     enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd};
+
+    enum CommandOperator {};
 
     /**
      * @brief DiceParser default constructor
@@ -95,9 +98,16 @@ public:
      * @brief displayResult
      */
     QString displayResult();
-
+    /**
+     * @brief readExpression
+     * @param str
+     * @param node
+     * @return
+     */
     bool readExpression(QString& str,ExecutionNode* & node);
-
+    /**
+     * @brief displayDotTree
+     */
     void displayDotTree();
 private:
 

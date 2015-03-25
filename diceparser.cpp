@@ -63,7 +63,7 @@ DiceParser::DiceParser()
 
     m_aliasMap = new QMap<QString,QString>;
     m_aliasMap->insert("l5r","D10k");
-    m_aliasMap->insert("l5R","D10e10k");
+    m_aliasMap->insert("l5R","D10K");
     m_aliasMap->insert("nwod","D10e10c[>7]");
     m_aliasMap->insert("nwod","D10e10c[>7]");
 
@@ -72,8 +72,8 @@ DiceParser::DiceParser()
 
 
 	m_commandList = new QStringList();
-    m_commandList->append("help");
-	m_commandList->append("la");
+    m_commandList->append(tr("help"));
+    m_commandList->append(tr("la"));
 
 }
 
