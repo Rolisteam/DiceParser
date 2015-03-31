@@ -1,31 +1,31 @@
 HEADERS += \
-    node/dicerollernode.h \
-    node/executionnode.h \
-    node/rerolldicenode.h \
-    node/startingnode.h \
-    node/scalaroperatornode.h \
-    node/numbernode.h \
-    node/sortresult.h \
-    node/keepdiceexecnode.h \
-    node/countexecutenode.h \
-    node/explosedicenode.h \
-    node/parenthesesnode.h \
-    node/helpnode.h \
+    $$PWD/dicerollernode.h \
+    $$PWD/executionnode.h \
+    $$PWD/rerolldicenode.h \
+    $$PWD/startingnode.h \
+    $$PWD/scalaroperatornode.h \
+    $$PWD/numbernode.h \
+    $$PWD/sortresult.h \
+    $$PWD/keepdiceexecnode.h \
+    $$PWD/countexecutenode.h \
+    $$PWD/explosedicenode.h \
+    $$PWD/parenthesesnode.h \
+    $$PWD/helpnode.h \
     $$PWD/jumpbackwardnode.h \
-    node/listsetrollnode.h
+    $$PWD/listsetrollnode.h
 
 SOURCES += \
-    node/dicerollernode.cpp \
-    node/executionnode.cpp \
-    node/startingnode.cpp \
-    node/rerolldicenode.cpp \
-    node/scalaroperatornode.cpp \
-    node/numbernode.cpp \
-    node/sortresult.cpp \
-    node/keepdiceexecnode.cpp \
-    node/countexecutenode.cpp \
-    node/explosedicenode.cpp \
-    node/parenthesesnode.cpp \
-    node/helpnode.cpp \
+    $$PWD/dicerollernode.cpp \
+    $$PWD/executionnode.cpp \
+    $$PWD/startingnode.cpp \
+    $$PWD/rerolldicenode.cpp \
+    $$PWD/scalaroperatornode.cpp \
+    $$PWD/numbernode.cpp \
+    $$PWD/sortresult.cpp \
+    $$PWD/keepdiceexecnode.cpp \
+    $$PWD/countexecutenode.cpp \
+    $$PWD/explosedicenode.cpp \
+    $$PWD/parenthesesnode.cpp \
+    $$PWD/helpnode.cpp \
     $$PWD/jumpbackwardnode.cpp \
-    node/listsetrollnode.cpp
+    $$PWD/listsetrollnode.cpp

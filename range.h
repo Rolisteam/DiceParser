@@ -34,6 +34,7 @@ public:
     virtual qint64 hasValid(Die* b,bool recursive) const;
 
     virtual QString toString();
+    virtual quint8 getValidRangeSize(quint64 faces) const;
 
 private:
     qint64 m_start;

@@ -9,7 +9,7 @@
 class ExecutionNode
 {
 public:
-    enum ERROR_CODE {NO_ERROR,DIE_RESULT_EXPECTED,BAD_SYNTAXE};
+    enum ERROR_CODE {NO_ERROR,DIE_RESULT_EXPECTED,BAD_SYNTAXE,ENDLESS_LOOP_ERROR};
     /**
      * @brief ExecutionNode
      */

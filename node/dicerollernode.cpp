@@ -8,24 +8,24 @@
 #include <QTime>
 
 
-DiceRoller::DiceRoller(QMutex* mutex,DiceResult* diceResult,int faces,int count)
-    : m_mutex(mutex),m_sharedDiceResult(diceResult),m_faces(faces),m_diceCount(count)
-{
+//DiceRoller::DiceRoller(QMutex* mutex,DiceResult* diceResult,int faces,int count)
+//    : m_mutex(mutex),m_sharedDiceResult(diceResult),m_faces(faces),m_diceCount(count)
+//{
 
-}
+//}
 
-void DiceRoller::run()
-{
-    for(quint64 i=0; i < m_diceCount ; ++i)
-    {
-        Die* die = new Die();
-        die->setFaces(m_faces);
-        die->roll();
-        m_mutex->lock();
-        m_sharedDiceResult->insertResult(die);
-        m_mutex->unlock();
-    }
-}
+//void DiceRoller::run()
+//{
+//    for(quint64 i=0; i < m_diceCount ; ++i)
+//    {
+//        Die* die = new Die();
+//        die->setFaces(m_faces);
+//        die->roll();
+//        m_mutex->lock();
+//        m_sharedDiceResult->insertResult(die);
+//        m_mutex->unlock();
+//    }
+//}
 
 
 

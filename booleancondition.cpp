@@ -79,3 +79,19 @@ QString BooleanCondition::toString()
 {
     return QString("BooleanCondition_op_%1_value_%2").arg(m_operator).arg(m_value);
 }
+quint8 BooleanCondition::getValidRangeSize(quint64 faces) const
+{
+    switch (m_operator)
+    {
+    case Equal:
+        return 1;
+    case GreaterThan:
+        return faces-m_value;
+    case LesserThan:
+        return m_value-1;
+    case GreaterOrEqual:
+        return faces-(m_value-1);
+    case LesserOrEqual:
+        return m_value;
+    }
+}

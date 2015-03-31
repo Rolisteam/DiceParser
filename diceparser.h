@@ -33,6 +33,7 @@
 #include "booleancondition.h"
 #include "parsingtoolbox.h"
 
+class ExploseDiceNode;
 /**
  * @mainpage DiceParser
  *
@@ -95,10 +96,30 @@ public:
      * @brief displayResult
      */
     QString displayResult();
-
+    /**
+     * @brief readExpression
+     * @param str
+     * @param node
+     * @return
+     */
     bool readExpression(QString& str,ExecutionNode* & node);
-
+    /**
+     * @brief displayDotTree
+     */
     void displayDotTree();
+
+    qreal getLastIntegerResult();
+    qreal getSumOfDiceResult();
+
+    QString getLastDiceResult();
+
+    bool hasIntegerResultNotInFirst();
+    bool hasDiceResult();
+    QString getDiceCommand();
+    bool hasStringResult();
+    QString getStringResult();
+
+    QString humanReadableError();
 private:
 
     /**
@@ -147,7 +168,7 @@ private:
 	 * @return
 	 */
     DiceRollerNode* addRollDiceNode(qint64 faces,ExecutionNode*);
-
+    ExploseDiceNode* addExploseDiceNode(qint64 faces,ExecutionNode* previous);
 	/**
 	 * @brief readOperand
 	 * @param node
@@ -166,10 +187,23 @@ private:
 	 * @return
 	 */
 	QList<ExecutionNode::ERROR_CODE>  getErrorList();
-
+    /**
+     * @brief readInstructionOperator
+     * @param c
+     * @return
+     */
     bool readInstructionOperator(QChar c);
-
+    /**
+     * @brief readNode
+     * @param str
+     * @param node
+     * @return
+     */
     bool readNode(QString& str,ExecutionNode* & node);
+
+
+    ExecutionNode* getLeafNode();
+    bool hasResultOfType(Result::RESULT_TYPE,bool notthelast = false);
 
 
 private:
@@ -178,6 +212,8 @@ private:
     QMap<QString,NodeAction>* m_nodeActionMap;
     QMap<QString,QString>* m_aliasMap;
     QList<QString>* m_commandList;
+
+    QMap<ExecutionNode::ERROR_CODE,QString> m_errorMap;
 
 
     ExecutionNode* m_start;
