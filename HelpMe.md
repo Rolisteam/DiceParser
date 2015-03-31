@@ -137,7 +137,7 @@ Divide by 2 the result of 1 die.
 
 ## Roll two (or more) kind of dice at once.
 
-To make it, you have to separate all dice command by `;`
+To make it, you have to separate all dice commands by `;`
 
 > 1d10;1d6
 
@@ -165,7 +165,7 @@ This command means : roll 4 dice and they explose on 10.
 
 ### Range
 
-The range is defined as two bound. You have to use square brackets and the two bound are separated by `-`.
+The range is defined as two bounds. You have to use square brackets and the two bounds are separated by `-`.
 
 > 4d10c[8-10]
 
@@ -220,7 +220,20 @@ roll 1 die with 25 faces
 
 compute: 24
 
-> 100/28*3
+> 1L[sword,bow,knife,gun,shotgun]
 
+One of this word will be picked. 
+
+> 8D10c[Validator1]-@c[validator2]
+
+Roll 8 dice with 10 faces then it counts how many dice respect the condition Validator1 and substract the number of dice which respect the validator2 and display the number (See Validator for more details about syntax)
+
+> 8D10c[>=6]-@c[=1]
+
+Old World in darkness system.
+
+> 8D10c[>=7]+@c[=10]
+
+Exalted 2nd edition system. 
 
 
