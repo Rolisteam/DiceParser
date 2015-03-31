@@ -83,8 +83,6 @@ int main(int argc, char *argv[])
             commands << QString::fromLatin1(argv[i]);
         }
     }
-
-
     foreach(QString cmd, commands)
     {
         if(myParser->parseLine(cmd))

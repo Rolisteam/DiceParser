@@ -72,8 +72,8 @@ DiceParser::DiceParser()
 
 
 	m_commandList = new QStringList();
-    m_commandList->append(tr("help"));
-    m_commandList->append(tr("la"));
+    m_commandList->append(QObject::tr("help"));
+    m_commandList->append(QObject::tr("la"));
 
 }
 
