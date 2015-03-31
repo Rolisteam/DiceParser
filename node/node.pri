@@ -13,6 +13,7 @@ HEADERS += \
     $$PWD/helpnode.h \
     $$PWD/jumpbackwardnode.h \
     $$PWD/listsetrollnode.h
+    $$PWD/listaliasnode.h
 
 SOURCES += \
     $$PWD/dicerollernode.cpp \
@@ -29,3 +30,4 @@ SOURCES += \
     $$PWD/helpnode.cpp \
     $$PWD/jumpbackwardnode.cpp \
     $$PWD/listsetrollnode.cpp
+    $$PWD/listaliasnode.cpp

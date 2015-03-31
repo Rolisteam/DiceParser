@@ -39,8 +39,8 @@ int main(int argc, char *argv[])
 
     QStringList commands;
 
-    commands << "1L[cheminée,chocolat,épée,arc,chute de pierre]" ;
-            /*<< "10d10c[>=6]-@c[=1]"
+	commands << "1L[cheminée,chocolat,épée,arc,chute de pierre]"
+			<< "10d10c[>=6]-@c[=1]"
              << "10d10c[>=6]-@c[=1]-@c[=1]"
              << "10d10c[>6]+@c[=10]"
              << "1+1D10"
@@ -59,9 +59,11 @@ int main(int argc, char *argv[])
             << "10D10e10s"
             << "10D10s"
             << "15D10e10c[8-10]"
-            << "x"
+			<< "10d10e11"
             << "1D8+2D6+7"
             << "D25"
+			<< "D25+D10"
+			<< "D25;D10"
             << "8+8+8"
             << "1D20-88"
             << "100*1D20*2D6"
@@ -69,7 +71,9 @@ int main(int argc, char *argv[])
             << "100/8"
             << "100*3*8"
             << "help"
-            << "100*3*8";*/
+			<< "la"
+			<< "400000D20/400000"
+			<< "100*3*8";
 
     if(argc>1)
     {
@@ -79,8 +83,6 @@ int main(int argc, char *argv[])
             commands << QString::fromLatin1(argv[i]);
         }
     }
-
-
     foreach(QString cmd, commands)
     {
         if(myParser->parseLine(cmd))

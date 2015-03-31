@@ -37,6 +37,7 @@
 #include "node/helpnode.h"
 #include "node/jumpbackwardnode.h"
 #include "node/listsetrollnode.h"
+#include "node/listaliasnode.h"
 
 #define DEFAULT_FACES_NUMBER 10
 
@@ -62,7 +63,7 @@ DiceParser::DiceParser()
 
     m_aliasMap = new QMap<QString,QString>;
     m_aliasMap->insert("l5r","D10k");
-    m_aliasMap->insert("l5R","D10e10k");
+    m_aliasMap->insert("l5R","D10K");
     m_aliasMap->insert("nwod","D10e10c[>7]");
     m_aliasMap->insert("nwod","D10e10c[>7]");
 
@@ -70,8 +71,9 @@ DiceParser::DiceParser()
     m_nodeActionMap->insert("@",JumpBackward);
 
 
-    m_commandList = new QList<QString>();
-    m_commandList->append("help");
+	m_commandList = new QStringList();
+    m_commandList->append(QObject::tr("help"));
+    m_commandList->append(QObject::tr("la"));
 
 }
 
@@ -126,8 +128,6 @@ bool DiceParser::parseLine(QString str)
 
 bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
 {
-    //    int myNumber = 1;
-    //    bool hasReadNumber=false;
     ExecutionNode* operandNode=NULL;
     if(m_parsingToolbox->readOpenParentheses(str))
     {
@@ -196,13 +196,6 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
 }
 bool DiceParser::readNode(QString& str,ExecutionNode* & node)
 {
-    /*k			case JumpBackward:
-            {
-                JumpBackwardNode* jumpNode = new JumpBackwardNode();
-                previous->setNextNode(jumpNode);
-                node = jumpNode;
-                isFine=true;
-            }*/
      QString key= str.left(1);
     if(m_nodeActionMap->contains(key))
     {
@@ -231,7 +224,6 @@ QString DiceParser::displayResult()
         next = next->getNextNode();
         ++nodeCount;
     }
-//    qDebug() << "node count"<< nodeCount;
     //////////////////////////////////
     //
     //  Display
@@ -277,7 +269,6 @@ QString DiceParser::displayResult()
                             resulStr+=" [";
                             foreach(qint64 i, die->getListValue())
                             {
-
                                 resulStr+=QString("%1 ").arg(i);
                             }
                             resulStr.remove(resulStr.size()-1,1);
@@ -501,7 +492,6 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
             QStringList list;
             if(m_parsingToolbox->readList(str,list))
             {
-                qDebug() << list;
                 ListSetRollNode* lsrNode = new ListSetRollNode();
                 lsrNode->setListValue(list);
                 node = lsrNode;
@@ -532,7 +522,14 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
 {
     if(m_commandList->contains(str))
     {
-       node = new HelpNode();
+		if(str=="help")
+		{
+       		node = new HelpNode();
+		}
+		else if(str=="la")
+		{
+			node = new ListAliasNode(m_aliasMap);
+		}
        return true;
     }
     return false;
