@@ -204,7 +204,14 @@ bool ParsingToolBox::readAscending(QString& str)
 bool ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
 {
     DiceRollerNode* node = getDiceRollerNode(previous);
-    return (val->getValidRangeSize(node->getFaces())<node->getFaces());
+    if(NULL!=node)
+    {
+        return (val->getValidRangeSize(node->getFaces())<node->getFaces());
+    }
+    else
+    {
+        return true;
+    }
 }
 DiceRollerNode* ParsingToolBox::getDiceRollerNode(ExecutionNode* previous)
 {

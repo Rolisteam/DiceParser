@@ -42,6 +42,7 @@ HEADERS += \
     $$PWD/node/parenthesesnode.h \
     $$PWD/node/helpnode.h \
     $$PWD/node/jumpbackwardnode.h \
+    $$PWD/node/listaliasnode.h \
     $$PWD/node/listsetrollnode.h
 
 SOURCES += \
@@ -58,6 +59,7 @@ SOURCES += \
     $$PWD/node/parenthesesnode.cpp \
     $$PWD/node/helpnode.cpp \
     $$PWD/node/jumpbackwardnode.cpp \
+    $$PWD/node/listaliasnode.cpp \
     $$PWD/node/listsetrollnode.cpp
 
 

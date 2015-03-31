@@ -77,7 +77,26 @@ void BooleanCondition::setValue(qint64 v)
 }
 QString BooleanCondition::toString()
 {
-    return QString("BooleanCondition_op_%1_value_%2").arg(m_operator).arg(m_value);
+    QString str="";
+    switch (m_operator)
+    {
+    case Equal:
+        str.append("=");
+        break;
+    case GreaterThan:
+        str.append(">");
+        break;
+    case LesserThan:
+        str.append("<");
+        break;
+    case GreaterOrEqual:
+        str.append(">=");
+        break;
+    case LesserOrEqual:
+        str.append("<=");
+        break;
+    }
+    return QString("[%1%2]").arg(str).arg(m_value);
 }
 quint8 BooleanCondition::getValidRangeSize(quint64 faces) const
 {

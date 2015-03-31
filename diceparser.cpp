@@ -100,6 +100,7 @@ QString DiceParser::convertAlias(QString str)
 
 bool DiceParser::parseLine(QString str)
 {
+    m_errorMap.clear();
     m_command = str;
     m_start = new StartingNode();
     ExecutionNode* newNode = NULL;
@@ -108,7 +109,7 @@ bool DiceParser::parseLine(QString str)
 	str = convertAlias(str);
     bool keepParsing = readExpression(str,newNode);
 
-    while(keepParsing)
+    if(keepParsing)
     {
         m_current->setNextNode(newNode);
         m_current = getLatestNode(m_current);
@@ -119,10 +120,16 @@ bool DiceParser::parseLine(QString str)
 
             m_current = getLatestNode(m_current);
         }
-        return true;
-
     }
-    return false;
+
+    if(m_errorMap.isEmpty())
+    {
+      return true;
+    }
+    else
+    {
+        return false;
+    }
 
 }
 
@@ -785,9 +792,9 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                 Validator* validator = m_parsingToolbox->readValidator(str);
                 if(NULL!=validator)
                 {
-                    if(m_parsingToolbox->isValidValidator(previous,validator))
+                    if(!m_parsingToolbox->isValidValidator(previous,validator))
                     {
-                        m_errorMap.insert(ExecutionNode::ENDLESS_LOOP_ERROR,tr("this condition introduce an endless loop: %1. Please, change it").arg(validator->toString()))
+                        m_errorMap.insert(ExecutionNode::ENDLESS_LOOP_ERROR,QObject::tr("This condition %1 introduces an endless loop. Please, change it").arg(validator->toString()));
                     }
                     ExploseDiceNode* explosedNode = new ExploseDiceNode();
                     explosedNode->setValidator(validator);
@@ -819,6 +826,7 @@ QString DiceParser::humanReadableError()
         str.append(i.value());
         str.append("\n");
     }
+    return str;
 }
 
 bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
