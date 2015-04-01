@@ -3,6 +3,7 @@
 
 JumpBackwardNode::JumpBackwardNode()
 {
+    m_previousNode=NULL;
     m_diceResult =new DiceResult();
     m_result = m_diceResult;
 }
