@@ -52,5 +52,5 @@ void Result::generateDotTree(QString& s)
 }
 QString Result::toString()
 {
-    QString();
+    return QString();
 }
