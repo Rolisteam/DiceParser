@@ -54,5 +54,10 @@ qint64 Range::hasValid(Die* m,bool recursive) const
 }
 QString Range::toString()
 {
-    return QString("Range_%1_%2").arg(m_start).arg(m_end);
+    return QString("[%1-%2]").arg(m_start).arg(m_end);
+}
+quint8 Range::getValidRangeSize(quint64 faces) const
+{
+    Q_UNUSED(faces);
+    return m_end-m_start;
 }

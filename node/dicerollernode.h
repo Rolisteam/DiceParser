@@ -7,17 +7,17 @@
 
 #include "executionnode.h"
 #include "result/diceresult.h"
-class DiceRoller : public QRunnable
-{
-public:
-    DiceRoller(QMutex* mutex,DiceResult* diceResult,int faces,int count);
-    virtual void run ();
-private:
-    QMutex* m_mutex;
-    DiceResult* m_sharedDiceResult;
-    int m_faces;
-    quint64 m_diceCount;
-};
+//class DiceRoller : public QRunnable
+//{
+//public:
+//    DiceRoller(QMutex* mutex,DiceResult* diceResult,int faces,int count);
+//    virtual void run ();
+//private:
+//    QMutex* m_mutex;
+//    DiceResult* m_sharedDiceResult;
+//    int m_faces;
+//    quint64 m_diceCount;
+//};
 
 /**
  * @brief The DiceRollerNode class

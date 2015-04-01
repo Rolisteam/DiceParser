@@ -33,6 +33,7 @@
 #include "booleancondition.h"
 #include "parsingtoolbox.h"
 
+class ExploseDiceNode;
 /**
  * @mainpage DiceParser
  *
@@ -109,6 +110,51 @@ public:
      * @brief displayDotTree
      */
     void displayDotTree();
+    /**
+     * @brief getLastIntegerResult
+     * @return
+     */
+    qreal getLastIntegerResult();
+    /**
+     * @brief getSumOfDiceResult
+     * @return
+     */
+    qreal getSumOfDiceResult();
+    /**
+     * @brief getLastDiceResult
+     * @return
+     */
+    QString getLastDiceResult();
+    /**
+     * @brief hasIntegerResultNotInFirst
+     * @return
+     */
+    bool hasIntegerResultNotInFirst();
+    /**
+     * @brief hasDiceResult
+     * @return
+     */
+    bool hasDiceResult();
+    /**
+     * @brief getDiceCommand
+     * @return
+     */
+    QString getDiceCommand();
+    /**
+     * @brief hasStringResult
+     * @return
+     */
+    bool hasStringResult();
+    /**
+     * @brief getStringResult
+     * @return
+     */
+    QString getStringResult();
+    /**
+     * @brief humanReadableError
+     * @return
+     */
+    QString humanReadableError();
 private:
 
     /**
@@ -157,7 +203,13 @@ private:
 	 * @return
 	 */
     DiceRollerNode* addRollDiceNode(qint64 faces,ExecutionNode*);
-
+    /**
+     * @brief addExploseDiceNode
+     * @param faces
+     * @param previous
+     * @return
+     */
+    ExploseDiceNode* addExploseDiceNode(qint64 faces,ExecutionNode* previous);
 	/**
 	 * @brief readOperand
 	 * @param node
@@ -176,10 +228,23 @@ private:
 	 * @return
 	 */
 	QList<ExecutionNode::ERROR_CODE>  getErrorList();
-
+    /**
+     * @brief readInstructionOperator
+     * @param c
+     * @return
+     */
     bool readInstructionOperator(QChar c);
-
+    /**
+     * @brief readNode
+     * @param str
+     * @param node
+     * @return
+     */
     bool readNode(QString& str,ExecutionNode* & node);
+
+
+    ExecutionNode* getLeafNode();
+    bool hasResultOfType(Result::RESULT_TYPE,bool notthelast = false);
 
 
 private:
@@ -188,6 +253,8 @@ private:
     QMap<QString,NodeAction>* m_nodeActionMap;
     QMap<QString,QString>* m_aliasMap;
 	QStringList* m_commandList;
+
+    QMap<ExecutionNode::ERROR_CODE,QString> m_errorMap;
 
 
     ExecutionNode* m_start;

@@ -37,6 +37,8 @@ public:
     void setValue(qint64);
     QString toString();
 
+    virtual quint8 getValidRangeSize(quint64 faces) const;
+
 private:
     LogicOperator m_operator;
     qint64 m_value;

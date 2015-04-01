@@ -72,9 +72,6 @@ void SortResultNode::run(ExecutionNode* node)
             }
 
         }
-
-
-
         m_diceResult->setResultList(diceList2);
         if(NULL!=m_nextNode)
         {

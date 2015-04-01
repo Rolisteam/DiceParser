@@ -100,6 +100,7 @@ QString DiceParser::convertAlias(QString str)
 
 bool DiceParser::parseLine(QString str)
 {
+    m_errorMap.clear();
     m_command = str;
     m_start = new StartingNode();
     ExecutionNode* newNode = NULL;
@@ -108,7 +109,7 @@ bool DiceParser::parseLine(QString str)
 	str = convertAlias(str);
     bool keepParsing = readExpression(str,newNode);
 
-    while(keepParsing)
+    if(keepParsing)
     {
         m_current->setNextNode(newNode);
         m_current = getLatestNode(m_current);
@@ -119,10 +120,16 @@ bool DiceParser::parseLine(QString str)
 
             m_current = getLatestNode(m_current);
         }
-        return true;
-
     }
-    return false;
+
+    if(m_errorMap.isEmpty())
+    {
+      return true;
+    }
+    else
+    {
+        return false;
+    }
 
 }
 
@@ -232,24 +239,24 @@ QString DiceParser::displayResult()
 
     QString str;
     QTextStream stream(&str);
-    Result* myResult=next->getResult();
+    Result* result=next->getResult();
 
-    QString totalValue("you get %1 ;");
+    QString totalValue("you got %1 ;");
     QString dieValue("D%1 : {%2} ");
 
     bool scalarDone=false;
-    while(NULL!=myResult)
+    while(NULL!=result)
     {
         ++resulCount;
-        if((myResult->hasResultOfType(Result::SCALAR))&&(!scalarDone))
+        if((result->hasResultOfType(Result::SCALAR))&&(!scalarDone))
         {
-            stream << totalValue.arg(myResult->getResult(Result::SCALAR).toReal()) << endl; //.arg(m_command)
+            stream << totalValue.arg(result->getResult(Result::SCALAR).toReal()) << endl; //.arg(m_command)
             scalarDone=true;
         }
-        else if(myResult->hasResultOfType(Result::DICE_LIST))
+        else if(result->hasResultOfType(Result::DICE_LIST))
         {
 
-            DiceResult* myDiceResult = dynamic_cast<DiceResult*>(myResult);
+            DiceResult* myDiceResult = dynamic_cast<DiceResult*>(result);
             if(NULL!=myDiceResult)
             {
 
@@ -286,12 +293,12 @@ QString DiceParser::displayResult()
 
             }
         }
-        else if(myResult->hasResultOfType(Result::STRING))
+        else if(result->hasResultOfType(Result::STRING))
         {
-           stream << myResult->getResult(Result::STRING).toString();
+           stream << result->getResult(Result::STRING).toString();
         }
 
-        myResult = myResult->getPrevious();
+        result = result->getPrevious();
     }
 
     QTextStream out(stdout);
@@ -303,8 +310,164 @@ QString DiceParser::displayResult()
 
 //    qDebug() << "result count:" << resulCount;
 }
+qreal DiceParser::getLastIntegerResult()
+{
+    ExecutionNode* next = getLeafNode();
+    Result* result=next->getResult();
+    qreal resultValue;
+    bool scalarDone = false;
+    while((result!=NULL)&&(!scalarDone))
+    {
+        if(result->hasResultOfType(Result::SCALAR))
+        {
+            resultValue = result->getResult(Result::SCALAR).toReal();
+            scalarDone=true;
+        }
+        result=result->getPrevious();
+    }
+    return resultValue;
+}
+QString DiceParser::getStringResult()
+{
+    ExecutionNode* next = getLeafNode();
+    QString str;
+
+    Result* result=next->getResult();
+    bool found = false;
+    while((NULL!=result) && (!found) )
+    {
+        if(result->hasResultOfType(Result::STRING))
+        {
+           str = result->getResult(Result::STRING).toString();
+           found = true;
+        }
+
+        result = result->getPrevious();
+    }
+    return str;
+}
+QString DiceParser::getLastDiceResult()
+{
+    ExecutionNode* next = getLeafNode();
+    QString str;
+    QTextStream stream(&str);
+    Result* result=next->getResult();
+    QString dieValue("D%1 : {%2} ");
+    while(NULL!=result)
+    {
+        if(result->hasResultOfType(Result::DICE_LIST))
+        {
+
+            DiceResult* myDiceResult = dynamic_cast<DiceResult*>(result);
+            if(NULL!=myDiceResult)
+            {
+
+                QString resulStr;
+                quint64 face=0;
+                foreach(Die* die, myDiceResult->getResultList())
+                {
+                    if(!die->hasBeenDisplayed())
+                    {
+                        resulStr+=QString("%1").arg(die->getValue());
+                        die->displayed();
+                        face = die->getFaces();
 
 
+                        if(die->hasChildrenValue())
+                        {
+                            resulStr+=" [";
+                            foreach(qint64 i, die->getListValue())
+                            {
+
+                                resulStr+=QString("%1,").arg(i);
+                            }
+                            resulStr.remove(resulStr.size()-1,1);
+                            resulStr+="]";
+                        }
+                        resulStr+=", ";
+                    }
+                }
+                resulStr.remove(resulStr.size()-2,2);
+
+                if(!resulStr.isEmpty())
+                {
+                    stream << dieValue.arg(face).arg(resulStr);
+                }
+            }
+        }
+
+        result = result->getPrevious();
+    }
+
+    return str.simplified();
+}
+QString DiceParser::getDiceCommand()
+{
+    return m_command;
+}
+
+bool DiceParser::hasIntegerResultNotInFirst()
+{
+    return hasResultOfType(Result::SCALAR,true);
+}
+
+bool DiceParser::hasDiceResult()
+{
+    return hasResultOfType(Result::DICE_LIST);
+}
+bool DiceParser::hasStringResult()
+{
+    return hasResultOfType(Result::STRING);
+}
+bool DiceParser::hasResultOfType(Result::RESULT_TYPE type, bool notthelast)
+{
+    ExecutionNode* next = getLeafNode();
+    Result* result=next->getResult();
+    bool scalarDone = false;
+    while((result!=NULL)&&(!scalarDone))
+    {
+        if(result->hasResultOfType(type) && ((!notthelast)||(notthelast && (NULL!=result->getPrevious()))))
+        {
+            scalarDone=true;
+        }
+        result=result->getPrevious();
+    }
+    return scalarDone;
+}
+qreal DiceParser::getSumOfDiceResult()
+{
+    ExecutionNode* next = getLeafNode();
+    qreal resultValue=0;
+    Result* result=next->getResult();
+    bool found = false;
+    while((NULL!=result)&&(!found))
+    {
+        if(result->hasResultOfType(Result::DICE_LIST))
+        {
+            DiceResult* myDiceResult = dynamic_cast<DiceResult*>(result);
+            if(NULL!=myDiceResult)
+            {
+                foreach(Die* die, myDiceResult->getResultList())
+                {
+                    resultValue+=die->getValue();
+                }
+                found = true;
+            }
+        }
+        result = result->getPrevious();
+    }
+    return resultValue;
+}
+
+ExecutionNode* DiceParser::getLeafNode()
+{
+    ExecutionNode* next = m_start;
+    while(NULL != next->getNextNode() )
+    {
+        next = next->getNextNode();
+    }
+    return next;
+}
 
 bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
 {
@@ -496,11 +659,19 @@ DiceRollerNode* DiceParser::addRollDiceNode(qint64 faces,ExecutionNode* previous
     previous->setNextNode(mydiceRoller);
     return mydiceRoller;
 }
-
+ExploseDiceNode* DiceParser::addExploseDiceNode(qint64 value,ExecutionNode* previous)
+{
+    ExploseDiceNode* exploseDiceNode= new ExploseDiceNode();
+    BooleanCondition* condition = new BooleanCondition();
+    condition->setValue(value);
+    condition->setOperator(BooleanCondition::Equal);
+    m_parsingToolbox->isValidValidator(previous,condition);
+    exploseDiceNode->setValidator(condition);
+    previous->setNextNode(exploseDiceNode);
+    return exploseDiceNode;
+}
 bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
 {
-
-
     if(str.isEmpty())
     {
         return false;
@@ -508,8 +679,6 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
 
     ExecutionNode* node = NULL;
     bool isFine=false;
-
-
 
     for(int i = 0; ((i<m_OptionOp->keys().size())&&(!isFine));++i )
     {
@@ -525,15 +694,14 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
             case Keep:
             {
                 int myNumber=0;
+                bool ascending = m_parsingToolbox->readAscending(str);
                 if(m_parsingToolbox->readNumber(str,myNumber))
                 {
                     if(!hasDice)
                     {
                         previous = addRollDiceNode(10,previous);
                     }
-
-
-                    node = m_parsingToolbox->addSort(previous,false);
+                    node = m_parsingToolbox->addSort(previous,ascending);
 
                     KeepDiceExecNode* nodeK = new KeepDiceExecNode();
                     nodeK->setDiceKeepNumber(myNumber);
@@ -548,15 +716,18 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
             case KeepAndExplose:
             {
                 int myNumber=0;
+                bool ascending = m_parsingToolbox->readAscending(str);
                 if(m_parsingToolbox->readNumber(str,myNumber))
                 {
                     if(!hasDice)
                     {
                         previous = addRollDiceNode(10,previous);
                     }
+                    DiceRollerNode* nodeTmp = dynamic_cast<DiceRollerNode*>(previous);
 
+                    previous = addExploseDiceNode(nodeTmp->getFaces(),previous);
 
-                    node = m_parsingToolbox->addSort(previous,false);
+                    node = m_parsingToolbox->addSort(previous,ascending);
 
                     KeepDiceExecNode* nodeK = new KeepDiceExecNode();
                     nodeK->setDiceKeepNumber(myNumber);
@@ -568,10 +739,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                 }
             }
                 break;
-                break;
             case Sort:
             {
-                node = m_parsingToolbox->addSort(previous,false);
+                bool ascending = m_parsingToolbox->readAscending(str);
+                node = m_parsingToolbox->addSort(previous,ascending);
 
                 isFine = true;
             }
@@ -581,6 +752,9 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                 Validator* validator = m_parsingToolbox->readValidator(str);
                 if(NULL!=validator)
                 {
+                    /// @todo display warning here.
+                    bool b = m_parsingToolbox->isValidValidator(previous,validator);
+
                     CountExecuteNode* countNode = new CountExecuteNode();
                     countNode->setValidator(validator);
 
@@ -596,6 +770,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                 Validator* validator = m_parsingToolbox->readValidator(str);
                 if(NULL!=validator)
                 {
+                    /// @todo display warning here.
+                    bool b = m_parsingToolbox->isValidValidator(previous,validator);
                     RerollDiceNode* rerollNode = new RerollDiceNode();
                     if(m_OptionOp->value(tmp)==RerollAndAdd)
                     {
@@ -616,11 +792,16 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                 Validator* validator = m_parsingToolbox->readValidator(str);
                 if(NULL!=validator)
                 {
+                    if(!m_parsingToolbox->isValidValidator(previous,validator))
+                    {
+                        m_errorMap.insert(ExecutionNode::ENDLESS_LOOP_ERROR,QObject::tr("This condition %1 introduces an endless loop. Please, change it").arg(validator->toString()));
+                    }
                     ExploseDiceNode* explosedNode = new ExploseDiceNode();
                     explosedNode->setValidator(validator);
                     previous->setNextNode(explosedNode);
                     node = explosedNode;
                     isFine = true;
+
                 }
             }
 
@@ -634,6 +815,18 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
 QList<ExecutionNode::ERROR_CODE>  DiceParser::getErrorList()
 {
 	return m_start->getErrorList();
+}
+QString DiceParser::humanReadableError()
+{
+    QMapIterator<ExecutionNode::ERROR_CODE,QString> i(m_errorMap);
+    QString str="";
+    while (i.hasNext())
+    {
+        i.next();
+        str.append(i.value());
+        str.append("\n");
+    }
+    return str;
 }
 
 bool DiceParser::readOperand(QString& str,ExecutionNode* & node)

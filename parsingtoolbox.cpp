@@ -186,3 +186,42 @@ bool ParsingToolBox::readList(QString& str,QStringList& list)
     }
     return false;
 }
+bool ParsingToolBox::readAscending(QString& str)
+{
+    if(str.isEmpty())
+    {
+        return false;
+    }
+    else if(str.at(0)=='l')
+    {
+        str=str.remove(0,1);
+        return true;
+    }
+    return false;
+
+
+}
+bool ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
+{
+    DiceRollerNode* node = getDiceRollerNode(previous);
+    if(NULL!=node)
+    {
+        return (val->getValidRangeSize(node->getFaces())<node->getFaces());
+    }
+    else
+    {
+        return true;
+    }
+}
+DiceRollerNode* ParsingToolBox::getDiceRollerNode(ExecutionNode* previous)
+{
+    while(NULL!=previous)
+    {
+        DiceRollerNode* node = dynamic_cast<DiceRollerNode*>(previous);
+        if(NULL!=node)
+        {
+            return node;
+        }
+        previous = previous->getPreviousNode();
+    }
+}

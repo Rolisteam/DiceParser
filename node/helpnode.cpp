@@ -30,7 +30,7 @@ void HelpNode::run(ExecutionNode* previous)
 }
 QString HelpNode::toString()const
 {
-    return QObject::tr("Rolisteam Dice Parser: Full documentation at: https://github.com/obiwankennedy/DiceParser/blob/master/HelpMe.md\n");
+    return QObject::tr("Rolisteam Dice Parser: Full documentation at: <a href=\"https://github.com/obiwankennedy/DiceParser/blob/master/HelpMe.md\">https://github.com/obiwankennedy/DiceParser/blob/master/HelpMe.md</a> \n");
 }
 
 qint64 HelpNode::getPriority() const

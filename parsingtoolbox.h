@@ -25,6 +25,7 @@
 #include <QMap>
 
 #include "node/executionnode.h"
+#include "node/dicerollernode.h"
 #include "booleancondition.h"
 #include "range.h"
 
@@ -42,6 +43,12 @@ public:
 	 * @return
 	 */
     ExecutionNode* addSort(ExecutionNode* e,bool b);
+    /**
+     * @brief readAscending
+     * @param str
+     * @return
+     */
+    bool readAscending(QString& str);
 	/**
 	 * @brief readLogicOperator
 	 * @param str
@@ -86,6 +93,19 @@ public:
      * @return
      */
     bool readList(QString& str,QStringList& list);
+    /**
+     * @brief isValidValidator
+     * @param previous
+     * @param val
+     * @return
+     */
+    bool isValidValidator(ExecutionNode* previous, Validator* val);
+    /**
+     * @brief getDiceRollerNode
+     * @param previous
+     * @return
+     */
+    DiceRollerNode* getDiceRollerNode(ExecutionNode* previous);
 
 private:
         QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
