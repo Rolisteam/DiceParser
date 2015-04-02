@@ -504,6 +504,10 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
                 node = lsrNode;
                 return true;
             }
+            else
+            {
+                 m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("List is missing after the L operator. Please, add it (e.g : 1L[sword,spear,gun,arrow]"));
+            }
         }
 
     }
@@ -762,6 +766,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                     node = countNode;
                     isFine = true;
                 }
+                else
+                {
+                   m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Validator is missing after the c operator. Please, change it"));
+                }
             }
                 break;
             case Reroll:
@@ -784,6 +792,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
 
 
                 }
+                else
+                {
+                   m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Validator is missing after the %1 operator. Please, change it").arg(m_OptionOp->value(tmp)==Reroll?"r":"a"));
+                }
 
             }
                 break;
@@ -802,6 +814,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                     node = explosedNode;
                     isFine = true;
 
+                }
+                else
+                {
+                   m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Validator is missing after the e operator. Please, change it"));
                 }
             }
 
