@@ -257,6 +257,7 @@ private:
 	QStringList* m_commandList;
 
     QMap<ExecutionNode::ERROR_CODE,QString> m_errorMap;
+    QMap<ExecutionNode::ERROR_CODE,QString> m_warningMap;
 
 
     ExecutionNode* m_start;

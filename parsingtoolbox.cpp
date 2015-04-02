@@ -181,6 +181,7 @@ bool ParsingToolBox::readList(QString& str,QStringList& list)
         {
             QString liststr = str.left(pos);
             list = liststr.split(",");
+            str=str.remove(0,liststr.size()+1);
             return true;
         }
     }
