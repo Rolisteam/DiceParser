@@ -60,12 +60,11 @@ DiceParser::DiceParser()
     //m_OptionOp->insert(QObject::tr("@"),JumpBackward);
 
 
-
-    m_aliasMap = new QMap<QString,QString>;
-    m_aliasMap->insert("l5r","D10k");
-    m_aliasMap->insert("l5R","D10K");
-    m_aliasMap->insert("nwod","D10e10c[>7]");
-    m_aliasMap->insert("nwod","D10e10c[>7]");
+    m_aliasList = new QList<DiceAlias*>();
+    m_aliasList->append(new DiceAlias("l5r","D10k"));
+    m_aliasList->append(new DiceAlias("l5R","D10K"));
+    m_aliasList->append(new DiceAlias("nwod","D10e10c[>7]"));
+    m_aliasList->append(new DiceAlias("(.*)wod(.*)","\\1d10e[=10]c[>=\\2]-@c[=1]",false));
 
     m_nodeActionMap = new QMap<QString,NodeAction>();
     m_nodeActionMap->insert("@",JumpBackward);
@@ -88,14 +87,15 @@ ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
 }
 QString DiceParser::convertAlias(QString str)
 {
-	foreach(QString cmd, m_aliasMap->keys())
+    foreach(DiceAlias* cmd, *m_aliasList)
 	{
-		if(str.contains(cmd))
-		{
-			str.replace(cmd,m_aliasMap->value(cmd));
-		}
+        cmd->resolved(str);
 	}
 	return str;
+}
+QList<DiceAlias*>* DiceParser::getAliases()
+{
+    return m_aliasList;
 }
 
 bool DiceParser::parseLine(QString str)
@@ -539,7 +539,7 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
 		}
 		else if(str=="la")
 		{
-			node = new ListAliasNode(m_aliasMap);
+            node = new ListAliasNode(m_aliasList);
 		}
        return true;
     }

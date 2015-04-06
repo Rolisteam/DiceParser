@@ -3,12 +3,12 @@
 
 #include "executionnode.h"
 #include "result/stringresult.h"
-
+#include "dicealias.h"
 
 class ListAliasNode : public ExecutionNode
 {
 public:
-	ListAliasNode(QMap<QString,QString>* mapAlias);
+    ListAliasNode(QList<DiceAlias*>* mapAlias);
 	/**
 	  * @brief run
 	  * @param previous
@@ -27,7 +27,7 @@ public:
 	virtual qint64 getPriority() const;
 
 private:
-	QMap<QString,QString>* m_mapAlias;
+    QList<DiceAlias*>* m_aliasList;
 };
 
 #endif // LISTALIASNODE_H

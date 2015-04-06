@@ -32,6 +32,7 @@
 #include "range.h"
 #include "booleancondition.h"
 #include "parsingtoolbox.h"
+#include "dicealias.h"
 
 class ExploseDiceNode;
 /**
@@ -157,6 +158,7 @@ public:
      * @return
      */
     QString humanReadableError();
+    QList<DiceAlias*>* getAliases();
 private:
 
     /**
@@ -253,7 +255,7 @@ private:
     QMap<QString,DiceOperator>* m_mapDiceOp;
     QMap<QString,OptionOperator>* m_OptionOp;
     QMap<QString,NodeAction>* m_nodeActionMap;
-    QMap<QString,QString>* m_aliasMap;
+    QList<DiceAlias*>* m_aliasList;
 	QStringList* m_commandList;
 
     QMap<ExecutionNode::ERROR_CODE,QString> m_errorMap;
