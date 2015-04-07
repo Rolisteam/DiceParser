@@ -61,10 +61,10 @@ DiceParser::DiceParser()
 
 
     m_aliasList = new QList<DiceAlias*>();
-    m_aliasList->append(new DiceAlias("l5r","D10k"));
+    /*m_aliasList->append(new DiceAlias("l5r","D10k"));
     m_aliasList->append(new DiceAlias("l5R","D10K"));
     m_aliasList->append(new DiceAlias("nwod","D10e10c[>7]"));
-    m_aliasList->append(new DiceAlias("(.*)wod(.*)","\\1d10e[=10]c[>=\\2]-@c[=1]",false));
+    m_aliasList->append(new DiceAlias("(.*)wod(.*)","\\1d10e[=10]c[>=\\2]-@c[=1]",false));*/
 
     m_nodeActionMap = new QMap<QString,NodeAction>();
     m_nodeActionMap->insert("@",JumpBackward);
