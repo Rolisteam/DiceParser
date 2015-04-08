@@ -42,6 +42,7 @@
 #define DEFAULT_FACES_NUMBER 10
 
 DiceParser::DiceParser()
+	: m_start(NULL)
 {
     m_parsingToolbox = new ParsingToolBox();
 
@@ -75,6 +76,44 @@ DiceParser::DiceParser()
     m_commandList->append(QObject::tr("la"));
 
 }
+DiceParser::~DiceParser()
+{
+	if(NULL!=m_commandList)
+	{
+		delete m_commandList;
+		m_commandList = NULL;
+	}
+	if(NULL!=m_nodeActionMap)
+	{
+		delete m_nodeActionMap;
+		m_nodeActionMap = NULL;
+	}
+	if(NULL!=m_OptionOp)
+	{
+		delete m_OptionOp;
+		m_OptionOp = NULL;
+	}
+	if(NULL!=m_mapDiceOp)
+	{
+		delete m_mapDiceOp;
+		m_mapDiceOp = NULL;
+	}
+	if(NULL!=m_parsingToolbox)
+	{
+		delete m_parsingToolbox;
+		m_parsingToolbox = NULL;
+	}
+	if(NULL!=m_aliasList)
+	{
+		delete m_aliasList;
+		m_aliasList = NULL;
+	}
+	if(NULL!=m_start)
+	{
+		delete m_start;
+		m_start = NULL;
+	}
+}
 
 ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
 {
@@ -101,6 +140,11 @@ QList<DiceAlias*>* DiceParser::getAliases()
 bool DiceParser::parseLine(QString str)
 {
     m_errorMap.clear();
+	if(NULL!=m_start)
+	{
+		delete m_start;
+		m_start = NULL;
+	}
     m_command = str;
     m_start = new StartingNode();
     ExecutionNode* newNode = NULL;
@@ -599,6 +643,7 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
             node->setInternalNode(nodeExec);
             if(NULL==nodeExec)
             {
+				delete node;
                 return false;
             }
             if(node->getPriority()>=nodeExec->getPriority())
@@ -610,6 +655,10 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
 
             return true;
         }
+		else
+		{
+			delete node;
+		}
     }
     else if(readInstructionOperator(str[0]))
     {
@@ -851,10 +900,10 @@ bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
 
     if(m_parsingToolbox->readNumber(str,myNumber))
     {
-        NumberNode* myNumberNode = new NumberNode();
-        myNumberNode->setNumber(myNumber);
+		NumberNode* numberNode = new NumberNode();
+		numberNode->setNumber(myNumber);
 
-        node = myNumberNode;
+		node = numberNode;
         return true;
     }
         return false;

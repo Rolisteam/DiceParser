@@ -1,7 +1,7 @@
 #include "explosedicenode.h"
 
 ExploseDiceNode::ExploseDiceNode()
-    : m_diceResult(new DiceResult())
+	: m_diceResult(new DiceResult()),m_validator(NULL)
 {
     m_result = m_diceResult;
 }
@@ -32,6 +32,13 @@ void ExploseDiceNode::run(ExecutionNode* previous)
             }
         }
     }
+}
+ExploseDiceNode::~ExploseDiceNode()
+{
+	if(NULL!=m_validator)
+	{
+		delete m_validator;
+	}
 }
 void ExploseDiceNode::setValidator(Validator* val)
 {

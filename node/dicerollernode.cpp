@@ -33,11 +33,9 @@
 /// \brief DiceRollerNode::DiceRollerNode
 //////////////////////////////////////////////////
 DiceRollerNode::DiceRollerNode(quint64 faces)
-    : m_faces(faces),m_myDiceResult(new DiceResult())
+	: m_faces(faces),m_diceResult(new DiceResult())
 {
-    m_mutex=new QMutex();
-    m_result=m_myDiceResult;
-
+	m_result=m_diceResult;
 }
 void DiceRollerNode::run(ExecutionNode* previous)
 {
@@ -55,7 +53,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
                 Die* die = new Die();
                 die->setFaces(m_faces);
                 die->roll();
-                m_myDiceResult->insertResult(die);
+				m_diceResult->insertResult(die);
             }
             if(NULL!=m_nextNode)
             {

@@ -83,6 +83,10 @@ public:
      * @brief DiceParser default constructor
      */
     DiceParser();
+	/**
+	 * @brief ~DiceParser
+	 */
+	virtual ~DiceParser();
 
     /**
      * @brief parseLine, method to call for starting the dice roll. It will parse the command and run the execution tree.

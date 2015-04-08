@@ -12,6 +12,7 @@ class ListSetRollNode : public ExecutionNode
 {
 public:
     ListSetRollNode();
+	virtual ~ListSetRollNode();
     virtual void run(ExecutionNode* previous = NULL);
     virtual QString toString()const;
     virtual qint64 getPriority() const;

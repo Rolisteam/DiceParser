@@ -15,6 +15,14 @@ ScalarOperatorNode::ScalarOperatorNode()
 
     m_result = m_scalarResult;
 }
+ScalarOperatorNode::~ScalarOperatorNode()
+{
+	if(NULL!=m_internalNode)
+	{
+		delete m_internalNode;
+		m_internalNode = NULL;
+	}
+}
 
 void ScalarOperatorNode::run(ExecutionNode* previous)
 {
@@ -43,7 +51,7 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
                 m_internalNode->getResult()->setPrevious(previousResult);
             }
 
-            switch(m_myOperator)
+			switch(m_operator)
             {
                 case PLUS:
                     m_scalarResult->setValue(add(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
@@ -74,7 +82,7 @@ bool ScalarOperatorNode::setOperatorChar(QChar c)
 {
     if(m_scalarOperationList.contains(c))
     {
-        m_myOperator = m_scalarOperationList.value(c);
+		m_operator = m_scalarOperationList.value(c);
         return true;
     }
     return false;
@@ -110,10 +118,14 @@ QString ScalarOperatorNode::toString() const
 }
 qint64 ScalarOperatorNode::getPriority() const
 {
-    if((m_myOperator==PLUS)||(m_myOperator==MINUS))
+	if((m_operator==PLUS)||(m_operator==MINUS))
+	{
         return 1;
+	}
     else
+	{
         return 2;
+	}
 }
 void ScalarOperatorNode::generateDotTree(QString& s)
 {

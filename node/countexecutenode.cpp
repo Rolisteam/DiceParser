@@ -4,13 +4,20 @@
 
 
 CountExecuteNode::CountExecuteNode()
-    : m_scalarResult(new ScalarResult())
+	: m_scalarResult(new ScalarResult()),m_validator(NULL)
 {
     m_result = m_scalarResult;
 }
 void CountExecuteNode::setValidator(Validator* validator)
 {
     m_validator = validator;
+}
+CountExecuteNode::~CountExecuteNode()
+{
+	if(NULL!=m_validator)
+	{
+		delete m_validator;
+	}
 }
 
 void CountExecuteNode::run(ExecutionNode *previous)

@@ -39,7 +39,8 @@ int main(int argc, char *argv[])
 
     QStringList commands;
 
-	commands << "1L[cheminée,chocolat,épée,arc,chute de pierre]"
+	commands<< "10d10c[>6]+@c[=10]"
+			<< "1L[cheminée,chocolat,épée,arc,chute de pierre]"
 			<< "10d10c[>=6]-@c[=1]"
              << "10d10c[>=6]-@c[=1]-@c[=1]"
              << "10d10c[>6]+@c[=10]"
@@ -61,6 +62,7 @@ int main(int argc, char *argv[])
             << "15D10e10c[8-10]"
 			<< "10d10e11"
             << "1D8+2D6+7"
+			<< "100190D6666666s"
             << "D25"
 			<< "D25+D10"
 			<< "D25;D10"
@@ -73,7 +75,7 @@ int main(int argc, char *argv[])
             << "help"
 			<< "la"
 			<< "400000D20/400000"
-			<< "100*3*8";
+			<< "100*3*8";//
 
     if(argc>1)
     {
@@ -100,4 +102,6 @@ int main(int argc, char *argv[])
     main.show();
     return a.exec();
 #endif
+	delete myParser;
+	return 0;
 }

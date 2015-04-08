@@ -35,6 +35,10 @@ public:
      * @brief DiceResult
      */
     DiceResult();
+	/**
+	 * @brief ~DiceResult
+	 */
+	virtual ~DiceResult();
 
     /**
      * @brief getResultList

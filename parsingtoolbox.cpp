@@ -63,6 +63,14 @@ bool ParsingToolBox::readLogicOperator(QString& str,BooleanCondition::LogicOpera
 
     return false;
 }
+ParsingToolBox::~ParsingToolBox()
+{
+	if(NULL!=m_logicOp)
+	{
+		delete m_logicOp;
+		m_logicOp = NULL;
+	}
+}
 Validator* ParsingToolBox::readValidator(QString& str)
 {
     Validator* returnVal=NULL;
@@ -181,6 +189,7 @@ bool ParsingToolBox::readList(QString& str,QStringList& list)
         {
             QString liststr = str.left(pos);
             list = liststr.split(",");
+			str=str.remove(0,pos+1);
             return true;
         }
     }

@@ -13,6 +13,10 @@ public:
      * @brief StringResult
      */
     StringResult();
+	/**
+	 * @brief StringResult
+	 */
+	virtual ~StringResult();
     /**
      * @brief setText
      * @param text

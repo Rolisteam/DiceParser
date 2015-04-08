@@ -35,7 +35,14 @@
 class ParsingToolBox
 {
 public:
+	/**
+	 * @brief ParsingToolBox
+	 */
     ParsingToolBox();
+	/**
+	 * @brief ~ParsingToolBox
+	 */
+	virtual ~ParsingToolBox();
 	/**
 	 * @brief addSort
 	 * @param e
