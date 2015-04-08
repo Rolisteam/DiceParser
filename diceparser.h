@@ -158,7 +158,17 @@ public:
      * @return
      */
     QString humanReadableError();
+    /**
+     * @brief getAliases
+     * @return
+     */
     QList<DiceAlias*>* getAliases();
+    /**
+     * @brief DiceParser::convertAlias
+     * @param str
+     * @return
+     */
+    QString convertAlias(QString str);
 private:
 
     /**
@@ -220,12 +230,6 @@ private:
 	 * @return
 	 */
     bool readOperand(QString&,ExecutionNode* & node);
-	/**
-	 * @brief DiceParser::convertAlias
-	 * @param str
-	 * @return
-	 */
-	QString convertAlias(QString str);
 
 	/**
 	 * @brief getErrorList
@@ -246,8 +250,17 @@ private:
      */
     bool readNode(QString& str,ExecutionNode* & node);
 
-
+    /**
+     * @brief getLeafNode
+     * @return
+     */
     ExecutionNode* getLeafNode();
+
+    /**
+     * @brief hasResultOfType
+     * @param notthelast
+     * @return
+     */
     bool hasResultOfType(Result::RESULT_TYPE,bool notthelast = false);
 
 
