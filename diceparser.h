@@ -168,6 +168,10 @@ public:
      */
     QList<DiceAlias*>* getAliases();
     /**
+     * @brief insertAlias
+     */
+    void insertAlias(DiceAlias*, int);
+    /**
      * @brief DiceParser::convertAlias
      * @param str
      * @return

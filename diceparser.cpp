@@ -136,6 +136,13 @@ QList<DiceAlias*>* DiceParser::getAliases()
 {
     return m_aliasList;
 }
+void DiceParser::insertAlias(DiceAlias* dice, int i)
+{
+    if(i>m_aliasList->size())
+    {
+        m_aliasList->insert(i, dice);
+    }
+}
 
 bool DiceParser::parseLine(QString str)
 {
