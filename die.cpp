@@ -132,3 +132,12 @@ void Die::displayed()
 {
     m_displayStatus = true;
 }
+void Die::setHighlighted(bool a)
+{
+    m_highlighted = a;
+}
+
+bool Die::isHighlighted()
+{
+    return m_highlighted;
+}

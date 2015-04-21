@@ -400,10 +400,12 @@ QString DiceParser::getStringResult()
 QString DiceParser::getLastDiceResult()
 {
     ExecutionNode* next = getLeafNode();
-    QString str;
-    QTextStream stream(&str);
+   // QString str;
+   // QTextStream stream(&str);
     Result* result=next->getResult();
-    QString dieValue("D%1 : {%2} ");
+    QMap<int,QString> diceValues;
+    //QString dieValue("%2 (D%1)");
+    bool first=true;
     while(NULL!=result)
     {
         if(result->hasResultOfType(Result::DICE_LIST))
@@ -423,17 +425,16 @@ QString DiceParser::getLastDiceResult()
                         die->displayed();
                         face = die->getFaces();
 
-
                         if(die->hasChildrenValue())
                         {
-                            resulStr+=" [";
+                            QString childDice("");
                             foreach(qint64 i, die->getListValue())
                             {
 
-                                resulStr+=QString("%1,").arg(i);
+                                childDice+=QString("%1,").arg(i);
                             }
-                            resulStr.remove(resulStr.size()-1,1);
-                            resulStr+="]";
+                            childDice.remove(childDice.size()-1,1);
+                            resulStr+=QString("[%1]").arg(childDice);
                         }
                         resulStr+=", ";
                     }
@@ -442,7 +443,17 @@ QString DiceParser::getLastDiceResult()
 
                 if(!resulStr.isEmpty())
                 {
-                    stream << dieValue.arg(face).arg(resulStr);
+                    if(!diceValues.contains(face))
+                    {
+                        diceValues.insert(face,resulStr);
+                    }
+                    else
+                    {
+                        QString tmp = diceValues.value(face);
+                        tmp+=resulStr;
+                        diceValues.insert(face,tmp);
+                    }
+                    //stream << dieValue.arg(face).arg(resulStr);
                 }
             }
         }
@@ -450,7 +461,8 @@ QString DiceParser::getLastDiceResult()
         result = result->getPrevious();
     }
 
-    return str.simplified();
+    //return str.simplified();
+    return diceValues;
 }
 QString DiceParser::getDiceCommand()
 {
