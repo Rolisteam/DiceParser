@@ -32,25 +32,28 @@ void Range::setValue(qint64 s,qint64 e)
     m_end=e;
 }
 
-qint64 Range::hasValid(Die* m,bool recursive) const
+qint64 Range::hasValid(Die* m,bool recursive, bool unhighlight) const
 {
+    qint64 result = 0;
     if(recursive)
     {
-        qint64 i = 0;
         foreach(qint64 value, m->getListValue())
         {
             if((value>=m_start)&&(value<=m_end))
             {
-                ++i;
+                ++result;
             }
         }
-        return i;
     }
     else if((m->getLastRolledValue()>=m_start)&&(m->getLastRolledValue()<=m_end))
     {
-        return 1;
+        ++result;
     }
-    return 0;
+    if((unhighlight)&&(result==0))
+    {
+        m->setHighlighted(false);
+    }
+    return result;
 }
 QString Range::toString()
 {

@@ -31,7 +31,7 @@ public:
     Range();
     void setValue(qint64,qint64);
 
-    virtual qint64 hasValid(Die* b,bool recursive) const;
+    virtual qint64 hasValid(Die* b,bool recursive,bool unlight = false) const;
 
     virtual QString toString();
     virtual quint8 getValidRangeSize(quint64 faces) const;

@@ -25,7 +25,7 @@
 BooleanCondition::BooleanCondition()
 {
 }
-qint64 BooleanCondition::hasValid(Die* b,bool recursive) const
+qint64 BooleanCondition::hasValid(Die* b,bool recursive,bool unhighlight) const
 {
     QList<qint64> listValues;
     if(recursive)
@@ -40,7 +40,6 @@ qint64 BooleanCondition::hasValid(Die* b,bool recursive) const
     qint64 sum= 0;
     foreach(qint64 value, listValues)
     {
-
         switch(m_operator)
         {
             case Equal:
@@ -58,11 +57,12 @@ qint64 BooleanCondition::hasValid(Die* b,bool recursive) const
             case LesserOrEqual:
                 sum+= (value<=m_value)?1:0;
                 break;
-
-
         }
     }
-
+    if((unhighlight)&&(sum==0))
+    {
+        b->setHighlighted(false);
+    }
     return sum;
 }
 
