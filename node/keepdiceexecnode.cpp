@@ -26,6 +26,11 @@ m_previousNode = previous;
 
 
         diceList2 = diceList.mid(0,m_numberOfDice);
+        foreach(Die* tmp,diceList.mid(m_numberOfDice,-1))
+        {
+            tmp->setHighlighted(false);
+        }
+
         m_diceResult->setResultList(diceList2);
         if(NULL!=m_nextNode)
         {
