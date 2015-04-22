@@ -26,7 +26,7 @@
 #include <QDebug>
 
 Die::Die()
-    : m_hasValue(false),m_displayStatus(false)
+    : m_hasValue(false),m_displayStatus(false),m_highlighted(true)
 {
     uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
     qsrand(seed);
