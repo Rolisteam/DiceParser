@@ -34,6 +34,11 @@
 #include "parsingtoolbox.h"
 #include "dicealias.h"
 
+
+typedef QPair<QList<quint64>,bool> DiceAndHighlight;
+typedef QList<DiceAndHighlight > ListDiceResult;
+typedef QMap<int,ListDiceResult > ExportedDiceResult;
+
 class ExploseDiceNode;
 /**
  * @mainpage DiceParser
@@ -131,7 +136,7 @@ public:
      * @brief getLastDiceResult
      * @return
      */
-    QString getLastDiceResult();
+    void getLastDiceResult(ExportedDiceResult& diceValues);
     /**
      * @brief hasIntegerResultNotInFirst
      * @return

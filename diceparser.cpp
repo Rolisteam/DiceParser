@@ -392,77 +392,65 @@ QString DiceParser::getStringResult()
            str = result->getResult(Result::STRING).toString();
            found = true;
         }
-
         result = result->getPrevious();
     }
     return str;
 }
-QString DiceParser::getLastDiceResult()
+void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues)
 {
     ExecutionNode* next = getLeafNode();
-   // QString str;
-   // QTextStream stream(&str);
     Result* result=next->getResult();
-    QMap<int,QString> diceValues;
-    //QString dieValue("%2 (D%1)");
-    bool first=true;
+
     while(NULL!=result)
     {
         if(result->hasResultOfType(Result::DICE_LIST))
         {
 
-            DiceResult* myDiceResult = dynamic_cast<DiceResult*>(result);
-            if(NULL!=myDiceResult)
+            DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
+            if(NULL!=diceResult)
             {
-
-                QString resulStr;
+                bool  hasResult = false;
                 quint64 face=0;
-                foreach(Die* die, myDiceResult->getResultList())
+                ListDiceResult listpair;
+                foreach(Die* die, diceResult->getResultList())
                 {
                     if(!die->hasBeenDisplayed())
                     {
-                        resulStr+=QString("%1").arg(die->getValue());
+                        QList<quint64> valuesResult;
+                        hasResult=true;
+                        valuesResult.append(die->getValue());
                         die->displayed();
                         face = die->getFaces();
-
                         if(die->hasChildrenValue())
                         {
-                            QString childDice("");
                             foreach(qint64 i, die->getListValue())
                             {
-
-                                childDice+=QString("%1,").arg(i);
+                                valuesResult.append(i);
                             }
-                            childDice.remove(childDice.size()-1,1);
-                            resulStr+=QString("[%1]").arg(childDice);
                         }
-                        resulStr+=", ";
+                        QPair<QList<quint64>,bool> pair(valuesResult,die->isHighlighted());
+                        listpair.append(pair);
                     }
                 }
-                resulStr.remove(resulStr.size()-2,2);
-
-                if(!resulStr.isEmpty())
+                if(!listpair.isEmpty())
                 {
                     if(!diceValues.contains(face))
                     {
-                        diceValues.insert(face,resulStr);
+                        diceValues.insert(face,listpair);
                     }
                     else
                     {
-                        QString tmp = diceValues.value(face);
-                        tmp+=resulStr;
+                        ListDiceResult tmp = diceValues.value(face);
+                        tmp.append(listpair);
                         diceValues.insert(face,tmp);
                     }
-                    //stream << dieValue.arg(face).arg(resulStr);
+
                 }
             }
         }
 
         result = result->getPrevious();
     }
-
-    //return str.simplified();
-    return diceValues;
 }
 QString DiceParser::getDiceCommand()
 {
