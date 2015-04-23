@@ -915,12 +915,20 @@ bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
     }
         return false;
 }
-void DiceParser::displayDotTree()
+void DiceParser::writeDownDotTree(QString filepath)
 {
     QString str("digraph ExecutionTree {\n");
     m_start->generateDotTree(str);
     str.append("}");
 
-    qDebug()<< str;
+
+    /*QFile file(filepath);
+    if(file.open(QIODevice::WriteOnly))
+    {
+        QTextStream in(&file);
+        in << str;
+    }*/
+
+    //qDebug()<< str;
 
 }

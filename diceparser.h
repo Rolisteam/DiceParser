@@ -121,7 +121,7 @@ public:
     /**
      * @brief displayDotTree
      */
-    void displayDotTree();
+    void writeDownDotTree(QString filepath);
     /**
      * @brief getLastIntegerResult
      * @return
