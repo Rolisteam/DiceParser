@@ -18,8 +18,11 @@ TEMPLATE = app
 
 #CONFIG+= IRC
 #CONFIG+= GUI
-
-
+CONFIG+= CLI
+CLI {
+DEFINES += CLI
+include(cli/cli.pri)cd
+}
 IRC {
 include(irc/irc.pri)
 QT       += gui widgets

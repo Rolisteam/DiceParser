@@ -19,27 +19,100 @@
 * Free Software Foundation, Inc.,                                          *
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
-#ifdef HAVE_IRC
-#include <QApplication>
-#include "irc/mainwindow.h"
-#endif
 
 #include <QStringList>
 #include "diceparser.h"
+#include <QCommandLineParser>
+#include <QCommandLineOption>
+
+void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
+{
+    DiceParser* parser = new DiceParser();
+    if(parser->parseLine(cmd))
+    {
+        parser->Start();
+       //
+        if(treeFile.isEmpty())
+        {
+            parser->displayResult();
+        }
+        else
+        {
+            parser->writeDownDotTree();
+        }
+    }
+}
+
+
+
 
 int main(int argc, char *argv[])
 {
-    #ifdef HAVE_IRC
-     QApplication a(argc, argv);
-
-
-    MainWindow main;
-#endif
-    DiceParser* myParser = new DiceParser();
 
     QStringList commands;
+    QString cmd;
+    QString dotFile;
 
-	commands<< "10d10c[>6]+@c[=10]"
+    bool color=true;
+
+    QCommandLineParser optionParser;
+    QCommandLineOption color(QStringList() << "co"<< "color-off", tr("Disable color to highlight result"));
+    QCommandLineOption version(QStringList() << "v"<< "version", tr("Show the version and quit."));
+    QCommandLineOption reset(QStringList() << "reset-settings", tr("Erase the settings and use the default parameters"));
+    QCommandLineOption dotFile(QStringList() << "d"<<"dot-file", tr("Instead of rolling dice, generate the execution tree and write it in <dotfile>"),"dotfile");
+    QCommandLineOption translation(QStringList() << "t"<<"translation", QObject::tr("path to the translation file: <translationfile>"),"translationfile");
+    QCommandLineOption help(QStringList() << "h"<<"help", QObject::tr("Display this help"));
+
+    optionParser.addOption(color);
+    optionParser.addOption(version);
+    optionParser.addOption(reset);
+    optionParser.addOption(dotFile);
+    optionParser.addOption(translation);
+    optionParser.addOption(help);
+
+    for(int i=1;i<argc;++i)
+    {
+
+        commands << QString::fromLatin1(argv[i]);
+    }
+
+    optionParser.parse(commands);
+
+
+    if(optionParser.isSet(color))
+    {
+        return 0;
+    }
+    else if(optionParser.isSet(version))
+    {
+        return 0;
+    }
+    else if(optionParser.isSet(reset))
+    {
+        return 0;
+    }
+    else if(optionParser.isSet(dotFile))
+    {
+         dotFile = optionParser.value(dotFile);
+    }
+    else if(optionParser.isSet(translation))
+    {
+
+    }
+    else if(optionParser.isSet(help))
+    {
+
+        cmd = "help";
+    }
+
+
+
+    cmd = commands.first();
+
+
+    startDiceParsing(cmd,dotFile,color);
+
+    /*commands<< "10d10c[>6]+@c[=10]"
 			<< "1L[cheminée,chocolat,épée,arc,chute de pierre]"
 			<< "10d10c[>=6]-@c[=1]"
              << "10d10c[>=6]-@c[=1]-@c[=1]"
@@ -76,32 +149,9 @@ int main(int argc, char *argv[])
 			<< "la"
 			<< "400000D20/400000"
 			<< "100*3*8";//
+*/
 
-    if(argc>1)
-    {
-        for(int i=1;i<argc;++i)
-        {
 
-            commands << QString::fromLatin1(argv[i]);
-        }
-    }
-    foreach(QString cmd, commands)
-    {
-        if(myParser->parseLine(cmd))
-        {
-            myParser->Start();
-           // myParser->displayDotTree();
-            myParser->displayResult();
-        }
-		else
-		{
-			qDebug() << "echec";
-		}
-    }
-        #ifdef HAVE_IRC
-    main.show();
-    return a.exec();
-#endif
-	delete myParser;
+
 	return 0;
 }
