@@ -16,6 +16,7 @@ public:
      * @brief CountExecuteNode
      */
     CountExecuteNode();
+	virtual ~CountExecuteNode();
     /**
      * @brief run
      * @param previous

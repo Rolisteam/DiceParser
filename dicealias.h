@@ -19,26 +19,74 @@
 * Free Software Foundation, Inc.,                                          *
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
-#ifndef RANGE_H
-#define RANGE_H
+#ifndef DICEALIAS_H
+#define DICEALIAS_H
 
-#include <Qt>
-#include "validator.h"
-
-class Range : public Validator
+#include <QString>
+/**
+ * @brief The DiceAlias class
+ */
+class DiceAlias
 {
 public:
-    Range();
-    void setValue(qint64,qint64);
 
-    virtual qint64 hasValid(Die* b,bool recursive,bool unlight = false) const;
+    enum RESOLUTION_TYPE { REPLACE,REGEXP};
+    /**
+     * @brief DiceAlias
+     * @param cmd
+     * @param key
+     * @param isReplace
+     */
+    DiceAlias(QString cmd, QString key, bool isReplace = true);
+    /**
+     * @brief ~DiceAlias
+     */
+    virtual ~DiceAlias();
+    /**
+     * @brief resolved
+     * @param str
+     * @return
+     */
+    bool resolved(QString & str);
+    /**
+     * @brief setCommand
+     * @param key
+     */
+    void setCommand(QString key);
+    /**
+     * @brief setValue
+     * @param value
+     */
+    void setValue(QString value);
+    /**
+     * @brief setType
+     */
+    void setType(RESOLUTION_TYPE );
 
-    virtual QString toString();
-    virtual quint8 getValidRangeSize(quint64 faces) const;
-
+    /**
+     * @brief getCommand
+     * @return
+     */
+    QString getCommand();
+    /**
+     * @brief getValue
+     * @return
+     */
+    QString getValue();
+    /**
+     * @brief isReplace
+     * @return
+     */
+    bool isReplace();
+    /**
+     * @brief setReplace
+     */
+    void setReplace(bool);
 private:
-    qint64 m_start;
-    qint64 m_end;
+    QString m_command;
+    QString m_value;
+    RESOLUTION_TYPE m_type;
+
 };
 
-#endif // RANGE_H
+#endif // DICEALIAS_H

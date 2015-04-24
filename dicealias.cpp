@@ -19,26 +19,81 @@
 * Free Software Foundation, Inc.,                                          *
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
-#ifndef RANGE_H
-#define RANGE_H
+#include "dicealias.h"
+#include <QRegularExpression>
 
-#include <Qt>
-#include "validator.h"
-
-class Range : public Validator
+DiceAlias::DiceAlias(QString cmd, QString key, bool isReplace)
+    : m_command(cmd),m_value(key)
 {
-public:
-    Range();
-    void setValue(qint64,qint64);
+    if(isReplace)
+    {
+        m_type = REPLACE;
+    }
+    else
+    {
+        m_type = REGEXP;
+    }
+}
 
-    virtual qint64 hasValid(Die* b,bool recursive,bool unlight = false) const;
+DiceAlias::~DiceAlias()
+{
 
-    virtual QString toString();
-    virtual quint8 getValidRangeSize(quint64 faces) const;
+}
 
-private:
-    qint64 m_start;
-    qint64 m_end;
-};
+bool DiceAlias::resolved(QString & str)
+{
+    if((m_type == REPLACE)&&(str.contains(m_command)))
+    {
+       str.replace(m_command,m_value);
+       return true;
+    }
+    else if(m_type == REGEXP)
+    {
+        QRegularExpression  exp(m_command);
+        str.replace(exp,m_value);
+        return true;
+    }
+    return false;
+}
 
-#endif // RANGE_H
+void DiceAlias::setCommand(QString key)
+{
+    m_command = key;
+}
+
+void DiceAlias::setValue(QString value)
+{
+    m_value = value;
+}
+
+void DiceAlias::setType(RESOLUTION_TYPE type)
+{
+    m_type = type;
+}
+QString DiceAlias::getCommand()
+{
+    return m_command;
+}
+
+QString DiceAlias::getValue()
+{
+    return m_value;
+}
+
+bool DiceAlias::isReplace()
+{
+    return (m_type == REPLACE) ? true : false;
+}
+
+
+void DiceAlias::setReplace(bool b)
+{
+    if(b)
+    {
+        m_type= REPLACE;
+    }
+    else
+    {
+        m_type = REGEXP;
+    }
+}

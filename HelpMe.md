@@ -71,6 +71,8 @@ Dice explose if their value are at the die maximum, the option sorts the resulti
 
 The dice list is sorted in descending order.
 
+> 10d6sl
+Roll 6 dice at 6 faces and then sort them ascendingly
 ### Counter
 
 > 3D10c[Validator]
@@ -163,7 +165,6 @@ There are three kind of Validator:
 -Scalar
 -Range
 -Boolean expression
-
 
 Any operator which requires validator (such as `a,r,e,c') can use those three kind.
 

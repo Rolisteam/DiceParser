@@ -23,7 +23,7 @@
 #include <QDebug>
 #include <QStringList>
 #include <QObject>
-
+#include <QFile>
 
 #include "node/startingnode.h"
 #include "node/scalaroperatornode.h"
@@ -42,6 +42,7 @@
 #define DEFAULT_FACES_NUMBER 10
 
 DiceParser::DiceParser()
+	: m_start(NULL)
 {
     m_parsingToolbox = new ParsingToolBox();
 
@@ -60,12 +61,11 @@ DiceParser::DiceParser()
     //m_OptionOp->insert(QObject::tr("@"),JumpBackward);
 
 
-
-    m_aliasMap = new QMap<QString,QString>;
-    m_aliasMap->insert("l5r","D10k");
-    m_aliasMap->insert("l5R","D10K");
-    m_aliasMap->insert("nwod","D10e10c[>7]");
-    m_aliasMap->insert("nwod","D10e10c[>7]");
+    m_aliasList = new QList<DiceAlias*>();
+    /*m_aliasList->append(new DiceAlias("l5r","D10k"));
+    m_aliasList->append(new DiceAlias("l5R","D10K"));
+    m_aliasList->append(new DiceAlias("nwod","D10e10c[>7]"));
+    m_aliasList->append(new DiceAlias("(.*)wod(.*)","\\1d10e[=10]c[>=\\2]-@c[=1]",false));*/
 
     m_nodeActionMap = new QMap<QString,NodeAction>();
     m_nodeActionMap->insert("@",JumpBackward);
@@ -75,6 +75,44 @@ DiceParser::DiceParser()
     m_commandList->append(QObject::tr("help"));
     m_commandList->append(QObject::tr("la"));
 
+}
+DiceParser::~DiceParser()
+{
+	if(NULL!=m_commandList)
+	{
+		delete m_commandList;
+		m_commandList = NULL;
+	}
+	if(NULL!=m_nodeActionMap)
+	{
+		delete m_nodeActionMap;
+		m_nodeActionMap = NULL;
+	}
+	if(NULL!=m_OptionOp)
+	{
+		delete m_OptionOp;
+		m_OptionOp = NULL;
+	}
+	if(NULL!=m_mapDiceOp)
+	{
+		delete m_mapDiceOp;
+		m_mapDiceOp = NULL;
+	}
+	if(NULL!=m_parsingToolbox)
+	{
+		delete m_parsingToolbox;
+		m_parsingToolbox = NULL;
+	}
+	if(NULL!=m_aliasList)
+	{
+		delete m_aliasList;
+		m_aliasList = NULL;
+	}
+	if(NULL!=m_start)
+	{
+		delete m_start;
+		m_start = NULL;
+	}
 }
 
 ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
@@ -88,19 +126,32 @@ ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
 }
 QString DiceParser::convertAlias(QString str)
 {
-	foreach(QString cmd, m_aliasMap->keys())
+    foreach(DiceAlias* cmd, *m_aliasList)
 	{
-		if(str.contains(cmd))
-		{
-			str.replace(cmd,m_aliasMap->value(cmd));
-		}
+        cmd->resolved(str);
 	}
 	return str;
+}
+QList<DiceAlias*>* DiceParser::getAliases()
+{
+    return m_aliasList;
+}
+void DiceParser::insertAlias(DiceAlias* dice, int i)
+{
+    if(i>m_aliasList->size())
+    {
+        m_aliasList->insert(i, dice);
+    }
 }
 
 bool DiceParser::parseLine(QString str)
 {
     m_errorMap.clear();
+	if(NULL!=m_start)
+	{
+		delete m_start;
+		m_start = NULL;
+	}
     m_command = str;
     m_start = new StartingNode();
     ExecutionNode* newNode = NULL;
@@ -341,65 +392,65 @@ QString DiceParser::getStringResult()
            str = result->getResult(Result::STRING).toString();
            found = true;
         }
-
         result = result->getPrevious();
     }
     return str;
 }
-QString DiceParser::getLastDiceResult()
+void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues)
 {
     ExecutionNode* next = getLeafNode();
-    QString str;
-    QTextStream stream(&str);
     Result* result=next->getResult();
-    QString dieValue("D%1 : {%2} ");
+
     while(NULL!=result)
     {
         if(result->hasResultOfType(Result::DICE_LIST))
         {
 
-            DiceResult* myDiceResult = dynamic_cast<DiceResult*>(result);
-            if(NULL!=myDiceResult)
+            DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
+            if(NULL!=diceResult)
             {
-
-                QString resulStr;
+                bool  hasResult = false;
                 quint64 face=0;
-                foreach(Die* die, myDiceResult->getResultList())
+                ListDiceResult listpair;
+                foreach(Die* die, diceResult->getResultList())
                 {
                     if(!die->hasBeenDisplayed())
                     {
-                        resulStr+=QString("%1").arg(die->getValue());
+                        QList<quint64> valuesResult;
+                        hasResult=true;
+                        valuesResult.append(die->getValue());
                         die->displayed();
                         face = die->getFaces();
-
-
                         if(die->hasChildrenValue())
                         {
-                            resulStr+=" [";
                             foreach(qint64 i, die->getListValue())
                             {
-
-                                resulStr+=QString("%1,").arg(i);
+                                valuesResult.append(i);
                             }
-                            resulStr.remove(resulStr.size()-1,1);
-                            resulStr+="]";
                         }
-                        resulStr+=", ";
+                        QPair<QList<quint64>,bool> pair(valuesResult,die->isHighlighted());
+                        listpair.append(pair);
                     }
                 }
-                resulStr.remove(resulStr.size()-2,2);
-
-                if(!resulStr.isEmpty())
+                if(!listpair.isEmpty())
                 {
-                    stream << dieValue.arg(face).arg(resulStr);
+                    if(!diceValues.contains(face))
+                    {
+                        diceValues.insert(face,listpair);
+                    }
+                    else
+                    {
+                        ListDiceResult tmp = diceValues.value(face);
+                        tmp.append(listpair);
+                        diceValues.insert(face,tmp);
+                    }
+
                 }
             }
         }
 
         result = result->getPrevious();
     }
-
-    return str.simplified();
 }
 QString DiceParser::getDiceCommand()
 {
@@ -539,7 +590,7 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
 		}
 		else if(str=="la")
 		{
-			node = new ListAliasNode(m_aliasMap);
+            node = new ListAliasNode(m_aliasList);
 		}
        return true;
     }
@@ -599,6 +650,7 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
             node->setInternalNode(nodeExec);
             if(NULL==nodeExec)
             {
+				delete node;
                 return false;
             }
             if(node->getPriority()>=nodeExec->getPriority())
@@ -610,6 +662,10 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
 
             return true;
         }
+		else
+		{
+			delete node;
+		}
     }
     else if(readInstructionOperator(str[0]))
     {
@@ -851,20 +907,28 @@ bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
 
     if(m_parsingToolbox->readNumber(str,myNumber))
     {
-        NumberNode* myNumberNode = new NumberNode();
-        myNumberNode->setNumber(myNumber);
+		NumberNode* numberNode = new NumberNode();
+		numberNode->setNumber(myNumber);
 
-        node = myNumberNode;
+		node = numberNode;
         return true;
     }
         return false;
 }
-void DiceParser::displayDotTree()
+void DiceParser::writeDownDotTree(QString filepath)
 {
     QString str("digraph ExecutionTree {\n");
     m_start->generateDotTree(str);
     str.append("}");
 
-    qDebug()<< str;
+
+    QFile file(filepath);
+    if(file.open(QIODevice::WriteOnly))
+    {
+        QTextStream in(&file);
+        in << str;
+    }
+
+    //qDebug()<< str;
 
 }

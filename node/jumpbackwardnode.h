@@ -6,8 +6,14 @@
 class JumpBackwardNode : public ExecutionNode
 {
 public:
+    /**
+     * @brief JumpBackwardNode allows to get result from remote node in the execution tree.
+     */
 	JumpBackwardNode();
-
+    /**
+     * @brief run - performs the actions
+     * @param previous
+     */
 	virtual void run(ExecutionNode* previous = NULL);
 
 	/**

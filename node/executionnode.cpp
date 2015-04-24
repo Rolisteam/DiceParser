@@ -8,6 +8,16 @@ ExecutionNode::ExecutionNode()
 ExecutionNode::~ExecutionNode()
 {
 
+	if(NULL!=m_result)
+	{
+		delete m_result;
+		m_result = NULL;
+	}
+	if(NULL!=m_nextNode)
+	{
+		delete m_nextNode;
+		m_nextNode = NULL;
+	}
 }
 
 Result* ExecutionNode::getResult()

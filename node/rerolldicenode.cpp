@@ -2,9 +2,17 @@
 
 
 RerollDiceNode::RerollDiceNode()
-    : m_myDiceResult(new DiceResult()),m_adding(false)
+	: m_myDiceResult(new DiceResult()),m_adding(false),m_validator(NULL)
 {
     m_result=m_myDiceResult;
+}
+RerollDiceNode::~RerollDiceNode()
+{
+	if(NULL!=m_validator)
+	{
+		delete m_validator;
+		m_validator = NULL;
+	}
 }
 void RerollDiceNode::run(ExecutionNode* previous)
 {

@@ -8,6 +8,10 @@ void StringResult::setText(QString text)
 {
     m_value=text;
 }
+StringResult::~StringResult()
+{
+
+}
 
 QString StringResult::getText() const
 {

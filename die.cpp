@@ -26,7 +26,7 @@
 #include <QDebug>
 
 Die::Die()
-    : m_hasValue(false),m_displayStatus(false)
+    : m_hasValue(false),m_displayStatus(false),m_highlighted(true)
 {
     uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
     qsrand(seed);
@@ -131,4 +131,13 @@ bool Die::hasBeenDisplayed()
 void Die::displayed()
 {
     m_displayStatus = true;
+}
+void Die::setHighlighted(bool a)
+{
+    m_highlighted = a;
+}
+
+bool Die::isHighlighted()
+{
+    return m_highlighted;
 }

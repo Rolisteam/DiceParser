@@ -35,17 +35,15 @@ QList<Die*>& DiceResult::getResultList()
 }
 void DiceResult::setResultList(QList<Die*> list)
 {
+	qDeleteAll(m_diceValues.begin(), m_diceValues.end());
     m_diceValues.clear();
     m_diceValues << list;
 }
-//bool DiceResult::isScalar() const
-//{
-//    if(m_diceValues.size()==1)
-//    {
-//        return true;
-//    }
-//    return false;
-//}
+DiceResult::~DiceResult()
+{
+	qDeleteAll(m_diceValues.begin(), m_diceValues.end());
+	m_diceValues.clear();
+}
 QVariant DiceResult::getResult(RESULT_TYPE type)
 {
 

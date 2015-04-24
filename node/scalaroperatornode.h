@@ -12,6 +12,7 @@ class ScalarOperatorNode : public ExecutionNode
 public:
     enum ScalarOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION};
     ScalarOperatorNode();
+	virtual ~ScalarOperatorNode();
     virtual void run(ExecutionNode*);
     bool setOperatorChar(QChar c);
     void setInternalNode(ExecutionNode* node);
@@ -28,7 +29,7 @@ private:
     qint64 multiple(qint64,qint64);
 
 private:
-    ScalarOperator m_myOperator;
+	ScalarOperator m_operator;
     ExecutionNode* m_internalNode;
     QMap<QChar,ScalarOperator> m_scalarOperationList;
     ScalarResult* m_scalarResult;

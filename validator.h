@@ -30,7 +30,7 @@ class Validator
 {
 public:
     Validator();
-    virtual qint64 hasValid(Die* b,bool recursive) const = 0 ;
+    virtual qint64 hasValid(Die* b,bool recursive,bool unlight = false) const = 0 ;
 
     virtual QString toString()=0;
     virtual quint8 getValidRangeSize(quint64 faces) const = 0 ;

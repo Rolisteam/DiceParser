@@ -4,13 +4,20 @@
 
 
 CountExecuteNode::CountExecuteNode()
-    : m_scalarResult(new ScalarResult())
+	: m_scalarResult(new ScalarResult()),m_validator(NULL)
 {
     m_result = m_scalarResult;
 }
 void CountExecuteNode::setValidator(Validator* validator)
 {
     m_validator = validator;
+}
+CountExecuteNode::~CountExecuteNode()
+{
+	if(NULL!=m_validator)
+	{
+		delete m_validator;
+	}
 }
 
 void CountExecuteNode::run(ExecutionNode *previous)
@@ -28,7 +35,7 @@ void CountExecuteNode::run(ExecutionNode *previous)
         qint64 sum = 0;
         foreach(Die* dice,diceList)
         {
-            sum+=m_validator->hasValid(dice,true);
+            sum+=m_validator->hasValid(dice,true,true);
         }
         m_scalarResult->setValue(sum);
 

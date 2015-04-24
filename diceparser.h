@@ -32,6 +32,12 @@
 #include "range.h"
 #include "booleancondition.h"
 #include "parsingtoolbox.h"
+#include "dicealias.h"
+
+
+typedef QPair<QList<quint64>,bool> DiceAndHighlight;
+typedef QList<DiceAndHighlight > ListDiceResult;
+typedef QMap<int,ListDiceResult > ExportedDiceResult;
 
 class ExploseDiceNode;
 /**
@@ -82,6 +88,10 @@ public:
      * @brief DiceParser default constructor
      */
     DiceParser();
+	/**
+	 * @brief ~DiceParser
+	 */
+	virtual ~DiceParser();
 
     /**
      * @brief parseLine, method to call for starting the dice roll. It will parse the command and run the execution tree.
@@ -111,7 +121,7 @@ public:
     /**
      * @brief displayDotTree
      */
-    void displayDotTree();
+    void writeDownDotTree(QString filepath);
     /**
      * @brief getLastIntegerResult
      * @return
@@ -126,7 +136,7 @@ public:
      * @brief getLastDiceResult
      * @return
      */
-    QString getLastDiceResult();
+    void getLastDiceResult(ExportedDiceResult& diceValues);
     /**
      * @brief hasIntegerResultNotInFirst
      * @return
@@ -157,6 +167,21 @@ public:
      * @return
      */
     QString humanReadableError();
+    /**
+     * @brief getAliases
+     * @return
+     */
+    QList<DiceAlias*>* getAliases();
+    /**
+     * @brief insertAlias
+     */
+    void insertAlias(DiceAlias*, int);
+    /**
+     * @brief DiceParser::convertAlias
+     * @param str
+     * @return
+     */
+    QString convertAlias(QString str);
 private:
 
     /**
@@ -218,12 +243,6 @@ private:
 	 * @return
 	 */
     bool readOperand(QString&,ExecutionNode* & node);
-	/**
-	 * @brief DiceParser::convertAlias
-	 * @param str
-	 * @return
-	 */
-	QString convertAlias(QString str);
 
 	/**
 	 * @brief getErrorList
@@ -244,8 +263,17 @@ private:
      */
     bool readNode(QString& str,ExecutionNode* & node);
 
-
+    /**
+     * @brief getLeafNode
+     * @return
+     */
     ExecutionNode* getLeafNode();
+
+    /**
+     * @brief hasResultOfType
+     * @param notthelast
+     * @return
+     */
     bool hasResultOfType(Result::RESULT_TYPE,bool notthelast = false);
 
 
@@ -253,7 +281,7 @@ private:
     QMap<QString,DiceOperator>* m_mapDiceOp;
     QMap<QString,OptionOperator>* m_OptionOp;
     QMap<QString,NodeAction>* m_nodeActionMap;
-    QMap<QString,QString>* m_aliasMap;
+    QList<DiceAlias*>* m_aliasList;
 	QStringList* m_commandList;
 
     QMap<ExecutionNode::ERROR_CODE,QString> m_errorMap;

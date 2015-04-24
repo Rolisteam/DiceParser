@@ -1,7 +1,7 @@
 #include "listaliasnode.h"
 
-ListAliasNode::ListAliasNode(QMap<QString,QString>* apAlias)
-	: m_mapAlias(apAlias)
+ListAliasNode::ListAliasNode(QList<DiceAlias*>* apAlias)
+    : m_aliasList(apAlias)
 {
 	m_result = new StringResult();
 }
@@ -29,14 +29,13 @@ void ListAliasNode::run(ExecutionNode* previous )
 		m_nextNode->run(this);
 	}
 }
-QString ListAliasNode::toString()const
+QString ListAliasNode::toString() const
 {
 	QString result(QObject::tr("List of Alias:\n"));
-	foreach(QString key, m_mapAlias->keys())
+    foreach(DiceAlias* key, *m_aliasList)
 	{
-		result+=QString("%1 : %2\n").arg(key).arg(m_mapAlias->value(key));
+        result+=QString("%1 : %2\n").arg(key->getCommand()).arg(key->getValue());
 	}
-
 	return result;
 }
 

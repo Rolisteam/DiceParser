@@ -6,6 +6,14 @@ ListSetRollNode::ListSetRollNode()
 {
     m_result = m_stringResult;
 }
+ListSetRollNode::~ListSetRollNode()
+{
+	if(NULL!=m_diceResult)
+	{
+		delete m_diceResult;
+		m_diceResult =NULL;
+	}
+}
 
 QStringList ListSetRollNode::getList()
 {

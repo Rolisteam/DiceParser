@@ -36,8 +36,7 @@ public:
 private:
     quint64 m_diceCount;
     quint64 m_faces; /// faces
-    DiceResult* m_myDiceResult;
-    QMutex* m_mutex;
+	DiceResult* m_diceResult;
 };
 
 #endif // DICEROLLERNODE_H

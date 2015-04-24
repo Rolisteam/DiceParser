@@ -109,6 +109,15 @@ public:
      * @brief displayed
      */
     void displayed();
+    /**
+     * @brief setHighlighted
+     */
+    void setHighlighted(bool);
+    /**
+     * @brief isHighlighted
+     * @return
+     */
+    bool isHighlighted();
 
 private:
     qint64 m_value;
@@ -116,6 +125,7 @@ private:
     bool m_selected;
     bool m_hasValue;
     bool m_displayStatus;
+    bool m_highlighted;
     quint64 m_faces;
 };
 
