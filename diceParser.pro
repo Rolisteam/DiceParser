@@ -36,8 +36,7 @@ DEFINES+= HAVE_GUI
 }
 
 
-SOURCES += main.cpp \
-    diceparser.cpp \
+SOURCES += diceparser.cpp \
     result/diceresult.cpp \
     range.cpp \
     booleancondition.cpp \

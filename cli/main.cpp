@@ -24,21 +24,101 @@
 #include "diceparser.h"
 #include <QCommandLineParser>
 #include <QCommandLineOption>
+#include <QDebug>
+
+QString diceToText(ExportedDiceResult& dice)
+{
+    QStringList resultGlobal;
+    foreach(int face, dice.keys())
+    {
+        QStringList result;
+           ListDiceResult diceResult =  dice.value(face);
+           bool previousHighlight=false;
+           QString patternColor("\e[0;31m");
+           //patternColor = patternColorarg();
+           foreach (DiceAndHighlight tmp, diceResult)
+           {
+                QStringList diceListStr;
+                QStringList diceListChildren;
+                 if((previousHighlight)&&(!tmp.second))
+                {
+                    result << patternColor << result.join(',') <<"\e[0m";
+                }
+                 previousHighlight = tmp.second;
+                for(int i =0; i < tmp.first.size(); ++i)
+                {
+                    quint64 dievalue = tmp.first[i];
+                    if(i==0)
+                    {
+                        diceListStr << QString::number(dievalue);
+                    }
+                    else
+                    {
+                        diceListChildren << QString::number(dievalue);
+                    }
+                }
+                if(!diceListChildren.isEmpty())
+                {
+                    diceListStr << QString("[%1]").arg(diceListChildren.join(','));
+                }
+
+                result << diceListStr.join(' ');
+           }
+           if(previousHighlight)
+           {
+               QStringList list;
+               list << patternColor << result.join(',') << "\e[0m";
+               result = list;
+           }
+           if(dice.keys().size()>1)
+           {
+              resultGlobal << QString(" d%2:(%1)").arg(result.join(' ')).arg(face);
+           }
+           else
+           {
+               resultGlobal << result;
+           }
+    }
+    return resultGlobal.join(' ');
+}
 
 void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
 {
     DiceParser* parser = new DiceParser();
+
     if(parser->parseLine(cmd))
     {
         parser->Start();
        //
         if(treeFile.isEmpty())
         {
-            parser->displayResult();
+            ExportedDiceResult list;
+            parser->getLastDiceResult(list);
+            QString diceText = diceToText(list);
+            QString scalarText;
+            QString str;
+
+            if(parser->hasIntegerResultNotInFirst())
+            {
+                scalarText = QString("%1").arg(parser->getLastIntegerResult());
+            }
+            else if(!list.isEmpty())
+            {
+                scalarText = QString("%1").arg(parser->getSumOfDiceResult());
+            }
+
+            str = QString("Result: \e[0;31m%1\e[0m, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(parser->getDiceCommand());
+
+            if(parser->hasStringResult())
+            {
+                str = parser->getStringResult().replace("\n","<br/>");
+            }
+            qDebug() << str;
+
         }
         else
         {
-            parser->writeDownDotTree();
+            parser->writeDownDotTree(treeFile);
         }
     }
 }
@@ -51,19 +131,23 @@ int main(int argc, char *argv[])
 
     QStringList commands;
     QString cmd;
-    QString dotFile;
+    QString dotFileStr;
 
-    bool color=true;
+    bool colorb=false;
 
     QCommandLineParser optionParser;
-    QCommandLineOption color(QStringList() << "co"<< "color-off", tr("Disable color to highlight result"));
-    QCommandLineOption version(QStringList() << "v"<< "version", tr("Show the version and quit."));
-    QCommandLineOption reset(QStringList() << "reset-settings", tr("Erase the settings and use the default parameters"));
-    QCommandLineOption dotFile(QStringList() << "d"<<"dot-file", tr("Instead of rolling dice, generate the execution tree and write it in <dotfile>"),"dotfile");
-    QCommandLineOption translation(QStringList() << "t"<<"translation", QObject::tr("path to the translation file: <translationfile>"),"translationfile");
-    QCommandLineOption help(QStringList() << "h"<<"help", QObject::tr("Display this help"));
+    QCommandLineOption color(QStringList() << "co"<< "color-off", "Disable color to highlight result");
+    QCommandLineOption version(QStringList() << "v"<< "version", "Show the version and quit.");
+    QCommandLineOption reset(QStringList() << "reset-settings", "Erase the settings and use the default parameters");
+    QCommandLineOption dotFile(QStringList() << "d"<<"dot-file", "Instead of rolling dice, generate the execution tree and write it in <dotfile>","dotfile");
+    QCommandLineOption translation(QStringList() << "t"<<"translation", "path to the translation file: <translationfile>","translationfile");
+    QCommandLineOption help(QStringList() << "h"<<"help", "Display this help");
 
-    optionParser.addOption(color);
+     if(!optionParser.addOption(color))
+     {
+         qDebug()<< optionParser.errorText();
+     }
+
     optionParser.addOption(version);
     optionParser.addOption(reset);
     optionParser.addOption(dotFile);
@@ -76,12 +160,20 @@ int main(int argc, char *argv[])
         commands << QString::fromLatin1(argv[i]);
     }
 
-    optionParser.parse(commands);
+    if(!optionParser.parse(commands))
+    {
+        qDebug()<< optionParser.errorText();
+    }
+    else
+         {
+        qDebug() << "no error";
+    }
 
 
     if(optionParser.isSet(color))
     {
-        return 0;
+        qDebug() << "color";
+        colorb = false;
     }
     else if(optionParser.isSet(version))
     {
@@ -93,7 +185,7 @@ int main(int argc, char *argv[])
     }
     else if(optionParser.isSet(dotFile))
     {
-         dotFile = optionParser.value(dotFile);
+         dotFileStr = optionParser.value(dotFile);
     }
     else if(optionParser.isSet(translation))
     {
@@ -101,16 +193,13 @@ int main(int argc, char *argv[])
     }
     else if(optionParser.isSet(help))
     {
-
         cmd = "help";
     }
 
-
-
     cmd = commands.first();
 
-
-    startDiceParsing(cmd,dotFile,color);
+    qDebug() << "super 5" << cmd << dotFileStr << colorb;
+    startDiceParsing(cmd,dotFileStr,colorb);
 
     /*commands<< "10d10c[>6]+@c[=10]"
 			<< "1L[cheminée,chocolat,épée,arc,chute de pierre]"
