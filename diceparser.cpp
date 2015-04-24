@@ -23,7 +23,7 @@
 #include <QDebug>
 #include <QStringList>
 #include <QObject>
-
+#include <QFile>
 
 #include "node/startingnode.h"
 #include "node/scalaroperatornode.h"
@@ -922,12 +922,12 @@ void DiceParser::writeDownDotTree(QString filepath)
     str.append("}");
 
 
-    /*QFile file(filepath);
+    QFile file(filepath);
     if(file.open(QIODevice::WriteOnly))
     {
         QTextStream in(&file);
         in << str;
-    }*/
+    }
 
     //qDebug()<< str;
 
