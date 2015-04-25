@@ -63,6 +63,11 @@ qint64 BooleanCondition::hasValid(Die* b,bool recursive,bool unhighlight) const
     {
         b->setHighlighted(false);
     }
+    else
+    {
+         b->setHighlighted(true);
+    }
+
     return sum;
 }
 

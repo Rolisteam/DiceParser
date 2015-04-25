@@ -41,6 +41,7 @@ Die::Die(const Die& die)
     m_hasValue = die.m_hasValue;
     m_displayStatus = die.m_displayStatus;
     m_faces = die.m_faces;
+    m_highlighted = die.m_highlighted;
 }
 
 void Die::setValue(qint64 r)
