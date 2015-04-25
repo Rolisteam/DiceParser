@@ -61,6 +61,11 @@ public:
      * @return
      */
     virtual QVariant getResult(RESULT_TYPE);
+    /**
+     * @brief toString
+     * @return
+     */
+    virtual QString toString();
 
 private:
     qreal getScalarResult();

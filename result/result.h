@@ -77,7 +77,7 @@ public:
      * @brief toString
      * @return
      */
-    QString toString();
+    virtual QString toString() = 0;
 protected:
      int m_resultTypes;/// @brief
 private:

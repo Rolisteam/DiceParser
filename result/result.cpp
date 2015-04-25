@@ -48,9 +48,21 @@ bool Result::hasResultOfType(RESULT_TYPE type) const
 void Result::generateDotTree(QString& s)
 {
     s.append(toString());
+    if(NULL!=m_previous)
+    {
+        s.append(" -> ");
+        s.append(m_previous->toString());
+        s.append(" [label=\"previousResult\"];\n");
+        m_previous->generateDotTree(s);
+    }
+    {
+        s.append(" -> ");
+        s.append("NULL");
+        s.append(" [label=\"previousResult\"];\n");
+    }
 
 }
-QString Result::toString()
+/*QString Result::toString()
 {
     return QString();
-}
+}*/

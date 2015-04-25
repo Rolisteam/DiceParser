@@ -82,3 +82,12 @@ qreal DiceResult::getScalarResult()
 
     return 0;
 }
+QString DiceResult::toString()
+{
+    QStringList scalarSum;
+    foreach(Die* die,m_diceValues)
+    {
+        scalarSum << QString::number(die->getValue());
+    }
+    return QString("DiceResult_Value_%1_dice_%2").arg(getScalarResult()).arg(scalarSum.join('_'));
+}
