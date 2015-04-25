@@ -221,9 +221,6 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
 
         operandNode= getLatestNode(operandNode);
         while(readOperator(str,operandNode));
-
-
-
     }
     else if(readCommand(str,operandNode))
     {
@@ -405,7 +402,6 @@ void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues)
     {
         if(result->hasResultOfType(Result::DICE_LIST))
         {
-
             DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
             if(NULL!=diceResult)
             {
@@ -604,7 +600,7 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
     ExecutionNode* next = NULL;
     if(readDice(str,next))
     {
-         ExecutionNode* latest = next;
+        ExecutionNode* latest = next;
         while(readOption(str,latest))
         {
             while(NULL!=latest->getNextNode())
@@ -685,30 +681,13 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
 
            return true;
        }
-
-
-
     }
     else
     {
         delete node;
-        ExecutionNode* nodeExec = new  DiceRollerNode(DEFAULT_FACES_NUMBER);
-        ExecutionNode* nodeExec2 = nodeExec;
-        bool readOptionSuccessed=false;
-        while(readOption(str,nodeExec))
+        while(readOption(str,previous,false))
         {
-           nodeExec = getLatestNode(nodeExec);
-           readOptionSuccessed = true;
-        }
-        if(readOptionSuccessed)
-        {
-            previous->setNextNode(nodeExec2);
-        }
-        else
-        {
-            delete nodeExec;
-            nodeExec = NULL;
-            nodeExec2 = NULL;
+           previous = getLatestNode(previous);
         }
     }
     return false;
@@ -730,7 +709,7 @@ ExploseDiceNode* DiceParser::addExploseDiceNode(qint64 value,ExecutionNode* prev
     previous->setNextNode(exploseDiceNode);
     return exploseDiceNode;
 }
-bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
+bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)//,
 {
     if(str.isEmpty())
     {
@@ -748,7 +727,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
         {
 
             str=str.remove(0,tmp.size());
-
+        //    option = m_OptionOp->value(tmp);
             switch(m_OptionOp->value(tmp))
             {
             case Keep:
@@ -759,7 +738,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                 {
                     if(!hasDice)
                     {
-                        previous = addRollDiceNode(10,previous);
+                        previous = addRollDiceNode(DEFAULT_FACES_NUMBER,previous);
                     }
                     node = m_parsingToolbox->addSort(previous,ascending);
 
@@ -769,7 +748,6 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                     node->setNextNode(nodeK);
                     node = nodeK;
                     isFine = true;
-
                 }
             }
                 break;
@@ -781,7 +759,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                 {
                     if(!hasDice)
                     {
-                        previous = addRollDiceNode(10,previous);
+                        previous = addRollDiceNode(DEFAULT_FACES_NUMBER,previous);
                     }
                     DiceRollerNode* nodeTmp = dynamic_cast<DiceRollerNode*>(previous);
 
@@ -795,7 +773,6 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                     node->setNextNode(nodeK);
                     node = nodeK;
                     isFine = true;
-
                 }
             }
                 break;
@@ -803,7 +780,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
             {
                 bool ascending = m_parsingToolbox->readAscending(str);
                 node = m_parsingToolbox->addSort(previous,ascending);
-
+                /*if(!hasDice)
+                {
+                    m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Sort Operator does not support default dice. You should add dice command before the s"));
+                }*/
                 isFine = true;
             }
                 break;
@@ -845,8 +825,6 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)
                     previous->setNextNode(rerollNode);
                     node = rerollNode;
                     isFine = true;
-
-
                 }
                 else
                 {
