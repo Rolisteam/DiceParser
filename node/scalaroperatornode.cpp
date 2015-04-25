@@ -105,6 +105,11 @@ qint64 ScalarOperatorNode::substract(qint64 a,qint64 b)
 
 qreal ScalarOperatorNode::divide(qint64 a,qint64 b)
 {
+    if(b==0)
+    {
+        m_errors.append(DIVIDE_BY_ZERO);
+        return 0;
+    }
     return (qreal)a/b;
 }
 
