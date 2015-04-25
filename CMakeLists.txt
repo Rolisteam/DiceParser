@@ -4,8 +4,6 @@ cmake_minimum_required(VERSION 2.8)
 project(dice)
 
 #/net/rnd/src/qt/qt-everywhere-enterprise-src-5.3.0/linux-x86_64-gcc-4.7.2/lib/cmake
-set(CMAKE_PREFIX_PATH "/net/rnd/src/qt/qt-everywhere-enterprise-src-5.3.0/linux-x86_64-gcc-4.7.2/lib/cmake")
-
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
 #${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 

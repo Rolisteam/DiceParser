@@ -80,7 +80,8 @@ void SortResultNode::run(ExecutionNode* node)
     }
     else
     {
-            m_errors.append(DIE_RESULT_EXPECTED);
+        m_result = node->getResult();
+        //m_errors.append(DIE_RESULT_EXPECTED);
     }
 
 }

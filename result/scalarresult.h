@@ -35,6 +35,8 @@ public:
 
     void setValue(qreal i);
 
+    virtual QString toString();
+
 private:
     qreal m_value;
 };

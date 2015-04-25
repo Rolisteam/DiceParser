@@ -31,48 +31,47 @@ QString diceToText(ExportedDiceResult& dice)
     QStringList resultGlobal;
     foreach(int face, dice.keys())
     {
-        QStringList result;
+           QStringList result;
            ListDiceResult diceResult =  dice.value(face);
-           bool previousHighlight=false;
-           QString patternColor("\e[0;31m");
            //patternColor = patternColorarg();
            foreach (DiceAndHighlight tmp, diceResult)
            {
                 QStringList diceListStr;
                 QStringList diceListChildren;
-                 if((previousHighlight)&&(!tmp.second))
-                {
-                    result << patternColor << result.join(',') <<"\e[0m";
-                }
-                 previousHighlight = tmp.second;
+
+
                 for(int i =0; i < tmp.first.size(); ++i)
                 {
                     quint64 dievalue = tmp.first[i];
+                    QString prefix("%1");
+
+                    if(tmp.second)
+                    {
+                        prefix = "\e[0;31m%1\e[0m";
+
+                    }
+
                     if(i==0)
                     {
-                        diceListStr << QString::number(dievalue);
+                        diceListStr << prefix.arg(QString::number(dievalue));
                     }
                     else
                     {
-                        diceListChildren << QString::number(dievalue);
+                        diceListChildren << prefix.arg(QString::number(dievalue));
                     }
                 }
                 if(!diceListChildren.isEmpty())
                 {
-                    diceListStr << QString("[%1]").arg(diceListChildren.join(','));
+                    diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
                 }
 
                 result << diceListStr.join(' ');
+               // qDebug() << result << tmp.first << tmp.second;
            }
-           if(previousHighlight)
-           {
-               QStringList list;
-               list << patternColor << result.join(',') << "\e[0m";
-               result = list;
-           }
+
            if(dice.keys().size()>1)
            {
-              resultGlobal << QString(" d%2:(%1)").arg(result.join(' ')).arg(face);
+              resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
            }
            else
            {
@@ -88,10 +87,10 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
 
     if(parser->parseLine(cmd))
     {
-        parser->Start();
        //
         if(treeFile.isEmpty())
         {
+            parser->Start();
             ExportedDiceResult list;
             parser->getLastDiceResult(list);
             QString diceText = diceToText(list);
@@ -114,12 +113,15 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
                 str = parser->getStringResult().replace("\n","<br/>");
             }
             qDebug() << str;
-
         }
         else
         {
             parser->writeDownDotTree(treeFile);
         }
+    }
+    else
+    {
+        qDebug() << parser->humanReadableError();
     }
 }
 
@@ -128,15 +130,19 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
 
 int main(int argc, char *argv[])
 {
+    //QCoreApplication app(argc,argv);
+    //QCoreApplication::setApplicationName("dice");
+    //QCoreApplication::setApplicationVersion("1.0");
+
 
     QStringList commands;
     QString cmd;
     QString dotFileStr;
 
-    bool colorb=false;
+    bool colorb=true;
 
     QCommandLineParser optionParser;
-    QCommandLineOption color(QStringList() << "co"<< "color-off", "Disable color to highlight result");
+    QCommandLineOption color(QStringList() << "c"<< "color-off", "Disable color to highlight result");
     QCommandLineOption version(QStringList() << "v"<< "version", "Show the version and quit.");
     QCommandLineOption reset(QStringList() << "reset-settings", "Erase the settings and use the default parameters");
     QCommandLineOption dotFile(QStringList() << "d"<<"dot-file", "Instead of rolling dice, generate the execution tree and write it in <dotfile>","dotfile");
@@ -154,25 +160,20 @@ int main(int argc, char *argv[])
     optionParser.addOption(translation);
     optionParser.addOption(help);
 
-    for(int i=1;i<argc;++i)
+    for(int i=0;i<argc;++i)
     {
 
         commands << QString::fromLatin1(argv[i]);
     }
 
-    if(!optionParser.parse(commands))
-    {
-        qDebug()<< optionParser.errorText();
-    }
-    else
-         {
-        qDebug() << "no error";
-    }
+    optionParser.process(commands);
+
+
 
 
     if(optionParser.isSet(color))
     {
-        qDebug() << "color";
+        commands.removeAt(0);
         colorb = false;
     }
     else if(optionParser.isSet(version))
@@ -195,11 +196,17 @@ int main(int argc, char *argv[])
     {
         cmd = "help";
     }
+    QStringList cmdList = optionParser.positionalArguments();
+   // qDebug()<< "rest"<< cmdList;
 
-    cmd = commands.first();
-
-    qDebug() << "super 5" << cmd << dotFileStr << colorb;
-    startDiceParsing(cmd,dotFileStr,colorb);
+    if(!cmdList.isEmpty())
+    {
+        cmd = cmdList.first();
+    }
+    if(!cmd.isEmpty())
+    {
+        startDiceParsing(cmd,dotFileStr,colorb);
+    }
 
     /*commands<< "10d10c[>6]+@c[=10]"
 			<< "1L[cheminée,chocolat,épée,arc,chute de pierre]"

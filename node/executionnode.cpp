@@ -59,5 +59,7 @@ void ExecutionNode::generateDotTree(QString& s)
         s.append(" -> ");
         s.append("NULL");
         s.append(" [label=\"nextNode\"];\n");
+
+        m_result->generateDotTree(s);
     }
 }

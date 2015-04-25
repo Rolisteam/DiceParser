@@ -31,3 +31,7 @@ QVariant StringResult::getResult(RESULT_TYPE type)
 
     return QVariant();
 }
+QString StringResult::toString()
+{
+    return QString("StringResult_value_%1").arg(getText().replace(" ","_"));
+}

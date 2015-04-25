@@ -1,5 +1,5 @@
 #include "jumpbackwardnode.h"
-
+#include <QDebug>
 
 JumpBackwardNode::JumpBackwardNode()
 {
@@ -32,12 +32,15 @@ void JumpBackwardNode::run(ExecutionNode* previous)
             if((NULL!=result))
 			{
 				--i;
-                if((i==0)&&(parent->getResult()->hasResultOfType(Result::DICE_LIST)))
+                if((i==0)&&(result->hasResultOfType(Result::DICE_LIST)))
 				{
 					found =true;
 				}
 			}
-			parent = parent->getPreviousNode();
+            if(!found)
+            {
+                parent = parent->getPreviousNode();
+            }
 
 		}
         DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
@@ -46,13 +49,27 @@ void JumpBackwardNode::run(ExecutionNode* previous)
             Die* tmpdie = new Die();
             *tmpdie=*die;
             m_diceResult->insertResult(tmpdie);
+            die->displayed();
         }
 
-        //*m_result = *result;
+
         m_result->setPrevious(parent->getResult());
+
+
 
         if(NULL!=m_nextNode)
         {
             m_nextNode->run(this);
         }
+        for(int i =0;i<diceResult->getResultList().size();++i)
+        {
+            Die* tmp =diceResult->getResultList().at(i);
+            Die* tmp2 =m_diceResult->getResultList().at(i);
+            if(tmp->isHighlighted())
+            {
+                tmp2->setHighlighted(true);
+            }
+        }
+
+
 }
