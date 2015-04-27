@@ -182,6 +182,11 @@ public:
      * @return
      */
     QString convertAlias(QString str);
+    /**
+     * @brief getErrorList
+     * @return
+     */
+    QMap<ExecutionNode::ERROR_CODE,QString> getErrorMap();
 private:
 
     /**
@@ -244,11 +249,6 @@ private:
 	 */
     bool readOperand(QString&,ExecutionNode* & node);
 
-	/**
-	 * @brief getErrorList
-	 * @return
-	 */
-	QList<ExecutionNode::ERROR_CODE>  getErrorList();
     /**
      * @brief readInstructionOperator
      * @param c

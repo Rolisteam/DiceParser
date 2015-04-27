@@ -1,3 +1,24 @@
+/***************************************************************************
+* Copyright (C) 2014 by Renaud Guezennec                                   *
+* http://renaudguezennec.homelinux.org/accueil,3.html                      *
+*                                                                          *
+*  This file is part of DiceParser                                         *
+*                                                                          *
+* DiceParser is free software; you can redistribute it and/or modify       *
+* it under the terms of the GNU General Public License as published by     *
+* the Free Software Foundation; either version 2 of the License, or        *
+* (at your option) any later version.                                      *
+*                                                                          *
+* This program is distributed in the hope that it will be useful,          *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
+* GNU General Public License for more details.                             *
+*                                                                          *
+* You should have received a copy of the GNU General Public License        *
+* along with this program; if not, write to the                            *
+* Free Software Foundation, Inc.,                                          *
+* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
+***************************************************************************/
 #include "scalaroperatornode.h"
 
 #include <QDebug>
@@ -107,7 +128,7 @@ qreal ScalarOperatorNode::divide(qint64 a,qint64 b)
 {
     if(b==0)
     {
-        m_errors.append(DIVIDE_BY_ZERO);
+        m_errors.insert(DIVIDE_BY_ZERO,QObject::tr("Division by zero"));
         return 0;
     }
     return (qreal)a/b;
@@ -159,4 +180,22 @@ void ScalarOperatorNode::generateDotTree(QString& s)
         m_internalNode->generateDotTree(str);
     }
     s.append(str);
+}
+QMap<ExecutionNode::ERROR_CODE,QString> ScalarOperatorNode::getExecutionErrorMap()
+{
+    if(NULL!=m_internalNode)
+    {
+        foreach (ExecutionNode::ERROR_CODE key, m_internalNode->getExecutionErrorMap().keys())
+        {
+            m_errors.insert(key,m_internalNode->getExecutionErrorMap().value(key));
+        }
+    }
+    if(NULL!=m_nextNode)
+    {
+        foreach (ExecutionNode::ERROR_CODE key, m_nextNode->getExecutionErrorMap().keys())
+        {
+            m_errors.insert(key,m_nextNode->getExecutionErrorMap().value(key));
+        }
+    }
+    return m_errors;
 }

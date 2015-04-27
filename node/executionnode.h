@@ -56,7 +56,7 @@ public:
      * @brief getErrorList
      * @return
      */
-    virtual QList<ExecutionNode::ERROR_CODE> getErrorList();
+    virtual QMap<ExecutionNode::ERROR_CODE,QString> getExecutionErrorMap();
 
     /**
      * @brief generateDotTree
@@ -84,7 +84,7 @@ protected:
     /**
      * @brief m_errors
      */
-    QList<ExecutionNode::ERROR_CODE> m_errors;
+    QMap<ExecutionNode::ERROR_CODE,QString> m_errors;
 };
 
 #endif // EXECUTIONNODE_H

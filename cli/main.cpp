@@ -91,6 +91,12 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
         if(treeFile.isEmpty())
         {
             parser->Start();
+            if(!parser->getErrorMap().isEmpty())
+            {
+                qDebug() << "Error" << parser->humanReadableError();
+                return;
+            }
+
             ExportedDiceResult list;
             parser->getLastDiceResult(list);
             QString diceText = diceToText(list);

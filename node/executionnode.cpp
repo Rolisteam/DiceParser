@@ -32,8 +32,15 @@ ExecutionNode* ExecutionNode::getNextNode()
 {
     return m_nextNode;
 }
-QList<ExecutionNode::ERROR_CODE> ExecutionNode::getErrorList()
+QMap<ExecutionNode::ERROR_CODE,QString> ExecutionNode::getExecutionErrorMap()
 {
+    if(NULL!=m_nextNode)
+    {
+        foreach (ExecutionNode::ERROR_CODE key, m_nextNode->getExecutionErrorMap().keys())
+        {
+            m_errors.insert(key,m_nextNode->getExecutionErrorMap().value(key));
+        }
+    }
     return m_errors;
 }
 QString ExecutionNode::getHelp()
