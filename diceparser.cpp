@@ -179,7 +179,7 @@ bool DiceParser::parseLine(QString str)
     }
     else
     {
-        return false;
+      return false;
     }
 
 }
@@ -862,9 +862,9 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
     return isFine;
 }
 
-QList<ExecutionNode::ERROR_CODE>  DiceParser::getErrorList()
+QMap<ExecutionNode::ERROR_CODE,QString>  DiceParser::getErrorMap()
 {
-	return m_start->getErrorList();
+    return m_start->getExecutionErrorMap();
 }
 QString DiceParser::humanReadableError()
 {
@@ -874,6 +874,15 @@ QString DiceParser::humanReadableError()
     {
         i.next();
         str.append(i.value());
+        str.append("\n");
+    }
+
+    ///list
+    QMapIterator<ExecutionNode::ERROR_CODE,QString> j(getErrorMap());
+    while(j.hasNext())
+    {
+        j.next();
+        str.append(j.value());
         str.append("\n");
     }
     return str;
