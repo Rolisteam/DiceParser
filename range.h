@@ -25,6 +25,9 @@
 #include <Qt>
 #include "validator.h"
 
+/**
+ * @brief The Range class is validator class to check validity between two values.
+ */
 class Range : public Validator
 {
 public:

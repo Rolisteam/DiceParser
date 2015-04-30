@@ -30,7 +30,8 @@
 #include "range.h"
 
 /**
- * @brief The ParsingToolBox class - gathering tools
+ * @brief The ParsingToolBox is gathering many useful methods for dice parsing.
+ * Its goal is to make the diceparser a bit lighter.
  */
 class ParsingToolBox
 {

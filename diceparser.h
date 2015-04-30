@@ -41,7 +41,7 @@ typedef QMap<int,ListDiceResult > ExportedDiceResult;
 
 class ExploseDiceNode;
 /**
- * @mainpage DiceParser
+ * @page DiceParser
  *
  * The grammar is something like this:
  *
