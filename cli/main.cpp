@@ -26,6 +26,20 @@
 #include <QCommandLineOption>
 #include <QTextStream>
 
+/**
+ * @page Dice
+ * The cli for DiceParser the new dice system from rolisteam.
+ * @section Build and install
+ * To build this program, type these command:
+ * - mkdir build
+ * - cd build
+ * - cmake ../
+ * - make
+ * - make install
+ * @return
+ */
+
+
 
 QTextStream out(stdout, QIODevice::WriteOnly);
 
@@ -156,9 +170,9 @@ Options:\n\
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication app(argc,argv);
+    /*QCoreApplication app(argc,argv);
     QCoreApplication::setApplicationName("dice");
-    QCoreApplication::setApplicationVersion("1.0");
+    QCoreApplication::setApplicationVersion("1.0");*/
 
 
     QStringList commands;

@@ -58,7 +58,6 @@ class ExploseDiceNode;
  *
  */
 
-class Dice;
 /**
  * @brief The DiceParser class facade class, it receives a command and return a DiceResult class (not yet implemented).
  */
@@ -291,16 +290,6 @@ private:
     ExecutionNode* m_current;
     QString m_command;
     ParsingToolBox* m_parsingToolbox;
-};
-
-/**
- * @brief The Dice class is a basic class to store dice. (May not be required any more).
- */
-class Dice
-{
-public:
-   DiceParser::DiceOperator m_diceOp;
-   int m_faces;
 };
 
 #endif // DICEPARSER_H

@@ -4,7 +4,7 @@
 #include <QString>
 #include "result.h"
 /**
- * @brief The StringResult class
+ * @brief The StringResult class stores command result for String.
  */
 class StringResult : public Result
 {
