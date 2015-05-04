@@ -42,7 +42,12 @@ public:
 	 * @brief toString
 	 * @return
 	 */
-	virtual QString toString()const;
+    virtual QString toString() const;
+    /**
+     * @brief buildList
+     * @return
+     */
+    virtual QString buildList() const;
 	/**
 	 * @brief getPriority
 	 * @return
