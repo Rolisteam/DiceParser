@@ -24,7 +24,24 @@
 #include "diceparser.h"
 #include <QCommandLineParser>
 #include <QCommandLineOption>
-#include <QDebug>
+#include <QTextStream>
+
+/**
+ * @page Dice
+ * The cli for DiceParser the new dice system from rolisteam.
+ * @section Build and install
+ * To build this program, type these command:
+ * - mkdir build
+ * - cd build
+ * - cmake ../
+ * - make
+ * - make install
+ * @return
+ */
+
+
+
+QTextStream out(stdout, QIODevice::WriteOnly);
 
 QString diceToText(ExportedDiceResult& dice)
 {
@@ -93,7 +110,7 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
             parser->Start();
             if(!parser->getErrorMap().isEmpty())
             {
-                qDebug() << "Error" << parser->humanReadableError();
+                out << "Error" << parser->humanReadableError()<< "\n";
                 return;
             }
 
@@ -116,9 +133,9 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
 
             if(parser->hasStringResult())
             {
-                str = parser->getStringResult().replace("\n","<br/>");
+                str = parser->getStringResult();
             }
-            qDebug() << str;
+            out << str << "\n";
         }
         else
         {
@@ -127,18 +144,35 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
     }
     else
     {
-        qDebug() << parser->humanReadableError();
+        out << parser->humanReadableError()<< "\n";;
     }
 }
 
+void usage()
+{
+    QString help = "Usage: ./dice [options]\n\
+\n\
+Options:\n\
+  -c, --color-off                      Disable color to highlight result\n\
+  -v, --version                        Show the version and quit.\n\
+  --reset-settings                     Erase the settings and use the default\n\
+                                       parameters\n\
+  -d, --dot-file <dotfile>             Instead of rolling dice, generate the\n\
+                                       execution tree and write it in <dotfile>\n\
+  -t, --translation <translationfile>  path to the translation file:\n\
+                                       <translationfile>\n\
+  -h, --help                           Display this help\n\
+";
 
+    out << help;
+}
 
 
 int main(int argc, char *argv[])
 {
-    //QCoreApplication app(argc,argv);
-    //QCoreApplication::setApplicationName("dice");
-    //QCoreApplication::setApplicationVersion("1.0");
+    /*QCoreApplication app(argc,argv);
+    QCoreApplication::setApplicationName("dice");
+    QCoreApplication::setApplicationVersion("1.0");*/
 
 
     QStringList commands;
@@ -157,7 +191,7 @@ int main(int argc, char *argv[])
 
      if(!optionParser.addOption(color))
      {
-         qDebug()<< optionParser.errorText();
+        out << optionParser.errorText() << "\n";
      }
 
     optionParser.addOption(version);
@@ -184,6 +218,8 @@ int main(int argc, char *argv[])
     }
     else if(optionParser.isSet(version))
     {
+        out << "Rolisteam DiceParser v1.0.0"<< "\n";
+        out << "More Details: www.rolisteam.org"<< "\n";
         return 0;
     }
     else if(optionParser.isSet(reset))
@@ -212,6 +248,10 @@ int main(int argc, char *argv[])
     if(!cmd.isEmpty())
     {
         startDiceParsing(cmd,dotFileStr,colorb);
+        if(cmd=="help")
+        {
+            usage();
+        }
     }
 
     /*commands<< "10d10c[>6]+@c[=10]"

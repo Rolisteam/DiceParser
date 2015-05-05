@@ -24,7 +24,7 @@
 
 #include <QString>
 /**
- * @brief The DiceAlias class
+ * @brief The DiceAlias class is dedicated to store aliases, alias is mainly two QString. The Alias and its replacement. The replacement can be a simple QString or a RegExp.
  */
 class DiceAlias
 {

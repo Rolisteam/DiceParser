@@ -25,16 +25,30 @@
 #include "result.h"
 #include <Qt>
 
-
+/**
+ * @brief The ScalarResult class is used to store scalar result by many ExecutionNode.
+ */
 class ScalarResult : public Result
 {
 public:
+    /**
+     * @brief ScalarResult
+     */
     ScalarResult();
-
+    /**
+     * @brief getResult
+     * @return
+     */
     virtual QVariant getResult(Result::RESULT_TYPE);
-
+    /**
+     * @brief setValue
+     * @param i
+     */
     void setValue(qreal i);
-
+    /**
+     * @brief toString
+     * @return
+     */
     virtual QString toString();
 
 private:

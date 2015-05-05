@@ -24,7 +24,10 @@
 
 #include <Qt>
 #include "validator.h"
-
+/**
+ * @brief The BooleanCondition class is a Validator class checking validity from logic expression.
+ * It manages many operators (see : @ref LogicOperator).
+ */
 class BooleanCondition : public Validator
 {
 public:

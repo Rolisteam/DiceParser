@@ -25,14 +25,35 @@
 #include <Qt>
 #include "die.h"
 #include <QString>
-
+/**
+ * @brief The Validator class is an abstract class for checking the validity of dice for some
+ * operator.
+ */
 class Validator
 {
 public:
+    /**
+     * @brief Validator
+     */
     Validator();
+    /**
+     * @brief hasValid
+     * @param b
+     * @param recursive
+     * @param unlight
+     * @return
+     */
     virtual qint64 hasValid(Die* b,bool recursive,bool unlight = false) const = 0 ;
-
+    /**
+     * @brief toString
+     * @return
+     */
     virtual QString toString()=0;
+    /**
+     * @brief getValidRangeSize
+     * @param faces
+     * @return
+     */
     virtual quint8 getValidRangeSize(quint64 faces) const = 0 ;
 };
 

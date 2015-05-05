@@ -25,7 +25,7 @@
 #include <QList>
 
 /**
- * @brief The Die class
+ * @brief The Die class implements all methods required from a die. You must set the Faces first, then you can roll it and roll it again, to add or replace the previous result.
  */
 class Die
 {
