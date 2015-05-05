@@ -70,8 +70,7 @@ DiceParser::DiceParser()
     m_nodeActionMap = new QMap<QString,NodeAction>();
     m_nodeActionMap->insert("@",JumpBackward);
 
-
-	m_commandList = new QStringList();
+    m_commandList = new QStringList();
     m_commandList->append("help");
     m_commandList->append("la");
 
