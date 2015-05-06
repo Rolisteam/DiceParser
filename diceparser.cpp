@@ -151,12 +151,12 @@ bool DiceParser::parseLine(QString str)
 		delete m_start;
 		m_start = NULL;
 	}
-    m_command = str;
     m_start = new StartingNode();
     ExecutionNode* newNode = NULL;
     m_current = m_start;
 
 	str = convertAlias(str);
+    m_command = str;
     bool keepParsing = readExpression(str,newNode);
 
     if(keepParsing)
