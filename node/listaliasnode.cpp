@@ -34,7 +34,7 @@ void ListAliasNode::run(ExecutionNode* previous )
 	{
 		if(previous->getResult() == NULL)
 		{
-			txtResult->setText(toString());
+            txtResult->setText(buildList());
 
 		}
 		else
@@ -49,7 +49,7 @@ void ListAliasNode::run(ExecutionNode* previous )
 		m_nextNode->run(this);
 	}
 }
-QString ListAliasNode::toString() const
+QString ListAliasNode::buildList() const
 {
 	QString result(QObject::tr("List of Alias:\n"));
     foreach(DiceAlias* key, *m_aliasList)
@@ -58,7 +58,16 @@ QString ListAliasNode::toString() const
 	}
 	return result;
 }
+QString ListAliasNode::toString() const
+{
+    QStringList resultList;
+    foreach(DiceAlias* key, *m_aliasList)
+    {
+        resultList <<  "{" <<key->getCommand() << key->getValue()<<  "}";
+    }
+    return QString("ListAliasNode [label=\"ListAliasNode %1\"]").arg(resultList.join(","));
 
+}
 qint64 ListAliasNode::getPriority() const
 {
 	return 0;

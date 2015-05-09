@@ -70,10 +70,9 @@ DiceParser::DiceParser()
     m_nodeActionMap = new QMap<QString,NodeAction>();
     m_nodeActionMap->insert("@",JumpBackward);
 
-
-	m_commandList = new QStringList();
-    m_commandList->append(QObject::tr("help"));
-    m_commandList->append(QObject::tr("la"));
+    m_commandList = new QStringList();
+    m_commandList->append("help");
+    m_commandList->append("la");
 
 }
 DiceParser::~DiceParser()
@@ -152,12 +151,12 @@ bool DiceParser::parseLine(QString str)
 		delete m_start;
 		m_start = NULL;
 	}
-    m_command = str;
     m_start = new StartingNode();
     ExecutionNode* newNode = NULL;
     m_current = m_start;
 
 	str = convertAlias(str);
+    m_command = str;
     bool keepParsing = readExpression(str,newNode);
 
     if(keepParsing)
@@ -203,11 +202,8 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
                 {
                     parentheseNode->setNextNode(diceNode);
                 }
-
                 return true;
             }
-
-
         }
     }
     else if(readOperand(str,operandNode))
@@ -527,9 +523,13 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
         {
             if(m_parsingToolbox->readNumber(str,num))
             {
+                if(num<1)
+                {
+                    m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Dice with %1 face(s) does not exist. Please, put a value higher than 0").arg(num));
+                    return false;
+                }
+                qDebug() << num;
                 DiceRollerNode* drNode = new DiceRollerNode(num);
-                //            dice.m_diceOp = myOperator;
-                //            dice.m_faces = num;
                 node = drNode;
                 ExecutionNode* current = drNode;
                 while(readOption(str,current))
@@ -553,7 +553,7 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
             }
             else
             {
-                 m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("List is missing after the L operator. Please, add it (e.g : 1L[sword,spear,gun,arrow]"));
+                 m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("List is missing after the L operator. Please, add it (e.g : 1L[sword,spear,gun,arrow])"));
             }
         }
 

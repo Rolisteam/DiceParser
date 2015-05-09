@@ -46,7 +46,7 @@ void ExploseDiceNode::setValidator(Validator* val)
 }
 QString ExploseDiceNode::toString() const
 {
-    return QString("ExploseDiceNode");
+    return QString("ExploseDiceNode [label=\"ExploseDiceNode %1\"]").arg(m_validator->toString());
 }
 qint64 ExploseDiceNode::getPriority() const
 {

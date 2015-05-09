@@ -46,7 +46,7 @@ void NumberNode::setNumber(qint64 a)
 }
 QString NumberNode::toString() const
 {
-    return QString("NumberNode_%1").arg(m_number);
+    return QString("NumberNode [label=\"NumberNode %1\"]").arg(m_number);
 }
 qint64 NumberNode::getPriority() const
 {

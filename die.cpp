@@ -95,15 +95,17 @@ void Die::replaceLastValue(qint64 value)
 
 void Die::roll(bool adding)
 {
-    quint64 value=(qrand()%m_faces)+1;
-
-    if((adding)||(m_rollResult.isEmpty()))
+    if(m_faces!=0)
     {
-        insertRollValue(value);
-    }
-    else
-    {
-        replaceLastValue(value);
+        quint64 value=(qrand()%m_faces)+1;
+        if((adding)||(m_rollResult.isEmpty()))
+        {
+            insertRollValue(value);
+        }
+        else
+        {
+            replaceLastValue(value);
+        }
     }
 }
 

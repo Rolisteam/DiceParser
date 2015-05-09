@@ -28,7 +28,7 @@ void HelpNode::run(ExecutionNode* previous)
         m_nextNode->run(this);
     }
 }
-QString HelpNode::toString()const
+QString HelpNode::toString() const
 {
     return QObject::tr("Rolisteam Dice Parser:\nFull documentation at: https://github.com/obiwankennedy/DiceParser/blob/master/HelpMe.md \n");
 }

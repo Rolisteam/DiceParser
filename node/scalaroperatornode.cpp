@@ -140,7 +140,26 @@ qint64 ScalarOperatorNode::multiple(qint64 a,qint64 b)
 }
 QString ScalarOperatorNode::toString() const
 {
-    return "ScalarOperatorNode";
+    QString op="";
+    switch(m_operator)
+    {
+        case PLUS:
+            op="+";
+            break;
+        case MINUS:
+            op="-";
+            break;
+        case MULTIPLICATION:
+            op="*";
+            break;
+        case DIVIDE:
+            op="/";
+            break;
+        default:
+            break;
+
+    }
+    return QString("ScalarOperatorNode [label=\"ScalarOperatorNode %1\"").arg(op);
 }
 qint64 ScalarOperatorNode::getPriority() const
 {
