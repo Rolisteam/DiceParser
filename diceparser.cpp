@@ -762,8 +762,11 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                         previous = addRollDiceNode(DEFAULT_FACES_NUMBER,previous);
                     }
                     DiceRollerNode* nodeTmp = dynamic_cast<DiceRollerNode*>(previous);
+                    if(NULL!=nodeTmp)
+                    {
 
-                    previous = addExploseDiceNode(nodeTmp->getFaces(),previous);
+                        previous = addExploseDiceNode(nodeTmp->getFaces(),previous);
+                    }
 
                     node = m_parsingToolbox->addSort(previous,ascending);
 
