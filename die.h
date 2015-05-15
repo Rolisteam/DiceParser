@@ -119,6 +119,11 @@ public:
      */
     bool isHighlighted();
 
+    /**
+     * @brief setBase
+     */
+    void setBase(qint64);
+
 private:
     qint64 m_value;
     QList<qint64> m_rollResult;
@@ -127,6 +132,7 @@ private:
     bool m_displayStatus;
     bool m_highlighted;
     quint64 m_faces;
+    qint64 m_base;
 };
 
 

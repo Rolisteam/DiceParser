@@ -26,7 +26,7 @@
 #include <QDebug>
 
 Die::Die()
-    : m_hasValue(false),m_displayStatus(false),m_highlighted(true)
+    : m_hasValue(false),m_displayStatus(false),m_highlighted(true),m_base(1)
 {
     uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
     qsrand(seed);
@@ -42,6 +42,7 @@ Die::Die(const Die& die)
     m_displayStatus = die.m_displayStatus;
     m_faces = die.m_faces;
     m_highlighted = die.m_highlighted;
+    m_base = die.m_base;
 }
 
 void Die::setValue(qint64 r)
@@ -97,7 +98,7 @@ void Die::roll(bool adding)
 {
     if(m_faces!=0)
     {
-        quint64 value=(qrand()%m_faces)+1;
+        quint64 value=(qrand()%m_faces)+m_base;
         if((adding)||(m_rollResult.isEmpty()))
         {
             insertRollValue(value);
@@ -143,4 +144,8 @@ void Die::setHighlighted(bool a)
 bool Die::isHighlighted()
 {
     return m_highlighted;
+}
+void Die::setBase(qint64 base)
+{
+        m_base = base;
 }
