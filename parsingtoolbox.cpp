@@ -141,7 +141,7 @@ bool ParsingToolBox::readNumber(QString& str, int& myNumber)
     QString number;
     int i=0;
 
-    while(i<str.length() && str[i].isNumber())
+    while(i<str.length() && ((str[i].isNumber()) || ( (i==0) && (str[i]=='-'))))
     {
         number+=str[i];
         ++i;
@@ -233,4 +233,45 @@ DiceRollerNode* ParsingToolBox::getDiceRollerNode(ExecutionNode* previous)
         }
         previous = previous->getPreviousNode();
     }
+}
+bool ParsingToolBox::readDiceRange(QString& str,int& start, int& end)
+{
+    bool expectSquareBrasket=false;
+
+    qDebug()<<"readDiceRange"<<str;
+    if((str.startsWith("[")))
+    {
+        str=str.remove(0,1);
+        expectSquareBrasket = true;
+    }
+qDebug()<<"readDiceRange"<<str;
+    if(readNumber(str,start))
+    {
+        qDebug()<<"readDiceRange"<<str;
+        if(str.startsWith("-"))
+        {
+            str=str.remove(0,1);
+            if(readNumber(str,end))
+            {
+                if(expectSquareBrasket)
+                {
+                    if(str.startsWith("]"))
+                    {
+                        str=str.remove(0,1);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+               return false;
+            }
+            qDebug()<<"readDiceRange"<<str;
+        }
+    }
+
 }

@@ -25,7 +25,7 @@
 class DiceRollerNode : public ExecutionNode
 {
 public:
-    DiceRollerNode(quint64 faces);
+    DiceRollerNode(quint64 faces, qint64 offset = 1);
 
     virtual void run(ExecutionNode*);
     quint64 getFaces();
@@ -37,6 +37,7 @@ private:
     quint64 m_diceCount;
     quint64 m_faces; /// faces
 	DiceResult* m_diceResult;
+    qint64 m_offset;
 };
 
 #endif // DICEROLLERNODE_H
