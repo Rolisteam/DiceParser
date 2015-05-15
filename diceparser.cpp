@@ -519,6 +519,7 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
     if(readDiceOperator(str,currentOperator))
     {
         int num;
+        int end;
         if(currentOperator==D)
         {
             if(m_parsingToolbox->readNumber(str,num))
@@ -528,7 +529,6 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
                     m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Dice with %1 face(s) does not exist. Please, put a value higher than 0").arg(num));
                     return false;
                 }
-                qDebug() << num;
                 DiceRollerNode* drNode = new DiceRollerNode(num);
                 node = drNode;
                 ExecutionNode* current = drNode;
@@ -536,8 +536,20 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
                 {
                     current = getLatestNode(current);
                 }
+                return true;
+            }
+            else if(m_parsingToolbox->readDiceRange(str,num,end))
+            {
 
-
+                int face = abs(num - end)+1;
+                qDebug()<< num << end<< face;
+                DiceRollerNode* drNode = new DiceRollerNode(face,num);
+                node = drNode;
+                ExecutionNode* current = drNode;
+                while(readOption(str,current))
+                {
+                    current = getLatestNode(current);
+                }
                 return true;
             }
         }

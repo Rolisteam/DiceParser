@@ -115,6 +115,15 @@ public:
      */
     DiceRollerNode* getDiceRollerNode(ExecutionNode* previous);
 
+    /**
+     * @brief readDiceRange
+     * @param str
+     * @param start
+     * @param end
+     * @return
+     */
+    bool readDiceRange(QString& str,int& start, int& end);
+
 private:
         QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
 };
