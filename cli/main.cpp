@@ -59,7 +59,7 @@ QString diceToText(ExportedDiceResult& dice)
 
                 for(int i =0; i < tmp.first.size(); ++i)
                 {
-                    quint64 dievalue = tmp.first[i];
+                    qint64 dievalue = tmp.first[i];
                     QString prefix("%1");
 
                     if(tmp.second)
