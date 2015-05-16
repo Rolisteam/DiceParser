@@ -238,16 +238,13 @@ bool ParsingToolBox::readDiceRange(QString& str,int& start, int& end)
 {
     bool expectSquareBrasket=false;
 
-    qDebug()<<"readDiceRange"<<str;
     if((str.startsWith("[")))
     {
         str=str.remove(0,1);
         expectSquareBrasket = true;
     }
-qDebug()<<"readDiceRange"<<str;
     if(readNumber(str,start))
     {
-        qDebug()<<"readDiceRange"<<str;
         if(str.startsWith("-"))
         {
             str=str.remove(0,1);
@@ -270,7 +267,6 @@ qDebug()<<"readDiceRange"<<str;
             {
                return false;
             }
-            qDebug()<<"readDiceRange"<<str;
         }
     }
 
