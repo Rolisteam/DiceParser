@@ -542,7 +542,6 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
             {
 
                 int face = abs(num - end)+1;
-                qDebug()<< num << end<< face;
                 DiceRollerNode* drNode = new DiceRollerNode(face,num);
                 node = drNode;
                 ExecutionNode* current = drNode;
