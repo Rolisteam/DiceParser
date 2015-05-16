@@ -43,7 +43,7 @@
 
 QTextStream out(stdout, QIODevice::WriteOnly);
 
-QString diceToText(ExportedDiceResult& dice)
+QString diceToText(ExportedDiceResult& dice,bool highlight)
 {
     QStringList resultGlobal;
     foreach(int face, dice.keys())
@@ -62,10 +62,9 @@ QString diceToText(ExportedDiceResult& dice)
                     qint64 dievalue = tmp.first[i];
                     QString prefix("%1");
 
-                    if(tmp.second)
+                    if((tmp.second)&&(highlight))
                     {
                         prefix = "\e[0;31m%1\e[0m";
-
                     }
 
                     if(i==0)
@@ -116,7 +115,7 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
 
             ExportedDiceResult list;
             parser->getLastDiceResult(list);
-            QString diceText = diceToText(list);
+            QString diceText = diceToText(list,highlight);
             QString scalarText;
             QString str;
 
@@ -128,8 +127,10 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
             {
                 scalarText = QString("%1").arg(parser->getSumOfDiceResult());
             }
-
-            str = QString("Result: \e[0;31m%1\e[0m, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(parser->getDiceCommand());
+            if(highlight)
+                str = QString("Result: \e[0;31m%1\e[0m, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(parser->getDiceCommand());
+            else
+                str = QString("Result: %1, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(parser->getDiceCommand());
 
             if(parser->hasStringResult())
             {
