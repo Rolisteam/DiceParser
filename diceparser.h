@@ -186,6 +186,11 @@ public:
      * @return
      */
     QMap<ExecutionNode::ERROR_CODE,QString> getErrorMap();
+    /**
+     * @brief setPathToHelp set the path to the documentation, this path must be adatped to the lang of application etc…
+     * @param l the path.
+     */
+    void setPathToHelp(QString l);
 private:
 
     /**
@@ -290,6 +295,7 @@ private:
     ExecutionNode* m_current;
     QString m_command;
     ParsingToolBox* m_parsingToolbox;
+    QString m_helpPath;
 };
 
 #endif // DICEPARSER_H

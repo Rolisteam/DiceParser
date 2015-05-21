@@ -1,6 +1,7 @@
 #include "helpnode.h"
 
 HelpNode::HelpNode()
+    : m_path("https://github.com/obiwankennedy/DiceParser/blob/master/HelpMe.md")
 {
     m_result = new StringResult();
 }
@@ -30,10 +31,14 @@ void HelpNode::run(ExecutionNode* previous)
 }
 QString HelpNode::toString() const
 {
-    return QObject::tr("Rolisteam Dice Parser:\nFull documentation at: https://github.com/obiwankennedy/DiceParser/blob/master/HelpMe.md \n");
+    return QObject::tr("Rolisteam Dice Parser:\nFull documentation at: %1 \n").arg(m_path);
 }
 
 qint64 HelpNode::getPriority() const
 {
     return 0;
+}
+void HelpNode::setHelpPath(QString path)
+{
+    m_path = path;
 }

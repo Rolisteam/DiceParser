@@ -32,6 +32,13 @@ public:
      * @return
      */
     virtual qint64 getPriority() const;
+    /**
+     * @brief setHelpPath
+     * @param path
+     */
+    void setHelpPath(QString path);
+private:
+    QString m_path;
 
 };
 

@@ -593,7 +593,10 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
     {
 		if(str=="help")
 		{
-       		node = new HelpNode();
+            HelpNode* help = new HelpNode();
+            help->setHelpPath(m_helpPath);
+            node = help;
+
 		}
 		else if(str=="la")
 		{
@@ -929,7 +932,8 @@ void DiceParser::writeDownDotTree(QString filepath)
         QTextStream in(&file);
         in << str;
     }
-
-    //qDebug()<< str;
-
+}
+void DiceParser::setPathToHelp(QString l)
+{
+    m_helpPath = l;
 }
