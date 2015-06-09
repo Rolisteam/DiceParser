@@ -22,6 +22,7 @@
 #include "range.h"
 
 Range::Range()
+    : m_hasEnd(false),m_hasStart(false)
 {
 
 
@@ -30,6 +31,9 @@ void Range::setValue(qint64 s,qint64 e)
 {
     m_start = s;
     m_end=e;
+
+    m_hasEnd = true;
+    m_hasStart = true;
 }
 
 qint64 Range::hasValid(Die* m,bool recursive, bool unhighlight) const
@@ -63,4 +67,27 @@ quint8 Range::getValidRangeSize(quint64 faces) const
 {
     Q_UNUSED(faces);
     return m_end-m_start;
+}
+void Range::setStart(qint64 start)
+{
+    m_start = start;
+    m_hasStart = true;
+}
+void Range::setEnd(qint64 end)
+{
+    m_end = end;
+    m_hasEnd = true;
+}
+
+bool Range::isFullyDefined()
+{
+    return (m_hasEnd & m_hasStart);
+}
+qint64 Range::getStart() const
+{
+ return m_start;
+}
+qint64 Range::getEnd() const
+{
+    return m_end;
 }

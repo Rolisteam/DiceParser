@@ -555,9 +555,16 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
         else if(currentOperator ==L)
         {
             QStringList list;
-            if(m_parsingToolbox->readList(str,list))
+            QList<Range> listRange;
+            ParsingToolBox::LIST_OPERATOR op = m_parsingToolbox->readListOperator(str);
+            if(m_parsingToolbox->readList(str,list,listRange))
             {
                 ListSetRollNode* lsrNode = new ListSetRollNode();
+                lsrNode->setRangeList(listRange);
+                if(op == ParsingToolBox::UNIQUE)
+                {
+                    lsrNode->setUnique(true);
+                }
                 lsrNode->setListValue(list);
                 node = lsrNode;
                 return true;

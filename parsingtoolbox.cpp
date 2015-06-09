@@ -179,17 +179,20 @@ bool ParsingToolBox::readCloseParentheses(QString& str)
     else
         return false;
 }
-bool ParsingToolBox::readList(QString& str,QStringList& list)
+bool ParsingToolBox::readList(QString& str,QStringList& list,QList<Range>& ranges)
 {
     if(str.startsWith("["))
     {
         str=str.remove(0,1);
-        int pos = str.indexOf("]");
+        int pos = str.lastIndexOf("]");
         if(-1!=pos)
         {
             QString liststr = str.left(pos);
             list = liststr.split(",");
 			str=str.remove(0,pos+1);
+            readProbability(list,ranges);
+
+
             return true;
         }
     }
@@ -269,5 +272,92 @@ bool ParsingToolBox::readDiceRange(QString& str,int& start, int& end)
             }
         }
     }
+
+}
+ParsingToolBox::LIST_OPERATOR  ParsingToolBox::readListOperator(QString& str)
+{
+
+    if(str.startsWith('u'))
+    {
+        return UNIQUE;
+    }
+    return NONE;
+}
+void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
+{
+    quint64 totalDistance=0;
+    quint64 undefDistance = 0;
+    int undefCount=0;
+    int maxValue = 0;
+    int i=0;
+    int j=0;
+    //range
+    foreach(QString line,str)
+    {
+        int pos = line.indexOf('[');
+        if(-1!=pos)
+        {
+            QString range = line.right(line.length()-pos);
+            line = line.left(pos);
+            str[j]=line;
+            int start;
+            int end;
+            if(readDiceRange(range,start,end))
+            {
+                Range range;
+                range.setValue(start,end);
+                ranges.append(range);
+                totalDistance += end-start+1;
+                ++i;
+            }
+            else
+            {
+                Range range;
+                range.setStart(start);
+                ranges.append(range);
+                ++undefCount;
+                undefDistance +=start;
+            }
+            if((end>maxValue)||(i==1))
+            {
+                maxValue = end;
+            }
+        }
+        ++j;
+
+    }
+
+
+
+
+    ///Normalize list
+//    qDebug() << 100 - undefDistance;
+//    qDebug() << totalDistance;
+
+    qint64 totalDistPourcent = totalDistance * undefDistance / (100-undefDistance);
+
+    if(totalDistPourcent<undefCount)
+    {
+        totalDistPourcent = undefCount;
+    }
+
+    for(int i = 0; i< ranges.size(); ++i)
+    {
+        Range tmp = ranges.at(i);
+        if(!tmp.isFullyDefined())
+        {
+            int dist  = tmp.getStart();
+            tmp.setStart(maxValue+1);
+            maxValue+=1;
+            double truc = undefDistance*1.0/dist;
+
+            tmp.setEnd(maxValue+(truc*totalDistPourcent));
+            maxValue = maxValue+(truc*totalDistPourcent);
+            qDebug() << truc << totalDistPourcent << undefDistance << totalDistance << maxValue << dist << totalDistPourcent << tmp.toString();
+            ranges[i]=tmp;
+        }
+    }
+
+
 
 }

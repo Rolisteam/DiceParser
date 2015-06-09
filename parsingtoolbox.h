@@ -36,6 +36,7 @@
 class ParsingToolBox
 {
 public:
+    enum LIST_OPERATOR {NONE,UNIQUE};
 	/**
 	 * @brief ParsingToolBox
 	 */
@@ -100,7 +101,7 @@ public:
      * @param list
      * @return
      */
-    bool readList(QString& str,QStringList& list);
+    bool readList(QString& str,QStringList& list, QList<Range>& ranges);
     /**
      * @brief isValidValidator
      * @param previous
@@ -123,6 +124,15 @@ public:
      * @return
      */
     bool readDiceRange(QString& str,int& start, int& end);
+    /**
+     * @brief readListOperator
+     * @param str
+     * @return
+     */
+    LIST_OPERATOR  readListOperator(QString& str);
+
+    void readProbability(QStringList& str,QList<Range>& ranges);
+
 
 private:
         QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;

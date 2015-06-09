@@ -27,6 +27,7 @@
 #include "executionnode.h"
 #include "result/diceresult.h"
 #include "result/stringresult.h"
+#include "range.h"
 /**
  * @brief The ListSetRollNode class is dedicated to pick up item from list.
  */
@@ -41,12 +42,20 @@ public:
     QStringList getList();
 
     void setListValue(QStringList);
+    void setUnique(bool );
+    void setRangeList(QList<Range>&);
+
+
+private:
+    void getValueFromDie(Die* die,QStringList& rollResult);
+    void computeFacesNumber(Die* die);
 
 private:
     QStringList m_values;
     DiceResult* m_diceResult;
     StringResult* m_stringResult;
-
+    bool m_unique;
+    QList<Range> m_rangeList;
 };
 
 #endif // LISTSETROLLNODE_H

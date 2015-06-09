@@ -22,7 +22,7 @@
 #include "die.h"
 
 ListSetRollNode::ListSetRollNode()
-    :m_diceResult(new DiceResult()),m_stringResult(new StringResult())
+    :m_diceResult(new DiceResult()),m_stringResult(new StringResult()),m_unique(false)
 {
     m_result = m_stringResult;
 }
@@ -46,12 +46,6 @@ QString ListSetRollNode::toString() const
 qint64 ListSetRollNode::getPriority() const
 {
     qint64 priority=4;
-//    if(NULL!=m_nextNode)
-//    {
-//        priority = m_nextNode->getPriority();
-//    }
-
-
     return priority;
 }
 void ListSetRollNode::run(ExecutionNode* previous)
@@ -68,13 +62,11 @@ void ListSetRollNode::run(ExecutionNode* previous)
             for(quint64 i=0; i < diceCount ; ++i)
             {
                 Die* die = new Die();
-                die->setFaces(m_values.size());
+                //die->setFaces(m_values.size());
+                computeFacesNumber(die);
                 die->roll();
                 m_diceResult->insertResult(die);
-                if(die->getValue()-1<m_values.size())
-                {
-                    rollResult << m_values[die->getValue()-1];
-                }
+                getValueFromDie(die,rollResult);
             }
             m_stringResult->setText(rollResult.join(","));
             if(NULL!=m_nextNode)
@@ -83,11 +75,63 @@ void ListSetRollNode::run(ExecutionNode* previous)
             }
         }
     }
-
-
-
 }
 void ListSetRollNode::setListValue(QStringList lirs)
 {
     m_values = lirs;
+}
+void ListSetRollNode::setUnique(bool u)
+{
+    m_unique = u;
+}
+void ListSetRollNode::setRangeList(QList<Range>& ranges)
+{
+    m_rangeList = ranges;
+}
+void ListSetRollNode::computeFacesNumber(Die* die)
+{
+    if(m_rangeList.isEmpty())
+    {
+        die->setFaces(m_values.size());
+    }
+    else
+    {
+        Q_ASSERT(m_values.size() == m_rangeList.size());
+        qint64 max;
+        int i=0;
+        foreach(Range range, m_rangeList)
+        {
+            if((i==0)||(max<range.getEnd()))
+            {
+                max= range.getEnd();
+            }
+            ++i;
+        }
+        die->setFaces(max);
+    }
+
+}
+void ListSetRollNode::getValueFromDie(Die* die,QStringList& rollResult)
+{
+    if(m_rangeList.isEmpty())
+    {
+        if(die->getValue()-1<m_values.size())
+        {
+            rollResult << m_values[die->getValue()-1];
+        }
+    }
+    else
+    {
+        Q_ASSERT(m_values.size() == m_rangeList.size());
+        int i=0;
+        foreach (Range range, m_rangeList)
+        {
+            qDebug() << range.toString()<< die->getValue();
+            if(range.hasValid(die,false))
+            {
+                rollResult << m_values[i];
+            }
+            ++i;
+        }
+    }
 }
