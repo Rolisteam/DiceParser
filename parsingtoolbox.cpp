@@ -327,13 +327,6 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
 
     }
 
-
-
-
-    ///Normalize list
-//    qDebug() << 100 - undefDistance;
-//    qDebug() << totalDistance;
-
     qint64 totalDistPourcent = totalDistance * undefDistance / (100-undefDistance);
 
     if(totalDistPourcent<undefCount)
@@ -353,7 +346,6 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
 
             tmp.setEnd(maxValue+(truc*totalDistPourcent));
             maxValue = maxValue+(truc*totalDistPourcent);
-            qDebug() << truc << totalDistPourcent << undefDistance << totalDistance << maxValue << dist << totalDistPourcent << tmp.toString();
             ranges[i]=tmp;
         }
     }
