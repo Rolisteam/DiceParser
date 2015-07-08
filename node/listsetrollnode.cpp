@@ -62,7 +62,6 @@ void ListSetRollNode::run(ExecutionNode* previous)
             for(quint64 i=0; i < diceCount ; ++i)
             {
                 Die* die = new Die();
-                //die->setFaces(m_values.size());
                 computeFacesNumber(die);
                 die->roll();
                 m_diceResult->insertResult(die);
@@ -101,12 +100,14 @@ void ListSetRollNode::computeFacesNumber(Die* die)
         int i=0;
         foreach(Range range, m_rangeList)
         {
-            if((i==0)||(max<range.getEnd()))
+            if(((i==0)||(max<range.getEnd()))&&(range.isFullyDefined()))
             {
+               // qDebug()<< range.isFullyDefined() << range.getEnd();
                 max= range.getEnd();
             }
             ++i;
         }
+        //qDebug() << "set Faces"<<max;
         die->setFaces(max);
     }
 
@@ -126,7 +127,6 @@ void ListSetRollNode::getValueFromDie(Die* die,QStringList& rollResult)
         int i=0;
         foreach (Range range, m_rangeList)
         {
-            qDebug() << range.toString()<< die->getValue();
             if(range.hasValid(die,false))
             {
                 rollResult << m_values[i];
