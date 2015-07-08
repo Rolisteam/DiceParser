@@ -172,13 +172,14 @@ bool DiceParser::parseLine(QString str)
         }
     }
 
-    if(m_errorMap.isEmpty())
+    if((m_errorMap.isEmpty())&&(NULL!=newNode))
     {
       return true;
     }
     else
     {
-      return false;
+       m_errorMap.insert(ExecutionNode::NOTHING_UNDERSTOOD,QObject::tr("Nothing was understood"));
+       return false;
     }
 
 }
