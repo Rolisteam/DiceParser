@@ -73,6 +73,7 @@ The dice list is sorted in descending order.
 
 > 10d6sl
 Roll 6 dice at 6 faces and then sort them ascendingly
+
 ### Counter
 
 > 3D10c[Validator]
