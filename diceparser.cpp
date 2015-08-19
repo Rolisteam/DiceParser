@@ -519,8 +519,8 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
 
     if(readDiceOperator(str,currentOperator))
     {
-        int num;
-        int end;
+        qint64 num;
+        qint64 end;
         if(currentOperator==D)
         {
             if(m_parsingToolbox->readNumber(str,num))
@@ -542,7 +542,7 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
             else if(m_parsingToolbox->readDiceRange(str,num,end))
             {
 
-                int face = abs(num - end)+1;
+                qint64 face = abs(num - end)+1;
                 DiceRollerNode* drNode = new DiceRollerNode(face,num);
                 node = drNode;
                 ExecutionNode* current = drNode;
@@ -754,7 +754,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
             {
             case Keep:
             {
-                int myNumber=0;
+                qint64 myNumber=0;
                 bool ascending = m_parsingToolbox->readAscending(str);
                 if(m_parsingToolbox->readNumber(str,myNumber))
                 {
@@ -775,7 +775,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 break;
             case KeepAndExplose:
             {
-                int myNumber=0;
+                qint64 myNumber=0;
                 bool ascending = m_parsingToolbox->readAscending(str);
                 if(m_parsingToolbox->readNumber(str,myNumber))
                 {
@@ -860,7 +860,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 break;
             case Explosing:
             {
-                Validator* validator = m_parsingToolbox->readValidator(str);
+                Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(NULL!=validator)
                 {
                     if(!m_parsingToolbox->isValidValidator(previous,validator))
@@ -915,7 +915,7 @@ QString DiceParser::humanReadableError()
 
 bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
 {
-    int myNumber=1;
+    qint64 myNumber=1;
 
     if(m_parsingToolbox->readNumber(str,myNumber))
     {
