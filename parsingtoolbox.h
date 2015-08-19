@@ -27,6 +27,7 @@
 #include "node/executionnode.h"
 #include "node/dicerollernode.h"
 #include "booleancondition.h"
+#include "compositevalidator.h"
 #include "range.h"
 
 /**
@@ -71,7 +72,12 @@ public:
 	 * @return
 	 */
     Validator* readValidator(QString& str);
-
+    /**
+     * @brief readCompositeValidator
+     * @param str
+     * @return
+     */
+    Validator* readCompositeValidator(QString& str);
 
     /**
      * @brief readNumber read number in the given str and remove from the string the read character.
@@ -79,7 +85,7 @@ public:
      * @param myNumber reference to the found number
      * @return true, succeed to read number, false otherwise.
      */
-    bool readNumber(QString&  str, int& myNumber);
+    bool readNumber(QString&  str, qint64& myNumber);
 
 
 	/**
@@ -123,7 +129,7 @@ public:
      * @param end
      * @return
      */
-    bool readDiceRange(QString& str,int& start, int& end);
+    bool readDiceRange(QString& str,qint64& start, qint64& end);
     /**
      * @brief readListOperator
      * @param str
@@ -133,9 +139,11 @@ public:
 
     void readProbability(QStringList& str,QList<Range>& ranges);
 
+    bool readLogicOperation(QString& str,CompositeValidator::LogicOperation& op);
 
 private:
         QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
+        QMap<QString,CompositeValidator::LogicOperation>* m_logicOperation;
 };
 
 #endif // PARSINGTOOLBOX_H

@@ -33,6 +33,12 @@ ParsingToolBox::ParsingToolBox()
     m_logicOp->insert("<",BooleanCondition::LesserThan);
     m_logicOp->insert("=",BooleanCondition::Equal);
     m_logicOp->insert(">",BooleanCondition::GreaterThan);
+
+
+    m_logicOperation = new QMap<QString,CompositeValidator::LogicOperation>();
+    m_logicOperation->insert("|",CompositeValidator::OR);
+    m_logicOperation->insert("^",CompositeValidator::EXCLUSIVE_OR);
+    m_logicOperation->insert("&",CompositeValidator::AND);
 }
 ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e,bool b)
 {
@@ -74,27 +80,23 @@ ParsingToolBox::~ParsingToolBox()
 Validator* ParsingToolBox::readValidator(QString& str)
 {
     Validator* returnVal=NULL;
-    bool expectSquareBrasket=false;
+
     bool isOk = true;
-    if((str.startsWith("[")))
-    {
-        str=str.remove(0,1);
-        expectSquareBrasket = true;
-    }
+
 
     BooleanCondition::LogicOperator myLogicOp = BooleanCondition::Equal;
     bool hasReadLogicOperator = readLogicOperator(str,myLogicOp);
-    int value=0;
+    qint64 value=0;
 
     if(readNumber(str,value))
     {
         if(str.startsWith("-"))
         {
             str=str.remove(0,1);
-            int end=0;
+            qint64 end=0;
             if(readNumber(str,end))
             {
-                if(expectSquareBrasket)
+               /* if(expectSquareBrasket)
                 {
                     if(str.startsWith("]"))
                     {
@@ -105,7 +107,7 @@ Validator* ParsingToolBox::readValidator(QString& str)
                     {
                         isOk=false;
                     }
-                }
+                }*/
                 if(isOk)
                 {
                     str=str.remove(0,1);
@@ -117,12 +119,12 @@ Validator* ParsingToolBox::readValidator(QString& str)
         }
         else
         {
-            if((expectSquareBrasket)&&(str.startsWith("]")))
+           /* if((expectSquareBrasket)&&(str.startsWith("]")))
             {
                 str=str.remove(0,1);
                 isOk=true;
-            }
-            if(isOk)
+            }*/
+            //if(isOk)
             {
                 BooleanCondition* condition = new BooleanCondition();
                 condition->setValue(value);
@@ -133,14 +135,86 @@ Validator* ParsingToolBox::readValidator(QString& str)
     }
     return returnVal;
 }
-bool ParsingToolBox::readNumber(QString& str, int& myNumber)
+Validator* ParsingToolBox::readCompositeValidator(QString& str)
+{
+        bool expectSquareBrasket=false;
+    if((str.startsWith("[")))
+    {
+        str=str.remove(0,1);
+        expectSquareBrasket = true;
+    }
+
+    Validator* tmp = readValidator(str);
+    CompositeValidator::LogicOperation opLogic;
+
+    QVector<CompositeValidator::LogicOperation>* operators = new QVector<CompositeValidator::LogicOperation>();
+    QList<Validator*>* validatorList = new QList<Validator*>();
+
+    while(NULL!=tmp)
+    {
+        bool hasOperator = readLogicOperation(str,opLogic);
+        if( hasOperator )
+        {
+            operators->append(opLogic);
+            validatorList->append(tmp);
+            tmp = readValidator(str);
+        }
+        else
+        {
+            if((expectSquareBrasket)&&(str.startsWith("]")))
+            {
+                str=str.remove(0,1);
+                //isOk=true;
+            }
+
+            if(!validatorList->isEmpty())
+            {
+                validatorList->append(tmp);
+            }
+            else
+            {
+                return tmp;
+            }
+            tmp = NULL;
+        }
+
+    }
+    CompositeValidator* validator = new CompositeValidator();
+    validator->setOperationList(operators);
+    validator->setValidatorList(validatorList);
+
+    return validator;
+}
+bool ParsingToolBox::readLogicOperation(QString& str,CompositeValidator::LogicOperation& op)
+{
+    QString longKey;
+    foreach(QString tmp, m_logicOperation->keys())
+    {
+        if(str.startsWith(tmp))
+        {
+            if(longKey.size()<tmp.size())
+            {
+                longKey = tmp;
+            }
+        }
+    }
+    if(longKey.size()>0)
+    {
+        str=str.remove(0,longKey.size());
+        op = m_logicOperation->value(longKey);
+        return true;
+    }
+
+    return false;
+}
+
+bool ParsingToolBox::readNumber(QString& str, qint64& myNumber)
 {
     if(str.isEmpty())
         return false;
 
     QString number;
     int i=0;
-
     while(i<str.length() && ((str[i].isNumber()) || ( (i==0) && (str[i]=='-'))))
     {
         number+=str[i];
@@ -151,7 +225,7 @@ bool ParsingToolBox::readNumber(QString& str, int& myNumber)
         return false;
 
     bool ok;
-    myNumber = number.toInt(&ok);
+    myNumber = number.toLongLong(&ok);
     if(ok)
     {
         str=str.remove(0,number.size());
@@ -210,8 +284,6 @@ bool ParsingToolBox::readAscending(QString& str)
         return true;
     }
     return false;
-
-
 }
 bool ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
 {
@@ -237,7 +309,7 @@ DiceRollerNode* ParsingToolBox::getDiceRollerNode(ExecutionNode* previous)
         previous = previous->getPreviousNode();
     }
 }
-bool ParsingToolBox::readDiceRange(QString& str,int& start, int& end)
+bool ParsingToolBox::readDiceRange(QString& str,qint64& start, qint64& end)
 {
     bool expectSquareBrasket=false;
 
@@ -300,8 +372,8 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
             QString range = line.right(line.length()-pos);
             line = line.left(pos);
             str[j]=line;
-            int start;
-            int end;
+            qint64 start;
+            qint64 end;
             if(readDiceRange(range,start,end))
             {
                 Range range;
