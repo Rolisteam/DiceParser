@@ -103,7 +103,7 @@ QString BooleanCondition::toString()
     }
     return QString("[%1%2]").arg(str).arg(m_value);
 }
-quint8 BooleanCondition::getValidRangeSize(quint64 faces) const
+quint64 BooleanCondition::getValidRangeSize(quint64 faces) const
 {
     switch (m_operator)
     {

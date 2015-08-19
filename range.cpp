@@ -63,7 +63,7 @@ QString Range::toString()
 {
     return QString("[%1-%2]").arg(m_start).arg(m_end);
 }
-quint8 Range::getValidRangeSize(quint64 faces) const
+quint64 Range::getValidRangeSize(quint64 faces) const
 {
     Q_UNUSED(faces);
     return m_end-m_start;
