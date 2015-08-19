@@ -24,6 +24,7 @@
 
 #include <QString>
 #include <QVector>
+#include <QList>
 #include <Qt>
 
 #include "validator.h"
@@ -39,16 +40,16 @@ public:
 
 	virtual qint64 hasValid(Die* b,bool recursive, bool unhighlight = false) const;
 
-	void addOperation(LogicOperation m);
-	void setValue(qint64);
+    void setOperationList(QVector<LogicOperation>* m);
+    void setValidatorList(QList<Validator*>*);
+
 	QString toString();
 
-	virtual quint8 getValidRangeSize(quint64 faces) const;
+    virtual quint64 getValidRangeSize(quint64 faces) const;
 
 private:
-	QVector<LogicOperation> m_operators;
-	qint64 m_value;
-	QList<Validator*> m_validatorList;
+    QVector<LogicOperation>* m_operators;
+    QList<Validator*>* m_validatorList;
 };
 
 #endif // BOOLEANCONDITION_H

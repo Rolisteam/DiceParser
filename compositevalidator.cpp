@@ -22,7 +22,7 @@
 #include "compositevalidator.h"
 
 
-CompositeValidator::BooleanCondition()
+CompositeValidator::CompositeValidator()
 {
 }
 qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) const
@@ -30,7 +30,7 @@ qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) cons
 
 	int i = 0;
 	qint64 sum = 0;
-	foreach(Validator* validator, m_validatorList)
+    foreach(const Validator* validator, *m_validatorList)
 	{
 		qint64 val = validator->hasValid(b,recursive,unhighlight);
 		if(i==0)
@@ -39,7 +39,7 @@ qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) cons
 		}
 		else
 		{
-			switch(m_operators[i-1])
+            switch(m_operators->at(i-1))
 			{
 				case OR:
 					sum |= val;
@@ -55,63 +55,13 @@ qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) cons
 		++i;
 	}
 
-	/*QList<qint64> listValues;
-	if(recursive)
-	{
-		listValues = b->getListValue();
-	}
-	else
-	{
-		listValues.append(b->getLastRolledValue());
-	}
-
-	qint64 sum= 0;
-	foreach(qint64 value, listValues)
-	{
-		switch(m_operator)
-		{
-			case Equal:
-				sum+=(value==m_value)?1:0;
-				break;
-			case GreaterThan:
-				sum+= (value>m_value)?1:0;
-				break;
-			case LesserThan:
-				sum+= (value<m_value)?1:0;
-				break;
-			case GreaterOrEqual:
-				sum+= (value>=m_value)?1:0;
-				break;
-			case LesserOrEqual:
-				sum+= (value<=m_value)?1:0;
-				break;
-		}
-	}
-	if((unhighlight)&&(sum==0))
-	{
-		b->setHighlighted(false);
-	}
-	else
-	{
-		 b->setHighlighted(true);
-	}
-
-	return sum;*/
+    return sum;
 }
 
-void CompositeValidator::setOperator(LogicOperator m)
-{
-	m_operator = m;
-}
-
-void CompositeValidator::setValue(qint64 v)
-{
-	m_value=v;
-}
 QString CompositeValidator::toString()
 {
 	QString str="";
-	switch (m_operator)
+	/*switch (m_operator)
 	{
 	case Equal:
 		str.append("=");
@@ -129,21 +79,40 @@ QString CompositeValidator::toString()
 		str.append("<=");
 		break;
 	}
-	return QString("[%1%2]").arg(str).arg(m_value);
+	return QString("[%1%2]").arg(str).arg(m_value);*/
+	return str;
 }
-quint8 CompositeValidator::getValidRangeSize(quint64 faces) const
+quint64 CompositeValidator::getValidRangeSize(quint64 faces) const
 {
-	switch (m_operator)
-	{
-	case Equal:
-		return 1;
-	case GreaterThan:
-		return faces-m_value;
-	case LesserThan:
-		return m_value-1;
-	case GreaterOrEqual:
-		return faces-(m_value-1);
-	case LesserOrEqual:
-		return m_value;
-	}
+    quint64 sum =0;
+    int i = -1;
+    foreach(Validator* tmp,*m_validatorList)
+    {
+        quint64 rel = tmp->getValidRangeSize(faces);
+        LogicOperation opt;
+        if(i>=0)
+        {
+            opt = m_operators->at(i);
+        }
+        if(opt == OR)
+        {
+            sum += rel;
+        }
+        else if((opt == AND)&&(opt == EXCLUSIVE_OR))
+        {
+            sum = qMax(rel,sum);
+        }
+        ++i;
+    }
+
+    return sum;
+}
+void CompositeValidator::setOperationList(QVector<LogicOperation>* m)
+{
+    m_operators = m;
+}
+
+void CompositeValidator::setValidatorList(QList<Validator*>* m)
+{
+    m_validatorList = m;
 }
