@@ -51,7 +51,7 @@ void ParenthesesNode::run(ExecutionNode* /*previous*/)
 }
 QString ParenthesesNode::toString(bool b) const
 {
-	if(wl)
+	if(b)
 	{
 		return QString("%1 [label=\"ParenthesesNode\"]").arg(m_id);
 	}
