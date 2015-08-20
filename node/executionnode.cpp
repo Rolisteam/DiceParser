@@ -1,7 +1,9 @@
 #include "executionnode.h"
 
+#include <QUuid>
+
 ExecutionNode::ExecutionNode()
-    : m_nextNode(NULL),m_result(NULL),m_previousNode(NULL)
+	: m_nextNode(NULL),m_result(NULL),m_previousNode(NULL),m_id(QUuid::createUuid().toString())
 {
 
 }

@@ -48,11 +48,11 @@ QString NumberNode::toString(bool withLabel) const
 {
     if(withLabel)
 	{
-    	return QString("NumberNode%2 [label=\"NumberNode %1\"]").arg(m_number).arg(m_number);
+		return QString("%1 [label=\"NumberNode %2\"]").arg(m_id).arg(m_number);
 	}
 	else
 	{
-		return QString("NumberNode%1").arg(m_number);
+		return m_id;
 	}
 }
 qint64 NumberNode::getPriority() const

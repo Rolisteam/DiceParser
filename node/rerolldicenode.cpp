@@ -48,7 +48,15 @@ void RerollDiceNode::setValidator(Validator* val)
 }
 QString RerollDiceNode::toString(bool wl) const
 {
-    return QString("RerollDiceNode [label=\"RerollDiceNode validatior:%1\"").arg(m_validator->toString());
+	if(wl)
+	{
+		return QString("%1 [label=\"RerollDiceNode validatior: %2\"]").arg(m_id).arg(m_validator->toString());
+	}
+	else
+	{
+		return m_id;
+	}
+	//return QString("RerollDiceNode [label=\"RerollDiceNode validatior:%1\"");
 }
 void RerollDiceNode::setAddingMode(bool b)
 {

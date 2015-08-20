@@ -15,13 +15,17 @@ void StartingNode::run(ExecutionNode*)
 }
 QString StartingNode::toString(bool withlabel) const
 {
-if(withlabel)
-    return "StartingNode [shape=box]";
-else
-    return "StartingNode";
+	if(withlabel)
+	{
+		return QString("%1 [label=\"StartingNode %2\"]").arg(m_id);
+	}
+	else
+	{
+		return m_id;
+	}
 }
 
-}
+
 qint64 StartingNode::getPriority() const
 {
     qint64 priority=0;

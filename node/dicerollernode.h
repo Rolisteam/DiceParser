@@ -30,7 +30,7 @@ public:
     virtual void run(ExecutionNode*);
     quint64 getFaces();
 
-     virtual QString toString()const;
+	 virtual QString toString(bool wl)const;
      virtual qint64 getPriority() const;
 //private members
 private:

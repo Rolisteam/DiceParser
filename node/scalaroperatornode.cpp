@@ -159,10 +159,14 @@ QString ScalarOperatorNode::toString(bool wl) const
             break;
 
     }
-if(wl)
-    return QString("ScalarOperatorNode [label=\"ScalarOperatorNode %1\"").arg(op);
-else
-    return QString("ScalarOperatorNode");
+	if(wl)
+	{
+		return QString("%1 [label=\"ScalarOperatorNode %2\"]").arg(m_id).arg(op);
+	}
+	else
+	{
+		return m_id;
+	}
 }
 qint64 ScalarOperatorNode::getPriority() const
 {

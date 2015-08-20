@@ -62,9 +62,16 @@ void KeepDiceExecNode::setDiceKeepNumber(quint64 n)
 {
     m_numberOfDice = n;
 }
-QString KeepDiceExecNode::toString() const
+QString KeepDiceExecNode::toString(bool wl) const
 {
-    return QString("KeepDiceExecNode [label=\"KeepDiceExecNode %1\"]").arg(m_numberOfDice);
+	if(wl)
+	{
+		return QString("%1 [label=\"KeepDiceExecNode %1\"]").arg(m_id).arg(m_numberOfDice);
+	}
+	else
+	{
+		return m_id;
+	}
 }
 qint64 KeepDiceExecNode::getPriority() const
 {

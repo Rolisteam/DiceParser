@@ -112,10 +112,14 @@ void SortResultNode::setSortAscending(bool asc)
 }
 QString SortResultNode::toString(bool wl) const
 {
-if(wl)
-    return QString("SortResultNode [label=\"SortResultNode %1\"").arg(m_ascending ? "Ascending":"Descending");
-else
-    return QString("SortResultNode");
+	if(wl)
+	{
+		return QString("%1 [label=\"SortResultNode %2\"]").arg(m_id).arg(m_ascending ? "Ascending":"Descending");
+	}
+	else
+	{
+		return m_id;
+	}
 
 }
 qint64 SortResultNode::getPriority() const

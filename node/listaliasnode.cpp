@@ -58,14 +58,23 @@ QString ListAliasNode::buildList() const
 	}
 	return result;
 }
-QString ListAliasNode::toString() const
+QString ListAliasNode::toString(bool wl) const
 {
-    QStringList resultList;
-    foreach(DiceAlias* key, *m_aliasList)
-    {
-        resultList <<  "{" <<key->getCommand() << key->getValue()<<  "}";
-    }
-    return QString("ListAliasNode [label=\"ListAliasNode %1\"]").arg(resultList.join(","));
+	QStringList resultList;
+	foreach(DiceAlias* key, *m_aliasList)
+	{
+		resultList <<  "{" <<key->getCommand() << key->getValue()<<  "}";
+	}
+
+	if(wl)
+	{
+		return QString("%1 [label=\"ListAliasNode %2\"]").arg(m_id).arg(resultList.join(","));
+	}
+	else
+	{
+		return m_id;
+	}
+
 
 }
 qint64 ListAliasNode::getPriority() const

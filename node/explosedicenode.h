@@ -16,7 +16,7 @@ public:
 	virtual ~ExploseDiceNode();
     virtual void run(ExecutionNode* previous = NULL);
     virtual void setValidator(Validator* );
-    virtual QString toString()const;
+	virtual QString toString(bool )const;
     virtual qint64 getPriority() const;
 
 protected:

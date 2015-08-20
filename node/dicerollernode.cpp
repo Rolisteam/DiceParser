@@ -71,9 +71,16 @@ quint64 DiceRollerNode::getFaces()
 {
     return m_faces;
 }
-QString DiceRollerNode::toString() const
+QString DiceRollerNode::toString(bool wl) const
 {
-    return QString("DiceRollerNode");
+	if(wl)
+	{
+		return QString("%1 [label=DiceRollerNode]").arg(m_id);
+	}
+	else
+	{
+		return m_id;
+	}
 }
 qint64 DiceRollerNode::getPriority() const
 {

@@ -3,6 +3,7 @@
 
 #include "result/result.h"
 #include <QDebug>
+
 /**
  * @brief The ExecutionNode class
  */
@@ -85,6 +86,8 @@ protected:
      * @brief m_errors
      */
     QMap<ExecutionNode::ERROR_CODE,QString> m_errors;
+
+	QString m_id;
 };
 
 #endif // EXECUTIONNODE_H
