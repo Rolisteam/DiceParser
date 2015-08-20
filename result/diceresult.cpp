@@ -91,7 +91,7 @@ QString DiceResult::toString(bool wl)
     }
 	if(wl)
 	{
-		return QString("%3 [label=\"DiceResult_Value_%1_dice_%2\"]").arg(getScalarResult()).arg(scalarSum.join('_')).arg(m_id);
+		return QString("%3 [label=\"DiceResult Value %1 dice %2\"]").arg(getScalarResult()).arg(scalarSum.join('_')).arg(m_id);
 	}
 	else
 	{
