@@ -36,7 +36,7 @@ public:
      * @brief toString
      * @return
      */
-    virtual QString toString();
+	virtual QString toString(bool );
 private:
     QString m_value;
 };
