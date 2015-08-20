@@ -80,9 +80,9 @@ public:
 	virtual QString toString(bool wl) = 0;
 protected:
      int m_resultTypes;/// @brief
+     QString m_id;
 private:
     Result* m_previous;/// @brief
-	QString m_id;
 
 };
 
