@@ -8,30 +8,7 @@
 #include <QTime>
 
 
-//DiceRoller::DiceRoller(QMutex* mutex,DiceResult* diceResult,int faces,int count)
-//    : m_mutex(mutex),m_sharedDiceResult(diceResult),m_faces(faces),m_diceCount(count)
-//{
 
-//}
-
-//void DiceRoller::run()
-//{
-//    for(quint64 i=0; i < m_diceCount ; ++i)
-//    {
-//        Die* die = new Die();
-//        die->setFaces(m_faces);
-//        die->roll();
-//        m_mutex->lock();
-//        m_sharedDiceResult->insertResult(die);
-//        m_mutex->unlock();
-//    }
-//}
-
-
-
-//////////////////////////////////////////////////
-/// \brief DiceRollerNode::DiceRollerNode
-//////////////////////////////////////////////////
 DiceRollerNode::DiceRollerNode(quint64 faces,qint64 offset)
     : m_faces(faces),m_diceResult(new DiceResult()),m_offset(offset)
 {
@@ -72,7 +49,7 @@ QString DiceRollerNode::toString(bool wl) const
 {
 	if(wl)
 	{
-		return QString("%1 [label=DiceRollerNode faces: %2]").arg(m_id).arg(m_faces);
+		return QString("%1 [label=\"DiceRollerNode faces: %2\"]").arg(m_id).arg(m_faces);
 	}
 	else
 	{
