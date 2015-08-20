@@ -14,7 +14,7 @@ void HelpNode::run(ExecutionNode* previous)
     {
         if(previous->getResult() == NULL)
         {
-			txtResult->setText(tr("Rolisteam Dice Parser:\nFull documentation at: %1").arg(m_path));
+			txtResult->setText(QObject::tr("Rolisteam Dice Parser:\nFull documentation at: %1").arg(m_path));
         }
         else
         {
