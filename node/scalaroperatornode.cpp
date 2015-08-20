@@ -181,27 +181,31 @@ qint64 ScalarOperatorNode::getPriority() const
 }
 void ScalarOperatorNode::generateDotTree(QString& s)
 {
-    s.append(toString());
+	s.append(toString(true));
+	s.append(";\n");
+
     if(NULL!=m_nextNode)
     {
+		s.append(toString(false));
         s.append(" -> ");
-        s.append(m_nextNode->toString());
-        s.append(" [label=\"nextNode\"];\n");
+		s.append(m_nextNode->toString(false));
+		s.append(";\n");
         m_nextNode->generateDotTree(s);
     }
     else
     {
+		s.append(toString(false));
         s.append(" -> ");
-        s.append("NULL");
-        s.append(" [label=\"nextNode\"];\n");
+		s.append("NULL");
+		s.append(" [label=\"nextNode\"];\n");
     }
     QString str;
     str.append("\n");
     if(NULL!=m_internalNode)
     {
-        str.append(toString());
+		str.append(toString(false));
         str.append(" -> ");
-        str.append(m_internalNode->toString());
+		str.append(m_internalNode->toString(false));
         str.append(" [label=\"internalNode\"];\n");
         m_internalNode->generateDotTree(str);
     }
