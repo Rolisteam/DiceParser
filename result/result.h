@@ -77,11 +77,12 @@ public:
      * @brief toString
      * @return
      */
-    virtual QString toString() = 0;
+	virtual QString toString(bool wl) = 0;
 protected:
      int m_resultTypes;/// @brief
 private:
     Result* m_previous;/// @brief
+	QString m_id;
 
 };
 

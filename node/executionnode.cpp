@@ -9,7 +9,6 @@ ExecutionNode::ExecutionNode()
 }
 ExecutionNode::~ExecutionNode()
 {
-
 	if(NULL!=m_result)
 	{
 		delete m_result;
@@ -55,19 +54,24 @@ ExecutionNode* ExecutionNode::getPreviousNode() const
 }
 void ExecutionNode::generateDotTree(QString& s)
 {
-    s.append(toString());
+	s.append(toString(true));
+	s.append(";\n");
+
     if(NULL!=m_nextNode)
     {
+		s.append(toString(false));
         s.append(" -> ");
-        s.append(m_nextNode->toString());
-        s.append(" [label=\"nextNode\"];\n");
+		s.append(m_nextNode->toString(false));
+		s.append("\n");
+//        s.append(" [label=\"nextNode\"];\n");
         m_nextNode->generateDotTree(s);
     }
     else
     {
+		s.append(toString(false));
         s.append(" -> ");
-        s.append("NULL");
-        s.append(" [label=\"nextNode\"];\n");
+		s.append("NULL;\n;");
+  //      s.append(" [label=\"nextNode\"];\n");
 
         m_result->generateDotTree(s);
     }

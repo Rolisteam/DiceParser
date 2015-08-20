@@ -31,7 +31,14 @@ QVariant StringResult::getResult(RESULT_TYPE type)
 
     return QVariant();
 }
-QString StringResult::toString()
+QString StringResult::toString(bool wl)
 {
-    return QString("StringResult_value_%1").arg(getText().replace(" ","_"));
+	if(wl)
+	{
+		return QString("%2 [label=\"StringResult_value_%1\"]").arg(getText().replace(" ","_")).arg(m_id);
+	}
+	else
+	{
+		return m_id;
+	}
 }

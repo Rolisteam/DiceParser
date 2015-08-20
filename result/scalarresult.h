@@ -49,7 +49,7 @@ public:
      * @brief toString
      * @return
      */
-    virtual QString toString();
+	virtual QString toString(bool);
 
 private:
     qreal m_value;
