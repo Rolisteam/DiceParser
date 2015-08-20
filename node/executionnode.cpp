@@ -70,7 +70,7 @@ void ExecutionNode::generateDotTree(QString& s)
     {
 		s.append(toString(false));
         s.append(" -> ");
-		s.append("NULL;\n;");
+		s.append("NULL;\n");
 
 
 		s.append(toString(false));
