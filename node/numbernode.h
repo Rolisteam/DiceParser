@@ -34,7 +34,7 @@ public:
     NumberNode();
     void run(ExecutionNode* previous);
     void setNumber(qint64);
-virtual QString toString()const;
+    virtual QString toString(bool withLabel)const;
     virtual qint64 getPriority() const;
 private:
     qint64 m_number;

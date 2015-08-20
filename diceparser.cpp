@@ -814,7 +814,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 break;
             case Count:
             {
-                Validator* validator = m_parsingToolbox->readValidator(str);
+                //Validator* validator = m_parsingToolbox->readValidator(str);
+                Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(NULL!=validator)
                 {
                     /// @todo display warning here.
@@ -836,7 +837,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
             case Reroll:
             case RerollAndAdd:
             {
-                Validator* validator = m_parsingToolbox->readValidator(str);
+                //Validator* validator = m_parsingToolbox->readValidator(str);
+                Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(NULL!=validator)
                 {
                     /// @todo display warning here.

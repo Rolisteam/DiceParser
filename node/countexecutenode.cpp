@@ -46,9 +46,18 @@ void CountExecuteNode::run(ExecutionNode *previous)
         }
     }
 }
-QString CountExecuteNode::toString() const
+QString CountExecuteNode::toString(bool withlabel) const
+{
+if(withlabel)
 {
     return "CountExecuteNode"+m_validator->toString();
+}
+else
+{
+
+    return "CountExecuteNode"+m_validator->toString();
+}
+}
 }
 qint64 CountExecuteNode::getPriority() const
 {

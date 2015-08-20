@@ -22,7 +22,7 @@ public:
      * @brief toString
      * @return
      */
-    virtual QString toString()const;
+    virtual QString toString(bool withlabel)const;
     /**
      * @brief getPriority
      * @return

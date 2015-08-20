@@ -42,7 +42,7 @@ public:
     bool setOperatorChar(QChar c);
     void setInternalNode(ExecutionNode* node);
 
-    virtual QString toString()const;
+    virtual QString toString(bool wl)const;
     virtual qint64 getPriority() const;
 
     void generateDotTree(QString& s);

@@ -13,9 +13,14 @@ void StartingNode::run(ExecutionNode*)
         m_nextNode->run(this);
     }
 }
-QString StartingNode::toString() const
+QString StartingNode::toString(bool withlabel) const
 {
+if(withlabel)
     return "StartingNode [shape=box]";
+else
+    return "StartingNode";
+}
+
 }
 qint64 StartingNode::getPriority() const
 {

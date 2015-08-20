@@ -44,9 +44,16 @@ void NumberNode::setNumber(qint64 a)
     m_scalarResult->setValue(a);
     m_number = a;
 }
-QString NumberNode::toString() const
+QString NumberNode::toString(bool withLabel) const
 {
-    return QString("NumberNode [label=\"NumberNode %1\"]").arg(m_number);
+    if(withLabel)
+	{
+    	return QString("NumberNode%2 [label=\"NumberNode %1\"]").arg(m_number).arg(m_number);
+	}
+	else
+	{
+		return QString("NumberNode%1").arg(m_number);
+	}
 }
 qint64 NumberNode::getPriority() const
 {
