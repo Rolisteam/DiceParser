@@ -3,7 +3,7 @@
 #include <QUuid>
 
 ExecutionNode::ExecutionNode()
-	: m_nextNode(NULL),m_result(NULL),m_previousNode(NULL),m_id(QUuid::createUuid().toString())
+	: m_nextNode(NULL),m_result(NULL),m_previousNode(NULL),m_id(QString("\"%1\"").arg(QUuid::createUuid().toString())
 {
 
 }
@@ -62,7 +62,7 @@ void ExecutionNode::generateDotTree(QString& s)
 		s.append(toString(false));
         s.append(" -> ");
 		s.append(m_nextNode->toString(false));
-		s.append("\n");
+		s.append(";\n");
 //        s.append(" [label=\"nextNode\"];\n");
         m_nextNode->generateDotTree(s);
     }
@@ -71,7 +71,12 @@ void ExecutionNode::generateDotTree(QString& s)
 		s.append(toString(false));
         s.append(" -> ");
 		s.append("NULL;\n;");
-  //      s.append(" [label=\"nextNode\"];\n");
+
+
+		s.append(toString(false));
+		s.append(" ->");
+		s.append(m_result->toString(false));
+		s.append(" [label=\"Result\"];\n");
 
         m_result->generateDotTree(s);
     }
