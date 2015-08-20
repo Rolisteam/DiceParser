@@ -66,7 +66,7 @@ QString KeepDiceExecNode::toString(bool wl) const
 {
 	if(wl)
 	{
-		return QString("%1 [label=\"KeepDiceExecNode %1\"]").arg(m_id).arg(m_numberOfDice);
+		return QString("%1 [label=\"KeepDiceExecNode %2\"]").arg(m_id).arg(m_numberOfDice);
 	}
 	else
 	{

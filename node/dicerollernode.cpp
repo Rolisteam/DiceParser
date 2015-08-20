@@ -61,10 +61,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
                 m_nextNode->run(this);
             }
         }
-    }
-
-
-
+	}
 }
 
 quint64 DiceRollerNode::getFaces()
@@ -75,7 +72,7 @@ QString DiceRollerNode::toString(bool wl) const
 {
 	if(wl)
 	{
-		return QString("%1 [label=DiceRollerNode]").arg(m_id);
+		return QString("%1 [label=DiceRollerNode faces: %2]").arg(m_id).arg(m_faces);
 	}
 	else
 	{
