@@ -942,6 +942,7 @@ void DiceParser::writeDownDotTree(QString filepath)
         QTextStream in(&file);
         in << str;
     }
+	in << "\n";
 }
 void DiceParser::setPathToHelp(QString l)
 {
