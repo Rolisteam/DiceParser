@@ -933,7 +933,7 @@ void DiceParser::writeDownDotTree(QString filepath)
 {
     QString str("digraph ExecutionTree {\n");
     m_start->generateDotTree(str);
-    str.append("}");
+	str.append("}\n");
 
 
     QFile file(filepath);
@@ -942,6 +942,7 @@ void DiceParser::writeDownDotTree(QString filepath)
         QTextStream in(&file);
         in << str;
     }
+
 }
 void DiceParser::setPathToHelp(QString l)
 {
