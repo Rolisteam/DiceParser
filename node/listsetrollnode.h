@@ -37,7 +37,7 @@ public:
     ListSetRollNode();
 	virtual ~ListSetRollNode();
     virtual void run(ExecutionNode* previous = NULL);
-    virtual QString toString()const;
+	virtual QString toString(bool)const;
     virtual qint64 getPriority() const;
     QStringList getList();
 
