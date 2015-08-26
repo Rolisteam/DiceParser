@@ -30,6 +30,7 @@ Roll five ten-faced die.
 Roll 777 six-faced die.
 
 
+
 Thanks of several operations and option, you can tune a bit you rolling command.
 
 ## List of operator
@@ -123,6 +124,15 @@ Result: 3.5
 
 Roll 2 dice and add 3 to the sum of those dice. Then the result is used for rolling dice.
 
+### Roll dice in Range
+
+> 4d[-1-1]
+
+Rolling 4 dice with value between -1 to 1. (Fudge/Fate system)
+
+> 3d[0-9]
+
+Rolling 3 dice with 10 faces starting at 0.
 
 ## Arithmetic and Dice
 
