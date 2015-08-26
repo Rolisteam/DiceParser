@@ -108,6 +108,10 @@ Rolling 4 dice with value between -1 to 1. (Fudge/Fate system)
 
 Rolling 3 dice with 10 faces starting at 0.
 
+> 3d[-20--9]
+
+Rolling 3 dice, values ars between -20 and -9.
+
 ## Arithmetic
 
 Rolisteam Dice Parser is able to compute primary arithmetic operation such as: +, -, /, * and it also manages those operator priority and it can also manage parenthesis. 
