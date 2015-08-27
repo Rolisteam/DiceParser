@@ -393,6 +393,29 @@ QString DiceParser::getStringResult()
     }
     return str;
 }
+QStringList DiceParser::getAllStringResult(bool& hasAlias)
+{
+    ExecutionNode* next = getLeafNode();
+    Result* result=next->getResult();
+    QStringList stringListResult;
+
+    while(NULL!=result)
+    {
+        if(result->hasResultOfType(Result::STRING))
+        {
+            StringResult* stringResult = dynamic_cast<StringResult*>(result);
+            if(NULL!=stringResult)
+            {
+                stringListResult << stringResult->getText();
+                hasAlias = stringResult->hasHighLight();
+            }
+        }
+        result = result->getPrevious();
+    }
+
+    return stringListResult;
+}
+
 void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues)
 {
     ExecutionNode* next = getLeafNode();

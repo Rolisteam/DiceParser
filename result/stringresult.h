@@ -37,8 +37,12 @@ public:
      * @return
      */
     virtual QString toString();
+
+    virtual void setHighLight(bool );
+    virtual bool hasHighLight() const;
 private:
     QString m_value;
+    bool m_highlight;
 };
 
 #endif // STRINGRESULT_H
