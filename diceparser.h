@@ -191,6 +191,11 @@ public:
      * @param l the path.
      */
     void setPathToHelp(QString l);
+    /**
+     * @brief getAllStringResult
+     * @return
+     */
+    QStringList getAllStringResult(bool& hasAlias);
 private:
 
     /**
