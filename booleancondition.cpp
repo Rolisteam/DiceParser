@@ -23,6 +23,7 @@
 
 
 BooleanCondition::BooleanCondition()
+    : m_operator(Equal)
 {
 }
 qint64 BooleanCondition::hasValid(Die* b,bool recursive,bool unhighlight) const

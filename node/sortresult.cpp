@@ -54,14 +54,11 @@ void SortResultNode::run(ExecutionNode* node)
             bool found = false;
             int start = 0;
             int end = diceList2.size();
-            int distance = 0;
             Die* tmp2 = NULL;
             while(!found)
             {
-                distance = end-start;
+                int distance = end-start;
                 j = (start+end)/2;
-
-
                 if(distance == 0)
                 {
                     j=end;
@@ -78,9 +75,7 @@ void SortResultNode::run(ExecutionNode* node)
                     {
                             start=j+1;
                     }
-
                 }
-
             }
             diceList2.insert(j,tmp1);
         }

@@ -75,7 +75,6 @@ Validator* ParsingToolBox::readValidator(QString& str)
 {
     Validator* returnVal=NULL;
     bool expectSquareBrasket=false;
-    bool isOk = true;
     if((str.startsWith("[")))
     {
         str=str.remove(0,1);
@@ -83,11 +82,13 @@ Validator* ParsingToolBox::readValidator(QString& str)
     }
 
     BooleanCondition::LogicOperator myLogicOp = BooleanCondition::Equal;
-    bool hasReadLogicOperator = readLogicOperator(str,myLogicOp);
+    //bool hasReadLogicOperator =
+    readLogicOperator(str,myLogicOp);
     int value=0;
 
     if(readNumber(str,value))
     {
+        bool isOk = true;
         if(str.startsWith("-"))
         {
             str=str.remove(0,1);
