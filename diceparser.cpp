@@ -42,7 +42,7 @@
 #define DEFAULT_FACES_NUMBER 10
 
 DiceParser::DiceParser()
-	: m_start(NULL)
+    : m_start(NULL),m_current(NULL)
 {
     m_parsingToolbox = new ParsingToolBox();
 
@@ -166,7 +166,8 @@ bool DiceParser::parseLine(QString str)
         keepParsing =!str.isEmpty();
         if(keepParsing)
         {
-            keepParsing = readOperator(str,m_current);
+            // keepParsing =
+           readOperator(str,m_current);
 
             m_current = getLatestNode(m_current);
         }
@@ -428,7 +429,6 @@ void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues)
             DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
             if(NULL!=diceResult)
             {
-                bool  hasResult = false;
                 quint64 face=0;
                 ListDiceResult listpair;
                 foreach(Die* die, diceResult->getResultList())
@@ -436,7 +436,6 @@ void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues)
                     if(!die->hasBeenDisplayed())
                     {
                         QList<quint64> valuesResult;
-                        hasResult=true;
                         valuesResult.append(die->getValue());
                         die->displayed();
                         face = die->getFaces();
@@ -545,10 +544,10 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
 
     if(readDiceOperator(str,currentOperator))
     {
-        int num;
-        int end;
         if(currentOperator==D)
         {
+            int num;
+            int end;
             if(m_parsingToolbox->readNumber(str,num))
             {
                 if(num<1)
@@ -837,7 +836,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 if(NULL!=validator)
                 {
                     /// @todo display warning here.
-                    bool b = m_parsingToolbox->isValidValidator(previous,validator);
+                    //bool b =
+                    m_parsingToolbox->isValidValidator(previous,validator);
 
                     CountExecuteNode* countNode = new CountExecuteNode();
                     countNode->setValidator(validator);
@@ -859,7 +859,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 if(NULL!=validator)
                 {
                     /// @todo display warning here.
-                    bool b = m_parsingToolbox->isValidValidator(previous,validator);
+                    //bool b =
+                    m_parsingToolbox->isValidValidator(previous,validator);
                     RerollDiceNode* rerollNode = new RerollDiceNode();
                     if(m_OptionOp->value(tmp)==RerollAndAdd)
                     {

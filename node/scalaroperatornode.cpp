@@ -26,7 +26,7 @@
 
 
 ScalarOperatorNode::ScalarOperatorNode()
-    : m_internalNode(NULL),m_scalarResult(new ScalarResult())
+    : m_internalNode(NULL),m_scalarResult(new ScalarResult()),m_operator(PLUS)
 {
     m_scalarOperationList.insert('+',PLUS);
     m_scalarOperationList.insert('-',MINUS);
