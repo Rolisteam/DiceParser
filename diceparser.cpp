@@ -181,11 +181,7 @@ bool DiceParser::parseLine(QString str)
     {
         m_errorMap.insert(ExecutionNode::NOTHING_UNDERSTOOD,QObject::tr("Nothing was understood"));
     }
-    else
-    {
-       return false;
-    }
-
+    return false;
 }
 
 bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
