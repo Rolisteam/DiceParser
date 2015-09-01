@@ -196,6 +196,14 @@ public:
      * @return
      */
     QStringList getAllStringResult(bool& hasAlias);
+    /**
+     * @brief getAllDiceResult
+     * @param hasAlias
+     * @return
+     */
+    QStringList getAllDiceResult(bool& hasAlias);
+
+    bool hasSeparator()const;
 private:
 
     /**
@@ -301,6 +309,7 @@ private:
     QString m_command;
     ParsingToolBox* m_parsingToolbox;
     QString m_helpPath;
+    bool m_currentTreeHasSeparator;
 };
 
 #endif // DICEPARSER_H
