@@ -44,6 +44,7 @@
 DiceParser::DiceParser()
     : m_start(NULL),m_current(NULL)
 {
+    m_currentTreeHasSeparator =false;
     m_parsingToolbox = new ParsingToolBox();
 
     m_mapDiceOp = new QMap<QString,DiceOperator>();
@@ -145,6 +146,7 @@ void DiceParser::insertAlias(DiceAlias* dice, int i)
 
 bool DiceParser::parseLine(QString str)
 {
+    m_currentTreeHasSeparator = false;
     m_errorMap.clear();
 	if(NULL!=m_start)
 	{
@@ -412,7 +414,36 @@ QStringList DiceParser::getAllStringResult(bool& hasAlias)
 
     return stringListResult;
 }
+QStringList DiceParser::getAllDiceResult(bool& hasAlias)
+{
+    ExecutionNode* next = getLeafNode();
+    Result* result=next->getResult();
+    QList<Die*> dieListResult;
+    QStringList stringListResult;
 
+    while(NULL!=result)
+    {
+        if(result->hasResultOfType(Result::DICE_LIST))
+        {
+            DiceResult* stringResult = dynamic_cast<DiceResult*>(result);
+            if(NULL!=stringResult)
+            {
+                dieListResult << stringResult->getResultList();
+                hasAlias = true;
+            }
+        }
+        result = result->getPrevious();
+    }
+    foreach(Die* die, dieListResult)
+    {
+        foreach (qint64 value, die->getListValue())
+        {
+            stringListResult << QString::number(value);
+        }
+    }
+
+    return stringListResult;
+}
 void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues)
 {
     ExecutionNode* next = getLeafNode();
@@ -701,21 +732,19 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
     }
     else if(readInstructionOperator(str[0]))
     {
-        str=str.remove(0,1);
-        delete node;
+       str=str.remove(0,1);
+       delete node;
        ExecutionNode* nodeExec = NULL;
        if(readExpression(str,nodeExec))
        {
-
-          // nodeExec = getLatestNode(nodeExec);
-
            if(NULL==nodeExec)
            {
                return false;
            }
            previous->setNextNode(nodeExec);
-
+           m_currentTreeHasSeparator = true;
            return true;
+
        }
     }
     else
@@ -727,6 +756,10 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
         }
     }
     return false;
+}
+bool DiceParser::hasSeparator()const
+{
+    return m_currentTreeHasSeparator;
 }
 DiceRollerNode* DiceParser::addRollDiceNode(qint64 faces,ExecutionNode* previous)
 {
