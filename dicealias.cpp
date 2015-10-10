@@ -22,8 +22,10 @@
 #include "dicealias.h"
 #include <QRegularExpression>
 
-DiceAlias::DiceAlias(QString cmd, QString key, bool isReplace)
-    : m_command(cmd),m_value(key)
+#include <QDebug>
+
+DiceAlias::DiceAlias(QString cmd, QString key, bool isReplace,bool isEnable)
+    : m_command(cmd),m_value(key),m_isEnable(isEnable)
 {
     if(isReplace)
     {
@@ -42,6 +44,9 @@ DiceAlias::~DiceAlias()
 
 bool DiceAlias::resolved(QString & str)
 {
+    if(!m_isEnable)
+        return false;
+
     if((m_type == REPLACE)&&(str.contains(m_command)))
     {
        str.replace(m_command,m_value);
@@ -96,4 +101,14 @@ void DiceAlias::setReplace(bool b)
     {
         m_type = REGEXP;
     }
+}
+
+bool DiceAlias::isEnable()
+{
+    return m_isEnable;
+}
+
+void DiceAlias::setEnable(bool b)
+{
+    m_isEnable = b;
 }

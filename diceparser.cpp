@@ -128,7 +128,10 @@ QString DiceParser::convertAlias(QString str)
 {
     foreach(DiceAlias* cmd, *m_aliasList)
 	{
-        cmd->resolved(str);
+        if(cmd->isEnable())
+        {
+            cmd->resolved(str);
+        }
 	}
 	return str;
 }
