@@ -179,11 +179,17 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
         }
 
     }
-    CompositeValidator* validator = new CompositeValidator();
-    validator->setOperationList(operators);
-    validator->setValidatorList(validatorList);
-
-    return validator;
+    if(!validatorList->isEmpty())
+    {
+        CompositeValidator* validator = new CompositeValidator();
+        validator->setOperationList(operators);
+        validator->setValidatorList(validatorList);
+        return validator;
+    }
+    else
+    {
+        return NULL;
+    }
 }
 bool ParsingToolBox::readLogicOperation(QString& str,CompositeValidator::LogicOperation& op)
 {
