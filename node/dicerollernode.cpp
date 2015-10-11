@@ -25,6 +25,11 @@ void DiceRollerNode::run(ExecutionNode* previous)
             m_diceCount = result->getResult(Result::SCALAR).toReal();
             m_result->setPrevious(result);
 
+            if(m_diceCount == 0)
+            {
+                m_errors.insert(NO_DICE_TO_ROLL,QObject::tr("No dice to roll"));
+            }
+
             for(quint64 i=0; i < m_diceCount ; ++i)
             {
                 Die* die = new Die();
