@@ -2,35 +2,43 @@
 #define DICEROLLERNODE_H
 
 #include <Qt>
-#include <QRunnable>
-#include <QMutex>
 
 #include "executionnode.h"
 #include "result/diceresult.h"
-//class DiceRoller : public QRunnable
-//{
-//public:
-//    DiceRoller(QMutex* mutex,DiceResult* diceResult,int faces,int count);
-//    virtual void run ();
-//private:
-//    QMutex* m_mutex;
-//    DiceResult* m_sharedDiceResult;
-//    int m_faces;
-//    quint64 m_diceCount;
-//};
 
 /**
- * @brief The DiceRollerNode class
+ * @brief The DiceRollerNode class rolls dice of one kind.
  */
 class DiceRollerNode : public ExecutionNode
 {
 public:
+	/**
+	 * @brief DiceRollerNode builds an instance
+	 * @param faces, number of faces of dices
+	 * @param offset, first value of dice.
+	 */
     DiceRollerNode(quint64 faces, qint64 offset = 1);
 
+	/**
+	 * @brief run - starts to roll dice.
+	 */
     virtual void run(ExecutionNode*);
+	/**
+	 * @brief getFaces accessor
+	 * @return the face count
+	 */
     quint64 getFaces();
 
-     virtual QString toString()const;
+	/**
+	  * @brief toString
+	  * @param wl
+	  * @return use to generate dot tree;
+	  */
+	 virtual QString toString(bool wl)const;
+	/**
+	  * @brief getPriority
+	  * @return priority for dice roll: 4 (higher)
+	  */
      virtual qint64 getPriority() const;
 //private members
 private:

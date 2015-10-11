@@ -45,7 +45,7 @@ public:
      * @brief toString
      * @return
      */
-    virtual QString toString()const;
+	virtual QString toString(bool )const;
     /**
      * @brief getPriority
      * @return

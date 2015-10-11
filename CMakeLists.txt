@@ -25,6 +25,7 @@ add_executable(
     range.cpp 
     booleancondition.cpp 
     validator.cpp 
+    compositevalidator.cpp
     die.cpp 
     parsingtoolbox.cpp 
     dicealias.cpp

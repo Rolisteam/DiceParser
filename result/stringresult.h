@@ -36,7 +36,7 @@ public:
      * @brief toString
      * @return
      */
-    virtual QString toString();
+    virtual QString toString(bool);
 
     virtual void setHighLight(bool );
     virtual bool hasHighLight() const;

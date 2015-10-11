@@ -19,32 +19,37 @@
 * Free Software Foundation, Inc.,                                          *
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
-#ifndef BOOLEANCONDITION_H
-#define BOOLEANCONDITION_H
+#ifndef COMPOSITEVALIDATOR_H
+#define COMPOSITEVALIDATOR_H
 
+#include <QString>
+#include <QVector>
+#include <QList>
 #include <Qt>
+
 #include "validator.h"
 /**
  * @brief The BooleanCondition class is a Validator class checking validity from logic expression.
  * It manages many operators (see : @ref LogicOperator).
  */
-class BooleanCondition : public Validator
+class CompositeValidator : public Validator
 {
 public:
-    enum LogicOperator { Equal, GreaterThan, LesserThan, GreaterOrEqual, LesserOrEqual};
-    BooleanCondition();
+	enum LogicOperation { OR, EXCLUSIVE_OR , AND};
+	CompositeValidator();
 
-    virtual qint64 hasValid(Die* b,bool recursive, bool unhighlight = false) const;
+	virtual qint64 hasValid(Die* b,bool recursive, bool unhighlight = false) const;
 
-    void setOperator(LogicOperator m);
-    void setValue(qint64);
-    QString toString();
+    void setOperationList(QVector<LogicOperation>* m);
+    void setValidatorList(QList<Validator*>*);
+
+	QString toString();
 
     virtual quint64 getValidRangeSize(quint64 faces) const;
 
 private:
-    LogicOperator m_operator;
-    qint64 m_value;
+    QVector<LogicOperation>* m_operators;
+    QList<Validator*>* m_validatorList;
 };
 
 #endif // BOOLEANCONDITION_H

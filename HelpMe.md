@@ -136,7 +136,6 @@ Result: 3.5
 
 Roll 2 dice and add 3 to the sum of those dice. Then the result is used for rolling dice.
 
-
 ## Arithmetic and Dice
 
 It is possible to use arithmetic opearation on dice. Please pay attention that the default operation to translate a 
