@@ -43,6 +43,10 @@ m_previousNode = previous;
     {
         QList<Die*> diceList=previousDiceResult->getResultList();
         QList<Die*> diceList2 = diceList.mid(0,m_numberOfDice);
+        if(m_numberOfDice > diceList.size())
+        {
+            m_errors.insert(TOO_MANY_DICE,QObject::tr(" You ask to keep %1 dice but the result only has %2").arg(m_numberOfDice).arg(diceList.size()));
+        }
 
         foreach(Die* tmp,diceList.mid(m_numberOfDice,-1))
         {
