@@ -572,8 +572,8 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
     {
         if(currentOperator==D)
         {
-            int num;
-            int end;
+            qint64 num;
+            qint64 end;
             if(m_parsingToolbox->readNumber(str,num))
             {
                 if(num<1)
