@@ -37,6 +37,10 @@ public:
      */
     Validator();
     /**
+     * @brief ~Validator
+     */
+    virtual ~Validator();
+    /**
      * @brief hasValid
      * @param b
      * @param recursive
