@@ -137,7 +137,7 @@ Validator* ParsingToolBox::readValidator(QString& str)
 }
 Validator* ParsingToolBox::readCompositeValidator(QString& str)
 {
-        bool expectSquareBrasket=false;
+    bool expectSquareBrasket=false;
     if((str.startsWith("[")))
     {
         str=str.remove(0,1);
