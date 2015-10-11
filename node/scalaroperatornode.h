@@ -60,9 +60,9 @@ private:
 
 private:
 	ScalarOperator m_operator;
+    ScalarResult* m_scalarResult;
     ExecutionNode* m_internalNode;
     QMap<QChar,ScalarOperator> m_scalarOperationList;
-    ScalarResult* m_scalarResult;
 };
 
 #endif // SCALAROPERATORNODE_H
