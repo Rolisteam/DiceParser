@@ -13,6 +13,7 @@ SOURCES += $$PWD/diceparser.cpp \
     $$PWD/result/scalarresult.cpp \
     $$PWD/parsingtoolbox.cpp \
     $$PWD/result/stringresult.cpp \
+    $$PWD/compositevalidator.cpp \
     $$PWD/dicealias.cpp
 
 
@@ -27,6 +28,7 @@ HEADERS += \
     $$PWD/result/scalarresult.h \
     $$PWD/parsingtoolbox.h \
     $$PWD/result/stringresult.h \
+    $$PWD/compositevalidator.h \
     $$PWD/dicealias.h
 
 
