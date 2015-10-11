@@ -36,7 +36,14 @@ QVariant ScalarResult::getResult(Result::RESULT_TYPE type)
     return m_value;
 }
 
-QString ScalarResult::toString()
+QString ScalarResult::toString(bool wl)
 {
-    return QString("ScalarResult_Value_%1").arg(m_value);
+	if(wl)
+	{
+		return QString("%2 [label=\"ScalarResult %1\"]").arg(m_value).arg(m_id);
+	}
+	else
+	{
+		return m_id;
+	}
 }

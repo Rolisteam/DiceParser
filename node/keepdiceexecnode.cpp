@@ -43,6 +43,10 @@ m_previousNode = previous;
     {
         QList<Die*> diceList=previousDiceResult->getResultList();
         QList<Die*> diceList2 = diceList.mid(0,m_numberOfDice);
+        if(m_numberOfDice > diceList.size())
+        {
+            m_errors.insert(TOO_MANY_DICE,QObject::tr(" You ask to keep %1 dice but the result only has %2").arg(m_numberOfDice).arg(diceList.size()));
+        }
 
         foreach(Die* tmp,diceList.mid(m_numberOfDice,-1))
         {
@@ -60,9 +64,16 @@ void KeepDiceExecNode::setDiceKeepNumber(quint64 n)
 {
     m_numberOfDice = n;
 }
-QString KeepDiceExecNode::toString() const
+QString KeepDiceExecNode::toString(bool wl) const
 {
-    return QString("KeepDiceExecNode [label=\"KeepDiceExecNode %1\"]").arg(m_numberOfDice);
+	if(wl)
+	{
+		return QString("%1 [label=\"KeepDiceExecNode %2\"]").arg(m_id).arg(m_numberOfDice);
+	}
+	else
+	{
+		return m_id;
+	}
 }
 qint64 KeepDiceExecNode::getPriority() const
 {

@@ -3,13 +3,14 @@
 
 #include "result/result.h"
 #include <QDebug>
+
 /**
  * @brief The ExecutionNode class
  */
 class ExecutionNode
 {
 public:
-    enum ERROR_CODE {NO_ERROR,DIE_RESULT_EXPECTED,BAD_SYNTAXE,ENDLESS_LOOP_ERROR,DIVIDE_BY_ZERO,NOTHING_UNDERSTOOD};
+    enum ERROR_CODE {NO_ERROR,DIE_RESULT_EXPECTED,BAD_SYNTAXE,ENDLESS_LOOP_ERROR,DIVIDE_BY_ZERO,NOTHING_UNDERSTOOD,NO_DICE_TO_ROLL,TOO_MANY_DICE};
     /**
      * @brief ExecutionNode
      */
@@ -46,7 +47,7 @@ public:
      * @brief toString
      * @return
      */
-    virtual QString toString()const=0;
+    virtual QString toString(bool withLabel)const=0;
     /**
      * @brief getPriority
      * @return
@@ -85,6 +86,8 @@ protected:
      * @brief m_errors
      */
     QMap<ExecutionNode::ERROR_CODE,QString> m_errors;
+
+	QString m_id;
 };
 
 #endif // EXECUTIONNODE_H

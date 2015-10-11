@@ -54,7 +54,6 @@ QVariant DiceResult::getResult(RESULT_TYPE type)
         break;
     case DICE_LIST:
     {
-
         return QVariant();
         break;
     }
@@ -82,12 +81,19 @@ qreal DiceResult::getScalarResult()
 
     return 0;
 }
-QString DiceResult::toString()
+QString DiceResult::toString(bool wl)
 {
     QStringList scalarSum;
     foreach(Die* die,m_diceValues)
     {
         scalarSum << QString::number(die->getValue());
     }
-    return QString("DiceResult_Value_%1_dice_%2").arg(getScalarResult()).arg(scalarSum.join('_'));
+	if(wl)
+	{
+		return QString("%3 [label=\"DiceResult Value %1 dice %2\"]").arg(getScalarResult()).arg(scalarSum.join('_')).arg(m_id);
+	}
+	else
+	{
+		return m_id;
+	}
 }

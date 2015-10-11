@@ -50,9 +50,16 @@ void ParenthesesNode::run(ExecutionNode* /*previous*/)
         m_nextNode->run(this);
     }
 }
-QString ParenthesesNode::toString() const
+QString ParenthesesNode::toString(bool b) const
 {
-    return "ParenthesesNode";
+	if(b)
+	{
+		return QString("%1 [label=\"ParenthesesNode\"]").arg(m_id);
+	}
+	else
+	{
+		return m_id;
+	}
 }
 qint64 ParenthesesNode::getPriority() const
 {

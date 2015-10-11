@@ -34,9 +34,16 @@ qint64 JumpBackwardNode::getPriority() const
 {
     return 4;
 }
-QString JumpBackwardNode::toString() const
+QString JumpBackwardNode::toString(bool wl) const
 {
-    return QString("JumpBackwardNode");
+	if(wl)
+	{
+		return QString("%1 [label=\"JumpBackwardNode\"]").arg(m_id);
+	}
+	else
+	{
+		return m_id;
+	}
 }
 void JumpBackwardNode::run(ExecutionNode* previous)
 {

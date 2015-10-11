@@ -19,75 +19,100 @@
 * Free Software Foundation, Inc.,                                          *
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
-#include "range.h"
+#include "compositevalidator.h"
 
-Range::Range()
-    : m_hasEnd(false),m_hasStart(false)
+
+CompositeValidator::CompositeValidator()
 {
-
-
 }
-void Range::setValue(qint64 s,qint64 e)
+qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) const
 {
-    m_start = s;
-    m_end=e;
 
-    m_hasEnd = true;
-    m_hasStart = true;
+	int i = 0;
+	qint64 sum = 0;
+    foreach(const Validator* validator, *m_validatorList)
+	{
+		qint64 val = validator->hasValid(b,recursive,unhighlight);
+		if(i==0)
+		{
+			sum = val;
+		}
+		else
+		{
+            switch(m_operators->at(i-1))
+			{
+				case OR:
+					sum |= val;
+				break;
+				case EXCLUSIVE_OR:
+					sum ^= val;/// @todo may required to be done by hand
+				break;
+				case AND:
+					sum &= val;
+				break;
+			}
+		}
+		++i;
+	}
+
+    return sum;
 }
 
-qint64 Range::hasValid(Die* m,bool recursive, bool unhighlight) const
+QString CompositeValidator::toString()
 {
-    qint64 result = 0;
-    if(recursive)
+	QString str="";
+	/*switch (m_operator)
+	{
+	case Equal:
+		str.append("=");
+		break;
+	case GreaterThan:
+		str.append(">");
+		break;
+	case LesserThan:
+		str.append("<");
+		break;
+	case GreaterOrEqual:
+		str.append(">=");
+		break;
+	case LesserOrEqual:
+		str.append("<=");
+		break;
+	}
+	return QString("[%1%2]").arg(str).arg(m_value);*/
+	return str;
+}
+quint64 CompositeValidator::getValidRangeSize(quint64 faces) const
+{
+    quint64 sum =0;
+    int i = -1;
+    foreach(Validator* tmp,*m_validatorList)
     {
-        foreach(qint64 value, m->getListValue())
+        quint64 rel = tmp->getValidRangeSize(faces);
+        LogicOperation opt;
+        if(i>=0)
         {
-            if((value>=m_start)&&(value<=m_end))
-            {
-                ++result;
-            }
+            opt = m_operators->at(i);
         }
+        if(opt == OR)
+        {
+            sum += rel;
+        }
+        else if((opt == AND)&&(opt == EXCLUSIVE_OR))
+        {
+            sum = qMax(rel,sum);
+        }
+        ++i;
     }
-    else if((m->getLastRolledValue()>=m_start)&&(m->getLastRolledValue()<=m_end))
-    {
-        ++result;
-    }
-    if((unhighlight)&&(result==0))
-    {
-        m->setHighlighted(false);
-    }
-    return result;
+
+    return sum;
 }
-QString Range::toString()
+void CompositeValidator::setOperationList(QVector<LogicOperation>* m)
 {
-    return QString("[%1-%2]").arg(m_start).arg(m_end);
-}
-quint64 Range::getValidRangeSize(quint64 faces) const
-{
-    Q_UNUSED(faces);
-    return m_end-m_start;
-}
-void Range::setStart(qint64 start)
-{
-    m_start = start;
-    m_hasStart = true;
-}
-void Range::setEnd(qint64 end)
-{
-    m_end = end;
-    m_hasEnd = true;
+    m_operators = m;
 }
 
-bool Range::isFullyDefined()
+void CompositeValidator::setValidatorList(QList<Validator*>* m)
 {
-    return (m_hasEnd & m_hasStart);
-}
-qint64 Range::getStart() const
-{
- return m_start;
-}
-qint64 Range::getEnd() const
-{
-    return m_end;
+    m_validatorList = m;
 }

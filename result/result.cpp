@@ -20,9 +20,10 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
 #include "result.h"
+#include <QUuid>
 
 Result::Result()
-    : m_previous(NULL),m_resultTypes(STRING)
+	: m_previous(NULL),m_id(QString("\"%1\"").arg(QUuid::createUuid().toString()))
 {
 }
 
@@ -47,22 +48,23 @@ bool Result::hasResultOfType(RESULT_TYPE type) const
 }
 void Result::generateDotTree(QString& s)
 {
-    s.append(toString());
+	s.append(toString(true));
+	s.append(";\n");
+
     if(NULL!=m_previous)
     {
+		s.append(toString(false));
         s.append(" -> ");
-        s.append(m_previous->toString());
-        s.append(" [label=\"previousResult\"];\n");
+		s.append(m_previous->toString(true));
+		s.append("\n");
         m_previous->generateDotTree(s);
     }
     {
+		s.append(toString(false));
         s.append(" -> ");
-        s.append("NULL");
+		s.append("NULL");
         s.append(" [label=\"previousResult\"];\n");
     }
 
 }
-/*QString Result::toString()
-{
-    return QString();
-}*/
+

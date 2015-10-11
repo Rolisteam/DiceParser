@@ -37,6 +37,10 @@ public:
      */
     Validator();
     /**
+     * @brief ~Validator
+     */
+    virtual ~Validator();
+    /**
      * @brief hasValid
      * @param b
      * @param recursive
@@ -54,7 +58,7 @@ public:
      * @param faces
      * @return
      */
-    virtual quint8 getValidRangeSize(quint64 faces) const = 0 ;
+    virtual quint64 getValidRangeSize(quint64 faces) const = 0 ;
 };
 
 #endif // VALIDATOR_H

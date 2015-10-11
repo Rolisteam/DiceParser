@@ -33,15 +33,22 @@ class Range : public Validator
 public:
     Range();
     void setValue(qint64,qint64);
-
+    void setStart(qint64);
+    void setEnd(qint64);
     virtual qint64 hasValid(Die* b,bool recursive,bool unlight = false) const;
 
     virtual QString toString();
-    virtual quint8 getValidRangeSize(quint64 faces) const;
+    virtual quint64 getValidRangeSize(quint64 faces) const;
+
+    bool isFullyDefined();
+    qint64 getStart() const;
+    qint64 getEnd() const;
 
 private:
     qint64 m_start;
     qint64 m_end;
+    bool m_hasEnd;
+    bool m_hasStart;
 };
 
 #endif // RANGE_H

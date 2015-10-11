@@ -34,8 +34,7 @@ void HelpNode::run(ExecutionNode* previous)
     {
         if(previous->getResult() == NULL)
         {
-            txtResult->setText(toString());
-
+			txtResult->setText(QObject::tr("Rolisteam Dice Parser:\nFull documentation at: %1").arg(m_path));
         }
         else
         {
@@ -49,9 +48,16 @@ void HelpNode::run(ExecutionNode* previous)
         m_nextNode->run(this);
     }
 }
-QString HelpNode::toString() const
+QString HelpNode::toString(bool wl) const
 {
-    return QObject::tr("Rolisteam Dice Parser:\nFull documentation at: %1 \n").arg(m_path);
+	if(wl)
+	{
+		return QString("%1 [label=\"Rolisteam Dice Parser:\nFull documentation at: %2\"]").arg(m_id).arg(m_path);
+	}
+	else
+	{
+		return m_id;
+	}
 }
 
 qint64 HelpNode::getPriority() const

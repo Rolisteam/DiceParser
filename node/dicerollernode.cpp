@@ -8,30 +8,7 @@
 #include <QTime>
 
 
-//DiceRoller::DiceRoller(QMutex* mutex,DiceResult* diceResult,int faces,int count)
-//    : m_mutex(mutex),m_sharedDiceResult(diceResult),m_faces(faces),m_diceCount(count)
-//{
 
-//}
-
-//void DiceRoller::run()
-//{
-//    for(quint64 i=0; i < m_diceCount ; ++i)
-//    {
-//        Die* die = new Die();
-//        die->setFaces(m_faces);
-//        die->roll();
-//        m_mutex->lock();
-//        m_sharedDiceResult->insertResult(die);
-//        m_mutex->unlock();
-//    }
-//}
-
-
-
-//////////////////////////////////////////////////
-/// \brief DiceRollerNode::DiceRollerNode
-//////////////////////////////////////////////////
 DiceRollerNode::DiceRollerNode(quint64 faces,qint64 offset)
     : m_faces(faces),m_diceResult(new DiceResult()),m_offset(offset)
 {
@@ -48,6 +25,11 @@ void DiceRollerNode::run(ExecutionNode* previous)
             m_diceCount = result->getResult(Result::SCALAR).toReal();
             m_result->setPrevious(result);
 
+            if(m_diceCount == 0)
+            {
+                m_errors.insert(NO_DICE_TO_ROLL,QObject::tr("No dice to roll"));
+            }
+
             for(quint64 i=0; i < m_diceCount ; ++i)
             {
                 Die* die = new Die();
@@ -61,19 +43,23 @@ void DiceRollerNode::run(ExecutionNode* previous)
                 m_nextNode->run(this);
             }
         }
-    }
-
-
-
+	}
 }
 
 quint64 DiceRollerNode::getFaces()
 {
     return m_faces;
 }
-QString DiceRollerNode::toString() const
+QString DiceRollerNode::toString(bool wl) const
 {
-    return QString("DiceRollerNode");
+	if(wl)
+	{
+		return QString("%1 [label=\"DiceRollerNode faces: %2\"]").arg(m_id).arg(m_faces);
+	}
+	else
+	{
+		return m_id;
+	}
 }
 qint64 DiceRollerNode::getPriority() const
 {

@@ -136,7 +136,6 @@ Result: 3.5
 
 Roll 2 dice and add 3 to the sum of those dice. Then the result is used for rolling dice.
 
-
 ## Arithmetic and Dice
 
 It is possible to use arithmetic opearation on dice. Please pay attention that the default operation to translate a 
@@ -163,7 +162,7 @@ Substract 4 to 6 and then roll two dice.
 
 Divide by 2 the result of 1 die.
 
-## Roll two (or more) kind of dice at once.
+## Roll two (or more) kinds of dice at once.
 
 To make it, you have to separate all dice commands by `;`
 

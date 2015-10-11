@@ -42,7 +42,7 @@ public:
     bool setOperatorChar(QChar c);
     void setInternalNode(ExecutionNode* node);
 
-    virtual QString toString()const;
+    virtual QString toString(bool wl)const;
     virtual qint64 getPriority() const;
 
     void generateDotTree(QString& s);
@@ -60,9 +60,9 @@ private:
 
 private:
 	ScalarOperator m_operator;
+    ScalarResult* m_scalarResult;
     ExecutionNode* m_internalNode;
     QMap<QChar,ScalarOperator> m_scalarOperationList;
-    ScalarResult* m_scalarResult;
 };
 
 #endif // SCALAROPERATORNODE_H

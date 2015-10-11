@@ -149,7 +149,6 @@ void DiceParser::insertAlias(DiceAlias* dice, int i)
 
 bool DiceParser::parseLine(QString str)
 {
-    m_currentTreeHasSeparator = false;
     m_errorMap.clear();
 	if(NULL!=m_start)
 	{
@@ -576,8 +575,8 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
     {
         if(currentOperator==D)
         {
-            int num;
-            int end;
+            qint64 num;
+            qint64 end;
             if(m_parsingToolbox->readNumber(str,num))
             {
                 if(num<1)
@@ -597,7 +596,7 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
             else if(m_parsingToolbox->readDiceRange(str,num,end))
             {
 
-                int face = abs(num - end)+1;
+                qint64 face = abs(num - end)+1;
                 DiceRollerNode* drNode = new DiceRollerNode(face,num);
                 node = drNode;
                 ExecutionNode* current = drNode;
@@ -611,9 +610,16 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
         else if(currentOperator ==L)
         {
             QStringList list;
-            if(m_parsingToolbox->readList(str,list))
+            QList<Range> listRange;
+            ParsingToolBox::LIST_OPERATOR op = m_parsingToolbox->readListOperator(str);
+            if(m_parsingToolbox->readList(str,list,listRange))
             {
                 ListSetRollNode* lsrNode = new ListSetRollNode();
+                lsrNode->setRangeList(listRange);
+                if(op == ParsingToolBox::UNIQUE)
+                {
+                    lsrNode->setUnique(true);
+                }
                 lsrNode->setListValue(list);
                 node = lsrNode;
                 return true;
@@ -747,7 +753,6 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
            previous->setNextNode(nodeExec);
            m_currentTreeHasSeparator = true;
            return true;
-
        }
     }
     else
@@ -804,7 +809,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
             {
             case Keep:
             {
-                int myNumber=0;
+                qint64 myNumber=0;
                 bool ascending = m_parsingToolbox->readAscending(str);
                 if(m_parsingToolbox->readNumber(str,myNumber))
                 {
@@ -825,7 +830,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 break;
             case KeepAndExplose:
             {
-                int myNumber=0;
+                qint64 myNumber=0;
                 bool ascending = m_parsingToolbox->readAscending(str);
                 if(m_parsingToolbox->readNumber(str,myNumber))
                 {
@@ -864,7 +869,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 break;
             case Count:
             {
-                Validator* validator = m_parsingToolbox->readValidator(str);
+                //Validator* validator = m_parsingToolbox->readValidator(str);
+                Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(NULL!=validator)
                 {
                     /// @todo display warning here.
@@ -887,7 +893,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
             case Reroll:
             case RerollAndAdd:
             {
-                Validator* validator = m_parsingToolbox->readValidator(str);
+                //Validator* validator = m_parsingToolbox->readValidator(str);
+                Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(NULL!=validator)
                 {
                     /// @todo display warning here.
@@ -912,7 +919,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 break;
             case Explosing:
             {
-                Validator* validator = m_parsingToolbox->readValidator(str);
+                Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(NULL!=validator)
                 {
                     if(!m_parsingToolbox->isValidValidator(previous,validator))
@@ -967,7 +974,7 @@ QString DiceParser::humanReadableError()
 
 bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
 {
-    int myNumber=1;
+    qint64 myNumber=1;
 
     if(m_parsingToolbox->readNumber(str,myNumber))
     {
@@ -983,7 +990,7 @@ void DiceParser::writeDownDotTree(QString filepath)
 {
     QString str("digraph ExecutionTree {\n");
     m_start->generateDotTree(str);
-    str.append("}");
+	str.append("}\n");
 
 
     QFile file(filepath);
