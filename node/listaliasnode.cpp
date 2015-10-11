@@ -29,6 +29,7 @@ void ListAliasNode::run(ExecutionNode* previous )
 {
 	m_previousNode = previous;
 	StringResult* txtResult = dynamic_cast<StringResult*>(m_result);
+    txtResult->setHighLight(false);
 
 	if(NULL != previous)
 	{

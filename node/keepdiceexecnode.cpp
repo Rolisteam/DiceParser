@@ -42,10 +42,8 @@ m_previousNode = previous;
     if(NULL!=previousDiceResult)
     {
         QList<Die*> diceList=previousDiceResult->getResultList();
-        QList<Die*> diceList2=m_diceResult->getResultList();
+        QList<Die*> diceList2 = diceList.mid(0,m_numberOfDice);
 
-
-        diceList2 = diceList.mid(0,m_numberOfDice);
         foreach(Die* tmp,diceList.mid(m_numberOfDice,-1))
         {
             tmp->setHighlighted(false);

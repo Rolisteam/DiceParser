@@ -191,6 +191,19 @@ public:
      * @param l the path.
      */
     void setPathToHelp(QString l);
+    /**
+     * @brief getAllStringResult
+     * @return
+     */
+    QStringList getAllStringResult(bool& hasAlias);
+    /**
+     * @brief getAllDiceResult
+     * @param hasAlias
+     * @return
+     */
+    QStringList getAllDiceResult(bool& hasAlias);
+
+    bool hasSeparator()const;
 private:
 
     /**
@@ -289,6 +302,7 @@ private:
 	QStringList* m_commandList;
 
     QMap<ExecutionNode::ERROR_CODE,QString> m_errorMap;
+    QMap<ExecutionNode::ERROR_CODE,QString> m_warningMap;
 
 
     ExecutionNode* m_start;
@@ -296,6 +310,7 @@ private:
     QString m_command;
     ParsingToolBox* m_parsingToolbox;
     QString m_helpPath;
+    bool m_currentTreeHasSeparator;
 };
 
 #endif // DICEPARSER_H

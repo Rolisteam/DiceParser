@@ -22,6 +22,7 @@
 #include "parenthesesnode.h"
 
 ParenthesesNode::ParenthesesNode()
+    : m_internalNode(NULL)
 {
 
 }

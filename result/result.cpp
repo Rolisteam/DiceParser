@@ -22,7 +22,7 @@
 #include "result.h"
 
 Result::Result()
-    : m_previous(NULL)
+    : m_previous(NULL),m_resultTypes(STRING)
 {
 }
 

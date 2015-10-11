@@ -25,7 +25,7 @@ HEADERS += \
     $$PWD/die.h \
     $$PWD/result/result.h \
     $$PWD/result/scalarresult.h \
-    $$PWD/result/parsingtoolbox.h \
+    $$PWD/parsingtoolbox.h \
     $$PWD/result/stringresult.h \
     $$PWD/dicealias.h
 
