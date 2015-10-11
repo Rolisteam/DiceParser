@@ -54,7 +54,6 @@ QVariant DiceResult::getResult(RESULT_TYPE type)
         break;
     case DICE_LIST:
     {
-
         return QVariant();
         break;
     }
