@@ -30,6 +30,7 @@ Roll five ten-faced die.
 Roll 777 six-faced die.
 
 
+
 Thanks of several operations and option, you can tune a bit you rolling command.
 
 ## List of operator
@@ -98,6 +99,15 @@ Explose while the value fits the Validator (See Validator for more details about
 
 Reroll the die if its value fits the Validator and add the new value to the previous one. It does that only once.
 
+### Roll dice in Range
+
+> 4d[-1-1]
+
+Rolling 4 dice with value between -1 to 1. (Fudge/Fate system)
+
+> 3d[0-9]
+
+Rolling 3 dice with 10 faces starting at 0.
 
 ## Arithmetic
 
@@ -122,7 +132,6 @@ Result: 3.5
 > (3+2D6)D10
 
 Roll 2 dice and add 3 to the sum of those dice. Then the result is used for rolling dice.
-
 
 ## Arithmetic and Dice
 
