@@ -83,26 +83,26 @@ void BooleanCondition::setValue(qint64 v)
 }
 QString BooleanCondition::toString()
 {
-    QString str="";
+	QString str(QStringLiteral(""));
     switch (m_operator)
     {
     case Equal:
-        str.append("=");
+		str.append(QStringLiteral("="));
         break;
     case GreaterThan:
-        str.append(">");
+		str.append(QStringLiteral(">"));
         break;
     case LesserThan:
-        str.append("<");
+		str.append(QStringLiteral("<"));
         break;
     case GreaterOrEqual:
-        str.append(">=");
+		str.append(QStringLiteral(">="));
         break;
     case LesserOrEqual:
-        str.append("<=");
+		str.append(QStringLiteral("<="));
         break;
     }
-    return QString("[%1%2]").arg(str).arg(m_value);
+	return QStringLiteral("[%1%2]").arg(str).arg(m_value);
 }
 quint64 BooleanCondition::getValidRangeSize(quint64 faces) const
 {
