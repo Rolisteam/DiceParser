@@ -37,7 +37,7 @@ public:
      * @param key
      * @param isReplace
      */
-    DiceAlias(QString cmd, QString key, bool isReplace = true);
+    DiceAlias(QString cmd, QString key, bool isReplace = true, bool isEnable = true);
     /**
      * @brief ~DiceAlias
      */
@@ -82,10 +82,22 @@ public:
      * @brief setReplace
      */
     void setReplace(bool);
+    /**
+     * @brief isEnable
+     * @return
+     */
+    bool isEnable() const;
+    /**
+     * @brief setEnable
+     * @param b
+     */
+    void setEnable(bool b);
+
 private:
     QString m_command;
     QString m_value;
     RESOLUTION_TYPE m_type;
+    bool m_isEnable;
 
 };
 
