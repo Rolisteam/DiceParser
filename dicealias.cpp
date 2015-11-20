@@ -103,7 +103,7 @@ void DiceAlias::setReplace(bool b)
     }
 }
 
-bool DiceAlias::isEnable()
+bool DiceAlias::isEnable() const
 {
     return m_isEnable;
 }
