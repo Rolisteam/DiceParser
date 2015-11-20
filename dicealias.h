@@ -83,8 +83,15 @@ public:
      */
     void setReplace(bool);
 
-    bool isEnable();
-
+    /**
+     * @brief isEnable
+     * @return
+     */
+    bool isEnable() const;
+    /**
+     * @brief setEnable
+     * @param b
+     */
     void setEnable(bool b);
 private:
     QString m_command;
