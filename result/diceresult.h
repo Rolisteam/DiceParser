@@ -66,11 +66,20 @@ public:
      * @return
      */
 	virtual QString toString(bool wl);
+    /**
+     * @brief isHomogeneous
+     */
+    bool isHomogeneous() const;
+    /**
+     * @brief setHomogeneous
+     */
+    void setHomogeneous(bool);
 
 private:
     qreal getScalarResult();
 private:
     QList<Die*> m_diceValues;
+    bool m_homogeneous;
 };
 
 #endif // DICERESULT_H

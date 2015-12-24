@@ -24,6 +24,7 @@
 DiceResult::DiceResult()
 {
     m_resultTypes= (DICE_LIST);
+    m_homogeneous = true;
 }
 void DiceResult::insertResult(Die* die)
 {
@@ -33,6 +34,15 @@ QList<Die*>& DiceResult::getResultList()
 {
     return m_diceValues;
 }
+bool DiceResult::isHomogeneous() const
+{
+    return m_homogeneous;
+}
+void DiceResult::setHomogeneous(bool b)
+{
+    m_homogeneous = b;
+}
+
 void DiceResult::setResultList(QList<Die*> list)
 {
 	qDeleteAll(m_diceValues.begin(), m_diceValues.end());
