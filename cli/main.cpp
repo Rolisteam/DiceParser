@@ -46,8 +46,6 @@ QTextStream out(stdout, QIODevice::WriteOnly);
 QString diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
 {
     QStringList resultGlobal;
-    if(homogeneous)
-    {
         foreach(int face, dice.keys())
         {
                QStringList result;
@@ -96,7 +94,7 @@ QString diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
                    resultGlobal << result;
                }
         }
-    }
+   /* }
     else
     {
         foreach(int face, dice.keys())
@@ -140,7 +138,7 @@ QString diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
               resultGlobal << QString(" (%1) ").arg(result.join(','));
 
         }
-    }
+    }*/
     return resultGlobal.join(' ');
 }
 
@@ -161,7 +159,7 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
             }
 
             ExportedDiceResult list;
-            bool homogeneous;
+            bool homogeneous = true;
             parser->getLastDiceResult(list,homogeneous);
             QString diceText = diceToText(list,highlight,homogeneous);
             QString scalarText;
