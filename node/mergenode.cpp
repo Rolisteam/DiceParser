@@ -39,6 +39,8 @@ void MergeNode::run(ExecutionNode* previous)
         DiceResult* dice = dynamic_cast<DiceResult*>(tmpResult);
         if(NULL!=dice)
         {
+            ///@todo improve here to set homogeneous while is really
+            m_diceResult->setHomogeneous(false);
             foreach(Die* die, dice->getResultList())
             {
                 if(!m_diceResult->getResultList().contains(die))
