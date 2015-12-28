@@ -23,7 +23,7 @@
 
 DiceResult::DiceResult()
 {
-    m_resultTypes= (DICE_LIST);
+    m_resultTypes= (DICE_LIST | SCALAR);
     m_homogeneous = true;
 }
 void DiceResult::insertResult(Die* die)
@@ -73,6 +73,10 @@ QVariant DiceResult::getResult(RESULT_TYPE type)
     return QVariant();
 
 }
+/*bool DiceResult::hasResultOfType(RESULT_TYPE type) const
+{
+    return (m_resultTypes & type);
+}*/
 qreal DiceResult::getScalarResult()
 {
     if(m_diceValues.size()==1)
