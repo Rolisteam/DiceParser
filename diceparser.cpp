@@ -459,6 +459,7 @@ void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues,bool& homogene
             {
                 if(homogeneous)
                 {
+
                     homogeneous = diceResult->isHomogeneous();
                 }
                 quint64 face=0;
