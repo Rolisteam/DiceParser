@@ -133,6 +133,7 @@ private:
     bool m_highlighted;
     quint64 m_faces;
     qint64 m_base;
+    QString m_color;
 };
 
 
