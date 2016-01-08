@@ -62,7 +62,7 @@ public:
      * @brief isStringResult
      * @return
      */
-	bool isStringResult();
+    virtual bool isStringResult() const;
 
     /**
      * @brief getStringResult

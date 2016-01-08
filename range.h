@@ -40,7 +40,7 @@ public:
     virtual QString toString();
     virtual quint64 getValidRangeSize(quint64 faces) const;
 
-    bool isFullyDefined();
+    bool isFullyDefined() const;
     qint64 getStart() const;
     qint64 getEnd() const;
 

@@ -46,19 +46,18 @@ DiceResult::~DiceResult()
 }
 QVariant DiceResult::getResult(RESULT_TYPE type)
 {
-
     switch (type)
     {
-    case SCALAR:
-            return getScalarResult();
-        break;
-    case DICE_LIST:
-    {
-        return QVariant();
-        break;
-    }
-    default:
-        break;
+        case SCALAR:
+        {
+             return getScalarResult();
+        }
+        case DICE_LIST:
+        {
+            return QVariant();
+        }
+        default:
+            break;
     }
     return QVariant();
 

@@ -79,9 +79,9 @@ void Range::setEnd(qint64 end)
     m_hasEnd = true;
 }
 
-bool Range::isFullyDefined()
+bool Range::isFullyDefined() const
 {
-    return (m_hasEnd & m_hasStart);
+    return (m_hasEnd && m_hasStart);
 }
 qint64 Range::getStart() const
 {

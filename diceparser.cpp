@@ -114,7 +114,6 @@ DiceParser::~DiceParser()
 		m_start = NULL;
 	}
 }
-
 ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
 {
     ExecutionNode* next = node;
