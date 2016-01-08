@@ -67,17 +67,17 @@ public:
      * @brief getCommand
      * @return
      */
-    QString getCommand();
+    QString getCommand() const;
     /**
      * @brief getValue
      * @return
      */
-    QString getValue();
+    QString getValue() const;
     /**
      * @brief isReplace
      * @return
      */
-    bool isReplace();
+    bool isReplace() const;
     /**
      * @brief setReplace
      */

@@ -75,17 +75,17 @@ void DiceAlias::setType(RESOLUTION_TYPE type)
 {
     m_type = type;
 }
-QString DiceAlias::getCommand()
+QString DiceAlias::getCommand() const
 {
     return m_command;
 }
 
-QString DiceAlias::getValue()
+QString DiceAlias::getValue() const
 {
     return m_value;
 }
 
-bool DiceAlias::isReplace()
+bool DiceAlias::isReplace() const
 {
     return (m_type == REPLACE) ? true : false;
 }

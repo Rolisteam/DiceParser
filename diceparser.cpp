@@ -499,7 +499,7 @@ void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues)
         result = result->getPrevious();
     }
 }
-QString DiceParser::getDiceCommand()
+QString DiceParser::getDiceCommand() const
 {
     return m_command;
 }
@@ -701,7 +701,6 @@ bool DiceParser::readInstructionOperator(QChar c)
         return true;
     }
     return false;
-
 }
 
 bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
