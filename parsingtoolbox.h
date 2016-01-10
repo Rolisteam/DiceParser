@@ -27,6 +27,7 @@
 #include "node/executionnode.h"
 #include "node/dicerollernode.h"
 #include "booleancondition.h"
+#include "operationcondition.h"
 #include "compositevalidator.h"
 #include "range.h"
 
@@ -141,9 +142,11 @@ public:
 
     bool readLogicOperation(QString& str,CompositeValidator::LogicOperation& op);
 
+    bool readDiceLogicOperator(QString &str, OperationCondition::ConditionOperator &op);
 private:
         QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
         QMap<QString,CompositeValidator::LogicOperation>* m_logicOperation;
+        QMap<QString,OperationCondition::ConditionOperator>* m_conditionOperation;
 };
 
 #endif // PARSINGTOOLBOX_H

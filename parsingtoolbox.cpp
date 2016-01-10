@@ -39,6 +39,9 @@ ParsingToolBox::ParsingToolBox()
     m_logicOperation->insert("|",CompositeValidator::OR);
     m_logicOperation->insert("^",CompositeValidator::EXCLUSIVE_OR);
     m_logicOperation->insert("&",CompositeValidator::AND);
+
+    m_conditionOperation = new QMap<QString,OperationCondition::ConditionOperator>();
+    m_conditionOperation->insert("%",OperationCondition::Modulo);
 }
 ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e,bool b)
 {
@@ -47,6 +50,29 @@ ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e,bool b)
     e->setNextNode(nodeSort);
     return nodeSort;
 }
+bool ParsingToolBox::readDiceLogicOperator(QString& str,OperationCondition::ConditionOperator& op)
+{
+    QString longKey;
+    foreach(QString tmp, m_conditionOperation->keys())
+    {
+        if(str.startsWith(tmp))
+        {
+            if(longKey.size()<tmp.size())
+            {
+                longKey = tmp;
+            }
+        }
+    }
+    if(longKey.size()>0)
+    {
+        str=str.remove(0,longKey.size());
+        op = m_conditionOperation->value(longKey);
+        return true;
+    }
+
+    return false;
+}
+
 bool ParsingToolBox::readLogicOperator(QString& str,BooleanCondition::LogicOperator& op)
 {
     QString longKey;
@@ -82,9 +108,29 @@ Validator* ParsingToolBox::readValidator(QString& str)
     Validator* returnVal=NULL;
     BooleanCondition::LogicOperator myLogicOp = BooleanCondition::Equal;
     bool hasReadLogicOperator = readLogicOperator(str,myLogicOp);
+
+
+    OperationCondition::ConditionOperator condiOp = OperationCondition::Modulo;
+    bool hasDiceLogicOperator = readDiceLogicOperator(str,condiOp);
     qint64 value=0;
 
-    if(readNumber(str,value))
+    if(hasDiceLogicOperator)
+    {
+        if(readNumber(str,value))
+        {
+            OperationCondition* condition = new OperationCondition();
+            condition->setValue(value);
+            Validator* valid = readValidator(str);
+            BooleanCondition* boolC = dynamic_cast<BooleanCondition*>(valid);
+            if(NULL!=boolC)
+            {
+                condition->setBoolean(boolC);
+            }
+            returnVal = condition;
+        }
+
+    }
+    else if(readNumber(str,value))
     {
         if(str.startsWith("-"))
         {
