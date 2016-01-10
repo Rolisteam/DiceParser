@@ -110,7 +110,7 @@ void Die::roll(bool adding)
     }
 }
 
-quint64 Die::getFaces()
+quint64 Die::getFaces() const
 {
     return m_faces;
 }
@@ -128,7 +128,7 @@ qint64 Die::getLastRolledValue()
     else
         return 0;
 }
-bool Die::hasBeenDisplayed()
+bool Die::hasBeenDisplayed() const
 {
     return m_displayStatus;
 }
@@ -141,7 +141,7 @@ void Die::setHighlighted(bool a)
     m_highlighted = a;
 }
 
-bool Die::isHighlighted()
+bool Die::isHighlighted() const
 {
     return m_highlighted;
 }

@@ -80,10 +80,6 @@ ParsingToolBox::~ParsingToolBox()
 Validator* ParsingToolBox::readValidator(QString& str)
 {
     Validator* returnVal=NULL;
-
-    bool isOk = true;
-
-
     BooleanCondition::LogicOperator myLogicOp = BooleanCondition::Equal;
     bool hasReadLogicOperator = readLogicOperator(str,myLogicOp);
     qint64 value=0;
@@ -96,41 +92,18 @@ Validator* ParsingToolBox::readValidator(QString& str)
             qint64 end=0;
             if(readNumber(str,end))
             {
-               /* if(expectSquareBrasket)
-                {
-                    if(str.startsWith("]"))
-                    {
-                        str=str.remove(0,1);
-                        isOk=true;
-                    }
-                    else
-                    {
-                        isOk=false;
-                    }
-                }*/
-                if(isOk)
-                {
-                    str=str.remove(0,1);
-                    Range* range = new Range();
-                    range->setValue(value,end);
-                    returnVal = range;
-                }
+                str=str.remove(0,1);
+                Range* range = new Range();
+                range->setValue(value,end);
+                returnVal = range;
             }
         }
         else
         {
-           /* if((expectSquareBrasket)&&(str.startsWith("]")))
-            {
-                str=str.remove(0,1);
-                isOk=true;
-            }*/
-            //if(isOk)
-            {
-                BooleanCondition* condition = new BooleanCondition();
-                condition->setValue(value);
-                condition->setOperator(myLogicOp);
-                returnVal = condition;
-            }
+            BooleanCondition* condition = new BooleanCondition();
+            condition->setValue(value);
+            condition->setOperator(myLogicOp);
+            returnVal = condition;
         }
     }
     return returnVal;

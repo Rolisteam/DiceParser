@@ -109,7 +109,6 @@ bool ScalarOperatorNode::setOperatorChar(QChar c)
     return false;
 }
 
-
 void ScalarOperatorNode::setInternalNode(ExecutionNode* node)
 {
     m_internalNode = node;
@@ -118,12 +117,10 @@ qint64 ScalarOperatorNode::add(qint64 a,qint64 b)
 {
     return a+b;
 }
-
 qint64 ScalarOperatorNode::substract(qint64 a,qint64 b)
 {
     return a-b;
 }
-
 qreal ScalarOperatorNode::divide(qint64 a,qint64 b)
 {
     if(b==0)
@@ -133,7 +130,6 @@ qreal ScalarOperatorNode::divide(qint64 a,qint64 b)
     }
     return (qreal)a/b;
 }
-
 qint64 ScalarOperatorNode::multiple(qint64 a,qint64 b)
 {
     return a*b;

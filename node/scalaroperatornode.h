@@ -53,10 +53,10 @@ public:
     virtual QMap<ExecutionNode::ERROR_CODE,QString> getExecutionErrorMap();
 
 private:
-    qint64 add(qint64,qint64);
-    qint64 substract(qint64,qint64);
+    static qint64 add(qint64,qint64);
+    static qint64 substract(qint64,qint64);
     qreal divide(qint64,qint64);
-    qint64 multiple(qint64,qint64);
+    static qint64 multiple(qint64,qint64);
 
 private:
 	ScalarOperator m_operator;

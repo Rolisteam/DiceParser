@@ -37,7 +37,7 @@ void Result::setPrevious(Result* p)
     m_previous = p;
 }
 
-bool Result::isStringResult()
+bool Result::isStringResult() const
 {
     return false;
 }

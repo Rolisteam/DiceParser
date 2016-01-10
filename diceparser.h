@@ -150,7 +150,7 @@ public:
      * @brief getDiceCommand
      * @return
      */
-    QString getDiceCommand();
+    QString getDiceCommand() const;
     /**
      * @brief hasStringResult
      * @return

@@ -99,12 +99,12 @@ public:
      * @brief getFaces
      * @return
      */
-    quint64 getFaces();
+    quint64 getFaces() const;
     /**
      * @brief hasBeenDisplayed
      * @return
      */
-    bool hasBeenDisplayed();
+    bool hasBeenDisplayed() const;
     /**
      * @brief displayed
      */
@@ -117,7 +117,7 @@ public:
      * @brief isHighlighted
      * @return
      */
-    bool isHighlighted();
+    bool isHighlighted() const;
 
     /**
      * @brief setBase

@@ -49,18 +49,17 @@ DiceParser::DiceParser()
     m_parsingToolbox = new ParsingToolBox();
 
     m_mapDiceOp = new QMap<QString,DiceOperator>();
-    m_mapDiceOp->insert("D",D);
-    m_mapDiceOp->insert("L",L);
+	m_mapDiceOp->insert(QStringLiteral("D"),D);
+	m_mapDiceOp->insert(QStringLiteral("L"),L);
 
     m_OptionOp = new QMap<QString,OptionOperator>();
-    m_OptionOp->insert(QObject::tr("k"),Keep);
-    m_OptionOp->insert(QObject::tr("K"),KeepAndExplose);
-    m_OptionOp->insert(QObject::tr("s"),Sort);
-    m_OptionOp->insert(QObject::tr("c"),Count);
-    m_OptionOp->insert(QObject::tr("r"),Reroll);
-    m_OptionOp->insert(QObject::tr("e"),Explosing);
-    m_OptionOp->insert(QObject::tr("a"),RerollAndAdd);
-    m_OptionOp->insert(QObject::tr("m"),Merge);
+	m_OptionOp->insert(QStringLiteral("k"),Keep);
+	m_OptionOp->insert(QStringLiteral("K"),KeepAndExplose);
+	m_OptionOp->insert(QStringLiteral("s"),Sort);
+	m_OptionOp->insert(QStringLiteral("c"),Count);
+	m_OptionOp->insert(QStringLiteral("r"),Reroll);
+	m_OptionOp->insert(QStringLiteral("e"),Explosing);
+	m_OptionOp->insert(QStringLiteral("a"),RerollAndAdd);
     //m_OptionOp->insert(QObject::tr("@"),JumpBackward);
 
 
@@ -71,11 +70,11 @@ DiceParser::DiceParser()
     m_aliasList->append(new DiceAlias("(.*)wod(.*)","\\1d10e[=10]c[>=\\2]-@c[=1]",false));*/
 
     m_nodeActionMap = new QMap<QString,NodeAction>();
-    m_nodeActionMap->insert("@",JumpBackward);
+	m_nodeActionMap->insert(QStringLiteral("@"),JumpBackward);
 
     m_commandList = new QStringList();
-    m_commandList->append("help");
-    m_commandList->append("la");
+	m_commandList->append(QStringLiteral("help"));
+	m_commandList->append(QStringLiteral("la"));
 
 }
 DiceParser::~DiceParser()
@@ -116,7 +115,6 @@ DiceParser::~DiceParser()
 		m_start = NULL;
 	}
 }
-
 ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
 {
     ExecutionNode* next = node;
@@ -130,7 +128,10 @@ QString DiceParser::convertAlias(QString str)
 {
     foreach(DiceAlias* cmd, *m_aliasList)
 	{
-        cmd->resolved(str);
+        if(cmd->isEnable())
+        {
+            cmd->resolved(str);
+        }
 	}
 	return str;
 }
@@ -289,8 +290,8 @@ QString DiceParser::displayResult()
     QTextStream stream(&str);
     Result* result=next->getResult();
 
-    QString totalValue("you got %1 ;");
-    QString dieValue("D%1 : {%2} ");
+	QString totalValue("you got %1 ;");
+	QString dieValue("D%1 : {%2} ");
 
     bool scalarDone=false;
     while(NULL!=result)
@@ -314,22 +315,22 @@ QString DiceParser::displayResult()
                 {
                     if(!die->hasBeenDisplayed())
                     {
-                        resulStr+=QString("%1").arg(die->getValue());
+						resulStr+=QStringLiteral("%1").arg(die->getValue());
                         die->displayed();
                         face = die->getFaces();
 
 
                         if(die->hasChildrenValue())
                         {
-                            resulStr+=" [";
+							resulStr+=QStringLiteral(" [");
                             foreach(qint64 i, die->getListValue())
                             {
-                                resulStr+=QString("%1 ").arg(i);
+								resulStr+=QStringLiteral("%1 ").arg(i);
                             }
                             resulStr.remove(resulStr.size()-1,1);
-                            resulStr+="]";
+							resulStr+=QStringLiteral("]");
                         }
-                        resulStr+=", ";
+						resulStr+=QStringLiteral(", ");
                     }
                 }
                 resulStr.remove(resulStr.size()-2,2);
@@ -354,7 +355,7 @@ QString DiceParser::displayResult()
     out <<  endl;
 
 
-    return QString("%1, you rolled:%3").arg(str.simplified()).arg(m_command) ;
+	return QStringLiteral("%1, you rolled:%3").arg(str.simplified()).arg(m_command) ;
 
 //    qDebug() << "result count:" << resulCount;
 }
@@ -503,7 +504,7 @@ void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues,bool& homogene
         result = result->getPrevious();
     }
 }
-QString DiceParser::getDiceCommand()
+QString DiceParser::getDiceCommand() const
 {
     return m_command;
 }
@@ -657,14 +658,14 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
 {
     if(m_commandList->contains(str))
     {
-		if(str=="help")
+		if(str== QLatin1String("help"))
 		{
             HelpNode* help = new HelpNode();
             help->setHelpPath(m_helpPath);
             node = help;
 
 		}
-		else if(str=="la")
+		else if(str== QLatin1String("la"))
 		{
             node = new ListAliasNode(m_aliasList);
 		}
@@ -705,7 +706,6 @@ bool DiceParser::readInstructionOperator(QChar c)
         return true;
     }
     return false;
-
 }
 
 bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
@@ -916,7 +916,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 }
                 else
                 {
-                   m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Validator is missing after the %1 operator. Please, change it").arg(m_OptionOp->value(tmp)==Reroll?"r":"a"));
+				   m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Validator is missing after the %1 operator. Please, change it").arg(m_OptionOp->value(tmp)==Reroll?QStringLiteral("r"):QStringLiteral("a")));
                 }
 
             }
@@ -966,12 +966,12 @@ QMap<ExecutionNode::ERROR_CODE,QString>  DiceParser::getErrorMap()
 QString DiceParser::humanReadableError()
 {
     QMapIterator<ExecutionNode::ERROR_CODE,QString> i(m_errorMap);
-    QString str="";
+	QString str("");
     while (i.hasNext())
     {
         i.next();
         str.append(i.value());
-        str.append("\n");
+		str.append(QStringLiteral("\n"));
     }
 
     ///list
@@ -980,7 +980,7 @@ QString DiceParser::humanReadableError()
     {
         j.next();
         str.append(j.value());
-        str.append("\n");
+		str.append(QStringLiteral("\n"));
     }
     return str;
 }
@@ -1001,9 +1001,9 @@ bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
 }
 void DiceParser::writeDownDotTree(QString filepath)
 {
-    QString str("digraph ExecutionTree {\n");
+	QString str(QStringLiteral("digraph ExecutionTree {\n"));
     m_start->generateDotTree(str);
-	str.append("}\n");
+	str.append(QStringLiteral("}\n"));
 
 
     QFile file(filepath);

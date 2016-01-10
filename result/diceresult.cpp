@@ -56,19 +56,18 @@ DiceResult::~DiceResult()
 }
 QVariant DiceResult::getResult(RESULT_TYPE type)
 {
-
     switch (type)
     {
-    case SCALAR:
-            return getScalarResult();
-        break;
-    case DICE_LIST:
-    {
-        return QVariant();
-        break;
-    }
-    default:
-        break;
+        case SCALAR:
+        {
+             return getScalarResult();
+        }
+        case DICE_LIST:
+        {
+            return QVariant();
+        }
+        default:
+            break;
     }
     return QVariant();
 
@@ -104,7 +103,7 @@ QString DiceResult::toString(bool wl)
     }
 	if(wl)
 	{
-		return QString("%3 [label=\"DiceResult Value %1 dice %2\"]").arg(getScalarResult()).arg(scalarSum.join('_')).arg(m_id);
+		return QStringLiteral("%3 [label=\"DiceResult Value %1 dice %2\"]").arg(getScalarResult()).arg(scalarSum.join('_')).arg(m_id);
 	}
 	else
 	{

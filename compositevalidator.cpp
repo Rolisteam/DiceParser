@@ -23,6 +23,7 @@
 
 
 CompositeValidator::CompositeValidator()
+    : m_operators(NULL),m_validatorList(NULL)
 {
 }
 qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) const
