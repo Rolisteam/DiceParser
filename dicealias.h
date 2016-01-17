@@ -93,9 +93,21 @@ public:
      * @param b
      */
     void setEnable(bool b);
+    /**
+     * @brief getComment
+     * @return
+     */
+    QString getComment() const;
+    /**
+     * @brief setComment
+     * @param comment
+     */
+    void setComment(const QString &comment);
+
 private:
     QString m_command;
     QString m_value;
+    QString m_comment;
     RESOLUTION_TYPE m_type;
     bool m_isEnable;
 

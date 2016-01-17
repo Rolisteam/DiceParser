@@ -112,3 +112,13 @@ void DiceAlias::setEnable(bool b)
 {
     m_isEnable = b;
 }
+
+QString DiceAlias::getComment() const
+{
+    return m_comment;
+}
+
+void DiceAlias::setComment(const QString &comment)
+{
+    m_comment = comment;
+}
