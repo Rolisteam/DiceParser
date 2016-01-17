@@ -38,6 +38,7 @@ add_executable(
     node/executionnode.cpp
     node/explosedicenode.cpp
     node/helpnode.cpp
+    node/mergenode.cpp
     node/jumpbackwardnode.cpp
     node/keepdiceexecnode.cpp
     node/listaliasnode.cpp

@@ -38,6 +38,7 @@
 #include "node/jumpbackwardnode.h"
 #include "node/listsetrollnode.h"
 #include "node/listaliasnode.h"
+#include "node/mergenode.h"
 
 #define DEFAULT_FACES_NUMBER 10
 
@@ -445,7 +446,7 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
 
     return stringListResult;
 }
-void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues)
+void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues,bool& homogeneous)
 {
     ExecutionNode* next = getLeafNode();
     Result* result=next->getResult();
@@ -457,6 +458,11 @@ void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues)
             DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
             if(NULL!=diceResult)
             {
+                if(homogeneous)
+                {
+
+                    homogeneous = diceResult->isHomogeneous();
+                }
                 quint64 face=0;
                 ListDiceResult listpair;
                 foreach(Die* die, diceResult->getResultList())
@@ -936,7 +942,16 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                    m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Validator is missing after the e operator. Please, change it"));
                 }
             }
+            break;
+            case Merge:
+            {
+                MergeNode* mergeNode = new MergeNode();
+                previous->setNextNode(mergeNode);
+                node = mergeNode;
+                isFine = true;
 
+            }
+                break;
 
             }
         }

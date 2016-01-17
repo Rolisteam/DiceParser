@@ -77,7 +77,7 @@ public:
     /**
      * @brief The OptionOperator enum gathering all options  availables for result.
      */
-    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd};
+    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd,Merge};
     /**
      * @brief The CommandOperator enum
      */
@@ -135,7 +135,7 @@ public:
      * @brief getLastDiceResult
      * @return
      */
-    void getLastDiceResult(ExportedDiceResult& diceValues);
+    void getLastDiceResult(ExportedDiceResult& diceValues,bool& homogeneous);
     /**
      * @brief hasIntegerResultNotInFirst
      * @return

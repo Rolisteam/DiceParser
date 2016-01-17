@@ -19,94 +19,62 @@
 * Free Software Foundation, Inc.,                                          *
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
-#include "diceresult.h"
+#include "mergenode.h"
 
-DiceResult::DiceResult()
+MergeNode::MergeNode()
+    : m_diceResult(new DiceResult())
 {
-    m_resultTypes= (DICE_LIST | SCALAR);
-    m_homogeneous = true;
+    m_result = m_diceResult;
 }
-void DiceResult::insertResult(Die* die)
+void MergeNode::run(ExecutionNode* previous)
 {
-    m_diceValues.append(die);
-}
-QList<Die*>& DiceResult::getResultList()
-{
-    return m_diceValues;
-}
-bool DiceResult::isHomogeneous() const
-{
-    return m_homogeneous;
-}
-void DiceResult::setHomogeneous(bool b)
-{
-    m_homogeneous = b;
-}
-
-void DiceResult::setResultList(QList<Die*> list)
-{
-	qDeleteAll(m_diceValues.begin(), m_diceValues.end());
-    m_diceValues.clear();
-    m_diceValues << list;
-}
-DiceResult::~DiceResult()
-{
-	qDeleteAll(m_diceValues.begin(), m_diceValues.end());
-	m_diceValues.clear();
-}
-QVariant DiceResult::getResult(RESULT_TYPE type)
-{
-    switch (type)
+    m_previousNode = previous;
+    if(NULL!=previous)
     {
-        case SCALAR:
-        {
-             return getScalarResult();
-        }
-        case DICE_LIST:
-        {
-            return QVariant();
-        }
-        default:
-            break;
+        m_result->setPrevious(previous->getResult());
     }
-    return QVariant();
-
-}
-/*bool DiceResult::hasResultOfType(RESULT_TYPE type) const
-{
-    return (m_resultTypes & type);
-}*/
-qreal DiceResult::getScalarResult()
-{
-    if(m_diceValues.size()==1)
+    Result* tmpResult = previous->getResult();
+    while(NULL!=tmpResult)
     {
-        return m_diceValues[0]->getValue();
+        DiceResult* dice = dynamic_cast<DiceResult*>(tmpResult);
+        if(NULL!=dice)
+        {
+            ///@todo improve here to set homogeneous while is really
+            m_diceResult->setHomogeneous(false);
+            foreach(Die* die, dice->getResultList())
+            {
+                if(!m_diceResult->getResultList().contains(die))
+                {
+                    m_diceResult->getResultList().append(die);
+                }
+            }
+        }
+        tmpResult = tmpResult->getPrevious();
+    }
+
+    if(NULL!=m_nextNode)
+    {
+        m_nextNode->run(this);
+    }
+}
+
+QString MergeNode::toString(bool withLabel) const
+{
+    if(withLabel)
+    {
+        return QString("%1 [label=\"Merge Node %2\"]").arg(m_id).arg(m_number);
     }
     else
     {
-       qint64 scalarSum = 0;
-       foreach(Die* die,m_diceValues)
-       {
-           scalarSum+=die->getValue();
-       }
-       return scalarSum;
+        return m_id;
     }
-
-    return 0;
 }
-QString DiceResult::toString(bool wl)
+qint64 MergeNode::getPriority() const
 {
-    QStringList scalarSum;
-    foreach(Die* die,m_diceValues)
+    qint64 priority=0;
+    if(NULL!=m_nextNode)
     {
-        scalarSum << QString::number(die->getValue());
+        priority = m_nextNode->getPriority();
     }
-	if(wl)
-	{
-		return QStringLiteral("%3 [label=\"DiceResult Value %1 dice %2\"]").arg(getScalarResult()).arg(scalarSum.join('_')).arg(m_id);
-	}
-	else
-	{
-		return m_id;
-	}
+    return priority;
 }

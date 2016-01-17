@@ -43,57 +43,102 @@
 
 QTextStream out(stdout, QIODevice::WriteOnly);
 
-QString diceToText(ExportedDiceResult& dice,bool highlight)
+QString diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
 {
     QStringList resultGlobal;
-    foreach(int face, dice.keys())
+        foreach(int face, dice.keys())
+        {
+               QStringList result;
+               ListDiceResult diceResult =  dice.value(face);
+               //patternColor = patternColorarg();
+               foreach (DiceAndHighlight tmp, diceResult)
+               {
+                    QStringList diceListStr;
+                    QStringList diceListChildren;
+
+
+                    for(int i =0; i < tmp.first.size(); ++i)
+                    {
+                        qint64 dievalue = tmp.first[i];
+                        QString prefix("%1");
+
+                        if((tmp.second)&&(highlight))
+                        {
+                            prefix = "\e[0;31m%1\e[0m";
+                        }
+
+                        if(i==0)
+                        {
+                            diceListStr << prefix.arg(QString::number(dievalue));
+                        }
+                        else
+                        {
+                            diceListChildren << prefix.arg(QString::number(dievalue));
+                        }
+                    }
+                    if(!diceListChildren.isEmpty())
+                    {
+                        diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
+                    }
+
+                    result << diceListStr.join(' ');
+                   // qDebug() << result << tmp.first << tmp.second;
+               }
+
+               if(dice.keys().size()>1)
+               {
+                  resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
+               }
+               else
+               {
+                   resultGlobal << result;
+               }
+        }
+   /* }
+    else
     {
-           QStringList result;
-           ListDiceResult diceResult =  dice.value(face);
-           //patternColor = patternColorarg();
-           foreach (DiceAndHighlight tmp, diceResult)
-           {
-                QStringList diceListStr;
-                QStringList diceListChildren;
+        foreach(int face, dice.keys())
+        {
+               QStringList result;
+               ListDiceResult diceResult =  dice.value(face);
+               foreach (DiceAndHighlight tmp, diceResult)
+               {
+                    QStringList diceListStr;
+                    QStringList diceListChildren;
 
 
-                for(int i =0; i < tmp.first.size(); ++i)
-                {
-                    qint64 dievalue = tmp.first[i];
-                    QString prefix("%1");
-
-                    if((tmp.second)&&(highlight))
+                    for(int i =0; i < tmp.first.size(); ++i)
                     {
-                        prefix = "\e[0;31m%1\e[0m";
+                        qint64 dievalue = tmp.first[i];
+                        QString prefix("%1");
+
+                        if((tmp.second)&&(highlight))
+                        {
+                            prefix = "\e[0;31m%1\e[0m";
+                        }
+
+                        if(i==0)
+                        {
+                            diceListStr << prefix.arg(QString::number(dievalue));
+                        }
+                        else
+                        {
+                            diceListChildren << prefix.arg(QString::number(dievalue));
+                        }
+                    }
+                    if(!diceListChildren.isEmpty())
+                    {
+                        diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
                     }
 
-                    if(i==0)
-                    {
-                        diceListStr << prefix.arg(QString::number(dievalue));
-                    }
-                    else
-                    {
-                        diceListChildren << prefix.arg(QString::number(dievalue));
-                    }
-                }
-                if(!diceListChildren.isEmpty())
-                {
-                    diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
-                }
+                    result << diceListStr.join(' ');
+                   // qDebug() << result << tmp.first << tmp.second;
+               }
 
-                result << diceListStr.join(' ');
-               // qDebug() << result << tmp.first << tmp.second;
-           }
+              resultGlobal << QString(" (%1) ").arg(result.join(','));
 
-           if(dice.keys().size()>1)
-           {
-              resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
-           }
-           else
-           {
-               resultGlobal << result;
-           }
-    }
+        }
+    }*/
     return resultGlobal.join(' ');
 }
 
@@ -114,8 +159,9 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
             }
 
             ExportedDiceResult list;
-            parser->getLastDiceResult(list);
-            QString diceText = diceToText(list,highlight);
+            bool homogeneous = true;
+            parser->getLastDiceResult(list,homogeneous);
+            QString diceText = diceToText(list,highlight,homogeneous);
             QString scalarText;
             QString str;
 
