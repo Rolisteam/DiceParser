@@ -70,31 +70,41 @@ void JumpBackwardNode::run(ExecutionNode* previous)
             }
 
 		}
-        DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
-        foreach(Die* die,diceResult->getResultList())
+        if(NULL==result)
         {
-            Die* tmpdie = new Die();
-            *tmpdie=*die;
-            m_diceResult->insertResult(tmpdie);
-            die->displayed();
+            m_errors.insert(DIE_RESULT_EXPECTED,QObject::tr(" The @ operator expects dice result. Please check the documentation to fix your command."));
         }
-
-
-        m_result->setPrevious(parent->getResult());
-
-
-
-        if(NULL!=m_nextNode)
+        else
         {
-            m_nextNode->run(this);
-        }
-        for(int i =0;i<diceResult->getResultList().size();++i)
-        {
-            Die* tmp =diceResult->getResultList().at(i);
-            Die* tmp2 =m_diceResult->getResultList().at(i);
-            if(tmp->isHighlighted())
+            DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
+            if(NULL!=diceResult)
             {
-                tmp2->setHighlighted(true);
+                foreach(Die* die,diceResult->getResultList())
+                {
+                    Die* tmpdie = new Die();
+                    *tmpdie=*die;
+                    m_diceResult->insertResult(tmpdie);
+                    die->displayed();
+                }
+            }
+
+            m_result->setPrevious(parent->getResult());
+
+            if(NULL!=m_nextNode)
+            {
+                m_nextNode->run(this);
+            }
+            if(NULL!=diceResult)
+            {
+                for(int i =0;i<diceResult->getResultList().size();++i)
+                {
+                    Die* tmp =diceResult->getResultList().at(i);
+                    Die* tmp2 =m_diceResult->getResultList().at(i);
+                    if(tmp->isHighlighted())
+                    {
+                        tmp2->setHighlighted(true);
+                    }
+                }
             }
         }
 
