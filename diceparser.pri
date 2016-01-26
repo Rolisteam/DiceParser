@@ -50,6 +50,7 @@ HEADERS += \
     $$PWD/node/jumpbackwardnode.h \
     $$PWD/node/mergenode.h \
     $$PWD/node/listaliasnode.h \
+    $$PWD/node/ifnode.h \
     $$PWD/node/listsetrollnode.h
 
 SOURCES += \
@@ -68,6 +69,7 @@ SOURCES += \
     $$PWD/node/jumpbackwardnode.cpp \
     $$PWD/node/mergenode.cpp \
     $$PWD/node/listaliasnode.cpp \
+    $$PWD/node/ifnode.cpp \
     $$PWD/node/listsetrollnode.cpp
 
 
