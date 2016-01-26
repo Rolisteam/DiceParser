@@ -32,7 +32,7 @@ KeepDiceExecNode::KeepDiceExecNode()
 
 void KeepDiceExecNode::run(ExecutionNode* previous)
 {
-m_previousNode = previous;
+    m_previousNode = previous;
     if(NULL==previous)
     {
         return;

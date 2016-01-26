@@ -27,11 +27,11 @@ void CountExecuteNode::run(ExecutionNode *previous)
 	{
 		return;
 	}
-	DiceResult* previous_result = dynamic_cast<DiceResult*>(previous->getResult());
-	if(NULL!=previous_result)
+    DiceResult* previousResult = dynamic_cast<DiceResult*>(previous->getResult());
+    if(NULL!=previousResult)
 	{
-		m_result->setPrevious(previous_result);
-		QList<Die*> diceList=previous_result->getResultList();
+        m_result->setPrevious(previousResult);
+        QList<Die*> diceList=previousResult->getResultList();
 		qint64 sum = 0;
 		foreach(Die* dice,diceList)
 		{

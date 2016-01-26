@@ -20,7 +20,7 @@
 #include "helpnode.h"
 
 HelpNode::HelpNode()
-    : m_path("https://github.com/obiwankennedy/DiceParser/blob/master/HelpMe.md")
+    : m_path("https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md")
 {
     m_result = new StringResult();
 }
