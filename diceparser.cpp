@@ -39,6 +39,7 @@
 #include "node/listsetrollnode.h"
 #include "node/listaliasnode.h"
 #include "node/mergenode.h"
+#include "node/ifnode.h"
 
 #define DEFAULT_FACES_NUMBER 10
 
@@ -60,14 +61,9 @@ DiceParser::DiceParser()
 	m_OptionOp->insert(QStringLiteral("r"),Reroll);
 	m_OptionOp->insert(QStringLiteral("e"),Explosing);
 	m_OptionOp->insert(QStringLiteral("a"),RerollAndAdd);
-    //m_OptionOp->insert(QObject::tr("@"),JumpBackward);
-
+    m_OptionOp->insert(QStringLiteral("i"),ifOperator);
 
     m_aliasList = new QList<DiceAlias*>();
-    /*m_aliasList->append(new DiceAlias("l5r","D10k"));
-    m_aliasList->append(new DiceAlias("l5R","D10K"));
-    m_aliasList->append(new DiceAlias("nwod","D10e10c[>7]"));
-    m_aliasList->append(new DiceAlias("(.*)wod(.*)","\\1d10e[=10]c[>=\\2]-@c[=1]",false));*/
 
     m_nodeActionMap = new QMap<QString,NodeAction>();
 	m_nodeActionMap->insert(QStringLiteral("@"),JumpBackward);
@@ -952,6 +948,15 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
 
             }
                 break;
+            case ifOperator:
+            {
+                 IfNode* nodeif = new IfNode();
+                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
+                 if(NULL!=validator)
+                 {
+
+                 }
+            }
 
             }
         }

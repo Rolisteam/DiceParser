@@ -143,6 +143,9 @@ public:
     bool readLogicOperation(QString& str,CompositeValidator::LogicOperation& op);
 
     bool readDiceLogicOperator(QString &str, OperationCondition::ConditionOperator &op);
+
+
+    bool readIfInstruction(QString& str,ExecutionNode* trueNode,ExecutionNode* falseNode);
 private:
         QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
         QMap<QString,CompositeValidator::LogicOperation>* m_logicOperation;
