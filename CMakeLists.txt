@@ -26,6 +26,7 @@ add_executable(
     booleancondition.cpp 
     validator.cpp 
     compositevalidator.cpp
+    operationcondition.cpp
     die.cpp 
     parsingtoolbox.cpp 
     dicealias.cpp
@@ -49,6 +50,7 @@ add_executable(
     node/scalaroperatornode.cpp
     node/sortresult.cpp
     node/startingnode.cpp
+    node/ifnode.cpp
     cli/main.cpp
     )
 
