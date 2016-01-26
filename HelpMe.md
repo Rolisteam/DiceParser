@@ -40,6 +40,7 @@ Thanks of several operations and option, you can tune a bit you rolling command.
 * r : Reroll
 * e : Explose
 * a : Reroll and add
+* @ : Backward Jump
 
 ### Keep
 
@@ -111,6 +112,16 @@ Rolling 3 dice with 10 faces starting at 0.
 > 3d[-20--9]
 
 Rolling 3 dice, values ars between -20 and -9.
+
+### Backward Jump
+
+This operator is dedicated to apply its next operator to the second to last result.
+For example:  
+
+> 8D10c[>=7]+@c[=10]
+
+c[=10] in this command is counting the number of 10 in the result of 8D10, if you remove the @, it will try to count the number of 10 in the result of c[>=7]. The result of c[>=7] is a scalar number (1 or 2 ... (max value 8)); it is not dice list.
+
 
 ## Arithmetic
 
