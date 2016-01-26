@@ -41,6 +41,9 @@ public:
     virtual qint64 getPriority() const;
 
 protected:
+    ExecutionNode *getLeafNode(ExecutionNode *node);
+
+protected:
     DiceResult* m_diceResult;
     Validator* m_validator;
 

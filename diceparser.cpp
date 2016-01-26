@@ -954,7 +954,15 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                  Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                  if(NULL!=validator)
                  {
-
+                    ExecutionNode* trueNode;
+                    ExecutionNode* falseNode;
+                    if(readIfInstruction(str,trueNode,falseNode))
+                    {
+                        nodeif->setInstructionTrue(trueNode);
+                        nodeif->setInstructionFalse(falseNode);
+                        nodeif->setValidator(validator);
+                        previous->setNextNode(nodeif);
+                    }
                  }
             }
 
@@ -962,6 +970,33 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
         }
     }
     return isFine;
+}
+bool DiceParser::readIfInstruction(QString& str,ExecutionNode*& trueNode,ExecutionNode*& falseNode)
+{
+    if(str.startsWith('{'))
+    {
+       str=str.remove(0,1);
+       ExecutionNode* node;
+       readExpression(str,node);
+       if(str.startsWith('}'))
+       {
+           trueNode = node;
+           str=str.remove(0,1);
+           if(str.startsWith('{'))
+           {
+               str=str.remove(0,1);
+               ExecutionNode* node2;
+               readExpression(str,node2);
+               if(str.startsWith('}'))
+               {
+                   falseNode=node2;
+                   return true;
+               }
+           }
+           return true;
+       }
+    }
+    return false;
 }
 
 QMap<ExecutionNode::ERROR_CODE,QString>  DiceParser::getErrorMap()

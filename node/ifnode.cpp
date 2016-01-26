@@ -22,7 +22,7 @@
 
 IfNode::IfNode()
 {
-    m_result = new DiceResult();
+    //m_result = new DiceResult();
 }
 
 IfNode::~IfNode()
@@ -37,20 +37,42 @@ void IfNode::run(ExecutionNode *previous)
     {
         return;
     }
+    ExecutionNode* previousLoop = previous;
+    ExecutionNode* nextNode = NULL;
     Result* previousResult = previous->getResult();
+    m_result = previousResult;
     DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previousResult);
 
     if(NULL!=previousDiceResult)
     {
         qreal value = previousResult->getResult(Result::SCALAR).toReal();
+
         QList<Die*> diceList=previousDiceResult->getResultList();
+
+
         if(NULL!=m_validator)
         {
             if(!diceList.isEmpty())
             {
                 foreach(Die* dice,diceList)
                 {
-                    m_validator->hasValid(dice,true,true);
+                    if(m_validator->hasValid(dice,true,true))
+                    {
+                            nextNode=m_true;
+                    }
+                    else
+                    {
+                            nextNode=m_false;
+                    }
+                    if(NULL!=nextNode)
+                    {
+                        if(NULL==m_nextNode)
+                        {
+                            m_nextNode = nextNode;
+                        }
+                        nextNode->run(previousLoop);
+                        previousLoop = getLeafNode(nextNode);
+                    }
                 }
             }
             else
@@ -63,10 +85,10 @@ void IfNode::run(ExecutionNode *previous)
         }
     }
 
-    if(NULL!=m_nextNode)
+   /* if(NULL!=m_nextNode)
     {
         m_nextNode->run(this);
-    }
+    }*/
 }
 
 void IfNode::setValidator(Validator* val)
@@ -93,3 +115,12 @@ qint64 IfNode::getPriority() const
     return 4;
 }
 
+ExecutionNode* IfNode::getLeafNode(ExecutionNode* node)
+{
+    ExecutionNode* next = node;
+    while(NULL != next->getNextNode() )
+    {
+        next = next->getNextNode();
+    }
+    return next;
+}

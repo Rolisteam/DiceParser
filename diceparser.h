@@ -204,6 +204,7 @@ public:
     QStringList getAllDiceResult(bool& hasAlias);
 
     bool hasSeparator()const;
+    bool readIfInstruction(QString &str, ExecutionNode* &trueNode, ExecutionNode* &falseNode);
 private:
 
     /**

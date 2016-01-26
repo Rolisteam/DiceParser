@@ -378,13 +378,7 @@ ParsingToolBox::LIST_OPERATOR  ParsingToolBox::readListOperator(QString& str)
     }
     return NONE;
 }
-bool ParsingToolBox::readIfInstruction(QString& str,ExecutionNode* trueNode,ExecutionNode* falseNode)
-{
-    if(str.startsWith('{'))
-    {
 
-    }
-}
 
 void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
 {
