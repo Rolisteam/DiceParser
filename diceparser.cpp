@@ -977,7 +977,7 @@ bool DiceParser::readIfInstruction(QString& str,ExecutionNode*& trueNode,Executi
     {
        str=str.remove(0,1);
        ExecutionNode* node;
-       readExpression(str,node);
+       bool hasExpresion = readExpression(str,node);
        if(str.startsWith('}'))
        {
            trueNode = node;
