@@ -977,23 +977,25 @@ bool DiceParser::readIfInstruction(QString& str,ExecutionNode*& trueNode,Executi
     {
        str=str.remove(0,1);
        ExecutionNode* node;
-       bool hasExpresion = readExpression(str,node);
-       if(str.startsWith('}'))
+       if(readExpression(str,node))
        {
-           trueNode = node;
-           str=str.remove(0,1);
-           if(str.startsWith('{'))
+           if(str.startsWith('}'))
            {
+               trueNode = node;
                str=str.remove(0,1);
-               ExecutionNode* node2;
-               readExpression(str,node2);
-               if(str.startsWith('}'))
+               if(str.startsWith('{'))
                {
-                   falseNode=node2;
-                   return true;
+                   str=str.remove(0,1);
+                   ExecutionNode* node2;
+                   readExpression(str,node2);
+                   if(str.startsWith('}'))
+                   {
+                       falseNode=node2;
+                       return true;
+                   }
                }
+               return true;
            }
-           return true;
        }
     }
     return false;

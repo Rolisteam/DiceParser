@@ -21,6 +21,7 @@
 #include "result/diceresult.h"
 
 IfNode::IfNode()
+    : m_validator(NULL),m_true(NULL),m_false(NULL)
 {
     //m_result = new DiceResult();
 }
