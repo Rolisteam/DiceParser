@@ -35,11 +35,11 @@
 class ScalarOperatorNode : public ExecutionNode
 {
 public:
-    enum ScalarOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION};
+    enum ArithmeticOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION};
     ScalarOperatorNode();
 	virtual ~ScalarOperatorNode();
     virtual void run(ExecutionNode*);
-    bool setOperatorChar(QChar c);
+
     void setInternalNode(ExecutionNode* node);
 
     virtual QString toString(bool wl)const;
@@ -52,6 +52,9 @@ public:
      */
     virtual QMap<ExecutionNode::ERROR_CODE,QString> getExecutionErrorMap();
 
+    ScalarOperatorNode::ArithmeticOperator getArithmeticOperator() const;
+    void setArithmeticOperator(const ScalarOperatorNode::ArithmeticOperator &arithmeticOperator);
+
 private:
     static qint64 add(qint64,qint64);
     static qint64 substract(qint64,qint64);
@@ -59,10 +62,9 @@ private:
     static qint64 multiple(qint64,qint64);
 
 private:
-	ScalarOperator m_operator;
+    ArithmeticOperator m_arithmeticOperator;
     ScalarResult* m_scalarResult;
     ExecutionNode* m_internalNode;
-    QMap<QChar,ScalarOperator> m_scalarOperationList;
 };
 
 #endif // SCALAROPERATORNODE_H

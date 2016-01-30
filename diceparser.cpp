@@ -711,12 +711,12 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
         return false;
     }
 
-    ScalarOperatorNode* node = new ScalarOperatorNode();
-    if(node->setOperatorChar(str[0]))
+    ScalarOperatorNode::ArithmeticOperator op;
+    if(m_parsingToolbox->readArithmeticOperator(str,op))
     {
-
+        ScalarOperatorNode* node = new ScalarOperatorNode();
+        node->setArithmeticOperator(op);
         ExecutionNode* nodeExec = NULL;
-        str=str.remove(0,1);//removal of one character
         if(readExpression(str,nodeExec))
         {
             node->setInternalNode(nodeExec);
@@ -742,7 +742,6 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
     else if(readInstructionOperator(str[0]))
     {
        str=str.remove(0,1);
-       delete node;
        ExecutionNode* nodeExec = NULL;
        if(readExpression(str,nodeExec))
        {
@@ -757,7 +756,6 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
     }
     else
     {
-        delete node;
         while(readOption(str,previous,false))
         {
            previous = getLatestNode(previous);
@@ -973,27 +971,43 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
 }
 bool DiceParser::readIfInstruction(QString& str,ExecutionNode*& trueNode,ExecutionNode*& falseNode)
 {
+    if(readBlocInstruction(str,trueNode))
+    {
+        if(readBlocInstruction(str,falseNode))
+        {
+            return true;
+        }
+        return true;
+    }
+    return false;
+}
+bool DiceParser::readBlocInstruction(QString& str,ExecutionNode*& resultnode)
+{
     if(str.startsWith('{'))
     {
        str=str.remove(0,1);
        ExecutionNode* node;
+       ScalarOperatorNode::ArithmeticOperator op;
+       ScalarOperatorNode* scalarNode = NULL;
+       if(m_parsingToolbox->readArithmeticOperator(str,op))
+       {
+           scalarNode = new ScalarOperatorNode();
+           scalarNode->setArithmeticOperator(op);
+       }
        if(readExpression(str,node))
        {
            if(str.startsWith('}'))
            {
-               trueNode = node;
-               str=str.remove(0,1);
-               if(str.startsWith('{'))
+               if(NULL==scalarNode)
                {
-                   str=str.remove(0,1);
-                   ExecutionNode* node2;
-                   readExpression(str,node2);
-                   if(str.startsWith('}'))
-                   {
-                       falseNode=node2;
-                       return true;
-                   }
+                resultnode = node;
                }
+               else
+               {
+                   resultnode = scalarNode;
+                   scalarNode->setInternalNode(node);
+               }
+               str=str.remove(0,1);
                return true;
            }
        }

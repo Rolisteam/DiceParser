@@ -312,6 +312,7 @@ private:
     ParsingToolBox* m_parsingToolbox;
     QString m_helpPath;
     bool m_currentTreeHasSeparator;
+    bool readBlocInstruction(QString &str, ExecutionNode *&resultnode);
 };
 
 #endif // DICEPARSER_H

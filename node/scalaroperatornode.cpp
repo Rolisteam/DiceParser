@@ -26,13 +26,13 @@
 
 
 ScalarOperatorNode::ScalarOperatorNode()
-    : m_internalNode(NULL),m_scalarResult(new ScalarResult()),m_operator(PLUS)
+    : m_internalNode(NULL),m_scalarResult(new ScalarResult()),m_arithmeticOperator(PLUS)
 {
-    m_scalarOperationList.insert('+',PLUS);
+    /*m_scalarOperationList.insert('+',PLUS);
     m_scalarOperationList.insert('-',MINUS);
     m_scalarOperationList.insert('x',MULTIPLICATION);
     m_scalarOperationList.insert('*',MULTIPLICATION);
-    m_scalarOperationList.insert('/',DIVIDE);
+    m_scalarOperationList.insert('/',DIVIDE);*/
 
     m_result = m_scalarResult;
 }
@@ -72,7 +72,7 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
                 m_internalNode->getResult()->setPrevious(previousResult);
             }
 
-			switch(m_operator)
+            switch(m_arithmeticOperator)
             {
                 case PLUS:
                     m_scalarResult->setValue(add(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
@@ -99,7 +99,7 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
     }
 
 }
-bool ScalarOperatorNode::setOperatorChar(QChar c)
+/*bool ScalarOperatorNode::setOperatorChar(QChar c)
 {
     if(m_scalarOperationList.contains(c))
     {
@@ -107,7 +107,7 @@ bool ScalarOperatorNode::setOperatorChar(QChar c)
         return true;
     }
     return false;
-}
+}*/
 
 void ScalarOperatorNode::setInternalNode(ExecutionNode* node)
 {
@@ -134,16 +134,26 @@ qint64 ScalarOperatorNode::multiple(qint64 a,qint64 b)
 {
     return a*b;
 }
+ScalarOperatorNode::ArithmeticOperator ScalarOperatorNode::getArithmeticOperator() const
+{
+    return m_arithmeticOperator;
+}
+
+void ScalarOperatorNode::setArithmeticOperator(const ScalarOperatorNode::ArithmeticOperator &arithmeticOperator)
+{
+    m_arithmeticOperator = arithmeticOperator;
+}
+
 QString ScalarOperatorNode::toString(bool wl) const
 {
     QString op="";
-    switch(m_operator)
+    switch(m_arithmeticOperator)
     {
-        case PLUS:
-            op="+";
-            break;
-        case MINUS:
-            op="-";
+    case PLUS:
+        op="+";
+        break;
+    case MINUS:
+        op="-";
             break;
         case MULTIPLICATION:
             op="*";
@@ -166,7 +176,7 @@ QString ScalarOperatorNode::toString(bool wl) const
 }
 qint64 ScalarOperatorNode::getPriority() const
 {
-	if((m_operator==PLUS)||(m_operator==MINUS))
+    if((m_arithmeticOperator==PLUS)||(m_arithmeticOperator==MINUS))
 	{
         return 1;
 	}
