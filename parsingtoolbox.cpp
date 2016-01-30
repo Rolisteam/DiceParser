@@ -42,6 +42,16 @@ ParsingToolBox::ParsingToolBox()
 
     m_conditionOperation = new QMap<QString,OperationCondition::ConditionOperator>();
     m_conditionOperation->insert("%",OperationCondition::Modulo);
+
+
+    m_arithmeticOperation = new QHash<QString,ScalarOperatorNode::ArithmeticOperator>();
+    m_arithmeticOperation->insert(QStringLiteral("+"),ScalarOperatorNode::PLUS);
+    m_arithmeticOperation->insert(QStringLiteral("-"),ScalarOperatorNode::MINUS);
+    m_arithmeticOperation->insert(QStringLiteral("*"),ScalarOperatorNode::MULTIPLICATION);
+    m_arithmeticOperation->insert(QStringLiteral("x"),ScalarOperatorNode::MULTIPLICATION);
+    m_arithmeticOperation->insert(QStringLiteral("/"),ScalarOperatorNode::DIVIDE);
+    m_arithmeticOperation->insert(QStringLiteral("÷"),ScalarOperatorNode::DIVIDE);
+
 }
 ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e,bool b)
 {
@@ -71,6 +81,23 @@ bool ParsingToolBox::readDiceLogicOperator(QString& str,OperationCondition::Cond
     }
 
     return false;
+}
+
+bool ParsingToolBox::readArithmeticOperator(QString &str, ScalarOperatorNode::ArithmeticOperator &op)
+{
+    bool found = false;
+    //QHash<QString,ScalarOperatorNode::ArithmeticOperator>::Iterator
+    auto i = m_arithmeticOperation->begin();
+    for(; i !=m_arithmeticOperation->end() && !found; ++i)
+    {
+        if(str.startsWith(i.key()))
+        {
+                op = i.value();
+                str=str.remove(0,i.key().size());
+                found=true;
+        }
+    }
+    return found;
 }
 
 bool ParsingToolBox::readLogicOperator(QString& str,BooleanCondition::LogicOperator& op)

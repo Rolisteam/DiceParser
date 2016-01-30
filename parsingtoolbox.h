@@ -30,6 +30,7 @@
 #include "operationcondition.h"
 #include "compositevalidator.h"
 #include "range.h"
+#include "node/scalaroperatornode.h"
 
 /**
  * @brief The ParsingToolBox is gathering many useful methods for dice parsing.
@@ -39,6 +40,7 @@ class ParsingToolBox
 {
 public:
     enum LIST_OPERATOR {NONE,UNIQUE};
+
 	/**
 	 * @brief ParsingToolBox
 	 */
@@ -144,12 +146,13 @@ public:
 
     bool readDiceLogicOperator(QString &str, OperationCondition::ConditionOperator &op);
 
-
+    bool readArithmeticOperator(QString& str, ScalarOperatorNode::ArithmeticOperator& op);
 
 private:
         QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
         QMap<QString,CompositeValidator::LogicOperation>* m_logicOperation;
         QMap<QString,OperationCondition::ConditionOperator>* m_conditionOperation;
+        QHash<QString,ScalarOperatorNode::ArithmeticOperator>* m_arithmeticOperation;
 };
 
 #endif // PARSINGTOOLBOX_H
