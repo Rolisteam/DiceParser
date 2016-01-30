@@ -19,6 +19,10 @@ add_definitions(${Qt5Core_DEFINITIONS})
 set(MODE "cli")
 
 
+ADD_DEFINITIONS(
+    -std=c++11 # Or -std=c++0x
+    # Other flags
+)
 add_executable(
     dice     
     diceparser.cpp 
