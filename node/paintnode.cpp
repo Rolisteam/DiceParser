@@ -51,18 +51,20 @@ void ColorItem::setColor(const QString &color)
 ///////////////////////////////////
 
 PainterNode::PainterNode()
+    : ExecutionNode()
 {
-
+    m_result = NULL;
+    m_nextNode = NULL;
 }
 
 
 PainterNode::~PainterNode()
 {
-
+    m_result = NULL;
 }
 
 
-void PainterNode::run(ExecutionNode *previous)
+void PainterNode::run(ExecutionNode* previous)
 {
     m_previousNode = previous;
     if(NULL==previous)
@@ -70,28 +72,33 @@ void PainterNode::run(ExecutionNode *previous)
         return;
     }
     Result* previousResult = previous->getResult();
-    m_result = previousResult;
+    //m_result = previousResult;
     DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previousResult);
     if(NULL!=previousDiceResult)
     {
-         QList<Die*> diceList=previousDiceResult->getResultList();
+        QList<Die*> diceList=previousDiceResult->getResultList();
+        int pastDice=0;
         foreach(ColorItem item, m_colors)
         {
             int current=item.colorNumber();
             QList<Die*>::iterator it;
-            for(it = diceList.begin(); it != diceList.end() && current>0 ; ++it)
+            for(it = diceList.begin()+pastDice; it != diceList.end() && current>0 ; ++it)
             {
                 (*it)->setColor(item.color());
                 --current;
+                ++pastDice;
             }
         }
     }
     if(NULL!=m_nextNode)
     {
-        m_nextNode->run(this);
+        m_nextNode->run(previous);
     }
 }
-
+Result* PainterNode::getResult()
+{
+    m_previousNode->getResult();
+}
 
 QString PainterNode::toString(bool wl) const
 {

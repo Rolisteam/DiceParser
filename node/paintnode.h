@@ -47,6 +47,7 @@ public:
     PainterNode();
     virtual ~PainterNode();
     virtual void run(ExecutionNode* previous = NULL);
+    Result* getResult();
     virtual QString toString(bool )const;
     virtual qint64 getPriority() const;
     void insertColorItem(QString color, int value);

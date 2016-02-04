@@ -6,6 +6,7 @@ INCLUDEPATH += $$PWD
 SOURCES += $$PWD/diceparser.cpp \
     $$PWD/result/diceresult.cpp \
     $$PWD/range.cpp \
+    $$PWD/highlightdice.cpp \
     $$PWD/booleancondition.cpp \
     $$PWD/validator.cpp \
     $$PWD/die.cpp \
@@ -23,6 +24,7 @@ HEADERS += \
     $$PWD/result/diceresult.h \
     $$PWD/range.h \
     $$PWD/booleancondition.h \
+    $$PWD/highlightdice.h \
     $$PWD/validator.h \
     $$PWD/die.h \
     $$PWD/result/result.h \
@@ -51,6 +53,7 @@ HEADERS += \
     $$PWD/node/mergenode.h \
     $$PWD/node/listaliasnode.h \
     $$PWD/node/ifnode.h \
+    $$PWD/node/paintnode.h \
     $$PWD/node/listsetrollnode.h
 
 SOURCES += \
@@ -69,6 +72,7 @@ SOURCES += \
     $$PWD/node/jumpbackwardnode.cpp \
     $$PWD/node/mergenode.cpp \
     $$PWD/node/listaliasnode.cpp \
+    $$PWD/node/paintnode.cpp \
     $$PWD/node/ifnode.cpp \
     $$PWD/node/listsetrollnode.cpp
 
