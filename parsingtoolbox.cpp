@@ -406,6 +406,27 @@ ParsingToolBox::LIST_OPERATOR  ParsingToolBox::readListOperator(QString& str)
     return NONE;
 }
 
+void ParsingToolBox::readPainterParameter(PainterNode* painter,QString& str)
+{
+    if(str.startsWith('['))
+    {
+        str=str.remove(0,1);
+        int pos = str.indexOf(']');
+        if(pos>-1)
+        {
+            QString data = str.left(pos);
+            QStringList duos = data.split(',');
+            foreach(QString duoStr,duos)
+            {
+                QStringList keyValu = duoStr.split(':');
+                if(keyValu.size()==2)
+                {
+                    painter->insertColorItem(keyValu[1],keyValu[0].toInt());
+                }
+            }
+        }
+    }
+}
 
 void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
 {

@@ -33,10 +33,9 @@
 #include "booleancondition.h"
 #include "parsingtoolbox.h"
 #include "dicealias.h"
+#include "highlightdice.h"
 
-
-typedef QPair<QList<quint64>,bool> DiceAndHighlight;
-typedef QList<DiceAndHighlight > ListDiceResult;
+typedef QList<HighLightDice > ListDiceResult;
 typedef QMap<int,ListDiceResult > ExportedDiceResult;
 
 class ExploseDiceNode;
@@ -77,7 +76,7 @@ public:
     /**
      * @brief The OptionOperator enum gathering all options  availables for result.
      */
-    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd,Merge,ifOperator};
+    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd,Merge,ifOperator,Painter};
     /**
      * @brief The CommandOperator enum
      */

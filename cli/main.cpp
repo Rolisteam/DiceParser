@@ -25,6 +25,7 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QTextStream>
+#include "highlightdice.h"
 
 /**
  * @page Dice
@@ -51,20 +52,31 @@ QString diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
                QStringList result;
                ListDiceResult diceResult =  dice.value(face);
                //patternColor = patternColorarg();
-               foreach (DiceAndHighlight tmp, diceResult)
+               foreach (HighLightDice tmp, diceResult)
                {
                     QStringList diceListStr;
                     QStringList diceListChildren;
 
 
-                    for(int i =0; i < tmp.first.size(); ++i)
+                    for(int i =0; i < tmp.getResult().size(); ++i)
                     {
-                        qint64 dievalue = tmp.first[i];
+                        qint64 dievalue = tmp.getResult()[i];
                         QString prefix("%1");
 
-                        if((tmp.second)&&(highlight))
+                        if((tmp.isHighlighted())&&(highlight))
                         {
-                            prefix = "\e[0;31m%1\e[0m";
+                            if(tmp.getColor().isEmpty()|| tmp.getColor()=="black")
+                            {
+                                prefix = "\e[0;31m%1\e[0m";
+                            }
+                            if(tmp.getColor()=="white")
+                            {
+                                prefix = "\e[97m%1\e[0m";
+                            }
+                            if(tmp.getColor()=="blue")
+                            {
+                                prefix = "\e[34m%1\e[0m";
+                            }
                         }
 
                         if(i==0)
@@ -94,51 +106,6 @@ QString diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
                    resultGlobal << result;
                }
         }
-   /* }
-    else
-    {
-        foreach(int face, dice.keys())
-        {
-               QStringList result;
-               ListDiceResult diceResult =  dice.value(face);
-               foreach (DiceAndHighlight tmp, diceResult)
-               {
-                    QStringList diceListStr;
-                    QStringList diceListChildren;
-
-
-                    for(int i =0; i < tmp.first.size(); ++i)
-                    {
-                        qint64 dievalue = tmp.first[i];
-                        QString prefix("%1");
-
-                        if((tmp.second)&&(highlight))
-                        {
-                            prefix = "\e[0;31m%1\e[0m";
-                        }
-
-                        if(i==0)
-                        {
-                            diceListStr << prefix.arg(QString::number(dievalue));
-                        }
-                        else
-                        {
-                            diceListChildren << prefix.arg(QString::number(dievalue));
-                        }
-                    }
-                    if(!diceListChildren.isEmpty())
-                    {
-                        diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
-                    }
-
-                    result << diceListStr.join(' ');
-                   // qDebug() << result << tmp.first << tmp.second;
-               }
-
-              resultGlobal << QString(" (%1) ").arg(result.join(','));
-
-        }
-    }*/
     return resultGlobal.join(' ');
 }
 
@@ -301,46 +268,5 @@ int main(int argc, char *argv[])
         }
     }
 
-    /*commands<< "10d10c[>6]+@c[=10]"
-			<< "1L[cheminée,chocolat,épée,arc,chute de pierre]"
-			<< "10d10c[>=6]-@c[=1]"
-             << "10d10c[>=6]-@c[=1]-@c[=1]"
-             << "10d10c[>6]+@c[=10]"
-             << "1+1D10"
-             << "3d10c[>=5]"
-            << "3nwod"
-            << "1+(4*3)D10"
-            << "2+4/4"
-            << "2D10*2D20*8"
-            <<"1+(4*3)D10"
-            <<"(4D6)D10"
-            << "1D100a[>=95]a[>=96]a[>=97]a[>=98]a[>=99]e[>=100]"
-            << "3D100"
-            << "4k3"
-            << "10D10e[>=6]sc[>=6]"
-			 << "100190D6666666s"
-            << "10D10e10s"
-            << "10D10s"
-            << "15D10e10c[8-10]"
-			<< "10d10e11"
-            << "1D8+2D6+7"
-			<< "100190D6666666s"
-            << "D25"
-			<< "D25+D10"
-			<< "D25;D10"
-            << "8+8+8"
-            << "1D20-88"
-            << "100*1D20*2D6"
-            << "100/28*3"
-            << "100/8"
-            << "100*3*8"
-            << "help"
-			<< "la"
-			<< "400000D20/400000"
-			<< "100*3*8";//
-*/
-
-
-
-	return 0;
+    return 0;
 }

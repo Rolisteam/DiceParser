@@ -125,6 +125,9 @@ public:
      */
     void setBase(qint64);
 
+    QString getColor() const;
+    void setColor(const QString &color);
+
 private:
     qint64 m_value;
     QList<qint64> m_rollResult;

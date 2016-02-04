@@ -40,6 +40,7 @@
 #include "node/listaliasnode.h"
 #include "node/mergenode.h"
 #include "node/ifnode.h"
+#include "node/paintnode.h"
 
 #define DEFAULT_FACES_NUMBER 10
 
@@ -61,7 +62,9 @@ DiceParser::DiceParser()
 	m_OptionOp->insert(QStringLiteral("r"),Reroll);
 	m_OptionOp->insert(QStringLiteral("e"),Explosing);
 	m_OptionOp->insert(QStringLiteral("a"),RerollAndAdd);
+    m_OptionOp->insert(QStringLiteral("m"),Merge);
     m_OptionOp->insert(QStringLiteral("i"),ifOperator);
+    m_OptionOp->insert(QStringLiteral("p"),Painter);
 
     m_aliasList = new QList<DiceAlias*>();
 
@@ -476,8 +479,9 @@ void DiceParser::getLastDiceResult(ExportedDiceResult& diceValues,bool& homogene
                                 valuesResult.append(i);
                             }
                         }
-                        QPair<QList<quint64>,bool> pair(valuesResult,die->isHighlighted());
-                        listpair.append(pair);
+                        HighLightDice hlDice(valuesResult,die->isHighlighted(),die->getColor());
+                        //QPair<QList<quint64>,bool> pair(valuesResult,die->isHighlighted());
+                        listpair.append(hlDice);
                     }
                 }
                 if(!listpair.isEmpty())
@@ -944,6 +948,15 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 node = mergeNode;
                 isFine = true;
 
+            }
+                break;
+            case Painter:
+            {
+                PainterNode* painter = new PainterNode();
+                m_parsingToolbox->readPainterParameter(painter,str);
+                previous->setNextNode(painter);
+                node = painter;
+                isFine = true;
             }
                 break;
             case ifOperator:

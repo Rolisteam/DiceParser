@@ -106,9 +106,16 @@ void IfNode::setInstructionFalse(ExecutionNode* node)
     m_false = node;
 }
 
-QString IfNode::toString(bool) const
+QString IfNode::toString(bool wl)  const
 {
-
+    if(wl)
+    {
+        return QString("%1 [label=\"IfNode\"]").arg(m_id);
+    }
+    else
+    {
+        return m_id;
+    }
 }
 
 qint64 IfNode::getPriority() const

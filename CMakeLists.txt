@@ -50,12 +50,14 @@ add_executable(
     node/listsetrollnode.cpp
     node/numbernode.cpp
     node/parenthesesnode.cpp
+    node/paintnode.cpp
     node/rerolldicenode.cpp
     node/scalaroperatornode.cpp
     node/sortresult.cpp
     node/startingnode.cpp
     node/ifnode.cpp
     cli/main.cpp
+    highlightdice.cpp
     )
 
 #add_executable(dice cli/main.cpp)

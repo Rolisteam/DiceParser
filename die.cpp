@@ -149,3 +149,13 @@ void Die::setBase(qint64 base)
 {
         m_base = base;
 }
+QString Die::getColor() const
+{
+    return m_color;
+}
+
+void Die::setColor(const QString &color)
+{
+    m_color = color;
+}
+

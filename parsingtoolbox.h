@@ -31,7 +31,7 @@
 #include "compositevalidator.h"
 #include "range.h"
 #include "node/scalaroperatornode.h"
-
+#include "node/paintnode.h"
 /**
  * @brief The ParsingToolBox is gathering many useful methods for dice parsing.
  * Its goal is to make the diceparser a bit lighter.
@@ -148,6 +148,7 @@ public:
 
     bool readArithmeticOperator(QString& str, ScalarOperatorNode::ArithmeticOperator& op);
 
+    void readPainterParameter(PainterNode *painter, QString &str);
 private:
         QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
         QMap<QString,CompositeValidator::LogicOperation>* m_logicOperation;
