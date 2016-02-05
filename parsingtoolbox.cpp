@@ -412,9 +412,12 @@ void ParsingToolBox::readPainterParameter(PainterNode* painter,QString& str)
     {
         str=str.remove(0,1);
         int pos = str.indexOf(']');
+
         if(pos>-1)
         {
+
             QString data = str.left(pos);
+            str=str.remove(0,pos+1);
             QStringList duos = data.split(',');
             foreach(QString duoStr,duos)
             {
