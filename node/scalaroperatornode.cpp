@@ -217,18 +217,18 @@ void ScalarOperatorNode::generateDotTree(QString& s)
     }
     s.append(str);
 }
-QMap<ExecutionNode::ERROR_CODE,QString> ScalarOperatorNode::getExecutionErrorMap()
+QMap<ExecutionNode::DICE_ERROR_CODE,QString> ScalarOperatorNode::getExecutionErrorMap()
 {
     if(NULL!=m_internalNode)
     {
-        foreach (ExecutionNode::ERROR_CODE key, m_internalNode->getExecutionErrorMap().keys())
+        foreach (ExecutionNode::DICE_ERROR_CODE key, m_internalNode->getExecutionErrorMap().keys())
         {
             m_errors.insert(key,m_internalNode->getExecutionErrorMap().value(key));
         }
     }
     if(NULL!=m_nextNode)
     {
-        foreach (ExecutionNode::ERROR_CODE key, m_nextNode->getExecutionErrorMap().keys())
+        foreach (ExecutionNode::DICE_ERROR_CODE key, m_nextNode->getExecutionErrorMap().keys())
         {
             m_errors.insert(key,m_nextNode->getExecutionErrorMap().value(key));
         }

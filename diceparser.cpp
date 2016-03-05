@@ -1028,13 +1028,13 @@ bool DiceParser::readBlocInstruction(QString& str,ExecutionNode*& resultnode)
     return false;
 }
 
-QMap<ExecutionNode::ERROR_CODE,QString>  DiceParser::getErrorMap()
+QMap<ExecutionNode::DICE_ERROR_CODE,QString>  DiceParser::getErrorMap()
 {
     return m_start->getExecutionErrorMap();
 }
 QString DiceParser::humanReadableError()
 {
-    QMapIterator<ExecutionNode::ERROR_CODE,QString> i(m_errorMap);
+    QMapIterator<ExecutionNode::DICE_ERROR_CODE,QString> i(m_errorMap);
 	QString str("");
     while (i.hasNext())
     {
@@ -1044,7 +1044,7 @@ QString DiceParser::humanReadableError()
     }
 
     ///list
-    QMapIterator<ExecutionNode::ERROR_CODE,QString> j(getErrorMap());
+    QMapIterator<ExecutionNode::DICE_ERROR_CODE,QString> j(getErrorMap());
     while(j.hasNext())
     {
         j.next();

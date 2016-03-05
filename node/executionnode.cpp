@@ -33,11 +33,11 @@ ExecutionNode* ExecutionNode::getNextNode()
 {
     return m_nextNode;
 }
-QMap<ExecutionNode::ERROR_CODE,QString> ExecutionNode::getExecutionErrorMap()
+QMap<ExecutionNode::DICE_ERROR_CODE,QString> ExecutionNode::getExecutionErrorMap()
 {
     if(NULL!=m_nextNode)
     {
-        foreach (ExecutionNode::ERROR_CODE key, m_nextNode->getExecutionErrorMap().keys())
+        foreach (ExecutionNode::DICE_ERROR_CODE key, m_nextNode->getExecutionErrorMap().keys())
         {
             m_errors.insert(key,m_nextNode->getExecutionErrorMap().value(key));
         }

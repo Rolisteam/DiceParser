@@ -10,7 +10,7 @@
 class ExecutionNode
 {
 public:
-    enum ERROR_CODE {NO_ERROR,DIE_RESULT_EXPECTED,BAD_SYNTAXE,ENDLESS_LOOP_ERROR,DIVIDE_BY_ZERO,NOTHING_UNDERSTOOD,NO_DICE_TO_ROLL,TOO_MANY_DICE};
+    enum DICE_ERROR_CODE {NO_DICE_ERROR,DIE_RESULT_EXPECTED,BAD_SYNTAXE,ENDLESS_LOOP_ERROR,DIVIDE_BY_ZERO,NOTHING_UNDERSTOOD,NO_DICE_TO_ROLL,TOO_MANY_DICE};
     /**
      * @brief ExecutionNode
      */
@@ -57,7 +57,7 @@ public:
      * @brief getErrorList
      * @return
      */
-    virtual QMap<ExecutionNode::ERROR_CODE,QString> getExecutionErrorMap();
+    virtual QMap<ExecutionNode::DICE_ERROR_CODE,QString> getExecutionErrorMap();
 
     /**
      * @brief generateDotTree
@@ -85,7 +85,7 @@ protected:
     /**
      * @brief m_errors
      */
-    QMap<ExecutionNode::ERROR_CODE,QString> m_errors;
+    QMap<ExecutionNode::DICE_ERROR_CODE,QString> m_errors;
 
 	QString m_id;
 };

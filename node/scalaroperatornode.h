@@ -50,7 +50,7 @@ public:
      * @brief getErrorList
      * @return
      */
-    virtual QMap<ExecutionNode::ERROR_CODE,QString> getExecutionErrorMap();
+    virtual QMap<ExecutionNode::DICE_ERROR_CODE,QString> getExecutionErrorMap();
 
     ScalarOperatorNode::ArithmeticOperator getArithmeticOperator() const;
     void setArithmeticOperator(const ScalarOperatorNode::ArithmeticOperator &arithmeticOperator);

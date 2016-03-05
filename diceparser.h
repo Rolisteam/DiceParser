@@ -184,7 +184,7 @@ public:
      * @brief getErrorList
      * @return
      */
-    QMap<ExecutionNode::ERROR_CODE,QString> getErrorMap();
+    QMap<ExecutionNode::DICE_ERROR_CODE,QString> getErrorMap();
     /**
      * @brief setPathToHelp set the path to the documentation, this path must be adatped to the lang of application etc…
      * @param l the path.
@@ -301,8 +301,8 @@ private:
     QList<DiceAlias*>* m_aliasList;
 	QStringList* m_commandList;
 
-    QMap<ExecutionNode::ERROR_CODE,QString> m_errorMap;
-    QMap<ExecutionNode::ERROR_CODE,QString> m_warningMap;
+    QMap<ExecutionNode::DICE_ERROR_CODE,QString> m_errorMap;
+    QMap<ExecutionNode::DICE_ERROR_CODE,QString> m_warningMap;
 
 
     ExecutionNode* m_start;
