@@ -39,7 +39,7 @@ public:
     virtual void run(ExecutionNode* previous = NULL);
 	virtual QString toString(bool)const;
     virtual qint64 getPriority() const;
-    QStringList getList();
+    QStringList getList() const;
 
     void setListValue(QStringList);
     void setUnique(bool );

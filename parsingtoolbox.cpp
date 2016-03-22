@@ -53,6 +53,19 @@ ParsingToolBox::ParsingToolBox()
     m_arithmeticOperation->insert(QStringLiteral("÷"),ScalarOperatorNode::DIVIDE);
 
 }
+
+ParsingToolBox::ParsingToolBox(const ParsingToolBox& data)
+{
+
+}
+ParsingToolBox::~ParsingToolBox()
+{
+    if(NULL!=m_logicOp)
+    {
+        delete m_logicOp;
+        m_logicOp = NULL;
+    }
+}
 ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e,bool b)
 {
     SortResultNode* nodeSort = new SortResultNode();
@@ -122,19 +135,11 @@ bool ParsingToolBox::readLogicOperator(QString& str,BooleanCondition::LogicOpera
 
     return false;
 }
-ParsingToolBox::~ParsingToolBox()
-{
-	if(NULL!=m_logicOp)
-	{
-		delete m_logicOp;
-		m_logicOp = NULL;
-	}
-}
 Validator* ParsingToolBox::readValidator(QString& str)
 {
     Validator* returnVal=NULL;
     BooleanCondition::LogicOperator myLogicOp = BooleanCondition::Equal;
-    bool hasReadLogicOperator = readLogicOperator(str,myLogicOp);
+    /*bool hasReadLogicOperator = */readLogicOperator(str,myLogicOp);
 
 
     OperationCondition::ConditionOperator condiOp = OperationCondition::Modulo;

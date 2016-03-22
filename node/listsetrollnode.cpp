@@ -35,7 +35,7 @@ ListSetRollNode::~ListSetRollNode()
 	}
 }
 
-QStringList ListSetRollNode::getList()
+QStringList ListSetRollNode::getList() const
 {
     return m_values;
 }

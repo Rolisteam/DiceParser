@@ -39,7 +39,7 @@ public:
 
     virtual quint64 getValidRangeSize(quint64 faces) const;
 
-    BooleanCondition *getBoolean() const;
+    BooleanCondition* getBoolean() const;
     void setBoolean(BooleanCondition *boolean);
 
 

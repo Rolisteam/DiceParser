@@ -45,6 +45,11 @@ public:
 	 * @brief ParsingToolBox
 	 */
     ParsingToolBox();
+    /**
+     * @brief ParsingToolBox
+     * @param data
+     */
+    ParsingToolBox(const ParsingToolBox & data);
 	/**
 	 * @brief ~ParsingToolBox
 	 */
@@ -61,7 +66,7 @@ public:
      * @param str
      * @return
      */
-    bool readAscending(QString& str);
+    static bool readAscending(QString& str);
 	/**
 	 * @brief readLogicOperator
 	 * @param str
@@ -88,7 +93,7 @@ public:
      * @param myNumber reference to the found number
      * @return true, succeed to read number, false otherwise.
      */
-    bool readNumber(QString&  str, qint64& myNumber);
+    static bool readNumber(QString&  str, qint64& myNumber);
 
 
 	/**
@@ -96,13 +101,13 @@ public:
 	 * @param str
 	 * @return
 	 */
-    bool readOpenParentheses(QString& str);
+    static bool readOpenParentheses(QString& str);
 	/**
 	 * @brief readCloseParentheses
 	 * @param str
 	 * @return
 	 */
-    bool readCloseParentheses(QString& str);
+    static bool readCloseParentheses(QString& str);
 
     /**
      * @brief readList
@@ -138,7 +143,7 @@ public:
      * @param str
      * @return
      */
-    LIST_OPERATOR  readListOperator(QString& str);
+    static LIST_OPERATOR  readListOperator(QString& str);
 
     void readProbability(QStringList& str,QList<Range>& ranges);
 
@@ -148,7 +153,7 @@ public:
 
     bool readArithmeticOperator(QString& str, ScalarOperatorNode::ArithmeticOperator& op);
 
-    void readPainterParameter(PainterNode *painter, QString &str);
+    static void readPainterParameter(PainterNode *painter, QString &str);
 private:
         QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
         QMap<QString,CompositeValidator::LogicOperation>* m_logicOperation;

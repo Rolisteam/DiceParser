@@ -3,7 +3,7 @@
 #include <QUuid>
 
 ExecutionNode::ExecutionNode()
-	: m_nextNode(NULL),m_result(NULL),m_previousNode(NULL),m_id(QString("\"%1\"").arg(QUuid::createUuid().toString()))
+    : m_previousNode(NULL),m_result(NULL),m_nextNode(NULL),m_errors(QMap<ExecutionNode::DICE_ERROR_CODE,QString>()),m_id(QString("\"%1\"").arg(QUuid::createUuid().toString()))
 {
 
 }

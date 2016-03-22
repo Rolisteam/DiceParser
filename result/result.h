@@ -34,7 +34,7 @@ public:
     /**
      * @brief The RESULT_TYPE enum or combinaison
      */
-    enum RESULT_TYPE {SCALAR=1,STRING=2,DICE_LIST=4};
+    enum RESULT_TYPE {NONE=0,SCALAR=1,STRING=2,DICE_LIST=4};
     /**
      * @brief Result
      */

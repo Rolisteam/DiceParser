@@ -19,14 +19,15 @@
 * Free Software Foundation, Inc.,                                          *
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
-#include <QDateTime>
 
 #include "die.h"
 
+#include <QDateTime>
 #include <QDebug>
+#include <QColor>
 
 Die::Die()
-    : m_hasValue(false),m_displayStatus(false),m_highlighted(true),m_base(1)
+    : m_hasValue(false),m_displayStatus(false),m_highlighted(true),m_base(1),m_color("")
 {
     uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
     qsrand(seed);

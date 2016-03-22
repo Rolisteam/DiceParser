@@ -62,9 +62,9 @@ private:
     static qint64 multiple(qint64,qint64);
 
 private:
-    ArithmeticOperator m_arithmeticOperator;
-    ScalarResult* m_scalarResult;
     ExecutionNode* m_internalNode;
+    ScalarResult* m_scalarResult;
+    ArithmeticOperator m_arithmeticOperator;
 };
 
 #endif // SCALAROPERATORNODE_H

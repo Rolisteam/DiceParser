@@ -32,26 +32,26 @@ void MergeNode::run(ExecutionNode* previous)
     if(NULL!=previous)
     {
         m_result->setPrevious(previous->getResult());
-    }
-    Result* tmpResult = previous->getResult();
-    while(NULL!=tmpResult)
-    {
-        DiceResult* dice = dynamic_cast<DiceResult*>(tmpResult);
-        if(NULL!=dice)
+
+        Result* tmpResult = previous->getResult();
+        while(NULL!=tmpResult)
         {
-            ///@todo improve here to set homogeneous while is really
-            m_diceResult->setHomogeneous(false);
-            foreach(Die* die, dice->getResultList())
+            DiceResult* dice = dynamic_cast<DiceResult*>(tmpResult);
+            if(NULL!=dice)
             {
-                if(!m_diceResult->getResultList().contains(die))
+                ///@todo improve here to set homogeneous while is really
+                m_diceResult->setHomogeneous(false);
+                foreach(Die* die, dice->getResultList())
                 {
-                    m_diceResult->getResultList().append(die);
+                    if(!m_diceResult->getResultList().contains(die))
+                    {
+                        m_diceResult->getResultList().append(die);
+                    }
                 }
             }
+            tmpResult = tmpResult->getPrevious();
         }
-        tmpResult = tmpResult->getPrevious();
     }
-
     if(NULL!=m_nextNode)
     {
         m_nextNode->run(this);
