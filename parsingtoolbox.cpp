@@ -100,8 +100,8 @@ bool ParsingToolBox::readArithmeticOperator(QString &str, ScalarOperatorNode::Ar
 {
     bool found = false;
     //QHash<QString,ScalarOperatorNode::ArithmeticOperator>::Iterator
-    auto i = m_arithmeticOperation->begin();
-    for(; i !=m_arithmeticOperation->end() && !found; ++i)
+
+    for(auto i = m_arithmeticOperation->begin() ; i !=m_arithmeticOperation->end() && !found; ++i)
     {
         if(str.startsWith(i.key()))
         {
