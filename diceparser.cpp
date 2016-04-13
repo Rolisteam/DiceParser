@@ -1086,3 +1086,7 @@ void DiceParser::setPathToHelp(QString l)
 {
     m_helpPath = l;
 }
+void DiceParser::setVariableDictionary(QHash<QString,QString>* variables)
+{
+    ParsingToolBox::setVariableHash(variables);
+}
