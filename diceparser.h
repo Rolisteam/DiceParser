@@ -204,6 +204,11 @@ public:
 
     bool hasSeparator()const;
     bool readIfInstruction(QString &str, ExecutionNode* &trueNode, ExecutionNode* &falseNode);
+    /**
+     * @brief setVariableDictionary
+     * @param variables
+     */
+    void setVariableDictionary(QHash<QString,QString>* variables);
 private:
 
     /**
