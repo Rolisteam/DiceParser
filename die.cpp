@@ -24,7 +24,6 @@
 
 #include <QDateTime>
 #include <QDebug>
-#include <QColor>
 
 Die::Die()
     : m_hasValue(false),m_displayStatus(false),m_highlighted(true),m_base(1),m_color("")
