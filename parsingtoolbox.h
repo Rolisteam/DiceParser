@@ -1,6 +1,6 @@
 /***************************************************************************
 * Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://renaudguezennec.homelinux.org/accueil,3.html                      *
+* http://www.rolisteam.org/contact                      *
 *                                                                          *
 *  This file is part of DiceParser                                         *
 *                                                                          *
@@ -95,7 +95,13 @@ public:
      */
     static bool readNumber(QString&  str, qint64& myNumber);
 
-
+    /**
+     * @brief readVariable
+     * @param str
+     * @param myNumber
+     * @return
+     */
+    static bool readVariable(QString& str,qint64& myNumber);
 	/**
 	 * @brief readOpenParentheses
 	 * @param str
@@ -154,11 +160,19 @@ public:
     bool readArithmeticOperator(QString& str, ScalarOperatorNode::ArithmeticOperator& op);
 
     static void readPainterParameter(PainterNode *painter, QString &str);
+
+    static QHash<QString, QString> *getVariableHash();
+    static void setVariableHash(QHash<QString, QString> *variableHash);
+
 private:
-        QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
-        QMap<QString,CompositeValidator::LogicOperation>* m_logicOperation;
+
+    QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
+    QMap<QString,CompositeValidator::LogicOperation>* m_logicOperation;
         QMap<QString,OperationCondition::ConditionOperator>* m_conditionOperation;
         QHash<QString,ScalarOperatorNode::ArithmeticOperator>* m_arithmeticOperation;
+
+
+        static QHash<QString,QString>* m_variableHash;
 };
 
 #endif // PARSINGTOOLBOX_H

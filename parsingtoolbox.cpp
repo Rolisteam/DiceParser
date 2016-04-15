@@ -1,6 +1,6 @@
 /***************************************************************************
 * Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://renaudguezennec.homelinux.org/accueil,3.html                      *
+* http://www.rolisteam.org/contact                      *
 *                                                                          *
 *  This file is part of DiceParser                                         *
 *                                                                          *
@@ -24,6 +24,7 @@
 #include "parsingtoolbox.h"
 #include "node/sortresult.h"
 
+QHash<QString,QString>*  ParsingToolBox::m_variableHash = NULL;
 
 ParsingToolBox::ParsingToolBox()
 {
@@ -279,7 +280,9 @@ bool ParsingToolBox::readNumber(QString& str, qint64& myNumber)
     }
 
     if(number.isEmpty())
-        return false;
+    {
+        return readVariable(str,myNumber);
+    }
 
     bool ok;
     myNumber = number.toLongLong(&ok);
@@ -288,7 +291,42 @@ bool ParsingToolBox::readNumber(QString& str, qint64& myNumber)
         str=str.remove(0,number.size());
         return true;
     }
+
     return false;
+}
+
+bool ParsingToolBox::readVariable(QString &str, qint64 &myNumber)
+{
+    if(str.isEmpty())
+        return false;
+    if(str.startsWith("${"))
+    {
+        str=str.remove(0,2);
+    }
+    QString key;
+    int post = str.indexOf('}');
+    key = str.left(post);
+
+    if(NULL!=m_variableHash)
+    {
+        if(m_variableHash->contains(key))
+        {
+            QString value = m_variableHash->value(key);
+            bool ok;
+            int valueInt = value.toInt(&ok);
+            if(ok)
+            {
+                myNumber = valueInt;
+                str=str.remove(0,post+1);
+                return true;
+            }
+
+        }
+    }
+
+
+    return false;
+
 }
 bool ParsingToolBox::readOpenParentheses(QString& str)
 {
@@ -434,6 +472,16 @@ void ParsingToolBox::readPainterParameter(PainterNode* painter,QString& str)
             }
         }
     }
+}
+
+QHash<QString, QString> *ParsingToolBox::getVariableHash()
+{
+    return m_variableHash;
+}
+
+void ParsingToolBox::setVariableHash(QHash<QString, QString> *variableHash)
+{
+    m_variableHash = variableHash;
 }
 
 void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)

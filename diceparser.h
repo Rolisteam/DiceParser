@@ -1,6 +1,6 @@
 /***************************************************************************
 * Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://renaudguezennec.homelinux.org/accueil,3.html                      *
+* http://www.rolisteam.org/contact                      *
 *                                                                          *
 *  This file is part of DiceParser                                         *
 *                                                                          *
@@ -204,6 +204,11 @@ public:
 
     bool hasSeparator()const;
     bool readIfInstruction(QString &str, ExecutionNode* &trueNode, ExecutionNode* &falseNode);
+    /**
+     * @brief setVariableDictionary
+     * @param variables
+     */
+    void setVariableDictionary(QHash<QString,QString>* variables);
 private:
 
     /**
