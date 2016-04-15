@@ -20,17 +20,8 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
 
-/*#include <QStringList>
-#include "diceparser.h"
-#include <QCommandLineParser>
-#include <QCommandLineOption>
-#include "highlightdice.h"
-*/
-
-
-
-#include <QApplication>
-#include "mainwindow.h"
+#include <QCoreApplication>
+#include "botircdiceparser.h"
 /**
  * @page Dice
  * The cli for DiceParser the new dice system from rolisteam.
@@ -45,132 +36,16 @@
  */
 int main(int argc, char *argv[])
 {
-    QApplication app(argc,argv);
-    MainWindow window;
-    window.show();
+    QCoreApplication app(argc,argv);
+    BotIrcDiceParser bot;
+    bot.connectToServer();
     return    app.exec();
 }
 
 
 /*QTextStream out(stdout, QIODevice::WriteOnly);
 
-QString diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
-{
-    QStringList resultGlobal;
-        foreach(int face, dice.keys())
-        {
-               QStringList result;
-               ListDiceResult diceResult =  dice.value(face);
-               //patternColor = patternColorarg();
-               foreach (HighLightDice tmp, diceResult)
-               {
-                    QStringList diceListStr;
-                    QStringList diceListChildren;
 
-
-                    for(int i =0; i < tmp.getResult().size(); ++i)
-                    {
-                        qint64 dievalue = tmp.getResult()[i];
-                        QString prefix("%1");
-
-                        if((tmp.isHighlighted())&&(highlight))
-                        {
-                            if(tmp.getColor().isEmpty()|| tmp.getColor()=="black")
-                            {
-                                prefix = "\e[0;31m%1\e[0m";
-                            }
-                            if(tmp.getColor()=="white")
-                            {
-                                prefix = "\e[97m%1\e[0m";
-                            }
-                            if(tmp.getColor()=="blue")
-                            {
-                                prefix = "\e[34m%1\e[0m";
-                            }
-                        }
-
-                        if(i==0)
-                        {
-                            diceListStr << prefix.arg(QString::number(dievalue));
-                        }
-                        else
-                        {
-                            diceListChildren << prefix.arg(QString::number(dievalue));
-                        }
-                    }
-                    if(!diceListChildren.isEmpty())
-                    {
-                        diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
-                    }
-
-                    result << diceListStr.join(' ');
-                   // qDebug() << result << tmp.first << tmp.second;
-               }
-
-               if(dice.keys().size()>1)
-               {
-                  resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
-               }
-               else
-               {
-                   resultGlobal << result;
-               }
-        }
-    return resultGlobal.join(' ');
-}
-
-void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
-{
-    DiceParser* parser = new DiceParser();
-
-    if(parser->parseLine(cmd))
-    {
-       //
-        if(treeFile.isEmpty())
-        {
-            parser->Start();
-            if(!parser->getErrorMap().isEmpty())
-            {
-                out << "Error" << parser->humanReadableError()<< "\n";
-                return;
-            }
-
-            ExportedDiceResult list;
-            bool homogeneous = true;
-            parser->getLastDiceResult(list,homogeneous);
-            QString diceText = diceToText(list,highlight,homogeneous);
-            QString scalarText;
-            QString str;
-
-            if(parser->hasIntegerResultNotInFirst())
-            {
-                scalarText = QString("%1").arg(parser->getLastIntegerResult());
-            }
-            else if(!list.isEmpty())
-            {
-                scalarText = QString("%1").arg(parser->getSumOfDiceResult());
-            }
-            if(highlight)
-                str = QString("Result: \e[0;31m%1\e[0m, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(parser->getDiceCommand());
-            else
-                str = QString("Result: %1, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(parser->getDiceCommand());
-
-            if(parser->hasStringResult())
-            {
-                str = parser->getStringResult();
-            }
-            out << str << "\n";
-        }
-        else
-        {
-            parser->writeDownDotTree(treeFile);
-        }
-    }
-    else
-    {
-        out << parser->humanReadableError()<< "\n";;
-    }
-}
 
 void usage()
 {

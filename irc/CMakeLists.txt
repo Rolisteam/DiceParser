@@ -69,7 +69,7 @@ add_executable(
     ../node/startingnode.cpp
     ../node/ifnode.cpp
     ${UI_HEADERS}
-    mainwindow.cpp
+    botircdiceparser.cpp
     main.cpp)
 
 
