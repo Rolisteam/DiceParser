@@ -18,9 +18,11 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     virtual ~MainWindow();
 
+public slots:
+    void errorOccurs(QAbstractSocket::SocketError);
 private:
     Ui::MainWindow *ui;
-    QTcpSocket * socket;
+    QTcpSocket * m_socket;
     DiceParser* m_parser;
 
 private slots:

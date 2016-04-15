@@ -11,13 +11,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     // Create socket
-    socket = new QTcpSocket(this);
+    m_socket = new QTcpSocket(this);
 
     m_parser = new DiceParser();
 
     // Connect signals and slots!
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
-    connect(socket,SIGNAL(connected()),this,SLOT(authentificationProcess()));
+    connect(m_socket, SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(m_socket,SIGNAL(connected()),this,SLOT(authentificationProcess()));
+    connect(m_socket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(errorOccurs(QAbstractSocket::SocketError)));
     connect(ui->m_connectButton, SIGNAL(clicked()), this, SLOT(connectToServer()));
     connect(ui->m_disconnectButton, SIGNAL(clicked()), this, SLOT(disconnectFromServer()));
     connect(ui->m_joinButton, SIGNAL(clicked()), this, SLOT(joinChannel()));
@@ -30,12 +31,19 @@ MainWindow::~MainWindow()
 }
 void MainWindow::connectToServer()
 {
-    socket->connectToHost(QString("irc.epiknet.org"), 6667);
+    qDebug() << "start connection";
+    m_socket->connectToHost(QString("irc.freenode.net"), 8001);
+}
+void MainWindow::errorOccurs(QAbstractSocket::SocketError)
+{
+       qDebug() << "ERROR" << m_socket->errorString();
 }
 
 void MainWindow::readData()
 {
-    QString readLine = socket->readLine();
+
+    qDebug() << "Reply";
+    QString readLine = m_socket->readLine();
 
     if(readLine.startsWith("!"))
          readLine = readLine.remove(0,1);
@@ -60,8 +68,8 @@ void MainWindow::readData()
                 {
                     m_parser->Start();
                     QString result = m_parser->displayResult();
-                    QString msg("PRIVMSG #opale-roliste :%1 \r\n");
-                    socket->write(msg.arg(result).toLatin1());
+                    QString msg("PRIVMSG #Rolisteam :%1 \r\n");
+                    m_socket->write(msg.arg(result).toLatin1());
                 }
             }
             else
@@ -81,29 +89,35 @@ void MainWindow::readData()
         {
             QString resp = "PONG :"+list[1];
 
-            socket->write(resp.toLatin1());
+            m_socket->write(resp.toLatin1());
         }
+    }
+    if(readLine.contains("Found your hostname"))
+    {
+        authentificationProcess();
     }
     // Add to ouput
     ui->m_output->append(readLine.trimmed());
     // Next data??
-    if(socket->canReadLine()) readData();
+    if(m_socket->canReadLine()) readData();
 }
 
 void MainWindow::disconnectFromServer()
 {
     // Disconnect from IRC server
-    socket->write("QUIT Good bye \r\n"); // Good bye is optional message
-    socket->flush();
-    socket->disconnect(); // Now we can try it :-)
+    m_socket->write("QUIT Good bye \r\n"); // Good bye is optional message
+    m_socket->flush();
+    m_socket->disconnect(); // Now we can try it :-)
 }
  void MainWindow::authentificationProcess()
  {
-     socket->write("NICK diceBot \r\n");
-     socket->write("USER diceBot diceBot diceBot :diceBot BOT \r\n");
+     qDebug() << "authentification";
+     m_socket->write("NICK rolisteamDice \r\n");
+     m_socket->write("USER rolisteamDice rolisteamDice rolisteamDice :rolisteamDice BOT \r\n");
+     m_socket->write("MSG NickServ identify  \r\n");
 
  }
 void MainWindow::joinChannel()
 {
-    socket->write("JOIN #opale-roliste \r\n");
+    m_socket->write("JOIN #Rolisteam \r\n");
 }
