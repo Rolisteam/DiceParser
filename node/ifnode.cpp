@@ -28,7 +28,7 @@ IfNode::IfNode()
 
 IfNode::~IfNode()
 {
-
+    m_result=NULL;
 }
 
 void IfNode::run(ExecutionNode *previous)
