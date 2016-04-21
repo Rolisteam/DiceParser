@@ -23,7 +23,7 @@
 #include <QUuid>
 
 Result::Result()
-    : m_previous(NULL),m_resultTypes(NONE),m_id(QString("\"%1\"").arg(QUuid::createUuid().toString()))
+    : m_resultTypes(NONE),m_id(QString("\"%1\"").arg(QUuid::createUuid().toString())),m_previous(NULL)
 {
 }
 
