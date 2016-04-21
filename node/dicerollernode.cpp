@@ -46,7 +46,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
 	}
 }
 
-quint64 DiceRollerNode::getFaces()
+quint64 DiceRollerNode::getFaces() const
 {
     return m_faces;
 }

@@ -38,8 +38,8 @@ public:
     virtual qint64 getPriority() const;
 
 private:
-    Validator* m_validator;
     ScalarResult* m_scalarResult;
+    Validator* m_validator;
 };
 
 #endif // COUNTEXECUTENODE_H
