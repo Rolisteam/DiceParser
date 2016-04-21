@@ -27,8 +27,12 @@
 QHash<QString,QString>*  ParsingToolBox::m_variableHash = NULL;
 
 ParsingToolBox::ParsingToolBox()
+    : m_logicOp(new QMap<QString,BooleanCondition::LogicOperator>()),
+      m_logicOperation(new QMap<QString,CompositeValidator::LogicOperation>()),
+      m_conditionOperation(new QMap<QString,OperationCondition::ConditionOperator>()),
+      m_arithmeticOperation(new QHash<QString,ScalarOperatorNode::ArithmeticOperator>())
 {
-    m_logicOp = new QMap<QString,BooleanCondition::LogicOperator>();
+    //m_logicOp = ;
     m_logicOp->insert(">=",BooleanCondition::GreaterOrEqual);
     m_logicOp->insert("<=",BooleanCondition::LesserOrEqual);
     m_logicOp->insert("<",BooleanCondition::LesserThan);
@@ -36,16 +40,16 @@ ParsingToolBox::ParsingToolBox()
     m_logicOp->insert(">",BooleanCondition::GreaterThan);
 
 
-    m_logicOperation = new QMap<QString,CompositeValidator::LogicOperation>();
+    //m_logicOperation = ;
     m_logicOperation->insert("|",CompositeValidator::OR);
     m_logicOperation->insert("^",CompositeValidator::EXCLUSIVE_OR);
     m_logicOperation->insert("&",CompositeValidator::AND);
 
-    m_conditionOperation = new QMap<QString,OperationCondition::ConditionOperator>();
+   // m_conditionOperation = ;
     m_conditionOperation->insert("%",OperationCondition::Modulo);
 
 
-    m_arithmeticOperation = new QHash<QString,ScalarOperatorNode::ArithmeticOperator>();
+    //m_arithmeticOperation = new QHash<QString,ScalarOperatorNode::ArithmeticOperator>();
     m_arithmeticOperation->insert(QStringLiteral("+"),ScalarOperatorNode::PLUS);
     m_arithmeticOperation->insert(QStringLiteral("-"),ScalarOperatorNode::MINUS);
     m_arithmeticOperation->insert(QStringLiteral("*"),ScalarOperatorNode::MULTIPLICATION);
