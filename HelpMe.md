@@ -58,12 +58,6 @@ Dice explose if their value are at the die maximum, the option sorts the resulti
 
 > klX
 
-The option sorts the resulting die list and select the X lowest dice.
-
-### Keep Lower dice
-
-> klX
-
 Dice explose if their value are at the die maximum, the option sorts the resulting die list, the it selects the X lowest dice.
 
 ### Sorting
@@ -73,6 +67,7 @@ Dice explose if their value are at the die maximum, the option sorts the resulti
 The dice list is sorted in descending order.
 
 > 10d6sl
+
 Roll 6 dice at 6 faces and then sort them ascendingly
 
 ### Counter
@@ -222,6 +217,12 @@ The Rolisteam Dice Parser allows you to use several logic operator:
 * Lesser or egual : <=
 * Lesser : <
 * Greater : >
+
+## Select value from List
+
+The L operator (meaning list) can offer you the opportunity to pick up value from list.
+
+> 1L[sword,bow,knife,gun,shotgun]
 
 ## Examples
 
