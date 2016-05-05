@@ -257,7 +257,7 @@ bool DiceParser::readNode(QString& str,ExecutionNode* & node)
         JumpBackwardNode* jumpNode = new JumpBackwardNode();
         node = jumpNode;
         str=str.remove(0,1);
-        readOption(str,jumpNode,true);
+        readOption(str,jumpNode);
         return true;
     }
     return false;
@@ -760,7 +760,7 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
     }
     else
     {
-        while(readOption(str,previous,false))
+        while(readOption(str,previous))
         {
            previous = getLatestNode(previous);
         }
@@ -788,7 +788,7 @@ ExploseDiceNode* DiceParser::addExploseDiceNode(qint64 value,ExecutionNode* prev
     previous->setNextNode(exploseDiceNode);
     return exploseDiceNode;
 }
-bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)//,
+bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
 {
     if(str.isEmpty())
     {
@@ -815,10 +815,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 bool ascending = m_parsingToolbox->readAscending(str);
                 if(m_parsingToolbox->readNumber(str,myNumber))
                 {
-                    if(!hasDice)
+                   /* if(!hasDice)
                     {
                         previous = addRollDiceNode(DEFAULT_FACES_NUMBER,previous);
-                    }
+                    }*/
                     node = m_parsingToolbox->addSort(previous,ascending);
 
                     KeepDiceExecNode* nodeK = new KeepDiceExecNode();
@@ -836,10 +836,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous, bool hasDice)/
                 bool ascending = m_parsingToolbox->readAscending(str);
                 if(m_parsingToolbox->readNumber(str,myNumber))
                 {
-                    if(!hasDice)
+                   /* if(!hasDice)
                     {
                         previous = addRollDiceNode(DEFAULT_FACES_NUMBER,previous);
-                    }
+                    }*/
                     DiceRollerNode* nodeTmp = dynamic_cast<DiceRollerNode*>(previous);
                     if(NULL!=nodeTmp)
                     {

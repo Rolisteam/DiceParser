@@ -249,7 +249,7 @@ private:
     /**
      * @brief readOption
      */
-    bool readOption(QString&,ExecutionNode* node, bool hasDice = true);//OptionOperator& option,
+    bool readOption(QString&,ExecutionNode* node);//OptionOperator& option,
 
 	/**
 	 * @brief addRollDiceNode
