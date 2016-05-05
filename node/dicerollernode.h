@@ -27,7 +27,7 @@ public:
 	 * @brief getFaces accessor
 	 * @return the face count
 	 */
-    quint64 getFaces();
+    quint64 getFaces() const;
 
 	/**
 	  * @brief toString

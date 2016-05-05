@@ -27,8 +27,12 @@
 QHash<QString,QString>*  ParsingToolBox::m_variableHash = NULL;
 
 ParsingToolBox::ParsingToolBox()
+    : m_logicOp(new QMap<QString,BooleanCondition::LogicOperator>()),
+      m_logicOperation(new QMap<QString,CompositeValidator::LogicOperation>()),
+      m_conditionOperation(new QMap<QString,OperationCondition::ConditionOperator>()),
+      m_arithmeticOperation(new QHash<QString,ScalarOperatorNode::ArithmeticOperator>())
 {
-    m_logicOp = new QMap<QString,BooleanCondition::LogicOperator>();
+    //m_logicOp = ;
     m_logicOp->insert(">=",BooleanCondition::GreaterOrEqual);
     m_logicOp->insert("<=",BooleanCondition::LesserOrEqual);
     m_logicOp->insert("<",BooleanCondition::LesserThan);
@@ -36,16 +40,16 @@ ParsingToolBox::ParsingToolBox()
     m_logicOp->insert(">",BooleanCondition::GreaterThan);
 
 
-    m_logicOperation = new QMap<QString,CompositeValidator::LogicOperation>();
+    //m_logicOperation = ;
     m_logicOperation->insert("|",CompositeValidator::OR);
     m_logicOperation->insert("^",CompositeValidator::EXCLUSIVE_OR);
     m_logicOperation->insert("&",CompositeValidator::AND);
 
-    m_conditionOperation = new QMap<QString,OperationCondition::ConditionOperator>();
+   // m_conditionOperation = ;
     m_conditionOperation->insert("%",OperationCondition::Modulo);
 
 
-    m_arithmeticOperation = new QHash<QString,ScalarOperatorNode::ArithmeticOperator>();
+    //m_arithmeticOperation = new QHash<QString,ScalarOperatorNode::ArithmeticOperator>();
     m_arithmeticOperation->insert(QStringLiteral("+"),ScalarOperatorNode::PLUS);
     m_arithmeticOperation->insert(QStringLiteral("-"),ScalarOperatorNode::MINUS);
     m_arithmeticOperation->insert(QStringLiteral("*"),ScalarOperatorNode::MULTIPLICATION);
@@ -425,18 +429,11 @@ bool ParsingToolBox::readDiceRange(QString& str,qint64& start, qint64& end)
                         str=str.remove(0,1);
                         return true;
                     }
-                    else
-                    {
-                        return false;
-                    }
                 }
-            }
-            else
-            {
-               return false;
             }
         }
     }
+    return false;
 
 }
 ParsingToolBox::LIST_OPERATOR  ParsingToolBox::readListOperator(QString& str)
@@ -493,7 +490,7 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
     int i=0;
     int j=0;
     //range
-    foreach(QString line,str)
+    for(QString line:str)
     {
         int pos = line.indexOf('[');
         if(-1!=pos)
@@ -511,7 +508,7 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
                 totalDistance += end-start+1;
                 ++i;
             }
-            else
+            else//pourcentage
             {
                 Range range;
                 range.setStart(start);
@@ -528,29 +525,25 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
 
     }
 
-    qint64 totalDistPourcent = totalDistance * undefDistance / (100-undefDistance);
-
-    if(totalDistPourcent<undefCount)
+    if(undefDistance!=0)
     {
-        totalDistPourcent = undefCount;
-    }
-
-    for(int i = 0; i< ranges.size(); ++i)
-    {
-        Range tmp = ranges.at(i);
-        if(!tmp.isFullyDefined())
+        qreal ratio = (qreal)100.0 / (qreal)undefDistance;
+        qint64 realStart=0;
+        for(int i = 0; i< ranges.size(); ++i)
         {
-            int dist  = tmp.getStart();
-            tmp.setStart(maxValue+1);
-            maxValue+=1;
-            double truc = undefDistance*1.0/dist;
+            Range tmp = ranges.at(i);
+            if(!tmp.isFullyDefined())
+            {
+                int dist  = tmp.getStart();
+                tmp.setStart(realStart+1);
+                double truc = dist*ratio;
 
-            tmp.setEnd(maxValue+(truc*totalDistPourcent));
-            maxValue = maxValue+(truc*totalDistPourcent);
-            ranges[i]=tmp;
+                tmp.setEnd(realStart+truc);
+                realStart = tmp.getEnd();
+                //qDebug() <<"start:"<< tmp.getStart() << "end:"<< realStart;
+                ranges[i]=tmp;
+            }
         }
     }
-
-
 
 }

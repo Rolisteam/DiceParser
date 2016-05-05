@@ -43,6 +43,7 @@ Die::Die(const Die& die)
     m_faces = die.m_faces;
     m_highlighted = die.m_highlighted;
     m_base = die.m_base;
+    m_color = die.getColor();
 }
 
 void Die::setValue(qint64 r)

@@ -40,20 +40,26 @@ typedef QMap<int,ListDiceResult > ExportedDiceResult;
 
 class ExploseDiceNode;
 /**
- * @page DiceParser
+ * @page DiceParser Dice Parser
+ *
+ * @section Intro Introduction
+ * Diceparser is the software component dedicated to compute dice command in rolisteam.<br/>
+ *
+ * @section grammar The Grammar
  *
  * The grammar is something like this:
  *
- * Line =: Command | Command;Command
- * Command =: Expression | ScalarOperator Expression | ScalarOperator NodeAction Expression
- * Expression =: number | number Dice | Command
- * Dice =: DiceOperator Number(faces) | DiceOperator List
- * List =: [Word,Number,',']+
- * NodeAction =: @
- * DiceOperator =: [D,L]
- * ScalarOperator =: [x,-,*,x,/]
- * number =: [0-9]+
- * Word =: [A-z]+
+ * Line =: Command | Command;Command<br/>
+ * Command =: Expression | ScalarOperator Expression | ScalarOperator NodeAction Expression<br/>
+ * Expression =: number | number Dice | Command<br/>
+ * Dice =: DiceOperator Number(faces) | DiceOperator List<br/>
+ * List =: [Word[range|percentage],Number[range|percentage],',']+<br/>
+ * Persentage =: Number <br/>
+ * NodeAction =: @<br/>
+ * DiceOperator =: [D,L]<br/>
+ * ScalarOperator =: [x,-,*,x,/]<br/>
+ * number =: [0-9]+<br/>
+ * Word =: [A-z]+<br/>
  *
  */
 
