@@ -154,6 +154,7 @@ bool DiceParser::parseLine(QString str)
 		delete m_start;
 		m_start = NULL;
 	}
+    m_currentTreeHasSeparator=false;
     m_start = new StartingNode();
     ExecutionNode* newNode = NULL;
     m_current = m_start;
@@ -429,7 +430,15 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
             DiceResult* stringResult = dynamic_cast<DiceResult*>(result);
             if(NULL!=stringResult)
             {
-                dieListResult << stringResult->getResultList();
+                for(auto die : stringResult->getResultList())
+                {
+                    if(!dieListResult.contains(die))
+                    {
+                        dieListResult.removeAll(die);
+                        dieListResult << die;
+                    }
+                }
+                //dieListResult << stringResult->getResultList();
                 hasAlias = true;
             }
         }
@@ -437,9 +446,14 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
     }
     foreach(Die* die, dieListResult)
     {
-        foreach (qint64 value, die->getListValue())
+        if(die->isHighlighted())
         {
-            stringListResult << QString::number(value);
+            qDebug() << die->getValue() << die->hasBeenDisplayed() << die->isHighlighted() << die->isSelected() << die;
+            foreach (qint64 value, die->getListValue())
+            {
+
+                stringListResult << QString::number(value);
+            }
         }
     }
 
