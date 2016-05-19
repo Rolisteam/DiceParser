@@ -42,6 +42,7 @@ Thanks of several operations and options, you can tune a bit your rolling comman
 * a : Reroll and add
 * @ : Backward Jump
 * p : Paint dice
+* m : Merge
 
 ### Keep
 
@@ -134,6 +135,13 @@ The amount of color is depending of client application of DiceParser.
 With Rolisteam, you may set any Qt color's name or set the Hexcode of your color: #ff28AC.
 The cli application supports few colors.
 
+# Merge
+
+Merge operator is used for gethering several dice rolls from different die type into one dice result and then you may apply any kind of operator.
+
+> 1d6;1d8mk1
+
+This command merges together the result from the d6 and the d8. Then, it applied the k operator on both result to keep the best.
 
 ## Arithmetic
 
