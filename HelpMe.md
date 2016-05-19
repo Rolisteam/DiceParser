@@ -41,6 +41,7 @@ Thanks of several operations and options, you can tune a bit your rolling comman
 * e : Explose
 * a : Reroll and add
 * @ : Backward Jump
+* p : Paint dice
 
 ### Keep
 
@@ -116,6 +117,22 @@ For example:
 > 8D10c[>=7]+@c[=10]
 
 c[=10] in this command is counting the number of 10 in the result of 8D10, if you remove the @, it will try to count the number of 10 in the result of c[>=7]. The result of c[>=7] is a scalar number (1 or 2 ... (max value 8)); it is not dice list.
+
+### Painter
+
+> 8D10p[1:blue]
+
+Paint the first die in the list in blue
+
+> 8d10p[2:blue] 
+
+Paint the two first dice in the list in blue.
+
+<a><img src="https://gist.githubusercontent.com/obiwankennedy/62101383d411e55d205e44df78aa5299/raw/70ed8797fdcf68516f06da23f53ca42c754efe74/diceResult.svg"/></a>
+
+The amount of color is depending of client application of DiceParser.
+With Rolisteam, you may set any Qt color's name or set the Hexcode of your color: #ff28AC.
+The cli application supports few colors.
 
 
 ## Arithmetic
