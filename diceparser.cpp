@@ -810,9 +810,9 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
     }
 
     ExecutionNode* node = NULL;
-    bool isFine=false;
+    bool found=false;
 
-    for(int i = 0; ((i<m_OptionOp->keys().size())&&(!isFine));++i )
+    for(int i = 0; ((i<m_OptionOp->keys().size())&&(!found));++i )
     {
         QString tmp =m_OptionOp->keys().at(i);
 
@@ -840,7 +840,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
 
                     node->setNextNode(nodeK);
                     node = nodeK;
-                    isFine = true;
+                    found = true;
                 }
             }
                 break;
@@ -868,7 +868,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
 
                     node->setNextNode(nodeK);
                     node = nodeK;
-                    isFine = true;
+                    found = true;
                 }
             }
                 break;
@@ -880,7 +880,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 {
                     m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Sort Operator does not support default dice. You should add dice command before the s"));
                 }*/
-                isFine = true;
+                found = true;
             }
                 break;
             case Count:
@@ -898,7 +898,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
 
                     previous->setNextNode(countNode);
                     node = countNode;
-                    isFine = true;
+                    found = true;
                 }
                 else
                 {
@@ -924,7 +924,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                     rerollNode->setValidator(validator);
                     previous->setNextNode(rerollNode);
                     node = rerollNode;
-                    isFine = true;
+                    found = true;
                 }
                 else
                 {
@@ -946,7 +946,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                     explosedNode->setValidator(validator);
                     previous->setNextNode(explosedNode);
                     node = explosedNode;
-                    isFine = true;
+                    found = true;
 
                 }
                 else
@@ -960,7 +960,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 MergeNode* mergeNode = new MergeNode();
                 previous->setNextNode(mergeNode);
                 node = mergeNode;
-                isFine = true;
+                found = true;
 
             }
                 break;
@@ -970,7 +970,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 m_parsingToolbox->readPainterParameter(painter,str);
                 previous->setNextNode(painter);
                 node = painter;
-                isFine = true;
+                found = true;
             }
                 break;
             case ifOperator:
@@ -994,7 +994,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
             }
         }
     }
-    return isFine;
+    return found;
 }
 bool DiceParser::readIfInstruction(QString& str,ExecutionNode*& trueNode,ExecutionNode*& falseNode)
 {
