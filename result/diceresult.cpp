@@ -51,7 +51,7 @@ void DiceResult::setResultList(QList<Die*> list)
 }
 DiceResult::~DiceResult()
 {
-	qDeleteAll(m_diceValues.begin(), m_diceValues.end());
+    qDeleteAll(m_diceValues.begin(), m_diceValues.end());
 	m_diceValues.clear();
 }
 QVariant DiceResult::getResult(RESULT_TYPE type)

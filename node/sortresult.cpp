@@ -96,7 +96,7 @@ void SortResultNode::run(ExecutionNode* node)
     }
     else
     {
-        m_result = node->getResult();
+        //m_result = node->getResult();
         //m_errors.append(DIE_RESULT_EXPECTED);
     }
 
