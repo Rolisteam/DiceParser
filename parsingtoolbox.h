@@ -41,25 +41,25 @@ class ParsingToolBox
 public:
     enum LIST_OPERATOR {NONE,UNIQUE};
 
-	/**
-	 * @brief ParsingToolBox
-	 */
+    /**
+     * @brief ParsingToolBox
+     */
     ParsingToolBox();
     /**
      * @brief ParsingToolBox
      * @param data
      */
     ParsingToolBox(const ParsingToolBox & data);
-	/**
-	 * @brief ~ParsingToolBox
-	 */
-	virtual ~ParsingToolBox();
-	/**
-	 * @brief addSort
-	 * @param e
-	 * @param b
-	 * @return
-	 */
+    /**
+     * @brief ~ParsingToolBox
+     */
+    virtual ~ParsingToolBox();
+    /**
+     * @brief addSort
+     * @param e
+     * @param b
+     * @return
+     */
     ExecutionNode* addSort(ExecutionNode* e,bool b);
     /**
      * @brief readAscending
@@ -67,18 +67,18 @@ public:
      * @return
      */
     static bool readAscending(QString& str);
-	/**
-	 * @brief readLogicOperator
-	 * @param str
-	 * @param op
-	 * @return
-	 */
+    /**
+     * @brief readLogicOperator
+     * @param str
+     * @param op
+     * @return
+     */
     bool readLogicOperator(QString& str,BooleanCondition::LogicOperator& op);
-	/**
-	 * @brief readValidator
-	 * @param str
-	 * @return
-	 */
+    /**
+     * @brief readValidator
+     * @param str
+     * @return
+     */
     Validator* readValidator(QString& str);
     /**
      * @brief readCompositeValidator
@@ -102,17 +102,17 @@ public:
      * @return
      */
     static bool readVariable(QString& str,qint64& myNumber);
-	/**
-	 * @brief readOpenParentheses
-	 * @param str
-	 * @return
-	 */
+    /**
+     * @brief readOpenParentheses
+     * @param str
+     * @return
+     */
     static bool readOpenParentheses(QString& str);
-	/**
-	 * @brief readCloseParentheses
-	 * @param str
-	 * @return
-	 */
+    /**
+     * @brief readCloseParentheses
+     * @param str
+     * @return
+     */
     static bool readCloseParentheses(QString& str);
 
     /**
@@ -168,11 +168,11 @@ private:
 
     QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
     QMap<QString,CompositeValidator::LogicOperation>* m_logicOperation;
-        QMap<QString,OperationCondition::ConditionOperator>* m_conditionOperation;
-        QHash<QString,ScalarOperatorNode::ArithmeticOperator>* m_arithmeticOperation;
+    QMap<QString,OperationCondition::ConditionOperator>* m_conditionOperation;
+    QHash<QString,ScalarOperatorNode::ArithmeticOperator>* m_arithmeticOperation;
 
 
-        static QHash<QString,QString>* m_variableHash;
+    static QHash<QString,QString>* m_variableHash;
 };
 
 #endif // PARSINGTOOLBOX_H
