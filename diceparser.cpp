@@ -979,8 +979,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                  Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                  if(NULL!=validator)
                  {
-                    ExecutionNode* trueNode;
-                    ExecutionNode* falseNode;
+                    ExecutionNode* trueNode = NULL;
+                    ExecutionNode* falseNode = NULL;
                     if(readIfInstruction(str,trueNode,falseNode))
                     {
                         nodeif->setInstructionTrue(trueNode);
