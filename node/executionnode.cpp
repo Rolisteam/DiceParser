@@ -62,7 +62,7 @@ void ExecutionNode::generateDotTree(QString& s)
 		s.append(toString(false));
         s.append(" -> ");
 		s.append(m_nextNode->toString(false));
-		s.append(";\n");
+        s.append("[label=\"next\"];\n");
 //        s.append(" [label=\"nextNode\"];\n");
         m_nextNode->generateDotTree(s);
     }
@@ -71,13 +71,17 @@ void ExecutionNode::generateDotTree(QString& s)
 		s.append(toString(false));
         s.append(" -> ");
 		s.append("NULL;\n");
+        if(NULL!=m_result)
+        {
+
+            s.append(toString(false));
+            s.append(" ->");
+            s.append(m_result->toString(false));
+            s.append(" [label=\"Result\"];\n");
 
 
-		s.append(toString(false));
-		s.append(" ->");
-		s.append(m_result->toString(false));
-		s.append(" [label=\"Result\"];\n");
-
-        m_result->generateDotTree(s);
+            m_result->generateDotTree(s);
+        }
     }
+
 }

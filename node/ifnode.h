@@ -40,6 +40,13 @@ public:
     virtual QString toString(bool )const;
     virtual qint64 getPriority() const;
 
+
+    /**
+     * @brief generateDotTree
+     */
+    virtual void generateDotTree(QString&);
+
+
 protected:
     ExecutionNode *getLeafNode(ExecutionNode *node);
 

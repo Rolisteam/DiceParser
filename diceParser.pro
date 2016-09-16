@@ -21,7 +21,7 @@ TEMPLATE = app
 CONFIG+= CLI
 CLI {
 DEFINES += CLI
-include(cli/cli.pri)cd
+include(cli/cli.pri)
 }
 IRC {
 include(irc/irc.pri)

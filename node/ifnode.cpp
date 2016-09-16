@@ -105,6 +105,54 @@ void IfNode::setInstructionFalse(ExecutionNode* node)
 {
     m_false = node;
 }
+void IfNode::generateDotTree(QString& s)
+{
+    s.append(toString(true));
+    s.append(";\n");
+
+    if((NULL!=m_true)&&(m_true != m_nextNode))
+    {
+        s.append(toString(false));
+        s.append(" -> ");
+        s.append(m_true->toString(false));
+        s.append("[label=\"true\"];\n");
+//        s.append(" [label=\"nextNode\"];\n");
+        m_true->generateDotTree(s);
+    }
+    if((NULL!=m_false)&&(m_false != m_nextNode))
+    {
+        s.append(toString(false));
+        s.append(" -> ");
+        s.append(m_false->toString(false));
+        s.append("[label=\"false\"];\n");
+        m_false->generateDotTree(s);
+    }
+
+    if(NULL!=m_nextNode)
+    {
+        s.append(toString(false));
+        s.append(" -> ");
+        s.append(m_nextNode->toString(false));
+        s.append("[label=\"next\"];\n");
+        m_nextNode->generateDotTree(s);
+    }
+    else
+    {
+        s.append(toString(false));
+        s.append(" -> ");
+        s.append("NULL;\n");
+
+        if(NULL!=m_result)
+        {
+
+            s.append(toString(false));
+            s.append(" ->");
+            s.append(m_result->toString(false));
+            s.append(" [label=\"Result\"];\n");
+            m_result->generateDotTree(s);
+        }
+    }
+}
 
 QString IfNode::toString(bool wl)  const
 {

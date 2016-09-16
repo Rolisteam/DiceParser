@@ -48,9 +48,11 @@ public:
 	 * @brief getPriority
 	 * @return
 	 */
-	virtual qint64 getPriority() const;
+    virtual qint64 getPriority() const;
+    virtual void generateDotTree(QString &s);
 private:
     DiceResult* m_diceResult;
+    ExecutionNode* m_backwardNode;
 
 };
 

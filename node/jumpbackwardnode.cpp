@@ -24,6 +24,7 @@
 JumpBackwardNode::JumpBackwardNode()
 {
     m_previousNode=NULL;
+    m_backwardNode = NULL;
     m_diceResult =new DiceResult();
     m_result = m_diceResult;
 }
@@ -45,6 +46,46 @@ QString JumpBackwardNode::toString(bool wl) const
 		return m_id;
 	}
 }
+void JumpBackwardNode::generateDotTree(QString& s)
+{
+    s.append(toString(true));
+    s.append(";\n");
+
+    if(NULL!=m_backwardNode)
+    {
+        s.append(toString(false));
+        s.append(" -> ");
+        s.append(m_backwardNode->toString(false));
+        s.append("[label=\"backward\"];\n");
+        //m_backwardNode->generateDotTree(s);
+    }
+
+    if(NULL!=m_nextNode)
+    {
+        s.append(toString(false));
+        s.append(" -> ");
+        s.append(m_nextNode->toString(false));
+        s.append("[label=\"next\"];\n");
+        m_nextNode->generateDotTree(s);
+    }
+    else
+    {
+        s.append(toString(false));
+        s.append(" -> ");
+        s.append("NULL;\n");
+
+        if(NULL!=m_result)
+        {
+            s.append(toString(false));
+            s.append(" ->");
+            s.append(m_result->toString(false));
+            s.append(" [label=\"Result\"];\n");
+            m_result->generateDotTree(s);
+        }
+    }
+
+}
+
 void JumpBackwardNode::run(ExecutionNode* previous)
 {
         m_previousNode = previous;
@@ -62,6 +103,7 @@ void JumpBackwardNode::run(ExecutionNode* previous)
                 if((i==0)&&(result->hasResultOfType(Result::DICE_LIST)))
 				{
 					found =true;
+                    m_backwardNode = parent;
 				}
 			}
             if(!found)
@@ -88,7 +130,7 @@ void JumpBackwardNode::run(ExecutionNode* previous)
                 }
             }
 
-            m_result->setPrevious(parent->getResult());
+            m_result->setPrevious(previous->getResult());
 
             if(NULL!=m_nextNode)
             {

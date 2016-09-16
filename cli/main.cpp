@@ -116,8 +116,7 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
     if(parser->parseLine(cmd))
     {
        //
-        if(treeFile.isEmpty())
-        {
+
             parser->Start();
             if(!parser->getErrorMap().isEmpty())
             {
@@ -150,11 +149,10 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
                 str = parser->getStringResult();
             }
             out << str << "\n";
-        }
-        else
-        {
-            parser->writeDownDotTree(treeFile);
-        }
+            if(!treeFile.isEmpty())
+            {
+                parser->writeDownDotTree(treeFile);
+            }
     }
     else
     {
