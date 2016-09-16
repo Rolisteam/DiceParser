@@ -46,7 +46,8 @@ SOURCES += diceparser.cpp \
     result/scalarresult.cpp \
     parsingtoolbox.cpp \
     result/stringresult.cpp \
-    dicealias.cpp
+    dicealias.cpp \
+    mobile/mainwindow.cpp
 
 
 HEADERS += \
@@ -60,7 +61,8 @@ HEADERS += \
     result/scalarresult.h \
     result/parsingtoolbox.h \
     result/stringresult.h \
-    dicealias.h
+    dicealias.h \
+    mobile/mainwindow.h
 
 OTHER_FILES += README.md \
     HelpMe.md
