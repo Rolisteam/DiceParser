@@ -144,7 +144,7 @@ Validator* ParsingToolBox::readValidator(QString& str)
 {
     Validator* returnVal=NULL;
     BooleanCondition::LogicOperator myLogicOp = BooleanCondition::Equal;
-    /*bool hasReadLogicOperator = */readLogicOperator(str,myLogicOp);
+    readLogicOperator(str,myLogicOp);
 
 
     OperationCondition::ConditionOperator condiOp = OperationCondition::Modulo;
@@ -169,6 +169,7 @@ Validator* ParsingToolBox::readValidator(QString& str)
     }
     else if(readNumber(str,value))
     {
+        bool isRange = false;
         if(str.startsWith("-"))
         {
             str=str.remove(0,1);
@@ -179,9 +180,15 @@ Validator* ParsingToolBox::readValidator(QString& str)
                 Range* range = new Range();
                 range->setValue(value,end);
                 returnVal = range;
+                isRange = true;
+            }
+            else
+            {
+                str.prepend("-");
             }
         }
-        else
+
+        if(!isRange)
         {
             BooleanCondition* condition = new BooleanCondition();
             condition->setValue(value);
@@ -489,18 +496,20 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
     int maxValue = 0;
     int i=0;
     int j=0;
+    bool hasPercentage=false;
+    //QList<Range> rangesTemp;
     //range
     for(QString line:str)
     {
         int pos = line.indexOf('[');
         if(-1!=pos)
         {
-            QString range = line.right(line.length()-pos);
+            QString rangeStr = line.right(line.length()-pos);
             line = line.left(pos);
             str[j]=line;
             qint64 start;
             qint64 end;
-            if(readDiceRange(range,start,end))
+            if(readDiceRange(rangeStr,start,end))
             {
                 Range range;
                 range.setValue(start,end);
@@ -510,6 +519,7 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
             }
             else//pourcentage
             {
+                hasPercentage = true;
                 Range range;
                 range.setStart(start);
                 ranges.append(range);
@@ -521,11 +531,17 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
                 maxValue = end;
             }
         }
+        else
+        {
+                Range range;
+                range.setEmptyRange(true);
+                ranges.append(range);
+        }
         ++j;
 
     }
 
-    if(undefDistance!=0)
+    if((hasPercentage)&&(undefDistance!=0))
     {
         qreal ratio = (qreal)100.0 / (qreal)undefDistance;
         qint64 realStart=0;
@@ -544,6 +560,31 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
                 ranges[i]=tmp;
             }
         }
+    }
+    else
+    {
+        int limitUp = 1;
+        for(int i = 0; i< ranges.size(); ++i)
+        {
+            Range range = ranges.at(i);
+            if(range.isEmptyRange())
+            {
+                range.setStart(limitUp);
+                range.setEnd(limitUp);
+                range.setEmptyRange(false);
+
+            }
+            else
+            {
+                qint64 sizeRange = range.getEnd()-range.getStart();
+                range.setStart(limitUp);
+                limitUp+=sizeRange+1;
+                range.setEnd(limitUp);
+            }
+            ++limitUp;
+            ranges[i]=range;
+        }
+
     }
 
 }
