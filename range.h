@@ -44,11 +44,15 @@ public:
     qint64 getStart() const;
     qint64 getEnd() const;
 
+    void setEmptyRange(bool);
+    bool isEmptyRange();
+
 private:
     qint64 m_start;
     qint64 m_end;
     bool m_hasEnd;
     bool m_hasStart;
+    bool m_emptyRange;
 };
 
 #endif // RANGE_H
