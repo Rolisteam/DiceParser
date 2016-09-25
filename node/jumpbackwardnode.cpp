@@ -91,20 +91,29 @@ void JumpBackwardNode::run(ExecutionNode* previous)
         m_previousNode = previous;
 		ExecutionNode* parent = previous;
 		bool found=false;
-        int i = 3;
+        //int i = 3;
 		Result* result=NULL;
         while((NULL!=parent)&&(!found))
 		{
 
 			result = parent->getResult();
-            if((NULL!=result))
+            if(NULL!=result)
 			{
-				--i;
-                if((i==0)&&(result->hasResultOfType(Result::DICE_LIST)))
+                //--i;
+                if(/*(i==0)&&*/(result->hasResultOfType(Result::DICE_LIST)))
 				{
 					found =true;
                     m_backwardNode = parent;
 				}
+                else
+                {
+                    JumpBackwardNode* jpNode = dynamic_cast<JumpBackwardNode*>(parent);
+                    if(NULL!=jpNode)
+                    {
+                        found = true;
+                        m_backwardNode = parent;
+                    }
+                }
 			}
             if(!found)
             {
