@@ -22,10 +22,25 @@
 
 #include <QObject>
 
+#include <QAbstractListModel>
+
 class CommandModel : public QAbstractListModel
 {
+    Q_OBJECT
 public:
+    enum CustomRole {NameRole = Qt::UserRole+1,CmdRole};
     CommandModel();
+
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole ) const;
+    virtual int rowCount(const QModelIndex &parent) const;
+
+     QHash<int, QByteArray>  roleNames() const;
+
+
+public slots:
+     void insertCmd(QString name, QString cmd);
+private:
+    QList<QPair<QString,QString> > m_data;
 };
 
 #endif // COMMANDMODEL_H

@@ -23,3 +23,35 @@ CommandModel::CommandModel()
 {
 
 }
+
+QVariant CommandModel::data(const QModelIndex &index, int role) const
+{
+    QPair<QString,QString> indexP = m_data.at(index.row());
+    if(role == NameRole)
+    {
+        return indexP.first;
+    }
+    else if(role == CmdRole)
+    {
+        return indexP.second;
+    }
+}
+
+int CommandModel::rowCount(const QModelIndex &parent) const
+{
+    return m_data.count();
+}
+QHash<int, QByteArray>  CommandModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[NameRole] = "name";
+    roles[CmdRole] = "cmd";
+    return roles;
+}
+void CommandModel::insertCmd(QString name, QString cmd)
+{
+    QModelIndex index;
+    beginInsertRows(index,0,0);
+    m_data.prepend(QPair<QString,QString>(name,cmd));
+    endInsertRows();
+}
