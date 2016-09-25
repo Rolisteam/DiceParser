@@ -1,6 +1,6 @@
 /***************************************************************************
-    *   Copyright (C) 2015 by Renaud Guezennec                                *
-    *   http:://www.rolisteam.org/contact                                     *
+    *   Copyright (C) 2016 by Renaud Guezennec                                *
+    *   http://www.rolisteam.org/contact                                      *
     *                                                                         *
     *   rolisteam is free software; you can redistribute it and/or modify     *
     *   it under the terms of the GNU General Public License as published by  *
@@ -17,43 +17,30 @@
     *   Free Software Foundation, Inc.,                                       *
     *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
     ***************************************************************************/
-#ifndef IFNODE_H
-#define IFNODE_H
+#ifndef COMMANDMODEL_H
+#define COMMANDMODEL_H
 
-#include "executionnode.h"
-#include "result/diceresult.h"
-#include "validator.h"
-#include <QDebug>
+#include <QObject>
 
-/**
- * @brief The ifNode class explose dice while is valid by the validator.
- */
-class IfNode : public ExecutionNode
+#include <QAbstractListModel>
+
+class CommandModel : public QAbstractListModel
 {
+    Q_OBJECT
 public:
-    IfNode();
-    virtual ~IfNode();
-    virtual void run(ExecutionNode* previous = NULL);
-    virtual void setValidator(Validator* );
-    virtual void setInstructionTrue(ExecutionNode*);
-    virtual void setInstructionFalse(ExecutionNode*);
-    virtual QString toString(bool )const;
-    virtual qint64 getPriority() const;
+    enum CustomRole {NameRole = Qt::UserRole+1,CmdRole};
+    CommandModel();
+
+    virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole ) const;
+    virtual int rowCount(const QModelIndex &parent) const;
+
+     QHash<int, QByteArray>  roleNames() const;
 
 
-    /**
-     * @brief generateDotTree
-     */
-    virtual void generateDotTree(QString&);
-
-
-protected:
-    ExecutionNode *getLeafNode(ExecutionNode *node);
-
-protected:
-    Validator* m_validator;
-
-    ExecutionNode* m_true;
-    ExecutionNode* m_false;
+public slots:
+     void insertCmd(QString name, QString cmd);
+private:
+    QList<QPair<QString,QString> > m_data;
 };
-#endif
+
+#endif // COMMANDMODEL_H

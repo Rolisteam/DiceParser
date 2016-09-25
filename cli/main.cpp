@@ -1,6 +1,6 @@
 /***************************************************************************
 * Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://renaudguezennec.homelinux.org/accueil,3.html                      *
+* http://www.rolisteam.org/contact                      *
 *                                                                          *
 *  This file is part of DiceParser                                         *
 *                                                                          *
@@ -77,6 +77,14 @@ QString diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
                             {
                                 prefix = "\e[34m%1\e[0m";
                             }
+                            if(tmp.getColor()=="red")
+                            {
+                                prefix = "\e[31m%1\e[0m";
+                            }
+                            if(tmp.getColor()=="black")
+                            {
+                                prefix = "\e[30m%1\e[0m";
+                            }
                         }
 
                         if(i==0)
@@ -116,8 +124,7 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
     if(parser->parseLine(cmd))
     {
        //
-        if(treeFile.isEmpty())
-        {
+
             parser->Start();
             if(!parser->getErrorMap().isEmpty())
             {
@@ -150,11 +157,10 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
                 str = parser->getStringResult();
             }
             out << str << "\n";
-        }
-        else
-        {
-            parser->writeDownDotTree(treeFile);
-        }
+            if(!treeFile.isEmpty())
+            {
+                parser->writeDownDotTree(treeFile);
+            }
     }
     else
     {

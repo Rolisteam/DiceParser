@@ -4,6 +4,7 @@ project(diceparser)
 
 add_subdirectory(irc)
 add_subdirectory(cli)
+add_subdirectory(mobile)
 
 #qt5_use_modules()
 

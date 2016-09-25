@@ -37,6 +37,7 @@ BotIrcDiceParser::BotIrcDiceParser(QObject *parent) :
     // Connect signals and slots!
     connect(m_socket, SIGNAL(readyRead()), this, SLOT(readData()));
     connect(m_socket,SIGNAL(connected()),this,SLOT(authentificationProcess()));
+    connect(m_socket,SIGNAL(disconnected()),this,SLOT(connectToServer()));
     connect(m_socket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(errorOccurs(QAbstractSocket::SocketError)));
 
 }

@@ -1,6 +1,6 @@
 /***************************************************************************
-    *   Copyright (C) 2015 by Renaud Guezennec                                *
-    *   http:://www.rolisteam.org/contact                                     *
+    *   Copyright (C) 2016 by Renaud Guezennec                                *
+    *   http://www.rolisteam.org/contact                                      *
     *                                                                         *
     *   rolisteam is free software; you can redistribute it and/or modify     *
     *   it under the terms of the GNU General Public License as published by  *
@@ -17,43 +17,23 @@
     *   Free Software Foundation, Inc.,                                       *
     *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
     ***************************************************************************/
-#ifndef IFNODE_H
-#define IFNODE_H
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
 
-#include "executionnode.h"
-#include "result/diceresult.h"
-#include "validator.h"
-#include <QDebug>
+#include "maincontroler.h"
 
-/**
- * @brief The ifNode class explose dice while is valid by the validator.
- */
-class IfNode : public ExecutionNode
+int main(int argc, char *argv[])
 {
-public:
-    IfNode();
-    virtual ~IfNode();
-    virtual void run(ExecutionNode* previous = NULL);
-    virtual void setValidator(Validator* );
-    virtual void setInstructionTrue(ExecutionNode*);
-    virtual void setInstructionFalse(ExecutionNode*);
-    virtual QString toString(bool )const;
-    virtual qint64 getPriority() const;
+    QGuiApplication app(argc, argv);
+
+    MainControler* main = new MainControler();
 
 
-    /**
-     * @brief generateDotTree
-     */
-    virtual void generateDotTree(QString&);
+    QQmlApplicationEngine engine;
+    main->initEngine(&engine);
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
+    //main->setConnections(&engine);
 
-protected:
-    ExecutionNode *getLeafNode(ExecutionNode *node);
-
-protected:
-    Validator* m_validator;
-
-    ExecutionNode* m_true;
-    ExecutionNode* m_false;
-};
-#endif
+    return app.exec();
+}

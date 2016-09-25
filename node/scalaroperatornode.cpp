@@ -47,7 +47,7 @@ ScalarOperatorNode::~ScalarOperatorNode()
 
 void ScalarOperatorNode::run(ExecutionNode* previous)
 {
-	m_previousNode = previous;
+    m_previousNode = previous;
     if(NULL!=m_internalNode)
     {
             m_internalNode->run(this);

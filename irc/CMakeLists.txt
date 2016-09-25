@@ -10,23 +10,23 @@ set(CMAKE_AUTOMOC ON)
 
 # Find the QtWidgets library
 find_package(Qt5Core)
-find_package(Qt5Gui)
-find_package(Qt5Widgets)
+#fsind_package(Qt5Gui)
+#find_package(Qt5Widgets)
 find_package(Qt5Network)
 
-SET(mainwindow_SOURCES mainwindow.cpp)
-SET(mainwindow_HEADERS mainwindow.h)
-SET(mainwindow_FORMS mainwindow.ui)
+#SET(mainwindow_SOURCES mainwindow.cpp)
+#SET(mainwindow_HEADERS mainwindow.h)
+#SET(mainwindow_FORMS mainwindow.ui)
 
 set(EXECUTABLE_OUTPUT_PATH bin/)
 
 
-include_directories(${Qt5Core_INCLUDES} ${Qt5Gui_INCLUDES} ${Qt5Widgets_INCLUDES} ${Qt5Network_INCLUDES} ../)
-add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS})
+include_directories(${Qt5Core_INCLUDES} ${Qt5Network_INCLUDES} ../)
+add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Network_DEFINITIONS})
 
 
-qt5_wrap_ui(UI_HEADERS mainwindow.ui)
-#set(MODE "cli")
+#qt5_wrap_ui(UI_HEADERS mainwindow.ui)
+set(MODE "cli")
 
 
 ADD_DEFINITIONS(
@@ -68,13 +68,11 @@ add_executable(
     ../node/sortresult.cpp
     ../node/startingnode.cpp
     ../node/ifnode.cpp
-    ${UI_HEADERS}
     botircdiceparser.cpp
     main.cpp)
 
 
-target_link_libraries(irc ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES})
+target_link_libraries(irc ${Qt5Core_LIBRARIES} ${Qt5Network_LIBRARIES})
 INSTALL_TARGETS(/bin irc)
-
 #qt5_use_modules()
 

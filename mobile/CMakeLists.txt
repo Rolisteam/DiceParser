@@ -4,7 +4,7 @@ option(UPDATE_TRANSLATIONS "update Translation" OFF)
 MESSAGE(STATUS "UPDATE TRANSLATIONS: ${UPDATE_TRANSLATIONS}")
 
 
-project(dice)
+project(diceGui)
 
 
 # Find includes in corresponding build directories
@@ -13,44 +13,42 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 # Find the QtWidgets library
-find_package(Qt5Core)
+find_package(Qt5 COMPONENTS Quick Qml Core Widgets Gui)
+#find_package(Qt5QuickCompiler)
 
 set(EXECUTABLE_OUTPUT_PATH bin/)
 
-include_directories(${Qt5Core_INCLUDES} ../)
-add_definitions(${Qt5Core_DEFINITIONS})
-
-set(MODE "cli")
+include_directories(${Qt5Core_INCLUDES} ${Qt5Widgets_INCLUDES} ${Qt5Gui_INCLUDES} ${Qt5Qml_INCLUDES} ${Qt5Quick_INCLUDES}../)
+add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Qml_DEFINITIONS} ${Qt5Quick_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Gui_DEFINITIONS} )
 
 ADD_DEFINITIONS(
-    -std=c++11 # Or -std=c++0x
-    # Other flags
+    -std=c++11
 )
 
-set(dice_RESOURCES diceparser.qrc)
+set(diceGui_RESOURCES diceparser.qrc)
 FIND_PACKAGE(Qt5LinguistTools)
-   
+
 
 IF(UPDATE_TRANSLATIONS)
-	MESSAGE( update Translation )
-    FILE(GLOB_RECURSE translate_dice_SRCS ../*.cpp ../*.h)
+        MESSAGE( update Translation )
+    FILE(GLOB_RECURSE translate_diceGui_SRCS ../*.cpp ../*.h)
     SET(translate_SRCS ${translate_dice_SRCS})
-    SET(dice_TS "${CMAKE_CURRENT_SOURCE_DIR}/i18n/dice_en.ts" "${CMAKE_CURRENT_SOURCE_DIR}/i18n/dice_fr.ts")
+    SET(diceGui_TS "${CMAKE_CURRENT_SOURCE_DIR}/i18n/diceGui_en.ts" "${CMAKE_CURRENT_SOURCE_DIR}/i18n/diceGui_fr.ts")
 ELSE()
-	MESSAGE( NO updates for translations)
-    FILE(GLOB dice_TS "${CMAKE_CURRENT_SOURCE_DIR}/i18n/*.ts")
+        MESSAGE( NO updates for translations)
+    FILE(GLOB diceGui_TS "${CMAKE_CURRENT_SOURCE_DIR}/i18n/*.ts")
 ENDIF(UPDATE_TRANSLATIONS)
 
 if(Qt5Core_FOUND)
 
     IF(UPDATE_TRANSLATIONS)
-		MESSAGE(status  "find" ${dice_TS} ${translate_SRCS} )
-        QT5_CREATE_TRANSLATION(dice_QM ${translate_SRCS} ${dice_TS})
+                MESSAGE(status  "find" ${diceGui_TS} ${translate_SRCS} )
+        QT5_CREATE_TRANSLATION(diceGui_QM ${translate_SRCS} ${diceGui_TS})
     ELSE()
-        QT5_ADD_TRANSLATION(dice_QM ${dice_TS})
+        QT5_ADD_TRANSLATION(diceGui_QM ${diceGui_TS})
     ENDIF()
 
-    QT5_ADD_RESOURCES(dice_RESOURCES_RCC ${dice_RESOURCES})
+    QT5_ADD_RESOURCES(diceGui_RESOURCES_RCC ${diceGui_RESOURCES})
 
     # guess plugins and libraries directory
     set(QT_PLUGINS_DIR "${Qt5Core_DIR}/../../../plugins")
@@ -58,7 +56,7 @@ if(Qt5Core_FOUND)
     get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
 endif()
 
-SET( dice_sources 
+SET( diceGui_sources
    ../diceparser.cpp
    ../range.cpp
    ../booleancondition.cpp
@@ -91,12 +89,14 @@ SET( dice_sources
    ../node/startingnode.cpp
     ../node/ifnode.cpp
     main.cpp
+    maincontroler.cpp
     ../highlightdice.cpp
 )
+qt5_add_resources(RESOURCE_ADDED mobile.qrc)
 
-add_executable( dice ${dice_sources} ${dice_QM}   )
+add_executable( diceGui ${diceGui_sources} ${diceGui_QM} ${RESOURCE_ADDED} )
 
-target_link_libraries(dice ${Qt5Core_LIBRARIES})
-INSTALL_TARGETS(/bin dice)
+target_link_libraries(diceGui ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Qml_LIBRARIES} ${Qt5Quick_LIBRARIES})
+INSTALL_TARGETS(/bin diceGui)
 
 #qt5_use_modules()

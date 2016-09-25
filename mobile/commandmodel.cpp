@@ -1,6 +1,6 @@
 /***************************************************************************
-    *   Copyright (C) 2015 by Renaud Guezennec                                *
-    *   http:://www.rolisteam.org/contact                                     *
+    *   Copyright (C) 2016 by Renaud Guezennec                                *
+    *   http://www.rolisteam.org/contact                                      *
     *                                                                         *
     *   rolisteam is free software; you can redistribute it and/or modify     *
     *   it under the terms of the GNU General Public License as published by  *
@@ -17,43 +17,41 @@
     *   Free Software Foundation, Inc.,                                       *
     *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
     ***************************************************************************/
-#ifndef IFNODE_H
-#define IFNODE_H
+#include "commandmodel.h"
 
-#include "executionnode.h"
-#include "result/diceresult.h"
-#include "validator.h"
-#include <QDebug>
-
-/**
- * @brief The ifNode class explose dice while is valid by the validator.
- */
-class IfNode : public ExecutionNode
+CommandModel::CommandModel()
 {
-public:
-    IfNode();
-    virtual ~IfNode();
-    virtual void run(ExecutionNode* previous = NULL);
-    virtual void setValidator(Validator* );
-    virtual void setInstructionTrue(ExecutionNode*);
-    virtual void setInstructionFalse(ExecutionNode*);
-    virtual QString toString(bool )const;
-    virtual qint64 getPriority() const;
 
+}
 
-    /**
-     * @brief generateDotTree
-     */
-    virtual void generateDotTree(QString&);
+QVariant CommandModel::data(const QModelIndex &index, int role) const
+{
+    QPair<QString,QString> indexP = m_data.at(index.row());
+    if(role == NameRole)
+    {
+        return indexP.first;
+    }
+    else if(role == CmdRole)
+    {
+        return indexP.second;
+    }
+}
 
-
-protected:
-    ExecutionNode *getLeafNode(ExecutionNode *node);
-
-protected:
-    Validator* m_validator;
-
-    ExecutionNode* m_true;
-    ExecutionNode* m_false;
-};
-#endif
+int CommandModel::rowCount(const QModelIndex &parent) const
+{
+    return m_data.count();
+}
+QHash<int, QByteArray>  CommandModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[NameRole] = "name";
+    roles[CmdRole] = "cmd";
+    return roles;
+}
+void CommandModel::insertCmd(QString name, QString cmd)
+{
+    QModelIndex index;
+    beginInsertRows(index,0,0);
+    m_data.prepend(QPair<QString,QString>(name,cmd));
+    endInsertRows();
+}

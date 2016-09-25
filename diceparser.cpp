@@ -221,7 +221,10 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         node = operandNode;
 
         operandNode= getLatestNode(operandNode);
-        while(readOperator(str,operandNode));
+        while(readOperator(str,operandNode))
+        {
+            operandNode= getLatestNode(operandNode);
+        };
     }
     else if(readCommand(str,operandNode))
     {
@@ -885,7 +888,6 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 break;
             case Count:
             {
-                //Validator* validator = m_parsingToolbox->readValidator(str);
                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(NULL!=validator)
                 {
@@ -979,8 +981,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                  Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                  if(NULL!=validator)
                  {
-                    ExecutionNode* trueNode;
-                    ExecutionNode* falseNode;
+                    ExecutionNode* trueNode = NULL;
+                    ExecutionNode* falseNode = NULL;
                     if(readIfInstruction(str,trueNode,falseNode))
                     {
                         nodeif->setInstructionTrue(trueNode);

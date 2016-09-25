@@ -22,7 +22,7 @@
 #include "range.h"
 
 Range::Range()
-    : m_hasEnd(false),m_hasStart(false)
+    : m_hasEnd(false),m_hasStart(false),m_emptyRange(false)
 {
 
 
@@ -90,4 +90,13 @@ qint64 Range::getStart() const
 qint64 Range::getEnd() const
 {
     return m_end;
+}
+void Range::setEmptyRange(bool b)
+{
+    m_emptyRange = b;
+}
+
+bool Range::isEmptyRange()
+{
+    return m_emptyRange;
 }
