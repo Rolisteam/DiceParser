@@ -77,6 +77,14 @@ QString diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
                             {
                                 prefix = "\e[34m%1\e[0m";
                             }
+                            if(tmp.getColor()=="red")
+                            {
+                                prefix = "\e[31m%1\e[0m";
+                            }
+                            if(tmp.getColor()=="black")
+                            {
+                                prefix = "\e[30m%1\e[0m";
+                            }
                         }
 
                         if(i==0)
