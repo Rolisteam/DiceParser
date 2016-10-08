@@ -97,7 +97,7 @@ void PainterNode::run(ExecutionNode* previous)
 }
 Result* PainterNode::getResult()
 {
-    m_previousNode->getResult();
+    return m_previousNode->getResult();
 }
 
 QString PainterNode::toString(bool wl) const
