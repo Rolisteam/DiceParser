@@ -1,6 +1,15 @@
 [![Logo](http://www.rolisteam.org/sites/default/files/pixture_reloaded_logo.png)](http://www.rolisteam.org)
 # Documentation:
 
+## Build
+> git clone git@github.com:Rolisteam/DiceParser.git
+> cd DiceParser
+> mkdir build
+> cd build
+> cmake ../
+> make
+> make install
+
 ## Irc and Chat
 
 Please, remember it is important to preffix all you command by `!`. This will allow the system to identify your command. To clarify the documentation, the `!` is not repeated before all commands.
