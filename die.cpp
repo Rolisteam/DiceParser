@@ -24,7 +24,7 @@
 
 #include <QDateTime>
 #include <QDebug>
-
+#include <chrono>
 
 Die::Die()
     : m_hasValue(false),m_displayStatus(false),m_highlighted(true),m_base(1),m_color("")//,m_mt(m_randomDevice)
@@ -103,9 +103,10 @@ void Die::roll(bool adding)
     if(m_faces!=0)
     {
         //quint64 value=(qrand()%m_faces)+m_base;
-        std::random_device rd;
+        auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+        std::mt19937 rng(quintptr(this)+seed);
         std::uniform_int_distribution<qint64> dist(m_base,m_faces);
-        qint64 value = dist(rd);
+        qint64 value = dist(rng);
         if((adding)||(m_rollResult.isEmpty()))
         {
             insertRollValue(value);
