@@ -96,6 +96,13 @@ public:
     static bool readNumber(QString&  str, qint64& myNumber);
 
     /**
+     * @brief readString
+     * @param str
+     * @param strResult
+     * @return
+     */
+    static bool readString(QString&  str, QString& strresult);
+    /**
      * @brief readVariable
      * @param str
      * @param myNumber

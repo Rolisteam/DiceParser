@@ -282,6 +282,7 @@ bool ParsingToolBox::readNumber(QString& str, qint64& myNumber)
     if(str.isEmpty())
         return false;
 
+
     QString number;
     int i=0;
     while(i<str.length() && ((str[i].isNumber()) || ( (i==0) && (str[i]=='-'))))
@@ -303,6 +304,57 @@ bool ParsingToolBox::readNumber(QString& str, qint64& myNumber)
         return true;
     }
 
+    return false;
+}
+
+bool ParsingToolBox::readString(QString &str, QString& strResult)
+{
+    if(str.isEmpty())
+        return false;
+
+
+    if(str.startsWith('"'))
+    {
+        str=str.remove(0,1);
+    }
+
+    int i=0;
+    int j=0;
+    bool previousEscape=false;
+    QString result;
+    /*&&
+            (((!previousEscape) && !(str[i]=='"')) || (previousEscape) && !(str[i]=='"'))
+                || (str[i]=='\\'))*/
+    while(i<str.length() && (!(!previousEscape && (str[i]=='"'))  || (previousEscape && str[i]!='"')))
+    {
+        if(str[i]=='\\')
+        {
+            previousEscape = true;
+        }
+        else
+        {
+            if(previousEscape && str[i]!='\"')
+            {
+                result += '\\';
+                ++j;
+            }
+            result+=str[i];
+            previousEscape = false;
+        }
+        ++i;
+    }
+    qDebug() << "previous" << previousEscape << str[i];
+
+    if(!result.isEmpty())
+    {
+        str=str.remove(0,i);
+        strResult = result;
+        if(str.startsWith('"'))
+        {
+            str=str.remove(0,1);
+            return true;
+        }
+    }
     return false;
 }
 

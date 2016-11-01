@@ -41,6 +41,8 @@
 #include "node/mergenode.h"
 #include "node/ifnode.h"
 #include "node/paintnode.h"
+#include "node/stringnode.h"
+
 
 #define DEFAULT_FACES_NUMBER 10
 
@@ -171,9 +173,8 @@ bool DiceParser::parseLine(QString str)
         if(keepParsing)
         {
             // keepParsing =
-           readOperator(str,m_current);
-
-            m_current = getLatestNode(m_current);
+          readOperator(str,m_current);
+          m_current = getLatestNode(m_current);
         }
     }
 
@@ -990,6 +991,14 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                         nodeif->setValidator(validator);
                         previous->setNextNode(nodeif);
                     }
+                    else
+                    {
+                        delete nodeif;
+                    }
+                 }
+                 else
+                 {
+                     delete nodeif;
                  }
             }
 
@@ -1073,7 +1082,7 @@ QString DiceParser::humanReadableError()
 bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
 {
     qint64 myNumber=1;
-
+    QString resultStr;
     if(m_parsingToolbox->readNumber(str,myNumber))
     {
 		NumberNode* numberNode = new NumberNode();
@@ -1082,6 +1091,15 @@ bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
 		node = numberNode;
         return true;
     }
+    else if(m_parsingToolbox->readString(str,resultStr))
+    {
+        StringNode* strNode = new StringNode();
+        strNode->setString(resultStr);
+        node = strNode;
+        return true;
+    }
+    ///! @todo Make this operator working
+
         return false;
 }
 void DiceParser::writeDownDotTree(QString filepath)
