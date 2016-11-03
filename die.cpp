@@ -29,11 +29,12 @@
 Die::Die()
     : m_hasValue(false),m_displayStatus(false),m_highlighted(true),m_base(1),m_color("")//,m_mt(m_randomDevice)
 {
-    uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
+//    uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
 
-    qsrand(seed);
+  //  qsrand(seed);
 
-
+    auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    m_rng = std::mt19937(quintptr(this)+seed);
 
 }
 Die::Die(const Die& die)
@@ -103,10 +104,9 @@ void Die::roll(bool adding)
     if(m_faces!=0)
     {
         //quint64 value=(qrand()%m_faces)+m_base;
-        auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-        std::mt19937 rng(quintptr(this)+seed);
+
         std::uniform_int_distribution<qint64> dist(m_base,m_faces);
-        qint64 value = dist(rng);
+        qint64 value = dist(m_rng);
         if((adding)||(m_rollResult.isEmpty()))
         {
             insertRollValue(value);
