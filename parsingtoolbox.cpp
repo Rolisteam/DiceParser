@@ -38,6 +38,7 @@ ParsingToolBox::ParsingToolBox()
     m_logicOp->insert("<",BooleanCondition::LesserThan);
     m_logicOp->insert("=",BooleanCondition::Equal);
     m_logicOp->insert(">",BooleanCondition::GreaterThan);
+    m_logicOp->insert("!=",BooleanCondition::Different);
 
 
     //m_logicOperation = ;
