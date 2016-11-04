@@ -1002,6 +1002,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                         nodeif->setInstructionFalse(falseNode);
                         nodeif->setValidator(validator);
                         previous->setNextNode(nodeif);
+                        node = nodeif;
+                        found = true;
                     }
                  }
             }
