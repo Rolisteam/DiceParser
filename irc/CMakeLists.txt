@@ -68,6 +68,7 @@ add_executable(
     ../node/sortresult.cpp
     ../node/startingnode.cpp
     ../node/ifnode.cpp
+    ../node/filternode.cpp
     botircdiceparser.cpp
     main.cpp)
 
