@@ -86,10 +86,10 @@ void IfNode::run(ExecutionNode *previous)
         }
     }
 
-   /* if(NULL!=m_nextNode)
+    if(NULL!=m_nextNode)
     {
-        m_nextNode->run(this);
-    }*/
+        m_nextNode->run(previousLoop);
+    }
 }
 
 void IfNode::setValidator(Validator* val)
