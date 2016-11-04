@@ -58,6 +58,9 @@ qint64 BooleanCondition::hasValid(Die* b,bool recursive,bool unhighlight) const
             case LesserOrEqual:
                 sum+= (value<=m_value)?1:0;
                 break;
+            case Different:
+                sum+= (value!=m_value)?1:0;
+                break;
         }
     }
     if((unhighlight)&&(sum==0))
@@ -101,6 +104,9 @@ QString BooleanCondition::toString()
     case LesserOrEqual:
 		str.append(QStringLiteral("<="));
         break;
+    case Different:
+        str.append(QStringLiteral("!="));
+        break;
     }
 	return QStringLiteral("[%1%2]").arg(str).arg(m_value);
 }
@@ -118,5 +124,7 @@ quint64 BooleanCondition::getValidRangeSize(quint64 faces) const
         return faces-(m_value-1);
     case LesserOrEqual:
         return m_value;
+    case Different:
+        return faces-1;
     }
 }

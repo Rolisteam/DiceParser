@@ -17,7 +17,8 @@ SOURCES += $$PWD/diceparser.cpp \
     $$PWD/compositevalidator.cpp \
     $$PWD/dicealias.cpp \
     $$PWD/operationcondition.cpp \
-    $$PWD/node/stringnode.cpp
+    $$PWD/node/stringnode.cpp \
+    $$PWD/node/filternode.cpp
 
 
 HEADERS += \
@@ -35,7 +36,8 @@ HEADERS += \
     $$PWD/compositevalidator.h \
     $$PWD/dicealias.h \
     $$PWD/operationcondition.h \
-    $$PWD/node/stringnode.h
+    $$PWD/node/stringnode.h \
+    $$PWD/node/filternode.h
 
 
 HEADERS += \

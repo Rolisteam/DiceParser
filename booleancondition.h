@@ -31,7 +31,7 @@
 class BooleanCondition : public Validator
 {
 public:
-    enum LogicOperator { Equal, GreaterThan, LesserThan, GreaterOrEqual, LesserOrEqual};
+    enum LogicOperator { Equal, GreaterThan, LesserThan, GreaterOrEqual, LesserOrEqual, Different};
     BooleanCondition();
 
     virtual qint64 hasValid(Die* b,bool recursive, bool unhighlight = false) const;

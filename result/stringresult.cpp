@@ -13,7 +13,21 @@ StringResult::~StringResult()
 {
 
 }
+bool StringResult::hasResultOfType(RESULT_TYPE resultType) const
+{
 
+    if(resultType & Result::STRING)
+    {
+        return true;
+    }
+    else if(resultType & Result::SCALAR)
+    {
+        bool ok=false;
+        getText().toInt(&ok);
+        return ok;
+    }
+    return false;
+}
 QString StringResult::getText() const
 {
     return m_value;
@@ -26,10 +40,11 @@ QVariant StringResult::getResult(RESULT_TYPE type)
     case STRING:
         return getText();
         break;
+    case SCALAR:
+        return getText().toInt();
+        break;
 
     }
-
-
     return QVariant();
 }
 QString StringResult::toString(bool wl)

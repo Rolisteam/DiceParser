@@ -89,6 +89,7 @@ SET( dice_sources
    ../node/scalaroperatornode.cpp
    ../node/sortresult.cpp
    ../node/startingnode.cpp
+   ../node/filternode.cpp
     ../node/ifnode.cpp
     main.cpp
     ../highlightdice.cpp

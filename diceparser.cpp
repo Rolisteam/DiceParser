@@ -27,6 +27,7 @@
 
 #include "node/startingnode.h"
 #include "node/scalaroperatornode.h"
+#include "node/filternode.h"
 #include "node/numbernode.h"
 #include "node/keepdiceexecnode.h"
 #include "node/sortresult.h"
@@ -67,6 +68,8 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QStringLiteral("m"),Merge);
     m_OptionOp->insert(QStringLiteral("i"),ifOperator);
     m_OptionOp->insert(QStringLiteral("p"),Painter);
+    m_OptionOp->insert(QStringLiteral("f"),Filter);
+
 
     m_aliasList = new QList<DiceAlias*>();
 
@@ -833,15 +836,9 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 bool ascending = m_parsingToolbox->readAscending(str);
                 if(m_parsingToolbox->readNumber(str,myNumber))
                 {
-                   /* if(!hasDice)
-                    {
-                        previous = addRollDiceNode(DEFAULT_FACES_NUMBER,previous);
-                    }*/
                     node = m_parsingToolbox->addSort(previous,ascending);
-
                     KeepDiceExecNode* nodeK = new KeepDiceExecNode();
                     nodeK->setDiceKeepNumber(myNumber);
-
                     node->setNextNode(nodeK);
                     node = nodeK;
                     found = true;
@@ -872,6 +869,22 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
 
                     node->setNextNode(nodeK);
                     node = nodeK;
+                    found = true;
+                }
+            }
+                break;
+            case Filter:
+            {
+                Validator* validator = m_parsingToolbox->readCompositeValidator(str);
+                if(NULL!=validator)
+                {
+                    m_parsingToolbox->isValidValidator(previous,validator);
+
+                    FilterNode* filterNode = new FilterNode();
+                    filterNode->setValidator(validator);
+
+                    previous->setNextNode(filterNode);
+                    node = filterNode;
                     found = true;
                 }
             }
@@ -990,6 +1003,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                         nodeif->setInstructionFalse(falseNode);
                         nodeif->setValidator(validator);
                         previous->setNextNode(nodeif);
+                        node = nodeif;
+                        found = true;
                     }
                     else
                     {

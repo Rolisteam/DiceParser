@@ -88,8 +88,10 @@ SET( diceGui_sources
    ../node/sortresult.cpp
    ../node/startingnode.cpp
     ../node/ifnode.cpp
+    ../node/filternode.cpp
     main.cpp
     maincontroler.cpp
+    commandmodel.cpp
     ../highlightdice.cpp
 )
 qt5_add_resources(RESOURCE_ADDED mobile.qrc)

@@ -40,6 +40,7 @@ public:
 
     virtual void setHighLight(bool );
     virtual bool hasHighLight() const;
+    virtual bool hasResultOfType(RESULT_TYPE resultType) const;
 private:
     QString m_value;
     bool m_highlight;
