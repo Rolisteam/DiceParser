@@ -138,7 +138,17 @@ Paint the first die in the list in blue
 
 Paint the two first dice in the list in blue.
 
-<a><img src="https://gist.githubusercontent.com/obiwankennedy/62101383d411e55d205e44df78aa5299/raw/70ed8797fdcf68516f06da23f53ca42c754efe74/diceResult.svg"/></a>
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" 
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="180" height="50">
+  <text font-size="16" x="10" y="20">
+    (<tspan fill="blue">10 4</tspan>
+    <tspan fill="red">10 3 7 7 9 9</tspan>)
+  </text>
+</svg>
+
 
 The amount of color is depending of client application of DiceParser.
 With Rolisteam, you may set any Qt color's name or set the Hexcode of your color: #ff28AC.
