@@ -138,16 +138,7 @@ Paint the first die in the list in blue
 
 Paint the two first dice in the list in blue.
 
-<?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" 
-     xmlns="http://www.w3.org/2000/svg"
-     xmlns:xlink="http://www.w3.org/1999/xlink"
-     width="180" height="50">
-  <text font-size="16" x="10" y="20">
-    (<tspan fill="blue">10 4</tspan>
-    <tspan fill="red">10 3 7 7 9 9</tspan>)
-  </text>
-</svg>
+https://gist.githubusercontent.com/obiwankennedy/62101383d411e55d205e44df78aa5299/raw/b5e65913dbdc7bfdb7a04d6bd1a7a3fef6f0891d/diceResult.svg
 
 
 The amount of color is depending of client application of DiceParser.
