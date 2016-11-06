@@ -138,7 +138,7 @@ Paint the first die in the list in blue
 
 Paint the two first dice in the list in blue.
 
-https://gist.githubusercontent.com/obiwankennedy/62101383d411e55d205e44df78aa5299/raw/b5e65913dbdc7bfdb7a04d6bd1a7a3fef6f0891d/diceResult.svg
+https://gist.github.com/obiwankennedy/62101383d411e55d205e44df78aa5299
 
 
 The amount of color is depending of client application of DiceParser.
