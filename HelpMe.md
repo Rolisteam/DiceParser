@@ -2,13 +2,16 @@
 # Documentation:
 
 ## Build
-> git clone git@github.com:Rolisteam/DiceParser.git
-> cd DiceParser
-> mkdir build
-> cd build
-> cmake ../
-> make
-> make install
+
+```
+git clone git@github.com:Rolisteam/DiceParser.git
+cd DiceParser
+mkdir build
+cd build
+cmake ../
+make
+make install
+```
 
 ## Irc and Chat
 
