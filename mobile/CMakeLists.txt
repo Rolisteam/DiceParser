@@ -87,8 +87,9 @@ SET( diceGui_sources
    ../node/scalaroperatornode.cpp
    ../node/sortresult.cpp
    ../node/startingnode.cpp
-    ../node/ifnode.cpp
-    ../node/filternode.cpp
+   ../node/ifnode.cpp
+   ../node/filternode.cpp
+   ../node/stringnode.cpp
     main.cpp
     maincontroler.cpp
     commandmodel.cpp
