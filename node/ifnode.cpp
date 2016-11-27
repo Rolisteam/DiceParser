@@ -262,7 +262,6 @@ IfNode::ConditionType IfNode::getConditionType() const
 
 void IfNode::setConditionType(const IfNode::ConditionType &conditionType)
 {
-    qDebug() << "set condisition type" << conditionType;
     m_conditionType = conditionType;
 }
 ExecutionNode* IfNode::getCopy() const
