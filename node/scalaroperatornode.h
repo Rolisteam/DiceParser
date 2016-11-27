@@ -35,30 +35,84 @@
 class ScalarOperatorNode : public ExecutionNode
 {
 public:
+    /**
+     * @brief The ArithmeticOperator enum
+     */
     enum ArithmeticOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION};
+    /**
+     * @brief ScalarOperatorNode
+     */
     ScalarOperatorNode();
-	virtual ~ScalarOperatorNode();
+    /**
+     * @brief ~ScalarOperatorNode
+     */
+    virtual ~ScalarOperatorNode();
+    /**
+     * @brief run
+     */
     virtual void run(ExecutionNode*);
-
+    /**
+     * @brief setInternalNode
+     * @param node
+     */
     void setInternalNode(ExecutionNode* node);
-
+    /**
+     * @brief toString
+     * @param wl
+     * @return
+     */
     virtual QString toString(bool wl)const;
+    /**
+     * @brief getPriority
+     * @return
+     */
     virtual qint64 getPriority() const;
-
+    /**
+     * @brief generateDotTree
+     * @param s
+     */
     void generateDotTree(QString& s);
     /**
      * @brief getErrorList
      * @return
      */
     virtual QMap<ExecutionNode::DICE_ERROR_CODE,QString> getExecutionErrorMap();
-
+    /**
+     * @brief getArithmeticOperator
+     * @return
+     */
     ScalarOperatorNode::ArithmeticOperator getArithmeticOperator() const;
+    /**
+     * @brief setArithmeticOperator
+     * @param arithmeticOperator
+     */
     void setArithmeticOperator(const ScalarOperatorNode::ArithmeticOperator &arithmeticOperator);
 
+    /**
+     * @brief getCopy
+     * @return
+     */
+    virtual ExecutionNode *getCopy() const;
 private:
+    /**
+     * @brief add
+     * @return
+     */
     static qint64 add(qint64,qint64);
+    /**
+     * @brief substract
+     * @return
+     */
     static qint64 substract(qint64,qint64);
+    /**
+     * @brief divide not static because of error management
+     * @return
+     */
     qreal divide(qint64,qint64);
+    /**
+     * @brief multiple
+     * @return
+     */
     static qint64 multiple(qint64,qint64);
 
 private:

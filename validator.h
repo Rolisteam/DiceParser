@@ -59,6 +59,11 @@ public:
      * @return
      */
     virtual quint64 getValidRangeSize(quint64 faces) const = 0 ;
+    /**
+     * @brief getCopy
+     * @return return  a copy of this validator
+     */
+    virtual Validator* getCopy() const = 0;
 };
 
 #endif // VALIDATOR_H

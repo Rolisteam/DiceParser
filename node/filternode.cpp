@@ -74,3 +74,16 @@ qint64 FilterNode::getPriority() const
 
     return priority;
 }
+ExecutionNode* FilterNode::getCopy() const
+{
+    FilterNode* node = new FilterNode();
+    if(NULL!=m_validator)
+    {
+        node->setValidator(m_validator->getCopy());
+    }
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+}

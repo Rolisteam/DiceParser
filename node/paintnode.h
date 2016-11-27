@@ -40,7 +40,9 @@ private:
     int m_colorNumber;
     QString m_color;
 };
-
+/**
+ * @brief The PainterNode class means to manage color attribute of dice.
+ */
 class PainterNode : public ExecutionNode
 {
 public:
@@ -51,6 +53,7 @@ public:
     virtual QString toString(bool )const;
     virtual qint64 getPriority() const;
     void insertColorItem(QString color, int value);
+    virtual ExecutionNode *getCopy() const;
 protected:
     QList<ColorItem> m_colors;
 };

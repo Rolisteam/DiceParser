@@ -66,3 +66,17 @@ qint64 ParenthesesNode::getPriority() const
     qint64 priority=3;
     return priority;
 }
+ExecutionNode* ParenthesesNode::getCopy() const
+{
+    ParenthesesNode* node = new ParenthesesNode();
+    if(NULL!=m_internalNode)
+    {
+        node->setInternelNode(m_internalNode->getCopy());
+    }
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+
+}

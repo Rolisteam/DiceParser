@@ -115,7 +115,16 @@ qint64 StringNode::getPriority() const
     {
         priority = m_nextNode->getPriority();
     }
-
-
     return priority;
+}
+ExecutionNode* StringNode::getCopy() const
+{
+    StringNode* node = new StringNode();
+    node->setString(m_data);
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+
 }

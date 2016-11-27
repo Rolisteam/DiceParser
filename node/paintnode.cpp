@@ -124,3 +124,12 @@ void PainterNode::insertColorItem(QString color, int value)
     ColorItem item(color,value);
     m_colors.append(item);
 }
+ExecutionNode* PainterNode::getCopy() const
+{
+    PainterNode* node = new PainterNode();
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+}

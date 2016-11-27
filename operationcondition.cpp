@@ -101,3 +101,13 @@ quint64 OperationCondition::getValidRangeSize(quint64 faces) const
 {
    return faces/m_value;
 }
+Validator* OperationCondition::getCopy() const
+{
+    OperationCondition* val = new OperationCondition();
+    val->setOperator(m_operator);
+    val->setValue(m_value);
+    BooleanCondition* boolean = dynamic_cast<BooleanCondition*>(m_boolean->getCopy());
+    val->setBoolean(boolean);
+    return val;
+
+}

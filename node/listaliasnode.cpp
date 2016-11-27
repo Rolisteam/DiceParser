@@ -75,10 +75,19 @@ QString ListAliasNode::toString(bool wl) const
 	{
 		return m_id;
 	}
-
-
 }
 qint64 ListAliasNode::getPriority() const
 {
 	return 0;
+}
+
+ExecutionNode* ListAliasNode::getCopy() const
+{
+    ListAliasNode* node = new ListAliasNode(m_aliasList);
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+
 }

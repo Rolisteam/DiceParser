@@ -36,7 +36,11 @@ public:
      * @return
      */
     virtual qint64 getPriority() const;
-
+    /**
+     * @brief getCopy
+     * @return
+     */
+    virtual ExecutionNode* getCopy() const;
 private:
     ScalarResult* m_scalarResult;
     Validator* m_validator;

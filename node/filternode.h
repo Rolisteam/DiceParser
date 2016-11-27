@@ -28,6 +28,7 @@ public:
      */
     virtual qint64 getPriority() const;
 
+    virtual ExecutionNode* getCopy() const;
 private:
     DiceResult* m_diceResult;
     Validator* m_validator;

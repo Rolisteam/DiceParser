@@ -41,6 +41,11 @@ public:
     QString toString();
 
     virtual quint64 getValidRangeSize(quint64 faces) const;
+    /**
+     * @brief getCopy
+     * @return
+     */
+    virtual Validator* getCopy() const;
 
 private:
     LogicOperator m_operator;

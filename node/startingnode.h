@@ -47,6 +47,11 @@ public:
      * @return
      */
     virtual qint64 getPriority() const;
+    /**
+     * @brief getCopy
+     * @return
+     */
+    virtual ExecutionNode *getCopy() const;
 };
 
 #endif // STARTINGNODE_H

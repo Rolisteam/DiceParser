@@ -54,3 +54,13 @@ qint64 StartingNode::getPriority() const
     }
     return priority;
 }
+ExecutionNode* StartingNode::getCopy() const
+{
+    StartingNode* node = new StartingNode();
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+
+}

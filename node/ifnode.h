@@ -31,13 +31,44 @@
 class IfNode : public ExecutionNode
 {
 public:
+    /**
+     * @brief The ConditionType enum
+     */
+    enum ConditionType {OnEach,OneOfThem,AllOfThem};
+    /**
+     * @brief IfNode
+     */
     IfNode();
+    /**
+     * @brief ~IfNode
+     */
     virtual ~IfNode();
+    /**
+     * @brief run
+     * @param previous
+     */
     virtual void run(ExecutionNode* previous = NULL);
+    /**
+     * @brief setValidator
+     */
     virtual void setValidator(Validator* );
+    /**
+     * @brief setInstructionTrue
+     */
     virtual void setInstructionTrue(ExecutionNode*);
+    /**
+     * @brief setInstructionFalse
+     */
     virtual void setInstructionFalse(ExecutionNode*);
+    /**
+     * @brief toString
+     * @return
+     */
     virtual QString toString(bool )const;
+    /**
+     * @brief getPriority
+     * @return
+     */
     virtual qint64 getPriority() const;
 
 
@@ -46,12 +77,29 @@ public:
      */
     virtual void generateDotTree(QString&);
 
+    /**
+     * @brief getCopy
+     * @return
+     */
+    virtual ExecutionNode *getCopy() const;
+    /**
+     * @brief getConditionType
+     * @return
+     */
+    ConditionType getConditionType() const;
+
+    /**
+     * @brief setConditionType
+     * @param conditionType
+     */
+    void setConditionType(const IfNode::ConditionType &conditionType);
 
 protected:
     ExecutionNode *getLeafNode(ExecutionNode *node);
 
 protected:
     Validator* m_validator;
+    ConditionType m_conditionType;
 
     ExecutionNode* m_true;
     ExecutionNode* m_false;

@@ -143,3 +143,17 @@ void ListSetRollNode::getValueFromDie(Die* die,QStringList& rollResult)
         }
     }
 }
+ExecutionNode* ListSetRollNode::getCopy() const
+{
+    ListSetRollNode* node = new ListSetRollNode();
+    QList<Range> dataList = m_rangeList;
+    node->setRangeList(dataList);
+    node->setUnique(m_unique);
+    node->setListValue(m_values);
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+
+}

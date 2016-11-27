@@ -36,6 +36,7 @@ public:
     virtual void setDiceKeepNumber(quint64 );
 	virtual QString toString(bool)const;
     virtual qint64 getPriority() const;
+    virtual ExecutionNode *getCopy() const;
 private:
     quint64 m_numberOfDice;
     DiceResult* m_diceResult;

@@ -55,7 +55,11 @@ public:
      * @return
      */
     virtual qint64 getPriority() const;
-
+    /**
+     * @brief getCopy
+     * @return
+     */
+    virtual ExecutionNode *getCopy() const;
 private:
     bool m_ascending;
     DiceResult* m_diceResult;

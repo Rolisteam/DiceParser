@@ -36,6 +36,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
                 die->setFaces(m_faces);
                 die->setBase(m_offset);
                 die->roll();
+                //qDebug() << die->getValue() << "value";
 				m_diceResult->insertResult(die);
             }
             if(NULL!=m_nextNode)
@@ -71,4 +72,13 @@ qint64 DiceRollerNode::getPriority() const
 
 
     return priority;
+}
+ExecutionNode* DiceRollerNode::getCopy() const
+{
+    DiceRollerNode* node = new DiceRollerNode(m_faces,m_offset);
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
 }

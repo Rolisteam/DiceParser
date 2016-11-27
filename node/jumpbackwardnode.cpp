@@ -158,6 +158,15 @@ void JumpBackwardNode::run(ExecutionNode* previous)
                 }
             }
         }
+}
 
+ExecutionNode* JumpBackwardNode::getCopy() const
+{
+    JumpBackwardNode* node = new JumpBackwardNode();
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
 
 }

@@ -56,6 +56,11 @@ public:
      * @param path
      */
     void setHelpPath(QString path);
+    /**
+     * @brief getCopy
+     * @return
+     */
+    virtual ExecutionNode* getCopy() const;
 private:
     QString m_path;
 

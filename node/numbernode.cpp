@@ -66,3 +66,14 @@ qint64 NumberNode::getPriority() const
 
     return priority;
 }
+ExecutionNode* NumberNode::getCopy() const
+{
+    NumberNode* node = new NumberNode();
+    node->setNumber(m_number);
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+
+}

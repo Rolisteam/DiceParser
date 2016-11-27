@@ -47,6 +47,7 @@ public:
     void setEmptyRange(bool);
     bool isEmptyRange();
 
+    virtual Validator* getCopy() const;
 private:
     qint64 m_start;
     qint64 m_end;

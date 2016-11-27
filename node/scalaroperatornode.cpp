@@ -221,17 +221,28 @@ QMap<ExecutionNode::DICE_ERROR_CODE,QString> ScalarOperatorNode::getExecutionErr
 {
     if(NULL!=m_internalNode)
     {
-        foreach (ExecutionNode::DICE_ERROR_CODE key, m_internalNode->getExecutionErrorMap().keys())
+        for (ExecutionNode::DICE_ERROR_CODE key: m_internalNode->getExecutionErrorMap().keys())
         {
             m_errors.insert(key,m_internalNode->getExecutionErrorMap().value(key));
         }
     }
     if(NULL!=m_nextNode)
     {
-        foreach (ExecutionNode::DICE_ERROR_CODE key, m_nextNode->getExecutionErrorMap().keys())
+        for (ExecutionNode::DICE_ERROR_CODE key: m_nextNode->getExecutionErrorMap().keys())
         {
             m_errors.insert(key,m_nextNode->getExecutionErrorMap().value(key));
         }
     }
     return m_errors;
+}
+ExecutionNode* ScalarOperatorNode::getCopy() const
+{
+    ScalarOperatorNode* node = new ScalarOperatorNode();
+    node->setInternalNode(m_internalNode->getCopy());
+    node->setArithmeticOperator(m_arithmeticOperator);
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
 }

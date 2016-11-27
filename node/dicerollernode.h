@@ -40,6 +40,9 @@ public:
 	  * @return priority for dice roll: 4 (higher)
 	  */
      virtual qint64 getPriority() const;
+
+    virtual ExecutionNode* getCopy() const;
+
 //private members
 private:
     quint64 m_diceCount;

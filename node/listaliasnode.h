@@ -54,6 +54,8 @@ public:
 	 */
 	virtual qint64 getPriority() const;
 
+    virtual ExecutionNode *getCopy() const;
+
 private:
     QList<DiceAlias*>* m_aliasList;
 };

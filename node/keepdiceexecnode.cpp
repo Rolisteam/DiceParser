@@ -48,7 +48,7 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
             m_errors.insert(TOO_MANY_DICE,QObject::tr(" You ask to keep %1 dice but the result only has %2").arg(m_numberOfDice).arg(diceList.size()));
         }
 
-        foreach(Die* tmp,diceList.mid(m_numberOfDice,-1))
+        for(Die* tmp : diceList.mid(m_numberOfDice,-1))
         {
             tmp->setHighlighted(false);
         }
@@ -85,4 +85,16 @@ qint64 KeepDiceExecNode::getPriority() const
 
 
     return priority;
+}
+
+ExecutionNode* KeepDiceExecNode::getCopy() const
+{
+    KeepDiceExecNode* node = new KeepDiceExecNode();
+    node->setDiceKeepNumber(m_numberOfDice);
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+
 }

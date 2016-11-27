@@ -49,7 +49,16 @@ public:
 	 * @return
 	 */
     virtual qint64 getPriority() const;
+    /**
+     * @brief generateDotTree
+     * @param s
+     */
     virtual void generateDotTree(QString &s);
+    /**
+     * @brief getCopy
+     * @return
+     */
+    virtual ExecutionNode *getCopy() const;
 private:
     DiceResult* m_diceResult;
     ExecutionNode* m_backwardNode;

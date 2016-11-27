@@ -100,3 +100,17 @@ bool Range::isEmptyRange()
 {
     return m_emptyRange;
 }
+Validator* Range::getCopy() const
+{
+    Range* val =  new Range();
+    val->setEmptyRange(m_emptyRange);
+    if(m_hasEnd)
+    {
+        val->setEnd(m_end);
+    }
+    if(m_hasStart)
+    {
+        val->setStart(m_start);
+    }
+    return  val;
+}

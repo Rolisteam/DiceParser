@@ -128,3 +128,13 @@ quint64 BooleanCondition::getValidRangeSize(quint64 faces) const
         return faces-1;
     }
 }
+Validator* BooleanCondition::getCopy() const
+{
+    BooleanCondition* val = new BooleanCondition();
+    val->setOperator(m_operator);
+    val->setValue(m_value);
+
+
+    return val;
+
+}

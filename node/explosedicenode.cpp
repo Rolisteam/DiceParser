@@ -66,3 +66,17 @@ qint64 ExploseDiceNode::getPriority() const
 
     return priority;
 }
+
+ExecutionNode* ExploseDiceNode::getCopy() const
+{
+    ExploseDiceNode* node = new ExploseDiceNode();
+    if(NULL!=m_validator)
+    {
+        node->setValidator(m_validator->getCopy());
+    }
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+}

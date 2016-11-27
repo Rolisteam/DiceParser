@@ -42,7 +42,7 @@ public:
     BooleanCondition* getBoolean() const;
     void setBoolean(BooleanCondition *boolean);
 
-
+    virtual Validator* getCopy() const;
 private:
     ConditionOperator m_operator;
     BooleanCondition* m_boolean;

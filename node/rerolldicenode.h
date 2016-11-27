@@ -52,6 +52,12 @@ public:
 	 */
     virtual qint64 getPriority() const;
 
+    /**
+     * @brief getCopy
+     * @return
+     */
+    virtual ExecutionNode* getCopy() const;
+
 private:
     DiceResult* m_myDiceResult;
     bool m_adding;

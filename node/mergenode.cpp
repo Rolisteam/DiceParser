@@ -41,7 +41,7 @@ void MergeNode::run(ExecutionNode* previous)
             {
                 ///@todo improve here to set homogeneous while is really
                 m_diceResult->setHomogeneous(false);
-                foreach(Die* die, dice->getResultList())
+                for(Die* die : dice->getResultList())
                 {
                     if(!m_diceResult->getResultList().contains(die))
                     {
@@ -62,7 +62,7 @@ QString MergeNode::toString(bool withLabel) const
 {
     if(withLabel)
     {
-        return QString("%1 [label=\"Merge Node %2\"]").arg(m_id).arg(m_number);
+        return QString("%1 [label=\"Merge Node\"]").arg(m_id);
     }
     else
     {
@@ -77,4 +77,14 @@ qint64 MergeNode::getPriority() const
         priority = m_nextNode->getPriority();
     }
     return priority;
+}
+ExecutionNode* MergeNode::getCopy() const
+{
+    MergeNode* node = new MergeNode();
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+
 }

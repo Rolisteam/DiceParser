@@ -45,7 +45,6 @@ void SortResultNode::run(ExecutionNode* node)
         QList<Die*> diceList=previousDiceResult->getResultList();
         QList<Die*> diceList2=m_diceResult->getResultList();
 
-
         // half-interval search sorting
         for(int i = 0; i<diceList.size();++i)
         {
@@ -127,4 +126,15 @@ qint64 SortResultNode::getPriority() const
 
 
     return priority;
+}
+ExecutionNode* SortResultNode::getCopy() const
+{
+    SortResultNode* node = new SortResultNode();
+    node->setSortAscending(m_ascending);
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+
 }

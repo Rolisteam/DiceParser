@@ -44,7 +44,7 @@ public:
     void setListValue(QStringList);
     void setUnique(bool );
     void setRangeList(QList<Range>&);
-
+    virtual ExecutionNode *getCopy() const;
 
 private:
     void getValueFromDie(Die* die,QStringList& rollResult);

@@ -35,8 +35,8 @@ public:
     void run(ExecutionNode* previous);
     virtual QString toString(bool withLabel)const;
     virtual qint64 getPriority() const;
+    virtual ExecutionNode *getCopy() const;
 private:
-    qint64 m_number;
     DiceResult* m_diceResult;
 };
 

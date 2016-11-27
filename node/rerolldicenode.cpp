@@ -73,3 +73,14 @@ qint64 RerollDiceNode::getPriority() const
 
     return priority;
 }
+ExecutionNode* RerollDiceNode::getCopy() const
+{
+    RerollDiceNode* node = new RerollDiceNode();
+    node->setValidator(m_validator);
+    node->setAddingMode(m_adding);
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+}

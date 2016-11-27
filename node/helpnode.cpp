@@ -68,3 +68,13 @@ void HelpNode::setHelpPath(QString path)
 {
     m_path = path;
 }
+
+ExecutionNode* HelpNode::getCopy() const
+{
+    HelpNode* node = new HelpNode();
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+}

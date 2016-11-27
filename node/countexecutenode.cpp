@@ -35,7 +35,10 @@ void CountExecuteNode::run(ExecutionNode *previous)
 		qint64 sum = 0;
 		foreach(Die* dice,diceList)
 		{
-			sum+=m_validator->hasValid(dice,true,true);
+            if(NULL!=m_validator)
+            {
+                sum+=m_validator->hasValid(dice,true,true);
+            }
 		}
 		m_scalarResult->setValue(sum);
 
@@ -66,5 +69,20 @@ qint64 CountExecuteNode::getPriority() const
 	}
 
 
-	return priority;
+    return priority;
+}
+
+ExecutionNode* CountExecuteNode::getCopy() const
+{
+    CountExecuteNode* node = new CountExecuteNode();
+    if(NULL!=m_validator)
+    {
+        node->setValidator(m_validator->getCopy());
+    }
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+
 }

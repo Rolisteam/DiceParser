@@ -15,7 +15,11 @@ public:
     void setString(QString str);
     virtual QString toString(bool withLabel)const;
     virtual qint64 getPriority() const;
-
+    /**
+     * @brief getCopy
+     * @return
+     */
+    virtual ExecutionNode *getCopy() const;
 private:
     QString m_data;
     StringResult* m_stringResult;

@@ -37,6 +37,8 @@ class CompositeValidator : public Validator
 public:
 	enum LogicOperation { OR, EXCLUSIVE_OR , AND};
 	CompositeValidator();
+    virtual ~CompositeValidator();
+
 
 	virtual qint64 hasValid(Die* b,bool recursive, bool unhighlight = false) const;
 
@@ -47,6 +49,7 @@ public:
 
     virtual quint64 getValidRangeSize(quint64 faces) const;
 
+    virtual Validator* getCopy() const;
 private:
     QVector<LogicOperation>* m_operators;
     QList<Validator*>* m_validatorList;

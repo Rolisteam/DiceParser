@@ -24,6 +24,7 @@
 #include "parsingtoolbox.h"
 #include "node/sortresult.h"
 
+
 QHash<QString,QString>*  ParsingToolBox::m_variableHash = NULL;
 
 ParsingToolBox::ParsingToolBox()
@@ -199,6 +200,22 @@ Validator* ParsingToolBox::readValidator(QString& str)
     }
     return returnVal;
 }
+IfNode::ConditionType ParsingToolBox::readConditionType(QString& str)
+{
+    IfNode::ConditionType type = IfNode::OnEach;
+    if(str.startsWith('.'))
+    {
+        str=str.remove(0,1);
+        type = IfNode::OneOfThem;
+    }
+    else if(str.startsWith('*'))
+    {
+        str=str.remove(0,1);
+        type = IfNode::AllOfThem;
+    }
+    return type;
+}
+
 Validator* ParsingToolBox::readCompositeValidator(QString& str)
 {
     bool expectSquareBrasket=false;

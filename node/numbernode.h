@@ -36,6 +36,7 @@ public:
     void setNumber(qint64);
     virtual QString toString(bool withLabel)const;
     virtual qint64 getPriority() const;
+    virtual ExecutionNode *getCopy() const;
 private:
     qint64 m_number;
     ScalarResult* m_scalarResult;

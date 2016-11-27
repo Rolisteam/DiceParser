@@ -19,6 +19,7 @@ public:
 	virtual QString toString(bool )const;
     virtual qint64 getPriority() const;
 
+    virtual ExecutionNode *getCopy() const;
 protected:
     DiceResult* m_diceResult;
     Validator* m_validator;

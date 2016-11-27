@@ -69,6 +69,13 @@ public:
      * @return
      */
     virtual QString getHelp();
+
+    /**
+     * @brief getCopy
+     * @return should return a copy of that node.
+     */
+    virtual ExecutionNode* getCopy() const  = 0;
+
 protected:
 	/**
 	 * @brief m_nextNode

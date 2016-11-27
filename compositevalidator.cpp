@@ -26,6 +26,15 @@ CompositeValidator::CompositeValidator()
     : m_operators(NULL),m_validatorList(NULL)
 {
 }
+
+CompositeValidator::~CompositeValidator()
+{
+    qDeleteAll(*m_validatorList);
+    if(NULL!=m_operators)
+    {
+        delete m_operators;
+    }
+}
 qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) const
 {
 
@@ -87,7 +96,7 @@ quint64 CompositeValidator::getValidRangeSize(quint64 faces) const
 {
     quint64 sum =0;
     int i = -1;
-    foreach(Validator* tmp,*m_validatorList)
+    for(Validator* tmp :*m_validatorList)
     {
         quint64 rel = tmp->getValidRangeSize(faces);
         LogicOperation opt;
@@ -116,4 +125,20 @@ void CompositeValidator::setOperationList(QVector<LogicOperation>* m)
 void CompositeValidator::setValidatorList(QList<Validator*>* m)
 {
     m_validatorList = m;
+}
+Validator* CompositeValidator::getCopy() const
+{
+    QVector<LogicOperation>* vector = new QVector<LogicOperation>();
+    *vector = *m_operators;
+
+    QList<Validator*>* list= new QList<Validator*>();
+    for(auto val : *m_validatorList)
+    {
+        list->append(val->getCopy());
+    }
+
+    CompositeValidator* val = new CompositeValidator();
+    val->setOperationList(vector);
+    val->setValidatorList(list);
+    return val;
 }

@@ -21,7 +21,7 @@
 #include "result/diceresult.h"
 
 IfNode::IfNode()
-    : m_validator(NULL),m_true(NULL),m_false(NULL)
+    : m_validator(NULL),m_true(NULL),m_false(NULL),m_conditionType(AllOfThem)
 {
     //m_result = new DiceResult();
 }
@@ -40,31 +40,89 @@ void IfNode::run(ExecutionNode *previous)
     }
     ExecutionNode* previousLoop = previous;
     ExecutionNode* nextNode = NULL;
+    bool runNext = (NULL==m_nextNode) ? false : true;
     Result* previousResult = previous->getResult();
     m_result = previousResult;
-    DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previousResult);
 
-    if(NULL!=previousDiceResult)
+    if(NULL!=m_result)
     {
         qreal value = previousResult->getResult(Result::SCALAR).toReal();
 
-        QList<Die*> diceList=previousDiceResult->getResultList();
-
-
         if(NULL!=m_validator)
         {
-            if(!diceList.isEmpty())
+            DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previousResult);
+            if(NULL!=previousDiceResult)
             {
-                foreach(Die* dice,diceList)
+                QList<Die*> diceList=previousDiceResult->getResultList();
+                if(m_conditionType == OnEach)
                 {
-                    if(m_validator->hasValid(dice,true,true))
+                    for(Die* dice : diceList)
                     {
-                            nextNode=m_true;
+                        if(m_validator->hasValid(dice,true,true))
+                        {
+                            nextNode = (NULL==m_true) ? NULL: m_true->getCopy();
+                        }
+                        else
+                        {
+                            nextNode = (NULL==m_false) ? NULL: m_false->getCopy();
+                        }
+                        if(NULL!=nextNode)
+                        {
+                            if(NULL==previousLoop->getNextNode())
+                            {
+                                previousLoop->setNextNode(nextNode);
+                            }
+                            if(NULL==m_nextNode)
+                            {
+                                m_nextNode = nextNode;
+                            }
+                            nextNode->run(previousLoop);
+                            previousLoop = getLeafNode(nextNode);
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    bool trueForAll=true;
+                    bool falseForAll=true;
+
+                    bool oneIsTrue=false;
+                    bool oneIsFalse=false;
+
+                    for(Die* dice : diceList)
                     {
-                            nextNode=m_false;
+                        bool result = m_validator->hasValid(dice,true,true);
+                        qDebug() << result << m_conditionType;
+                        trueForAll = trueForAll ? result : false;
+                        falseForAll = falseForAll ? result : false;
+
+                        oneIsTrue = (oneIsTrue==false) ? result : true;
+                        oneIsFalse = (oneIsFalse==false) ? result : true;
                     }
+                    if(m_conditionType==OneOfThem)
+                    {
+                        if(oneIsTrue)
+                        {
+                            nextNode = (NULL==m_true) ? NULL: m_true->getCopy();
+                        }
+                        else if(oneIsFalse)
+                        {
+                             nextNode = (NULL==m_false) ? NULL: m_false->getCopy();
+                        }
+                    }
+                    else if(m_conditionType==AllOfThem)
+                    {
+                        if(trueForAll)
+                        {
+                            nextNode = (NULL==m_true) ? NULL: m_true->getCopy();
+                        }
+                        else if(falseForAll)
+                        {
+                             nextNode = (NULL==m_false) ? NULL: m_false->getCopy();
+                        }
+                    }
+
+
                     if(NULL!=nextNode)
                     {
                         if(NULL==m_nextNode)
@@ -81,12 +139,28 @@ void IfNode::run(ExecutionNode *previous)
                 Die* dice = new Die();
                 dice->setValue(value);
                 dice->setFaces(value);
-                m_validator->hasValid(dice,true,true);
+                if(m_validator->hasValid(dice,true,true))
+                {
+                        nextNode=m_true;
+                }
+                else
+                {
+                        nextNode=m_false;
+                }
+                if(NULL!=nextNode)
+                {
+                    if(NULL==m_nextNode)
+                    {
+                        m_nextNode = nextNode;
+                    }
+                    nextNode->run(previousLoop);
+                    previousLoop = getLeafNode(nextNode);
+                }
             }
         }
     }
 
-    if(NULL!=m_nextNode)
+    if((NULL!=m_nextNode)&&(runNext))
     {
         m_nextNode->run(previousLoop);
     }
@@ -179,4 +253,37 @@ ExecutionNode* IfNode::getLeafNode(ExecutionNode* node)
         next = next->getNextNode();
     }
     return next;
+}
+
+IfNode::ConditionType IfNode::getConditionType() const
+{
+    return m_conditionType;
+}
+
+void IfNode::setConditionType(const IfNode::ConditionType &conditionType)
+{
+    qDebug() << "set condisition type" << conditionType;
+    m_conditionType = conditionType;
+}
+ExecutionNode* IfNode::getCopy() const
+{
+    IfNode* node = new IfNode();
+    if(NULL!=m_validator)
+    {
+        node->setValidator(m_validator->getCopy());
+    }
+    if(NULL!=m_false)
+    {
+        node->setInstructionFalse(m_false->getCopy());
+    }
+    if(NULL!=m_true)
+    {
+        node->setInstructionTrue(m_true->getCopy());
+    }
+    if(NULL!=m_nextNode)
+    {
+        node->setNextNode(m_nextNode->getCopy());
+    }
+    return node;
+
 }

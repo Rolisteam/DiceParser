@@ -32,6 +32,8 @@
 #include "range.h"
 #include "node/scalaroperatornode.h"
 #include "node/paintnode.h"
+#include "node/ifnode.h"
+
 /**
  * @brief The ParsingToolBox is gathering many useful methods for dice parsing.
  * Its goal is to make the diceparser a bit lighter.
@@ -170,7 +172,12 @@ public:
 
     static QHash<QString, QString> *getVariableHash();
     static void setVariableHash(QHash<QString, QString> *variableHash);
-
+    /**
+     * @brief readConditionType
+     * @param str
+     * @return
+     */
+    static IfNode::ConditionType readConditionType(QString &str);
 private:
 
     QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
