@@ -15,7 +15,7 @@ make install
 
 ## Irc and Chat
 
-Please, remember it is important to preffix all you command by `!`. This will allow the system to identify your command. To clarify the documentation, the `!` is not repeated before all commands.
+Please, remember it is important to prefix all you command by `!`. This will allow the system to identify your command. To clarify the documentation, the `!` is not repeated before all commands.
 
 ## How to roll a die 
 
@@ -55,6 +55,7 @@ Thanks of several operations and options, you can tune a bit your rolling comman
 * @ : Backward Jump
 * p : Paint dice
 * m : Merge
+* i : if
 
 ### Keep
 
@@ -125,7 +126,7 @@ Rolling 3 dice, values ars between -20 and -9.
 ### Backward Jump
 
 This operator is dedicated to apply its next operator to the second to last result.
-For example:  
+For example: 
 
 > 8D10c[>=7]+@c[=10]
 
@@ -150,11 +151,59 @@ The cli application supports few colors.
 
 # Merge
 
-Merge operator is used for gethering several dice rolls from different die type into one dice result and then you may apply any kind of operator.
+Merge operator is used for gathering several dice rolls from different die type into one dice result and then you may apply any kind of operator.
 
 > 1d6;1d8mk1
 
 This command merges together the result from the d6 and the d8. Then, it applied the k operator on both result to keep the best.
+
+# if
+
+If operator means to allow you to do one thing if some conditions are true.
+The if operator has 2 mandatory parameters:
+* The condition (see validator)
+* the instruction to do when it is true.
+
+There is also 2 optional parameters
+* the compare method
+* the instruction to do when it is false.
+
+> i*[]{}{}
+
+\* : the compare method
+[] : the validator
+{} : the true instruction
+{} : the false instruction
+
+## Compare method
+
+There are 3 different methods.
+* On Each : the condition is tested on each die from the previous part of the command. \[Default method\]
+* All Of Them : All dice must fit the condition to trigger the true instruction. If all dice do not fit the condition the false instruction is run.
+* One Of Them : at least one die must fit the condition to trigger the true instruction. If no dices fit the condition the false instruction is run.
+
+To switch the operator to act in '''All Of Them''' method you must add '*' character as compare method position.
+To switch the operator to act in '''One Of Them''' method you must add '.' character as compare method position.
+
+
+## example:
+
+>  1d6i[<4]{3}
+
+If the value of the die is less than 4, the die value is 3. (So 1, 2 , 3 become 3).
+
+>  4d6e6i[=4]{-4}
+
+If die has 4 as value, it remove it. \[Kuro System\]
+
+> 4d6i.[=6]{+1d6}
+
+if at least one die is equal to 6, then roll another d6 and add it to the result.
+
+> 4d6i*[=6]{+1d6}
+
+if all dice are equal to 6, then roll another d6 and add it to the result.
+
 
 ## Arithmetic
 
