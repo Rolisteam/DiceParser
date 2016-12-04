@@ -1,0 +1,3 @@
+[submodule "webserver/qhttp"]
+	path = webserver/qhttp
+	url = https://github.com/azadkuh/qhttp.git
