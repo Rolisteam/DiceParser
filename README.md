@@ -3,26 +3,37 @@
 
 # DiceParser
 
-
-
 Rolisteam Dice Parser
 
 ## Grammar
 The grammar is something like this:
 
+```
 Command =: Expression
-
-Expression =: number | number Dice | ScalarOperator Expression
-
-Dice =: DiceOperator Number(faces)
-
-DiceOperator =: D
-
+Expression =: number | number Dice DiceOperation | ScalarOperator Expression | string
+Dice =: DiceOperator Number(faces) | DiceOperator ListOfValues
+DiceOperator =: D | L
+DiceOperation =: Keep | KeepAndExplose | sort | if | explose | jumpbackward | merge | filter | parenthese | count
 ScalarOperator =: [x,-,*,x,/]
-
 number =: [0-9]+
-
-Validator =: number | [operator number] | [ number - number ]
+Validator =: BooleanValidator | RangeValidator | CompositeValidator
+CompositeValidator =: Validator LogicOpetator Validator
+LogicOpetator =: = | > | => | < | =<
+RangeValidator =: [ number - number ]
+BooleanValidator =: number | [operator number] |
+ListOfValue=: String[Range],ListOfValue | String[Range]
+String =: [A-z0-9]+
+Keep =: k Number
+KeepAndExplose =: K number
+sort =: s
+if =: i compareMethod [Validator] {Expression}
+explose =: e Validator
+jumpbackward =: @DiceOperation
+merge =: m | m Expression
+filter =: f Validator
+parenthese =: (expression)
+count =: c Validator
+```
 
 
 ## Example:
