@@ -40,6 +40,11 @@ public:
      */
     Result();
     /**
+     * @brief ~Result
+     */
+    virtual ~Result();
+
+    /**
      * @brief isScalar
      * @return
      */

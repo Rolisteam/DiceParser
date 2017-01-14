@@ -26,6 +26,10 @@ Result::Result()
     : m_resultTypes(NONE),m_id(QString("\"%1\"").arg(QUuid::createUuid().toString())),m_previous(NULL)
 {
 }
+Result::~Result()
+{
+
+}
 
 Result* Result::getPrevious()
 {
