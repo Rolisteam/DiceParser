@@ -268,7 +268,7 @@ int main(int argc, char *argv[])
     if(!cmd.isEmpty())
     {
         startDiceParsing(cmd,dotFileStr,colorb);
-        if(cmd=="help")
+        if(optionParser.isSet(help))
         {
             usage();
         }

@@ -9,6 +9,8 @@
 DiceServer::DiceServer(int port)
     : QObject(),m_diceParser(new DiceParser())
 {
+
+    m_diceParser->setPathToHelp("<span><a href=\"https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md\">Documentation</a>");
    // using namespace ;
     m_server = new qhttp::server::QHttpServer(this);
     m_server->listen( // listening on 0.0.0.0:8080
@@ -36,15 +38,21 @@ DiceServer::DiceServer(int port)
                 {
                     qDebug() << QUrl::fromPercentEncoding(m_hashArgs["cmd"].toLocal8Bit());
                     QString result = startDiceParsing(QUrl::fromPercentEncoding(m_hashArgs["cmd"].toLocal8Bit()));
+                    qDebug() << result;
 
                     res->setStatusCode(qhttp::ESTATUS_OK);
+                    res->addHeader("Access-Control-Allow-Origin", "*");
+                    res->addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+                    res->addHeader("Access-Control-Allow-Headers", "x-requested-with");
+
+
                     QString html("<!doctype html>\n"
                              "<html>\n"
                              "<head>\n"
-                             "</head>\n"
                              "  <meta charset=\"utf-8\">\n"
                              "  <title>Rolisteam Dice System Webservice</title>\n"
                              "  <style>.dice {color:#FF0000;font-weight: bold;}</style>"
+                             "</head>\n"
                              "<body>\n"
                              "%1\n"
                              "</body>\n"

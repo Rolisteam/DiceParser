@@ -682,7 +682,10 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
 		if(str== QLatin1String("help"))
 		{
             HelpNode* help = new HelpNode();
-            help->setHelpPath(m_helpPath);
+            if(!m_helpPath.isEmpty())
+            {
+                help->setHelpPath(m_helpPath);
+            }
             node = help;
 
 		}

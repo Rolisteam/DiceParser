@@ -334,7 +334,6 @@ bool ParsingToolBox::readString(QString &str, QString& strResult)
     if(str.startsWith('"'))
     {
         str=str.remove(0,1);
-    }
 
     int i=0;
     int j=0;
@@ -373,6 +372,8 @@ bool ParsingToolBox::readString(QString &str, QString& strResult)
             return true;
         }
     }
+    }
+
     return false;
 }
 
