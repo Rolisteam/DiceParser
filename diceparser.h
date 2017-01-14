@@ -207,8 +207,18 @@ public:
      * @return
      */
     QStringList getAllDiceResult(bool& hasAlias);
-
+    /**
+    * @brief hasSeparator allows to know if the current command has separator.
+    * @return true when the command has separator, false otherwise. 
+    */
     bool hasSeparator()const;
+    /**
+    * @brief readIfInstruction reads the current command to build if node with proper parameters. 
+    * @param str is the command string, if IF istruction is found, the str will be changed, in other case the string is unmodified
+    * @param trueNode is the branch's beginning to be executed if the IfNode is true. 
+    * @param falseNode is the branch's beginning to be executed if the IfNode is false. 
+    * @return true, ifNode has been found, false otherwise
+    */
     bool readIfInstruction(QString &str, ExecutionNode* &trueNode, ExecutionNode* &falseNode);
     /**
      * @brief setVariableDictionary
