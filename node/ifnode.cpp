@@ -92,7 +92,6 @@ void IfNode::run(ExecutionNode *previous)
                     for(Die* dice : diceList)
                     {
                         bool result = m_validator->hasValid(dice,true,true);
-                        qDebug() << result << m_conditionType;
                         trueForAll = trueForAll ? result : false;
                         falseForAll = falseForAll ? result : false;
 
