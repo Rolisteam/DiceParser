@@ -59,7 +59,7 @@ public:
     virtual ExecutionNode* getCopy() const;
 
 private:
-    DiceResult* m_myDiceResult;
+    DiceResult* m_diceResult;
     bool m_adding;
     Validator* m_validator;
 };
