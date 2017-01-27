@@ -59,6 +59,8 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
         if(NULL!=previousResult)
         {
             ExecutionNode* internal = m_internalNode;
+            if(NULL != internal)
+            {
              while(NULL != internal->getNextNode() )
              {
                     internal = internal->getNextNode();
@@ -89,6 +91,7 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
                 default:
                     break;
 
+            }
             }
 
             if(NULL!=m_nextNode)
@@ -195,7 +198,7 @@ void ScalarOperatorNode::generateDotTree(QString& s)
 		s.append(toString(false));
         s.append(" -> ");
 		s.append(m_nextNode->toString(false));
-		s.append(";\n");
+        s.append("[label=\"nextNode\"];\n");
         m_nextNode->generateDotTree(s);
     }
     else
