@@ -74,7 +74,9 @@ bool Die::isSelected() const
 qint64 Die::getValue() const
 {
     if(m_hasValue)
+    {
         return m_value;
+    }
     else
     {
         qint64 value=0;
