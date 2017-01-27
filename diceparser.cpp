@@ -753,11 +753,27 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
 				delete node;
                 return false;
             }
-            if(node->getPriority()>=nodeExec->getPriority())
+            ExecutionNode* nodeExecOrChild = nodeExec;
+            ExecutionNode* parent = NULL;
+
+            while((nullptr!=nodeExecOrChild) && (node->getPriority()<nodeExecOrChild->getPriority()))
             {
-                node->setNextNode(nodeExec->getNextNode());
-                nodeExec->setNextNode(NULL);
+                parent = nodeExecOrChild;
+                nodeExecOrChild = nodeExecOrChild->getNextNode();
             }
+
+            if((nullptr != nodeExecOrChild)&&(nodeExec != nodeExecOrChild))
+            {
+                node->setNextNode(nodeExecOrChild);
+                parent->setNextNode(NULL);
+            }
+            else
+            {
+                node->setNextNode(nodeExecOrChild->getNextNode());
+                nodeExecOrChild->setNextNode(NULL);
+            }
+
+
             previous->setNextNode(node);
 
             return true;
