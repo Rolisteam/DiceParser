@@ -21,7 +21,6 @@
 ***************************************************************************/
 #include "compositevalidator.h"
 
-
 CompositeValidator::CompositeValidator()
     : m_operators(NULL),m_validatorList(NULL)
 {
@@ -38,59 +37,70 @@ CompositeValidator::~CompositeValidator()
 qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) const
 {
 
-	int i = 0;
-	qint64 sum = 0;
+    int i = 0;
+    qint64 sum = 0;
+    bool highLight = false;
     foreach(const Validator* validator, *m_validatorList)
-	{
-		qint64 val = validator->hasValid(b,recursive,unhighlight);
-		if(i==0)
-		{
-			sum = val;
-		}
-		else
-		{
+    {
+        qint64 val = validator->hasValid(b,recursive,unhighlight);
+        if(i==0)
+        {
+            sum = val;
+            if(b->isHighlighted())
+            {
+                highLight = b->isHighlighted();
+            }
+        }
+        else
+        {
             switch(m_operators->at(i-1))
-			{
-				case OR:
-					sum |= val;
-				break;
-				case EXCLUSIVE_OR:
-					sum ^= val;/// @todo may required to be done by hand
-				break;
-				case AND:
-					sum &= val;
-				break;
-			}
-		}
-		++i;
-	}
+            {
+            case OR:
+                sum |= val;
+
+                if(highLight)
+                {
+                    b->setHighlighted(highLight);
+                }
+                break;
+            case EXCLUSIVE_OR:
+                sum ^= val;/// @todo may required to be done by hand
+                break;
+            case AND:
+                sum &= val;
+                break;
+            }
+        }
+        ++i;
+
+    }
 
     return sum;
 }
 
 QString CompositeValidator::toString()
 {
-	QString str="";
-	/*switch (m_operator)
-	{
-	case Equal:
-		str.append("=");
-		break;
-	case GreaterThan:
-		str.append(">");
-		break;
-	case LesserThan:
-		str.append("<");
-		break;
-	case GreaterOrEqual:
-		str.append(">=");
-		break;
-	case LesserOrEqual:
-		str.append("<=");
-		break;
-	}
-	return QString("[%1%2]").arg(str).arg(m_value);*/
-	return str;
+    QString str="";
+    /*switch (m_operator)
+    {
+    case Equal:
+        str.append("=");
+        break;
+    case GreaterThan:
+        str.append(">");
+        break;
+    case LesserThan:
+        str.append("<");
+        break;
+    case GreaterOrEqual:
+        str.append(">=");
+        break;
+    case LesserOrEqual:
+        str.append("<=");
+        break;
+    }
+    return QString("[%1%2]").arg(str).arg(m_value);*/
+    return str;
 }
 quint64 CompositeValidator::getValidRangeSize(quint64 faces) const
 {
