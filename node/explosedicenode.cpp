@@ -14,7 +14,15 @@ void ExploseDiceNode::run(ExecutionNode* previous)
         m_result->setPrevious(previous_result);
         if(NULL!=previous_result)
         {
-            QList<Die*> list = previous_result->getResultList();
+            foreach(Die* die,previous_result->getResultList())
+            {
+                Die* tmpdie = new Die();
+                *tmpdie=*die;
+                m_diceResult->insertResult(tmpdie);
+                die->displayed();
+            }
+
+            QList<Die*> list = m_diceResult->getResultList();
 
 
             foreach(Die* die, list)
@@ -24,7 +32,7 @@ void ExploseDiceNode::run(ExecutionNode* previous)
                     die->roll(true);
                 }
             }
-            m_diceResult->setResultList(list);
+           // m_diceResult->setResultList(list);
 
             if(NULL!=m_nextNode)
             {

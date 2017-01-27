@@ -2,9 +2,9 @@
 
 
 RerollDiceNode::RerollDiceNode()
-	: m_myDiceResult(new DiceResult()),m_adding(false),m_validator(NULL)
+    : m_diceResult(new DiceResult()),m_adding(false),m_validator(NULL)
 {
-    m_result=m_myDiceResult;
+    m_result=m_diceResult;
 }
 RerollDiceNode::~RerollDiceNode()
 {
@@ -23,8 +23,16 @@ void RerollDiceNode::run(ExecutionNode* previous)
         m_result->setPrevious(previous_result);
         if(NULL!=previous_result)
         {
-            QList<Die*> list = previous_result->getResultList();
+            foreach(Die* die,previous_result->getResultList())
+            {
+                Die* tmpdie = new Die();
+                *tmpdie=*die;
+                m_diceResult->insertResult(tmpdie);
+                die->displayed();
+            }
+            //m_diceResult->setResultList(list);
 
+            QList<Die*> list = m_diceResult->getResultList();
 
             foreach(Die* die, list)
             {
@@ -33,7 +41,6 @@ void RerollDiceNode::run(ExecutionNode* previous)
                     die->roll(m_adding);
                 }
             }
-            m_myDiceResult->setResultList(list);
 
             if(NULL!=m_nextNode)
             {
