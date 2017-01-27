@@ -767,10 +767,10 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
                 node->setNextNode(nodeExecOrChild);
                 parent->setNextNode(NULL);
             }
-            else
+            else if(node->getPriority()>=nodeExec->getPriority())
             {
-                node->setNextNode(nodeExecOrChild->getNextNode());
-                nodeExecOrChild->setNextNode(NULL);
+                node->setNextNode(nodeExec->getNextNode());
+                nodeExec->setNextNode(NULL);
             }
 
 
