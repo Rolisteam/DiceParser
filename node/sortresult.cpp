@@ -41,14 +41,18 @@ void SortResultNode::run(ExecutionNode* node)
     DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(node->getResult());
     m_diceResult->setPrevious(previousDiceResult);
     if(NULL!=previousDiceResult)
-    {
+    {   
         QList<Die*> diceList=previousDiceResult->getResultList();
         QList<Die*> diceList2=m_diceResult->getResultList();
 
         // half-interval search sorting
         for(int i = 0; i<diceList.size();++i)
         {
-            Die* tmp1 = diceList[i];
+
+            Die* tmp1 = new Die();
+            *tmp1=*diceList[i];
+            diceList[i]->displayed();
+
             int j =0;
             bool found = false;
             int start = 0;
