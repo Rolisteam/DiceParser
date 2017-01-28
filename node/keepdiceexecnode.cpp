@@ -29,7 +29,10 @@ KeepDiceExecNode::KeepDiceExecNode()
 {
     m_result = m_diceResult;
 }
+KeepDiceExecNode::~KeepDiceExecNode()
+{
 
+}
 void KeepDiceExecNode::run(ExecutionNode* previous)
 {
     m_previousNode = previous;
@@ -42,7 +45,20 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
     if(NULL!=previousDiceResult)
     {
         QList<Die*> diceList=previousDiceResult->getResultList();
-        QList<Die*> diceList2 = diceList.mid(0,m_numberOfDice);
+
+        QList<Die*> diceList3= diceList.mid(0,m_numberOfDice);
+        QList<Die*> diceList2;
+
+        foreach(Die* die,diceList3)
+        {
+            Die* tmpdie = new Die();
+            *tmpdie=*die;
+            diceList2.append(tmpdie);
+            die->displayed();
+        }
+
+
+
         if(m_numberOfDice > diceList.size())
         {
             m_errors.insert(TOO_MANY_DICE,QObject::tr(" You ask to keep %1 dice but the result only has %2").arg(m_numberOfDice).arg(diceList.size()));

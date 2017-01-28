@@ -31,6 +31,7 @@ class KeepDiceExecNode : public ExecutionNode
 {
 public:
     KeepDiceExecNode();
+    virtual ~KeepDiceExecNode();
 
     virtual void run(ExecutionNode *previous);
     virtual void setDiceKeepNumber(quint64 );
