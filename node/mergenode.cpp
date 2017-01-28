@@ -45,7 +45,9 @@ void MergeNode::run(ExecutionNode* previous)
                 {
                     if(!m_diceResult->getResultList().contains(die))
                     {
-                        m_diceResult->getResultList().append(die);
+                        Die* tmpdie = new Die();
+                        *tmpdie=*die;
+                        m_diceResult->getResultList().append(tmpdie);
                     }
                 }
             }
