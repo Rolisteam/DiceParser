@@ -360,7 +360,6 @@ bool ParsingToolBox::readString(QString &str, QString& strResult)
         }
         ++i;
     }
-    qDebug() << "previous" << previousEscape << str[i];
 
     if(!result.isEmpty())
     {

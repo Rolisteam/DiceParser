@@ -455,7 +455,7 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
     {
         if(die->isHighlighted())
         {
-            qDebug() << die->getValue() << die->hasBeenDisplayed() << die->isHighlighted() << die->isSelected() << die;
+            //qDebug() << die->getValue() << die->hasBeenDisplayed() << die->isHighlighted() << die->isSelected() << die;
             foreach (qint64 value, die->getListValue())
             {
 
@@ -924,8 +924,6 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(NULL!=validator)
                 {
-                    /// @todo display warning here.
-                    //bool b =
                     m_parsingToolbox->isValidValidator(previous,validator);
 
                     CountExecuteNode* countNode = new CountExecuteNode();
@@ -944,12 +942,9 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
             case Reroll:
             case RerollAndAdd:
             {
-                //Validator* validator = m_parsingToolbox->readValidator(str);
                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(NULL!=validator)
                 {
-                    /// @todo display warning here.
-                    //bool b =
                     m_parsingToolbox->isValidValidator(previous,validator);
                     RerollDiceNode* rerollNode = new RerollDiceNode();
                     if(m_OptionOp->value(tmp)==RerollAndAdd)
@@ -1133,9 +1128,7 @@ bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
         node = strNode;
         return true;
     }
-    ///! @todo Make this operator working
-
-        return false;
+    return false;
 }
 void DiceParser::writeDownDotTree(QString filepath)
 {
