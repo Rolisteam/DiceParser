@@ -185,7 +185,7 @@ bool DiceParser::parseLine(QString str)
     {
       return true;
     }
-    else if(m_errorMap.isEmpty())
+    else if(!m_errorMap.isEmpty())
     {
         m_errorMap.insert(ExecutionNode::NOTHING_UNDERSTOOD,QObject::tr("Nothing was understood"));
     }
