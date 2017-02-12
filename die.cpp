@@ -44,7 +44,7 @@ Die::Die(const Die& die)
     m_selected = die.m_selected;
     m_hasValue = die.m_hasValue;
     m_displayStatus = die.m_displayStatus;
-    m_faces = die.m_faces;
+    m_maxValue = die.m_maxValue;
     m_highlighted = die.m_highlighted;
     m_base = die.m_base;
     m_color = die.getColor();
@@ -103,11 +103,11 @@ void Die::replaceLastValue(qint64 value)
 
 void Die::roll(bool adding)
 {
-    if(m_faces!=0)
+    if(m_maxValue!=0)
     {
         //quint64 value=(qrand()%m_faces)+m_base;
 
-        std::uniform_int_distribution<qint64> dist(m_base,m_faces);
+        std::uniform_int_distribution<qint64> dist(m_base,m_maxValue);
         qint64 value = dist(m_rng);
         if((adding)||(m_rollResult.isEmpty()))
         {
@@ -122,12 +122,12 @@ void Die::roll(bool adding)
 
 quint64 Die::getFaces() const
 {
-    return m_faces;
+    return abs(m_maxValue-m_base)+1;
 }
 
 void Die::setFaces(quint64 face)
 {
-    m_faces=face;
+    //m_maxValue=m_base+face-1;
 }
 qint64 Die::getLastRolledValue()
 {
@@ -167,5 +167,15 @@ QString Die::getColor() const
 void Die::setColor(const QString &color)
 {
     m_color = color;
+}
+
+quint64 Die::getMaxValue() const
+{
+    return m_maxValue;
+}
+
+void Die::setMaxValue(const quint64 &maxValue)
+{
+    m_maxValue = maxValue;
 }
 

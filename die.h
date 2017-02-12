@@ -128,6 +128,9 @@ public:
     QString getColor() const;
     void setColor(const QString &color);
 
+    quint64 getMaxValue() const;
+    void setMaxValue(const quint64 &maxValue);
+
 private:
     qint64 m_value;
     QList<qint64> m_rollResult;
@@ -135,7 +138,7 @@ private:
     bool m_hasValue;
     bool m_displayStatus;
     bool m_highlighted;
-    quint64 m_faces;
+    quint64 m_maxValue;
     qint64 m_base;
     QString m_color;
 
