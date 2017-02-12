@@ -225,6 +225,9 @@ public:
      * @param variables
      */
     void setVariableDictionary(QHash<QString,QString>* variables);
+    QString getComment() const;
+    void setComment(const QString &comment);
+
 private:
 
     /**
@@ -333,6 +336,7 @@ private:
     QString m_helpPath;
     bool m_currentTreeHasSeparator;
     bool readBlocInstruction(QString &str, ExecutionNode *&resultnode);
+    QString m_comment;
 };
 
 #endif // DICEPARSER_H

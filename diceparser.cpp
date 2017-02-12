@@ -195,6 +195,8 @@ bool DiceParser::parseLine(QString str)
 bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
 {
     ExecutionNode* operandNode=NULL;
+    QString result;
+    QString comment;
     if(m_parsingToolbox->readOpenParentheses(str))
     {
         ExecutionNode* internalNode=NULL;
@@ -254,6 +256,11 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         {
             return false;
         }
+    }
+    if(m_parsingToolbox->readComment(str,result,comment))
+    {
+        m_command.remove(comment);
+        m_comment = result;
     }
     return true;
 }
@@ -601,16 +608,16 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
     {
         if(currentOperator==D)
         {
-            qint64 num;
-            qint64 end;
-            if(m_parsingToolbox->readNumber(str,num))
+            qint64 max;
+            qint64 min;
+            if(m_parsingToolbox->readNumber(str,max))
             {
-                if(num<1)
+                if(max<1)
                 {
-                    m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Dice with %1 face(s) does not exist. Please, put a value higher than 0").arg(num));
+                    m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Dice with %1 face(s) does not exist. Please, put a value higher than 0").arg(max));
                     return false;
                 }
-                DiceRollerNode* drNode = new DiceRollerNode(num);
+                DiceRollerNode* drNode = new DiceRollerNode(max);
                 node = drNode;
                 ExecutionNode* current = drNode;
                 while(readOption(str,current))
@@ -619,11 +626,12 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
                 }
                 return true;
             }
-            else if(m_parsingToolbox->readDiceRange(str,num,end))
+            else if(m_parsingToolbox->readDiceRange(str,min,max))
             {
 
-                qint64 face = abs(num - end)+1;
-                DiceRollerNode* drNode = new DiceRollerNode(face,num);
+               // qint64 face = abs(num - end);
+                //qDebug() << face << end;
+                DiceRollerNode* drNode = new DiceRollerNode(max,min);
                 node = drNode;
                 ExecutionNode* current = drNode;
                 while(readOption(str,current))
@@ -1081,6 +1089,16 @@ bool DiceParser::readBlocInstruction(QString& str,ExecutionNode*& resultnode)
        }
     }
     return false;
+}
+
+QString DiceParser::getComment() const
+{
+    return m_comment;
+}
+
+void DiceParser::setComment(const QString &comment)
+{
+    m_comment = comment;
 }
 
 QMap<ExecutionNode::DICE_ERROR_CODE,QString>  DiceParser::getErrorMap()
