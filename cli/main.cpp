@@ -117,9 +117,12 @@ QString diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
     return resultGlobal.join(' ');
 }
 
-void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
+void startDiceParsing(QStringList& cmds,QString& treeFile,bool highlight)
 {
     DiceParser* parser = new DiceParser();
+
+    for(QString cmd : cmds)
+    {
 
     if(parser->parseLine(cmd))
     {
@@ -156,6 +159,10 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
             {
                 str = parser->getStringResult();
             }
+            if(!parser->getComment().isEmpty())
+            {
+                out << "\033[1m" <<parser->getComment()<< "\033[0m\n";
+            }
             out << str << "\n";
             if(!treeFile.isEmpty())
             {
@@ -165,6 +172,7 @@ void startDiceParsing(QString& cmd,QString& treeFile,bool highlight)
     else
     {
         out << parser->humanReadableError()<< "\n";;
+    }
     }
 }
 
@@ -261,18 +269,14 @@ int main(int argc, char *argv[])
     QStringList cmdList = optionParser.positionalArguments();
    // qDebug()<< "rest"<< cmdList;
 
-    if(!cmdList.isEmpty())
-    {
-        cmd = cmdList.first();
-    }
-    if(!cmd.isEmpty())
-    {
-        startDiceParsing(cmd,dotFileStr,colorb);
+
+        startDiceParsing(cmdList,dotFileStr,colorb);
         if(optionParser.isSet(help))
         {
             usage();
         }
-    }
+
+
 
     return 0;
 }
