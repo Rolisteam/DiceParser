@@ -57,7 +57,7 @@ qint64 OperationCondition::hasValid(Die* b,bool recursive,bool unhighlight) cons
             case Modulo:
             {
                 Die die;
-                die.setFaces(b->getFaces());
+                die.setMaxValue(b->getMaxValue());
                 die.insertRollValue(value%m_value);
                 sum+=m_boolean->hasValid(&die,recursive,false);
             }

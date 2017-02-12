@@ -99,7 +99,7 @@ void ListSetRollNode::computeFacesNumber(Die* die)
 {
     if(m_rangeList.isEmpty())
     {
-        die->setFaces(m_values.size());
+        die->setMaxValue(m_values.size());
     }
     else
     {
@@ -116,7 +116,7 @@ void ListSetRollNode::computeFacesNumber(Die* die)
             ++i;
         }
         //qDebug() << "set Faces"<<max;
-        die->setFaces(max);
+        die->setMaxValue(max);
     }
 
 }

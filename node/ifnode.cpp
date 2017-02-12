@@ -137,7 +137,7 @@ void IfNode::run(ExecutionNode *previous)
             {
                 Die* dice = new Die();
                 dice->setValue(value);
-                dice->setFaces(value);
+                dice->setMaxValue(value);
                 if(m_validator->hasValid(dice,true,true))
                 {
                         nextNode=m_true;

@@ -178,6 +178,8 @@ public:
      * @return
      */
     static IfNode::ConditionType readConditionType(QString &str);
+
+    bool readComment(QString& str, QString &,QString &);
 private:
 
     QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;

@@ -658,3 +658,16 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
     }
 
 }
+bool ParsingToolBox::readComment(QString& str, QString & result, QString& comment)
+{
+    QString left = str;
+    str = str.trimmed();
+    if(str.startsWith("#"))
+    {
+        comment = left;
+        str = str.remove(0,1);
+        result = str.trimmed();
+        return true;
+    }
+    return false;
+}
