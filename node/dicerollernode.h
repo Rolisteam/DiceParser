@@ -17,7 +17,7 @@ public:
 	 * @param faces, number of faces of dices
 	 * @param offset, first value of dice.
 	 */
-    DiceRollerNode(quint64 faces, qint64 offset = 1);
+    DiceRollerNode(quint64 max, qint64 min = 1);
 
 	/**
 	 * @brief run - starts to roll dice.
@@ -46,9 +46,9 @@ public:
 //private members
 private:
     quint64 m_diceCount;
-    quint64 m_faces; /// faces
+    qint64 m_max; /// faces
 	DiceResult* m_diceResult;
-    qint64 m_offset;
+    qint64 m_min;
 };
 
 #endif // DICEROLLERNODE_H

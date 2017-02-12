@@ -9,8 +9,8 @@
 
 
 
-DiceRollerNode::DiceRollerNode(quint64 faces,qint64 offset)
-    : m_faces(faces),m_diceResult(new DiceResult()),m_offset(offset)
+DiceRollerNode::DiceRollerNode(quint64 max,qint64 min)
+    : m_max(max),m_diceResult(new DiceResult()),m_min(min)
 {
 	m_result=m_diceResult;
 }
@@ -33,8 +33,8 @@ void DiceRollerNode::run(ExecutionNode* previous)
             for(quint64 i=0; i < m_diceCount ; ++i)
             {
                 Die* die = new Die();
-                die->setFaces(m_faces);
-                die->setBase(m_offset);
+                die->setBase(m_min);
+                die->setMaxValue(m_max);
                 die->roll();
                 //qDebug() << die->getValue() << "value";
 				m_diceResult->insertResult(die);
@@ -49,13 +49,13 @@ void DiceRollerNode::run(ExecutionNode* previous)
 
 quint64 DiceRollerNode::getFaces() const
 {
-    return m_faces;
+    return abs(m_max-m_min)+1;
 }
 QString DiceRollerNode::toString(bool wl) const
 {
 	if(wl)
 	{
-		return QString("%1 [label=\"DiceRollerNode faces: %2\"]").arg(m_id).arg(m_faces);
+        return QString("%1 [label=\"DiceRollerNode faces: %2\"]").arg(m_id).arg(getFaces());
 	}
 	else
 	{
@@ -75,7 +75,7 @@ qint64 DiceRollerNode::getPriority() const
 }
 ExecutionNode* DiceRollerNode::getCopy() const
 {
-    DiceRollerNode* node = new DiceRollerNode(m_faces,m_offset);
+    DiceRollerNode* node = new DiceRollerNode(m_max,m_min);
     if(NULL!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
