@@ -169,12 +169,12 @@ void Die::setColor(const QString &color)
     m_color = color;
 }
 
-quint64 Die::getMaxValue() const
+qint64 Die::getMaxValue() const
 {
     return m_maxValue;
 }
 
-void Die::setMaxValue(const quint64 &maxValue)
+void Die::setMaxValue(const qint64 &maxValue)
 {
     m_maxValue = maxValue;
 }
