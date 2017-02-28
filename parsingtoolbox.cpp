@@ -213,6 +213,11 @@ IfNode::ConditionType ParsingToolBox::readConditionType(QString& str)
         str=str.remove(0,1);
         type = IfNode::AllOfThem;
     }
+    else if(str.startsWith(':'))
+    {
+        str=str.remove(0,1);
+        type = IfNode::OnScalar;
+    }
     return type;
 }
 

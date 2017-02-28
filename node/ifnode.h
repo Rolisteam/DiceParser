@@ -34,7 +34,7 @@ public:
     /**
      * @brief The ConditionType enum
      */
-    enum ConditionType {OnEach,OneOfThem,AllOfThem};
+    enum ConditionType {OnEach,OneOfThem,AllOfThem,OnScalar};
     /**
      * @brief IfNode
      */
