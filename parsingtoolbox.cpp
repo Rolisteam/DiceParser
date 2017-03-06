@@ -316,7 +316,8 @@ bool ParsingToolBox::readNumber(QString& str, qint64& myNumber)
 
     if(number.isEmpty())
     {
-        return readVariable(str,myNumber);
+        QString reason;
+        return readVariable(str,myNumber,reason);
     }
 
     bool ok;
@@ -381,7 +382,7 @@ bool ParsingToolBox::readString(QString &str, QString& strResult)
     return false;
 }
 
-bool ParsingToolBox::readVariable(QString &str, qint64 &myNumber)
+bool ParsingToolBox::readVariable(QString &str, qint64 &myNumber, QString& reasonFail)
 {
     if(str.isEmpty())
         return false;
@@ -395,6 +396,7 @@ bool ParsingToolBox::readVariable(QString &str, qint64 &myNumber)
 
     if(NULL!=m_variableHash)
     {
+        qDebug() << m_variableHash->keys();
         if(m_variableHash->contains(key))
         {
             QString value = m_variableHash->value(key);
@@ -406,10 +408,21 @@ bool ParsingToolBox::readVariable(QString &str, qint64 &myNumber)
                 str=str.remove(0,post+1);
                 return true;
             }
+            else
+            {
+                reasonFail = QStringLiteral("Variable value is %1, not a number").arg(value);
+            }
 
         }
+        else
+        {
+            reasonFail = QStringLiteral("Variable not found");
+        }
     }
-
+    else
+    {
+        reasonFail = QStringLiteral("No Variables are defined");
+    }
 
     return false;
 

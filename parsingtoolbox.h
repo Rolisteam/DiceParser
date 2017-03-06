@@ -110,7 +110,7 @@ public:
      * @param myNumber
      * @return
      */
-    static bool readVariable(QString& str,qint64& myNumber);
+    static bool readVariable(QString& str,qint64& myNumber, QString& reasonFail);
     /**
      * @brief readOpenParentheses
      * @param str
