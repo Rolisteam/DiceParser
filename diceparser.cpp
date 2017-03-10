@@ -770,10 +770,15 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
                 nodeExecOrChild = nodeExecOrChild->getNextNode();
             }
 
-            if((nullptr != nodeExecOrChild)&&(nodeExec != nodeExecOrChild))
+            // management of operator priority
+           if((nullptr != nodeExecOrChild)&&(nodeExec != nodeExecOrChild))
             {
-                node->setNextNode(nodeExecOrChild);
-                parent->setNextNode(NULL);
+                // good 1 1 2 ; bad 1 0 4
+                if(nodeExecOrChild->getPriority()>=node->getPriority())
+                {
+                    node->setNextNode(nodeExecOrChild);
+                    parent->setNextNode(NULL);
+                }
             }
             else if(node->getPriority()>=nodeExec->getPriority())
             {
