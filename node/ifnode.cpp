@@ -81,7 +81,7 @@ void IfNode::run(ExecutionNode *previous)
                         }
                     }
                 }
-                else
+                else if((m_conditionType == OneOfThem)||(m_conditionType == AllOfThem))
                 {
                     bool trueForAll=true;
                     bool falseForAll=true;
@@ -133,28 +133,30 @@ void IfNode::run(ExecutionNode *previous)
                     }
                 }
             }
+        }
+
+        if(m_conditionType == OnScalar)
+        {
+            Die* dice = new Die();
+            dice->setValue(value);
+            dice->insertRollValue(value);
+            dice->setMaxValue(value);
+            if(m_validator->hasValid(dice,true,true))
+            {
+                    nextNode=m_true;
+            }
             else
             {
-                Die* dice = new Die();
-                dice->setValue(value);
-                dice->setMaxValue(value);
-                if(m_validator->hasValid(dice,true,true))
+                    nextNode=m_false;
+            }
+            if(NULL!=nextNode)
+            {
+                if(NULL==m_nextNode)
                 {
-                        nextNode=m_true;
+                    m_nextNode = nextNode;
                 }
-                else
-                {
-                        nextNode=m_false;
-                }
-                if(NULL!=nextNode)
-                {
-                    if(NULL==m_nextNode)
-                    {
-                        m_nextNode = nextNode;
-                    }
-                    nextNode->run(previousLoop);
-                    previousLoop = getLeafNode(nextNode);
-                }
+                nextNode->run(previousLoop);
+                previousLoop = getLeafNode(nextNode);
             }
         }
     }
