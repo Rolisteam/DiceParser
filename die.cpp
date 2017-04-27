@@ -27,7 +27,7 @@
 #include <chrono>
 
 Die::Die()
-    : m_hasValue(false),m_displayStatus(false),m_highlighted(true),m_base(1),m_color("")//,m_mt(m_randomDevice)
+    : m_hasValue(false),m_displayStatus(false),m_highlighted(true),m_base(1),m_color(""),m_op(Die::PLUS)//,m_mt(m_randomDevice)
 {
 //    uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
 
@@ -48,6 +48,7 @@ Die::Die(const Die& die)
     m_highlighted = die.m_highlighted;
     m_base = die.m_base;
     m_color = die.getColor();
+    m_op = die.getOp();
 }
 
 void Die::setValue(qint64 r)
@@ -80,9 +81,39 @@ qint64 Die::getValue() const
     else
     {
         qint64 value=0;
-        foreach(qint64 tmp,m_rollResult)
+        int i = 0;
+        for(qint64 tmp : m_rollResult)
         {
-            value+=tmp;
+            if(i>0)
+            {
+                switch(m_op)
+                {
+                case PLUS:
+                    value+=tmp;
+                    break;
+                case MULTIPLICATION:
+                    value*=tmp;
+                    break;
+                case MINUS:
+                    value-=tmp;
+                    break;
+                case DIVIDE:
+                    if(tmp!=0)
+                    {
+                        value/=tmp;
+                    }
+                    else
+                    {
+                        //error();
+                    }
+                    break;
+                }
+            }
+            else
+            {
+               value=tmp;
+            }
+            ++i;
         }
         return value;
     }
@@ -179,3 +210,12 @@ void Die::setMaxValue(const qint64 &maxValue)
     m_maxValue = maxValue;
 }
 
+Die::ArithmeticOperator Die::getOp() const
+{
+    return m_op;
+}
+
+void Die::setOp(const Die::ArithmeticOperator &op)
+{
+    m_op = op;
+}

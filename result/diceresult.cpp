@@ -87,15 +87,55 @@ qreal DiceResult::getScalarResult()
     }
     else
     {
-       qint64 scalarSum = 0;
-       foreach(Die* die,m_diceValues)
-       {
-           scalarSum+=die->getValue();
-       }
-       return scalarSum;
+        qint64 scalar=0;
+        int i = 0;
+        for(auto tmp : m_diceValues)
+        {
+            if(i>0)
+            {
+                switch(m_operator)
+                {
+                case Die::PLUS:
+                    scalar+=tmp->getValue();
+                    break;
+                case Die::MULTIPLICATION:
+                    scalar*=tmp->getValue();
+                    break;
+                case Die::MINUS:
+                    scalar-=tmp->getValue();
+                    break;
+                case Die::DIVIDE:
+                    if(tmp!=0)
+                    {
+                        scalar/=tmp->getValue();
+                    }
+                    else
+                    {
+                        //error();
+                    }
+                    break;
+                }
+            }
+            else
+            {
+               scalar=tmp;
+            }
+            ++i;
+        }
+        return scalar;
     }
 
     return 0;
+}
+
+Die::ArithmeticOperator DiceResult::getOperator() const
+{
+    return m_operator;
+}
+
+void DiceResult::setOperator(const Die::ArithmeticOperator& dieOperator)
+{
+    m_operator = dieOperator;
 }
 QString DiceResult::toString(bool wl)
 {
@@ -104,8 +144,8 @@ QString DiceResult::toString(bool wl)
     {
         scalarSum << QString::number(die->getValue());
     }
-	if(wl)
-	{
+    if(wl)
+    {
 		return QStringLiteral("%3 [label=\"DiceResult Value %1 dice %2\"]").arg(getScalarResult()).arg(scalarSum.join('_')).arg(m_id);
 	}
 	else

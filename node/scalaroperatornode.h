@@ -27,6 +27,7 @@
 
 #include "executionnode.h"
 #include "result/scalarresult.h"
+#include "die.h"
 
 
 /**
@@ -38,7 +39,7 @@ public:
     /**
      * @brief The ArithmeticOperator enum
      */
-    enum ArithmeticOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION};
+    //enum ArithmeticOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION};
     /**
      * @brief ScalarOperatorNode
      */
@@ -81,12 +82,12 @@ public:
      * @brief getArithmeticOperator
      * @return
      */
-    ScalarOperatorNode::ArithmeticOperator getArithmeticOperator() const;
+    Die::ArithmeticOperator getArithmeticOperator() const;
     /**
      * @brief setArithmeticOperator
      * @param arithmeticOperator
      */
-    void setArithmeticOperator(const ScalarOperatorNode::ArithmeticOperator &arithmeticOperator);
+    void setArithmeticOperator(const Die::ArithmeticOperator &arithmeticOperator);
 
     /**
      * @brief getCopy
@@ -118,7 +119,7 @@ private:
 private:
     ExecutionNode* m_internalNode;
     ScalarResult* m_scalarResult;
-    ArithmeticOperator m_arithmeticOperator;
+    Die::ArithmeticOperator m_arithmeticOperator;
 };
 
 #endif // SCALAROPERATORNODE_H

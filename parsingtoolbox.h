@@ -166,7 +166,7 @@ public:
 
     bool readDiceLogicOperator(QString &str, OperationCondition::ConditionOperator &op);
 
-    bool readArithmeticOperator(QString& str, ScalarOperatorNode::ArithmeticOperator& op);
+    bool readArithmeticOperator(QString& str, Die::ArithmeticOperator& op);
 
     static void readPainterParameter(PainterNode *painter, QString &str);
 
@@ -185,7 +185,7 @@ private:
     QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
     QMap<QString,CompositeValidator::LogicOperation>* m_logicOperation;
     QMap<QString,OperationCondition::ConditionOperator>* m_conditionOperation;
-    QHash<QString,ScalarOperatorNode::ArithmeticOperator>* m_arithmeticOperation;
+    QHash<QString,Die::ArithmeticOperator>* m_arithmeticOperation;
 
 
     static QHash<QString,QString>* m_variableHash;

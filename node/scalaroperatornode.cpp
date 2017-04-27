@@ -26,7 +26,7 @@
 
 
 ScalarOperatorNode::ScalarOperatorNode()
-    : m_internalNode(NULL),m_scalarResult(new ScalarResult()),m_arithmeticOperator(PLUS)
+    : m_internalNode(NULL),m_scalarResult(new ScalarResult()),m_arithmeticOperator(Die::PLUS)
 {
     /*m_scalarOperationList.insert('+',PLUS);
     m_scalarOperationList.insert('-',MINUS);
@@ -76,16 +76,16 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
 
             switch(m_arithmeticOperator)
             {
-                case PLUS:
+                case Die::PLUS:
                     m_scalarResult->setValue(add(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
-                case MINUS:
+                case Die::MINUS:
                     m_scalarResult->setValue(substract(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
-                case MULTIPLICATION:
+                case Die::MULTIPLICATION:
                     m_scalarResult->setValue(multiple(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
-                case DIVIDE:
+                case Die::DIVIDE:
                     m_scalarResult->setValue(divide(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
                 default:
@@ -137,12 +137,12 @@ qint64 ScalarOperatorNode::multiple(qint64 a,qint64 b)
 {
     return a*b;
 }
-ScalarOperatorNode::ArithmeticOperator ScalarOperatorNode::getArithmeticOperator() const
+Die::ArithmeticOperator ScalarOperatorNode::getArithmeticOperator() const
 {
     return m_arithmeticOperator;
 }
 
-void ScalarOperatorNode::setArithmeticOperator(const ScalarOperatorNode::ArithmeticOperator &arithmeticOperator)
+void ScalarOperatorNode::setArithmeticOperator(const Die::ArithmeticOperator &arithmeticOperator)
 {
     m_arithmeticOperator = arithmeticOperator;
 }
@@ -152,16 +152,16 @@ QString ScalarOperatorNode::toString(bool wl) const
     QString op="";
     switch(m_arithmeticOperator)
     {
-    case PLUS:
+    case Die::PLUS:
         op="+";
         break;
-    case MINUS:
+    case Die::MINUS:
         op="-";
             break;
-        case MULTIPLICATION:
+        case Die::MULTIPLICATION:
             op="*";
             break;
-        case DIVIDE:
+        case Die::DIVIDE:
             op="/";
             break;
         default:
@@ -179,7 +179,7 @@ QString ScalarOperatorNode::toString(bool wl) const
 }
 qint64 ScalarOperatorNode::getPriority() const
 {
-    if((m_arithmeticOperator==PLUS)||(m_arithmeticOperator==MINUS))
+    if((m_arithmeticOperator==Die::PLUS)||(m_arithmeticOperator==Die::MINUS))
 	{
         return 1;
 	}

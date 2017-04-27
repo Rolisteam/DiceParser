@@ -44,11 +44,15 @@ public:
     virtual ExecutionNode* getCopy() const;
 
 //private members
+    Die::ArithmeticOperator getOperator() const;
+    void setOperator(const Die::ArithmeticOperator & dieOperator);
+
 private:
     quint64 m_diceCount;
     qint64 m_max; /// faces
-	DiceResult* m_diceResult;
+    DiceResult* m_diceResult;
     qint64 m_min;
+    Die::ArithmeticOperator m_operator;
 };
 
 #endif // DICEROLLERNODE_H

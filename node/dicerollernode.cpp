@@ -33,6 +33,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
             for(quint64 i=0; i < m_diceCount ; ++i)
             {
                 Die* die = new Die();
+                die->setOp(m_operator);
                 die->setBase(m_min);
                 die->setMaxValue(m_max);
                 die->roll();
@@ -81,4 +82,14 @@ ExecutionNode* DiceRollerNode::getCopy() const
         node->setNextNode(m_nextNode->getCopy());
     }
     return node;
+}
+
+Die::ArithmeticOperator DiceRollerNode::getOperator() const
+{
+    return m_operator;
+}
+
+void DiceRollerNode::setOperator(const Die::ArithmeticOperator &dieOperator)
+{
+    m_operator = dieOperator;
 }

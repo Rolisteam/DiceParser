@@ -92,6 +92,7 @@ SET( dice_sources
    ../node/filternode.cpp
    ../node/stringnode.cpp
     ../node/ifnode.cpp
+    ../node/splitnode.cpp
     main.cpp
     ../highlightdice.cpp
 )

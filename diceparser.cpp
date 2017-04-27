@@ -43,6 +43,7 @@
 #include "node/ifnode.h"
 #include "node/paintnode.h"
 #include "node/stringnode.h"
+#include "node/splitnode.h"
 
 
 #define DEFAULT_FACES_NUMBER 10
@@ -69,7 +70,7 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QStringLiteral("i"),ifOperator);
     m_OptionOp->insert(QStringLiteral("p"),Painter);
     m_OptionOp->insert(QStringLiteral("f"),Filter);
-
+    m_OptionOp->insert(QStringLiteral("u"),Split);
 
     m_aliasList = new QList<DiceAlias*>();
 
@@ -610,6 +611,13 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
         {
             qint64 max;
             qint64 min;
+            Die::ArithmeticOperator op;
+
+            bool hasOp= m_parsingToolbox->readArithmeticOperator(str,op);
+
+
+
+
             if(m_parsingToolbox->readNumber(str,max))
             {
                 if(max<1)
@@ -618,6 +626,10 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
                     return false;
                 }
                 DiceRollerNode* drNode = new DiceRollerNode(max);
+                if(hasOp)
+                {
+                    drNode->setOperator(op);
+                }
                 node = drNode;
                 ExecutionNode* current = drNode;
                 while(readOption(str,current))
@@ -747,7 +759,7 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
         return false;
     }
 
-    ScalarOperatorNode::ArithmeticOperator op;
+    Die::ArithmeticOperator op;
     if(m_parsingToolbox->readArithmeticOperator(str,op))
     {
         ScalarOperatorNode* node = new ScalarOperatorNode();
@@ -1044,6 +1056,14 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                      delete nodeif;
                  }
             }
+            case Split:
+            {
+                SplitNode* splitnode = new SplitNote();
+                previous->setNextNode(splitnode);
+                node = splitnode;
+                found = true;
+            }
+                break;
 
             }
         }
@@ -1068,7 +1088,7 @@ bool DiceParser::readBlocInstruction(QString& str,ExecutionNode*& resultnode)
     {
        str=str.remove(0,1);
        ExecutionNode* node;
-       ScalarOperatorNode::ArithmeticOperator op;
+       Die::ArithmeticOperator op;
        ScalarOperatorNode* scalarNode = NULL;
        if(m_parsingToolbox->readArithmeticOperator(str,op))
        {

@@ -32,6 +32,10 @@ class Die
 {
 public:
     /**
+     * @brief The ArithmeticOperator enum
+     */
+    enum ArithmeticOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION};
+    /**
      * @brief Die
      */
     Die();
@@ -131,6 +135,9 @@ public:
     qint64 getMaxValue() const;
     void setMaxValue(const qint64 &maxValue);
 
+    Die::ArithmeticOperator getOp() const;
+    void setOp(const Die::ArithmeticOperator &op);
+
 private:
     qint64 m_value;
     QList<qint64> m_rollResult;
@@ -142,7 +149,10 @@ private:
     qint64 m_base;
     QString m_color;
 
+    Die::ArithmeticOperator m_op;
+
     std::mt19937 m_rng;
+
 };
 
 

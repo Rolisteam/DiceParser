@@ -19,71 +19,25 @@
 * Free Software Foundation, Inc.,                                          *
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
-#ifndef DICERESULT_H
-#define DICERESULT_H
-#include <QList>
+#ifndef MERGENODE_H
+#define MERGENODE_H
 
-#include "die.h"
-#include "result.h"
+#include "node/executionnode.h"
+#include "result/diceresult.h"
+
 /**
- * @brief The DiceResult class
+ * @brief The MergeNode class is an ExecutionNode. It is dedicated to merge result of several commands.
  */
-class DiceResult : public Result
+class SplitNode : public ExecutionNode
 {
 public:
-    /**
-     * @brief DiceResult
-     */
-    DiceResult();
-	/**
-	 * @brief ~DiceResult
-	 */
-	virtual ~DiceResult();
-
-    /**
-     * @brief getResultList
-     * @return
-     */
-    QList<Die*>& getResultList();
-    /**
-     * @brief insertResult
-     */
-    void insertResult(Die*);
-
-    /**
-     * @brief setResultList
-     * @param list
-     */
-    void setResultList(QList<Die*> list);
-
-    /**
-     * @brief getScalar
-     * @return
-     */
-    virtual QVariant getResult(RESULT_TYPE);
-    /**
-     * @brief toString
-     * @return
-     */
-	virtual QString toString(bool wl);
-    /**
-     * @brief isHomogeneous
-     */
-    bool isHomogeneous() const;
-    /**
-     * @brief setHomogeneous
-     */
-    void setHomogeneous(bool);
-
-    Die::ArithmeticOperator getOperator() const;
-    void setOperator(const Die::ArithmeticOperator & dieOperator);
-
+    SplitNode();
+    void run(ExecutionNode* previous);
+    virtual QString toString(bool withLabel)const;
+    virtual qint64 getPriority() const;
+    virtual ExecutionNode *getCopy() const;
 private:
-    qreal getScalarResult();
-private:
-    QList<Die*> m_diceValues;
-    bool m_homogeneous;
-    Die::ArithmeticOperator m_operator;
+    DiceResult* m_diceResult;
 };
 
-#endif // DICERESULT_H
+#endif // NUMBERNODE_H

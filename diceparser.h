@@ -74,7 +74,6 @@ public:
      * @brief The DiceOperator enum gathering all dice operators
      */
 	enum DiceOperator {D,L};
-
     /**
      * @brief The DiceSymbol enum
      */
@@ -82,7 +81,7 @@ public:
     /**
      * @brief The OptionOperator enum gathering all options  availables for result.
      */
-    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd,Merge,ifOperator,Painter,Filter};
+    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd,Merge,ifOperator,Painter,Filter,Split};
     /**
      * @brief The CommandOperator enum
      */
