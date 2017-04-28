@@ -1055,10 +1055,11 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                  {
                      delete nodeif;
                  }
+                 break;
             }
             case Split:
             {
-                SplitNode* splitnode = new SplitNote();
+                SplitNode* splitnode = new SplitNode();
                 previous->setNextNode(splitnode);
                 node = splitnode;
                 found = true;
