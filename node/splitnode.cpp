@@ -46,6 +46,7 @@ void SplitNode::run(ExecutionNode* previous)
                     for(qint64 value : oldDie->getListValue())
                     {
                         Die* tmpdie = new Die();
+                        tmpdie->insertRollValue(value);
                         tmpdie->setFaces(oldDie->getFaces());
                         tmpdie->setValue(value);
                         tmpdie->setOp(oldDie->getOp());
