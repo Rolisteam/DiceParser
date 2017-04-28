@@ -70,6 +70,7 @@ add_executable(
     ../node/ifnode.cpp
     ../node/stringnode.cpp
     ../node/filternode.cpp
+    ../node/splitnode.cpp
     botircdiceparser.cpp
     main.cpp)
 

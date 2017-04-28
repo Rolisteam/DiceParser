@@ -90,6 +90,7 @@ SET( diceGui_sources
    ../node/ifnode.cpp
    ../node/filternode.cpp
    ../node/stringnode.cpp
+   ../node/splitnode.cpp
     main.cpp
     maincontroler.cpp
     commandmodel.cpp

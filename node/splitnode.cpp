@@ -41,13 +41,15 @@ void SplitNode::run(ExecutionNode* previous)
             {
                 for(Die* oldDie : dice->getResultList())
                 {
+                    oldDie->displayed();
                     m_diceResult->setOperator(oldDie->getOp());
                     for(qint64 value : oldDie->getListValue())
                     {
                         Die* tmpdie = new Die();
+                        tmpdie->setFaces(oldDie->getFaces());
                         tmpdie->setValue(value);
                         tmpdie->setOp(oldDie->getOp());
-                        m_diceResult->insertResult(tmpDie);
+                        m_diceResult->insertResult(tmpdie);
                     }
                  }
             }
@@ -63,7 +65,7 @@ QString SplitNode::toString(bool withLabel) const
 {
     if(withLabel)
     {
-        return QString("%1 [label=\"Merge Node\"]").arg(m_id);
+        return QString("%1 [label=\"SplitNode Node\"]").arg(m_id);
     }
     else
     {
