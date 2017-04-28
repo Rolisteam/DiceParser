@@ -19,7 +19,9 @@
 * Free Software Foundation, Inc.,                                          *
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
+
 #include "diceresult.h"
+#include <QDebug>
 
 DiceResult::DiceResult()
 {
@@ -105,20 +107,20 @@ qreal DiceResult::getScalarResult()
                     scalar-=tmp->getValue();
                     break;
                 case Die::DIVIDE:
-                    if(tmp!=0)
+                    if(tmp->getValue()!=0)
                     {
                         scalar/=tmp->getValue();
                     }
                     else
                     {
-                        //error();
+                        /// @todo Error cant divide by 0. Must be displayed.
                     }
                     break;
                 }
             }
             else
             {
-               scalar=tmp;
+               scalar=tmp->getValue();
             }
             ++i;
         }
