@@ -47,6 +47,7 @@ void MergeNode::run(ExecutionNode* previous)
                     {
                         Die* tmpdie = new Die();
                         *tmpdie=*die;
+                        die->displayed();
                         m_diceResult->getResultList().append(tmpdie);
                     }
                 }
