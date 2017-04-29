@@ -92,4 +92,5 @@ Die::ArithmeticOperator DiceRollerNode::getOperator() const
 void DiceRollerNode::setOperator(const Die::ArithmeticOperator &dieOperator)
 {
     m_operator = dieOperator;
+    m_diceResult->setOperator(dieOperator);
 }

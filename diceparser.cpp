@@ -644,6 +644,11 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
                // qint64 face = abs(num - end);
                 //qDebug() << face << end;
                 DiceRollerNode* drNode = new DiceRollerNode(max,min);
+
+                if(hasOp)
+                {
+                    drNode->setOperator(op);
+                }
                 node = drNode;
                 ExecutionNode* current = drNode;
                 while(readOption(str,current))

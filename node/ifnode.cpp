@@ -34,48 +34,57 @@ IfNode::~IfNode()
 void IfNode::run(ExecutionNode *previous)
 {
     m_previousNode = previous;
-    if(NULL==previous)
+    if(nullptr==previous)
     {
         return;
     }
     ExecutionNode* previousLoop = previous;
-    ExecutionNode* nextNode = NULL;
-    bool runNext = (NULL==m_nextNode) ? false : true;
+    ExecutionNode* nextNode = nullptr;
+    bool runNext = (nullptr==m_nextNode) ? false : true;
     Result* previousResult = previous->getResult();
     m_result = previousResult;
 
-    if(NULL!=m_result)
+    if(nullptr!=m_result)
     {
         qreal value = previousResult->getResult(Result::SCALAR).toReal();
 
-        if(NULL!=m_validator)
+        if(nullptr!=m_validator)
         {
             DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previousResult);
-            if(NULL!=previousDiceResult)
+            if(nullptr!=previousDiceResult)
             {
                 QList<Die*> diceList=previousDiceResult->getResultList();
+
                 if(m_conditionType == OnEach)
                 {
                     for(Die* dice : diceList)
                     {
+                        qDebug()<< "dice value:" << dice->getValue();
                         if(m_validator->hasValid(dice,true,true))
                         {
-                            nextNode = (NULL==m_true) ? NULL: m_true->getCopy();
+                            qDebug()<< "true";
+                            nextNode = (nullptr==m_true) ? nullptr: m_true->getCopy();
                         }
                         else
                         {
-                            nextNode = (NULL==m_false) ? NULL: m_false->getCopy();
+                            qDebug()<< "false";
+                            nextNode = (nullptr==m_false) ? nullptr: m_false->getCopy();
                         }
-                        if(NULL!=nextNode)
+                        qDebug()<< "dice value:" << dice->getValue() << "next node" << nextNode << "m_true" << m_true;
+
+                        if(nullptr!=nextNode)
                         {
-                            if(NULL==previousLoop->getNextNode())
+                            if(nullptr==previousLoop->getNextNode())
                             {
+                                qDebug() << "iniside loop";
                                 previousLoop->setNextNode(nextNode);
                             }
-                            if(NULL==m_nextNode)
+                            if(nullptr==m_nextNode)
                             {
+                                qDebug() << "next node" ;
                                 m_nextNode = nextNode;
                             }
+                            qDebug() << "before run";
                             nextNode->run(previousLoop);
                             previousLoop = getLeafNode(nextNode);
                         }
