@@ -59,32 +59,25 @@ void IfNode::run(ExecutionNode *previous)
                 {
                     for(Die* dice : diceList)
                     {
-                        qDebug()<< "dice value:" << dice->getValue();
                         if(m_validator->hasValid(dice,true,true))
                         {
-                            qDebug()<< "true";
                             nextNode = (nullptr==m_true) ? nullptr: m_true->getCopy();
                         }
                         else
                         {
-                            qDebug()<< "false";
                             nextNode = (nullptr==m_false) ? nullptr: m_false->getCopy();
                         }
-                        qDebug()<< "dice value:" << dice->getValue() << "next node" << nextNode << "m_true" << m_true;
 
                         if(nullptr!=nextNode)
                         {
                             if(nullptr==previousLoop->getNextNode())
                             {
-                                qDebug() << "iniside loop";
                                 previousLoop->setNextNode(nextNode);
                             }
                             if(nullptr==m_nextNode)
                             {
-                                qDebug() << "next node" ;
                                 m_nextNode = nextNode;
                             }
-                            qDebug() << "before run";
                             nextNode->run(previousLoop);
                             previousLoop = getLeafNode(nextNode);
                         }

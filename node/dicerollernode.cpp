@@ -10,7 +10,7 @@
 
 
 DiceRollerNode::DiceRollerNode(qint64 max,qint64 min)
-    : m_max(max),m_diceResult(new DiceResult()),m_min(min)
+    : m_max(max),m_diceResult(new DiceResult()),m_min(min),m_operator(Die::PLUS)
 {
 	m_result=m_diceResult;
 }

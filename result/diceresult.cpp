@@ -24,6 +24,7 @@
 #include <QDebug>
 
 DiceResult::DiceResult()
+    : m_operator(Die::PLUS)
 {
     m_resultTypes= (DICE_LIST | SCALAR);
     m_homogeneous = true;
