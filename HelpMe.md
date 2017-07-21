@@ -181,9 +181,11 @@ There are 3 different methods.
 * **On Each** : the condition is tested on each die from the previous part of the command. \[Default method\]
 * **All Of Them** : All dice must fit the condition to trigger the true instruction. If all dice do not fit the condition the false instruction is run.
 * **One Of Them** : at least one die must fit the condition to trigger the true instruction. If no dices fit the condition the false instruction is run.
+* **On Scalar** : the condition is evaluated on the scalar result of the dice roll.
 
 To switch the operator to act in **All Of Them** method you must add **\*** character as compare method position.
 To switch the operator to act in **One Of Them** method you must add **.** character as compare method position.
+To switch the operator to act in **On Scalar** method you must add **:** character as compare method position.
 
 
 ## example:
@@ -203,6 +205,11 @@ if at least one die is equal to 6, then roll another d6 and add it to the result
 > 4d6i*[=6]{+1d6}
 
 if all dice are equal to 6, then roll another d6 and add it to the result.
+
+
+> 2d10i:[>15]{"Success"}
+
+if the sum of two dice is greater than 15, It displays "Success".
 
 
 ## Arithmetic
