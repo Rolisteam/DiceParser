@@ -394,9 +394,9 @@ bool ParsingToolBox::readVariable(QString &str, qint64 &myNumber, QString& reaso
     int post = str.indexOf('}');
     key = str.left(post);
 
-    if(NULL!=m_variableHash)
+    if(nullptr!=m_variableHash)
     {
-        qDebug() << m_variableHash->keys();
+        //qDebug() << m_variableHash->keys();
         if(m_variableHash->contains(key))
         {
             QString value = m_variableHash->value(key);
