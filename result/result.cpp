@@ -63,6 +63,7 @@ void Result::generateDotTree(QString& s)
 		s.append("\n");
         m_previous->generateDotTree(s);
     }
+    else
     {
 		s.append(toString(false));
         s.append(" -> ");

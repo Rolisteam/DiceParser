@@ -325,6 +325,7 @@ void startDiceParsing(QStringList& cmds,QString& treeFile,bool highlight)
         out << parser->humanReadableError()<< "\n";;
     }
     }
+    delete parser;
 }
 
 void usage()

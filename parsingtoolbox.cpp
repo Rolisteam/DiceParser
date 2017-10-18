@@ -72,6 +72,21 @@ ParsingToolBox::~ParsingToolBox()
         delete m_logicOp;
         m_logicOp = NULL;
     }
+    if(nullptr != m_logicOperation)
+    {
+        delete m_logicOperation;
+        m_logicOperation= nullptr;
+    }
+    if(nullptr != m_conditionOperation)
+    {
+        delete m_conditionOperation;
+        m_conditionOperation= nullptr;
+    }
+    if(nullptr != m_arithmeticOperation)
+    {
+        delete m_arithmeticOperation;
+        m_arithmeticOperation= nullptr;
+    }
 }
 ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e,bool b)
 {

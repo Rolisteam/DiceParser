@@ -71,6 +71,7 @@ add_executable(
     ../node/stringnode.cpp
     ../node/filternode.cpp
     ../node/splitnode.cpp
+    ../node/groupnode.cpp
     botircdiceparser.cpp
     main.cpp)
 

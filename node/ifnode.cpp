@@ -192,8 +192,8 @@ void IfNode::generateDotTree(QString& s)
         s.append(toString(false));
         s.append(" -> ");
         s.append(m_true->toString(false));
-        s.append("[label=\"true\"];\n");
-//        s.append(" [label=\"nextNode\"];\n");
+        s.append("[label=\"true"+m_validator->toString()+"\"];\n");
+
         m_true->generateDotTree(s);
     }
     if((NULL!=m_false)&&(m_false != m_nextNode))

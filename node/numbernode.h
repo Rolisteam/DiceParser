@@ -32,6 +32,7 @@ class NumberNode : public ExecutionNode
 {
 public:
     NumberNode();
+    virtual ~NumberNode();
     void run(ExecutionNode* previous);
     void setNumber(qint64);
     virtual QString toString(bool withLabel)const;
