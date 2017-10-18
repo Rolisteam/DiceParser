@@ -81,7 +81,7 @@ public:
     /**
      * @brief The OptionOperator enum gathering all options  availables for result.
      */
-    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd,Merge,ifOperator,Painter,Filter,Split};
+    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd,Merge,ifOperator,Painter,Filter,Split,Group};
     /**
      * @brief The CommandOperator enum
      */

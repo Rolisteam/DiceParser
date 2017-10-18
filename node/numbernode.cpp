@@ -26,6 +26,16 @@ NumberNode::NumberNode()
 {
     m_result = m_scalarResult;
 }
+NumberNode::~NumberNode()
+{
+    /// @todo make sure there is no copy of the internal result.
+    /*if( nullptr != m_scalarResult)
+    {
+        delete m_scalarResult;
+        m_scalarResult = nullptr;
+    }*/
+}
+
 void NumberNode::run(ExecutionNode* previous)
 {
 	m_previousNode = previous;

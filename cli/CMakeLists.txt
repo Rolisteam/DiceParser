@@ -59,40 +59,41 @@ if(Qt5Core_FOUND)
 endif()
 
 SET( dice_sources 
-   ../diceparser.cpp
-   ../range.cpp
-   ../booleancondition.cpp
-   ../validator.cpp
-   ../compositevalidator.cpp
-   ../operationcondition.cpp
-   ../die.cpp
-   ../parsingtoolbox.cpp
-   ../dicealias.cpp
-   ../result/result.cpp
-   ../result/scalarresult.cpp
-   ../result/stringresult.cpp
-   ../result/diceresult.cpp
-   ../node/countexecutenode.cpp
-   ../node/dicerollernode.cpp
-   ../node/executionnode.cpp
-   ../node/explosedicenode.cpp
-   ../node/helpnode.cpp
-   ../node/mergenode.cpp
-   ../node/jumpbackwardnode.cpp
-   ../node/keepdiceexecnode.cpp
-   ../node/listaliasnode.cpp
-   ../node/listsetrollnode.cpp
-   ../node/numbernode.cpp
-   ../node/parenthesesnode.cpp
-   ../node/paintnode.cpp
-   ../node/rerolldicenode.cpp
-   ../node/scalaroperatornode.cpp
-   ../node/sortresult.cpp
-   ../node/startingnode.cpp
-   ../node/filternode.cpp
-   ../node/stringnode.cpp
+    ../diceparser.cpp
+    ../range.cpp
+    ../booleancondition.cpp
+    ../validator.cpp
+    ../compositevalidator.cpp
+    ../operationcondition.cpp
+    ../die.cpp
+    ../parsingtoolbox.cpp
+    ../dicealias.cpp
+    ../result/result.cpp
+    ../result/scalarresult.cpp
+    ../result/stringresult.cpp
+    ../result/diceresult.cpp
+    ../node/countexecutenode.cpp
+    ../node/dicerollernode.cpp
+    ../node/executionnode.cpp
+    ../node/explosedicenode.cpp
+    ../node/helpnode.cpp
+    ../node/mergenode.cpp
+    ../node/jumpbackwardnode.cpp
+    ../node/keepdiceexecnode.cpp
+    ../node/listaliasnode.cpp
+    ../node/listsetrollnode.cpp
+    ../node/numbernode.cpp
+    ../node/parenthesesnode.cpp
+    ../node/paintnode.cpp
+    ../node/rerolldicenode.cpp
+    ../node/scalaroperatornode.cpp
+    ../node/sortresult.cpp
+    ../node/startingnode.cpp
+    ../node/filternode.cpp
+    ../node/stringnode.cpp
     ../node/ifnode.cpp
     ../node/splitnode.cpp
+    ../node/groupnode.cpp
     main.cpp
     ../highlightdice.cpp
 )

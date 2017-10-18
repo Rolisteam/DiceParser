@@ -37,6 +37,7 @@ public:
 	virtual QString toString(bool)const;
     virtual qint64 getPriority() const;
     virtual ExecutionNode *getCopy() const;
+    virtual void generateDotTree(QString&);
 private:
     ExecutionNode* m_internalNode;
 };

@@ -44,6 +44,7 @@
 #include "node/paintnode.h"
 #include "node/stringnode.h"
 #include "node/splitnode.h"
+#include "node/groupnode.h"
 
 
 #define DEFAULT_FACES_NUMBER 10
@@ -71,6 +72,7 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QStringLiteral("p"),Painter);
     m_OptionOp->insert(QStringLiteral("f"),Filter);
     m_OptionOp->insert(QStringLiteral("u"),Split);
+    m_OptionOp->insert(QStringLiteral("g"),Group);
 
     m_aliasList = new QList<DiceAlias*>();
 
@@ -1068,6 +1070,19 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 previous->setNextNode(splitnode);
                 node = splitnode;
                 found = true;
+            }
+                break;
+            case Group:
+            {
+                qint64 groupNumber=0;
+                if(m_parsingToolbox->readNumber(str,groupNumber))
+                {
+                    GroupNode* groupNode = new GroupNode();
+                    groupNode->setGroupValue(groupNumber);
+                    previous->setNextNode(groupNode);
+                    node = groupNode;
+                    found = true;
+                }
             }
                 break;
 
