@@ -34,7 +34,7 @@ public:
     explicit BotIrcDiceParser(QObject *parent = 0);
     virtual ~BotIrcDiceParser();
 
-    QString diceToText(ExportedDiceResult &dice, bool highlight, bool homogeneous);
+    QString diceToText(QList<ExportedDiceResult>& dice, bool highlight, bool homogeneous);
     QString startDiceParsing(QString &cmd, bool highlight);
 public slots:
     void errorOccurs(QAbstractSocket::SocketError);

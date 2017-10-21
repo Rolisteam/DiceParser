@@ -24,14 +24,15 @@ void MainControler::rollDice(QString cmd)
     if(m_diceParser->parseLine(cmd))
     {
         m_diceParser->Start();
-        qDebug() << m_diceParser->getSumOfDiceResult();
+        for(int i = 0; i < m_diceParser->getStartNodeCount(); ++i)
+        {
+           //qDebug() << m_diceParser->getSumOfDiceResult(i);
+        }
     }
 }
 void MainControler::setConnections(QObject* root,QUrl url)
 {
     //QObject* root = engine->rootContext()->contextObject();
-
-
     connect(root,SIGNAL(roll(QString)),this,SLOT(rollDice(QString)));
     connect(root,SIGNAL(addRoll(QString,QString)),m_model,SLOT(insertCmd(QString,QString)));
 }

@@ -44,7 +44,7 @@ BotIrcDiceParser::BotIrcDiceParser(QObject *parent) :
 
 BotIrcDiceParser::~BotIrcDiceParser()
 {
-  //  delete ui;
+    //  delete ui;
 }
 void BotIrcDiceParser::connectToServer()
 {
@@ -53,7 +53,7 @@ void BotIrcDiceParser::connectToServer()
 }
 void BotIrcDiceParser::errorOccurs(QAbstractSocket::SocketError)
 {
-       qDebug() << "ERROR" << m_socket->errorString();
+    qDebug() << "ERROR" << m_socket->errorString();
 }
 
 void BotIrcDiceParser::readData()
@@ -63,42 +63,42 @@ void BotIrcDiceParser::readData()
     QString readLine = m_socket->readLine();
 
     if(readLine.startsWith("!"))
-         readLine = readLine.remove(0,1);
+        readLine = readLine.remove(0,1);
 
 
     if(readLine.contains("!"))
     {
 
-       // qDebug()<< "in /dice";
+        // qDebug()<< "in /dice";
         QString dice=".*PRIVMSG.*!(.*)";
         QRegExp exp(dice);
         exp.indexIn(readLine);
 
 
 
-            QStringList list = exp.capturedTexts();
-            qDebug()<<list;
-            if(list.size()==2)
+        QStringList list = exp.capturedTexts();
+        qDebug()<<list;
+        if(list.size()==2)
+        {
+            QString cmd = list[1];
+            if(!cmd.isEmpty())
             {
-                QString cmd = list[1];
-                if(!cmd.isEmpty())
+
+                cmd = cmd.simplified();
+                QString result = startDiceParsing(cmd,true);
+                if(!result.isEmpty())
                 {
-
-                    cmd = cmd.simplified();
-                    QString result = startDiceParsing(cmd,true);
-                    if(!result.isEmpty())
-                    {
-                        QString msg("PRIVMSG #RolisteamOfficial :%1 \r\n");
-                        m_socket->write(msg.arg(result).toLatin1());
-                    }
+                    QString msg("PRIVMSG #RolisteamOfficial :%1 \r\n");
+                    m_socket->write(msg.arg(result).toLatin1());
                 }
+            }
 
-            }
-            else
-            {
-                return;
-            }
-//
+        }
+        else
+        {
+            return;
+        }
+        //
 
     }
     else if(readLine.contains("PING :"))
@@ -142,85 +142,89 @@ void BotIrcDiceParser::disconnectFromServer()
     m_socket->disconnect(); // Now we can try it :-)
 
 }
- void BotIrcDiceParser::authentificationProcess()
- {
-     qDebug() << "authentification";
-     m_socket->write(QLatin1String("NICK rolisteamDice \r\n").data());
-     m_socket->write(QLatin1String("USER rolisteamDice rolisteamDice rolisteamDice :rolisteamDice BOT \r\n").data());
+void BotIrcDiceParser::authentificationProcess()
+{
+    qDebug() << "authentification";
+    m_socket->write(QLatin1String("NICK rolisteamDice \r\n").data());
+    m_socket->write(QLatin1String("USER rolisteamDice rolisteamDice rolisteamDice :rolisteamDice BOT \r\n").data());
 
 
- }
+}
 void BotIrcDiceParser::joinChannel()
 {
     m_socket->write(QLatin1String("JOIN #RolisteamOfficial \r\n").data());
 }
-QString BotIrcDiceParser::diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
+QString BotIrcDiceParser::diceToText(QList<ExportedDiceResult>& diceList,bool highlight,bool homogeneous)
 {
-    QStringList resultGlobal;
-        foreach(int face, dice.keys())
+    QStringList global;
+    for(auto dice : diceList)
+    {
+        QStringList resultGlobal;
+        for(int face : dice.keys())
         {
-               QStringList result;
-               ListDiceResult diceResult =  dice.value(face);
-               //patternColor = patternColorarg();
-               foreach (HighLightDice tmp, diceResult)
-               {
-                    QStringList diceListStr;
-                    QStringList diceListChildren;
+            QStringList result;
+            ListDiceResult diceResult =  dice.value(face);
+            //patternColor = patternColorarg();
+            foreach (HighLightDice tmp, diceResult)
+            {
+                QStringList diceListStr;
+                QStringList diceListChildren;
 
+                for(int i =0; i < tmp.getResult().size(); ++i)
+                {
+                    qint64 dievalue = tmp.getResult()[i];
+                    QString prefix("%1");
 
-                    for(int i =0; i < tmp.getResult().size(); ++i)
+                    if((tmp.isHighlighted())&&(highlight))
                     {
-                        qint64 dievalue = tmp.getResult()[i];
-                        QString prefix("%1");
-
-                        if((tmp.isHighlighted())&&(highlight))
+                        if(tmp.getColor().isEmpty()|| tmp.getColor()=="black")
                         {
-                            if(tmp.getColor().isEmpty()|| tmp.getColor()=="black")
-                            {
-                                prefix = "%1";
-                            }
-                            if(tmp.getColor()=="white")
-                            {
-                                prefix = "%1";
-                            }
-                            if(tmp.getColor()=="blue")
-                            {
-                                prefix = "%1";
-                            }
-                            if(tmp.getColor()=="red")
-                            {
-                                prefix = "%1";
-                            }
+                            prefix = "%1";
                         }
-
-                        if(i==0)
+                        if(tmp.getColor()=="white")
                         {
-                            diceListStr << prefix.arg(QString::number(dievalue));
+                            prefix = "%1";
                         }
-                        else
+                        if(tmp.getColor()=="blue")
                         {
-                            diceListChildren << prefix.arg(QString::number(dievalue));
+                            prefix = "%1";
+                        }
+                        if(tmp.getColor()=="red")
+                        {
+                            prefix = "%1";
                         }
                     }
-                    if(!diceListChildren.isEmpty())
+
+                    if(i==0)
                     {
-                        diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
+                        diceListStr << prefix.arg(QString::number(dievalue));
                     }
+                    else
+                    {
+                        diceListChildren << prefix.arg(QString::number(dievalue));
+                    }
+                }
+                if(!diceListChildren.isEmpty())
+                {
+                    diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
+                }
 
-                    result << diceListStr.join(' ');
-                   // qDebug() << result << tmp.first << tmp.second;
-               }
+                result << diceListStr.join(' ');
+                // qDebug() << result << tmp.first << tmp.second;
+            }
 
-               if(dice.keys().size()>1)
-               {
-                  resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
-               }
-               else
-               {
-                   resultGlobal << result;
-               }
+            if(dice.keys().size()>1)
+            {
+                resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
+            }
+            else
+            {
+                resultGlobal << result;
+            }
         }
-    return resultGlobal.join(' ');
+        global << resultGlobal.join(' ');
+    }
+    return global.join(' ');
 }
 
 QString BotIrcDiceParser::startDiceParsing(QString& cmd,bool highlight)
@@ -230,38 +234,51 @@ QString BotIrcDiceParser::startDiceParsing(QString& cmd,bool highlight)
     if(m_parser->parseLine(cmd))
     {
 
-            m_parser->Start();
-            if(!m_parser->getErrorMap().isEmpty())
-            {
-                out << "Error" << m_parser->humanReadableError()<< "\n";
-                return QString();
-            }
+        m_parser->Start();
+        if(!m_parser->getErrorMap().isEmpty())
+        {
+            out << "Error" << m_parser->humanReadableError()<< "\n";
+            return QString();
+        }
 
-            ExportedDiceResult list;
-            bool homogeneous = true;
-            m_parser->getLastDiceResult(list,homogeneous);
-            QString diceText = diceToText(list,highlight,homogeneous);
-            QString scalarText;
-            QString str;
+        QList<ExportedDiceResult> list;
+        bool homogeneous = true;
+        m_parser->getLastDiceResult(list,homogeneous);
+        QString diceText = diceToText(list,highlight,homogeneous);
+        QString scalarText;
+        QString str;
 
-            if(m_parser->hasIntegerResultNotInFirst())
+        if(m_parser->hasIntegerResultNotInFirst())
+        {
+            auto values = m_parser->getLastIntegerResults();
+            QStringList strLst;
+            for(auto val : values )
             {
-                scalarText = QString("%1").arg(m_parser->getLastIntegerResult());
+                strLst << QString::number(val);
             }
-            else if(!list.isEmpty())
+            scalarText = QString("%1").arg(strLst.join(','));
+        }
+        else if(!list.isEmpty())
+        {
+            auto values = m_parser->getSumOfDiceResult();
+            QStringList strLst;
+            for(auto val : values )
             {
-                scalarText = QString("%1").arg(m_parser->getSumOfDiceResult());
+                strLst << QString::number(val);
             }
-            if(highlight)
-                str = QString("Result: %1, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(m_parser->getDiceCommand());
-            else
-                str = QString("Result: %1, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(m_parser->getDiceCommand());
+            scalarText = QString("%1").arg(strLst.join(','));
+        }
+        if(highlight)
+            str = QString("Result: %1, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(m_parser->getDiceCommand());
+        else
+            str = QString("Result: %1, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(m_parser->getDiceCommand());
 
-            if(m_parser->hasStringResult())
-            {
-                str = m_parser->getStringResult();
-            }
-            out << str << "\n";
+        if(m_parser->hasStringResult())
+        {
+            str = m_parser->getStringResult().join(",");
+        }
+        out << str << "\n";
+
 
     }
     else
