@@ -29,38 +29,62 @@ MergeNode::MergeNode()
 void MergeNode::run(ExecutionNode* previous)
 {
     m_previousNode = previous;
-    if(NULL!=previous)
+    m_result->setPrevious(previous->getResult());
+    ExecutionNode* previousLast =nullptr;
+    for(auto start : *m_startList)
     {
-        m_result->setPrevious(previous->getResult());
-
-        Result* tmpResult = previous->getResult();
-        while(NULL!=tmpResult)
+        ExecutionNode* last = getLatestNode(start);
+        if(nullptr!=last)
         {
-            DiceResult* dice = dynamic_cast<DiceResult*>(tmpResult);
-            if(NULL!=dice)
+            if(nullptr != previousLast)
             {
-                ///@todo improve here to set homogeneous while is really
-                m_diceResult->setHomogeneous(false);
-                for(Die* die : dice->getResultList())
+                auto startResult = start->getResult();
+                startResult->setPrevious(previousLast->getResult());
+                previousLast->setNextNode(start);
+            }
+            previousLast = last;
+            Result* tmpResult = last->getResult();
+            while(nullptr!=tmpResult)
+            {
+                DiceResult* dice = dynamic_cast<DiceResult*>(tmpResult);
+                if(nullptr!=dice)
                 {
-                    if(!m_diceResult->getResultList().contains(die))
+                    ///@todo improve here to set homogeneous while is really
+                    m_diceResult->setHomogeneous(false);
+                    for(Die* die : dice->getResultList())
                     {
-                        Die* tmpdie = new Die();
-                        *tmpdie=*die;
-                        die->displayed();
-                        m_diceResult->getResultList().append(tmpdie);
+                        if(!m_diceResult->getResultList().contains(die)&&(!die->hasBeenDisplayed()))
+                        {
+                            Die* tmpdie = new Die();
+                            *tmpdie=*die;
+                            die->displayed();
+                            m_diceResult->getResultList().append(tmpdie);
+                        }
                     }
                 }
+                tmpResult = tmpResult->getPrevious();
             }
-            tmpResult = tmpResult->getPrevious();
         }
     }
-    if(NULL!=m_nextNode)
+
+    auto first = m_startList->first();
+    m_startList->clear();
+    m_startList->append(first);
+
+    if(nullptr!=m_nextNode)
     {
         m_nextNode->run(this);
     }
 }
-
+ExecutionNode* MergeNode::getLatestNode(ExecutionNode* node)
+{
+    ExecutionNode* next = node;
+    while(nullptr != next->getNextNode() && (next->getNextNode()!=this))
+    {
+        next = next->getNextNode();
+    }
+    return next;
+}
 QString MergeNode::toString(bool withLabel) const
 {
     if(withLabel)
@@ -90,4 +114,14 @@ ExecutionNode* MergeNode::getCopy() const
     }
     return node;
 
+}
+
+QList<ExecutionNode *>* MergeNode::getStartList() const
+{
+    return m_startList;
+}
+
+void MergeNode::setStartList(QList<ExecutionNode *>* startList)
+{
+    m_startList = startList;
 }
