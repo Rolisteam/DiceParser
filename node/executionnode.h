@@ -43,6 +43,7 @@ public:
 	 * @return
 	 */
 	virtual ExecutionNode* getPreviousNode() const;
+    void setPreviousNode(ExecutionNode* node);
     /**
      * @brief toString
      * @return

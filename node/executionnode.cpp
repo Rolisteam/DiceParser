@@ -29,6 +29,10 @@ void ExecutionNode::setNextNode(ExecutionNode* node)
 {
     m_nextNode = node;
 }
+void ExecutionNode::setPreviousNode(ExecutionNode* node)
+{
+    m_previousNode = node;
+}
 ExecutionNode* ExecutionNode::getNextNode()
 {
     return m_nextNode;
