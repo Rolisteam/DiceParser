@@ -18,7 +18,8 @@ SOURCES += $$PWD/diceparser.cpp \
     $$PWD/dicealias.cpp \
     $$PWD/operationcondition.cpp \
     $$PWD/node/stringnode.cpp \
-    $$PWD/node/filternode.cpp
+    $$PWD/node/filternode.cpp \
+    $$PWD/node/groupnode.cpp \
 
 
 HEADERS += \
@@ -37,7 +38,8 @@ HEADERS += \
     $$PWD/dicealias.h \
     $$PWD/operationcondition.h \
     $$PWD/node/stringnode.h \
-    $$PWD/node/filternode.h
+    $$PWD/node/filternode.h\
+    $$PWD/node/groupnode.h
 
 
 HEADERS += \

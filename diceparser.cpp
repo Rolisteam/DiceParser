@@ -171,17 +171,17 @@ bool DiceParser::parseLine(QString str)
 
     str = convertAlias(str);
     m_command = str;
-    bool keepParsing = readExpression(m_command,newNode);
+    bool keepParsing = readExpression(str,newNode);
 
     if(keepParsing)
     {
         m_current->setNextNode(newNode);
         m_current = getLatestNode(m_current);
-        keepParsing =!m_command.isEmpty();
+        keepParsing =!str.isEmpty();
         if(keepParsing)
         {
             // keepParsing =
-            readOperator(m_command,m_current);
+            readOperator(str,m_current);
             m_current = getLatestNode(m_current);
         }
     }
