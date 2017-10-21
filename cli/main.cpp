@@ -44,226 +44,258 @@
 
 QTextStream out(stdout, QIODevice::WriteOnly);
 bool markdown = false;
-QString diceToMarkdown(ExportedDiceResult& dice,bool highlight,bool homogeneous)
+QString diceToMarkdown(QList<ExportedDiceResult>& diceList,bool highlight,bool homogeneous)
 {
-    QStringList resultGlobal;
-    foreach(int face, dice.keys())
+    QStringList global;
+    for(auto dice : diceList)
     {
-        QStringList result;
-        QStringList currentStreak;
-        QList<QStringList> allStreakList;
-        ListDiceResult diceResult =  dice.value(face);
-        bool previousHighlight=false;
-        QString previousColor;
-        QString patternColor("");
-        foreach (HighLightDice tmp, diceResult)
+        QStringList resultGlobal;
+        for(int face:  dice.keys())
         {
-            if(previousColor != tmp.getColor())
+            QStringList result;
+            QStringList currentStreak;
+            QList<QStringList> allStreakList;
+            ListDiceResult diceResult =  dice.value(face);
+            bool previousHighlight=false;
+            QString previousColor;
+            QString patternColor("");
+            for (const HighLightDice& tmp : diceResult)
             {
-                if(!currentStreak.isEmpty())
+                if(previousColor != tmp.getColor())
                 {
-                    QStringList list;
-                    list << patternColor+currentStreak.join(',');
-                    allStreakList.append(list);
-                    currentStreak.clear();
-                }
-                patternColor = QStringLiteral("");
+                    if(!currentStreak.isEmpty())
+                    {
+                        QStringList list;
+                        list << patternColor+currentStreak.join(',');
+                        allStreakList.append(list);
+                        currentStreak.clear();
+                    }
+                    patternColor = QStringLiteral("");
 
+                }
+                QStringList diceListStr;
+                if((previousHighlight)&&(!tmp.isHighlighted()))
+                {
+                    if(!currentStreak.isEmpty())
+                    {
+                        QStringList list;
+                        list << patternColor+currentStreak.join(',');
+                        allStreakList.append(list);
+                        currentStreak.clear();
+                    }
+
+                }
+                else if((!previousHighlight)&&(tmp.isHighlighted()))
+                {
+                    if(!currentStreak.isEmpty())
+                    {
+                        QStringList list;
+                        list << currentStreak.join(',');
+                        allStreakList.append(list);
+                        currentStreak.clear();
+                    }
+                }
+                previousHighlight = tmp.isHighlighted();
+                previousColor = tmp.getColor();
+                for(int i =0; i < tmp.getResult().size(); ++i)
+                {
+                    qint64 dievalue = tmp.getResult()[i];
+                    diceListStr << QString::number(dievalue);
+                }
+                if(diceListStr.size()>1)
+                {
+                    QString first = diceListStr.takeFirst();
+                    first = QString("%1 [%2]").arg(first).arg(diceListStr.join(','));
+                    diceListStr.clear();
+                    diceListStr << first;
+                }
+                currentStreak << diceListStr.join(' ');
             }
-            QStringList diceListStr;
-            if((previousHighlight)&&(!tmp.isHighlighted()))
+
+            if(previousHighlight)
             {
-                if(!currentStreak.isEmpty())
-                {
-                    QStringList list;
-                    list << patternColor+currentStreak.join(',');
-                    allStreakList.append(list);
-                    currentStreak.clear();
-                }
-
+                QStringList list;
+                list <<  patternColor+currentStreak.join(',');
+                allStreakList.append(list);
             }
-            else if((!previousHighlight)&&(tmp.isHighlighted()))
+            else
             {
                 if(!currentStreak.isEmpty())
                 {
                     QStringList list;
                     list << currentStreak.join(',');
                     allStreakList.append(list);
-                    currentStreak.clear();
                 }
             }
-            previousHighlight = tmp.isHighlighted();
-            previousColor = tmp.getColor();
-            for(int i =0; i < tmp.getResult().size(); ++i)
+            for(const QStringList& a : allStreakList)
             {
-                qint64 dievalue = tmp.getResult()[i];
-                diceListStr << QString::number(dievalue);
+                result << a;
             }
-            if(diceListStr.size()>1)
+            if(dice.keys().size()>1)
             {
-                QString first = diceListStr.takeFirst();
-                first = QString("%1 [%2]").arg(first).arg(diceListStr.join(','));
-                diceListStr.clear();
-                diceListStr << first;
+                resultGlobal << QString(" d%2:(%1)").arg(result.join(",")).arg(face);
             }
-            currentStreak << diceListStr.join(' ');
-        }
-
-        if(previousHighlight)
-        {
-            QStringList list;
-            list <<  patternColor+currentStreak.join(',');
-            allStreakList.append(list);
-        }
-        else
-        {
-            if(!currentStreak.isEmpty())
+            else
             {
-                QStringList list;
-                list << currentStreak.join(',');
-                allStreakList.append(list);
+                resultGlobal << result.join(",");
             }
         }
-        foreach(QStringList a, allStreakList)
-        {
-            result << a;
-        }
-        if(dice.keys().size()>1)
-        {
-            resultGlobal << QString(" d%2:(%1)").arg(result.join(",")).arg(face);
-        }
-        else
-        {
-            resultGlobal << result.join(",");
-        }
+        global << resultGlobal.join("");
     }
-    return resultGlobal.join("");
+    return global.join(";");
 }
 
-QString diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
+QString diceToText(QList<ExportedDiceResult>& diceList,bool highlight,bool homogeneous)
 {
-    QStringList resultGlobal;
+    QStringList global;
+    for(auto dice : diceList)
+    {
+        QStringList resultGlobal;
         foreach(int face, dice.keys())
         {
-               QStringList result;
-               ListDiceResult diceResult =  dice.value(face);
-               //patternColor = patternColorarg();
-               foreach (HighLightDice tmp, diceResult)
-               {
-                    QStringList diceListStr;
-                    QStringList diceListChildren;
+            QStringList result;
+            ListDiceResult diceResult =  dice.value(face);
+            for (const HighLightDice& tmp : diceResult)
+            {
+                QStringList diceListStr;
+                QStringList diceListChildren;
 
 
-                    for(int i =0; i < tmp.getResult().size(); ++i)
+                for(int i =0; i < tmp.getResult().size(); ++i)
+                {
+                    qint64 dievalue = tmp.getResult()[i];
+                    QString prefix("%1");
+
+                    if((tmp.isHighlighted())&&(highlight))
                     {
-                        qint64 dievalue = tmp.getResult()[i];
-                        QString prefix("%1");
-
-                        if((tmp.isHighlighted())&&(highlight))
+                        if(tmp.getColor().isEmpty()|| tmp.getColor()=="black")
                         {
-                            if(tmp.getColor().isEmpty()|| tmp.getColor()=="black")
-                            {
-                                prefix = "\e[0;31m%1\e[0m";
-                            }
-                            if(tmp.getColor()=="white")
-                            {
-                                prefix = "\e[97m%1\e[0m";
-                            }
-                            if(tmp.getColor()=="blue")
-                            {
-                                prefix = "\e[34m%1\e[0m";
-                            }
-                            if(tmp.getColor()=="red")
-                            {
-                                prefix = "\e[31m%1\e[0m";
-                            }
-                            if(tmp.getColor()=="black")
-                            {
-                                prefix = "\e[30m%1\e[0m";
-                            }
+                            prefix = "\e[0;31m%1\e[0m";
                         }
-
-                        if(i==0)
+                        if(tmp.getColor()=="white")
                         {
-                            diceListStr << prefix.arg(QString::number(dievalue));
+                            prefix = "\e[97m%1\e[0m";
                         }
-                        else
+                        if(tmp.getColor()=="blue")
                         {
-                            diceListChildren << prefix.arg(QString::number(dievalue));
+                            prefix = "\e[34m%1\e[0m";
+                        }
+                        if(tmp.getColor()=="red")
+                        {
+                            prefix = "\e[31m%1\e[0m";
+                        }
+                        if(tmp.getColor()=="black")
+                        {
+                            prefix = "\e[30m%1\e[0m";
                         }
                     }
-                    if(!diceListChildren.isEmpty())
+
+                    if(i==0)
                     {
-                        diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
+                        diceListStr << prefix.arg(QString::number(dievalue));
                     }
+                    else
+                    {
+                        diceListChildren << prefix.arg(QString::number(dievalue));
+                    }
+                }
+                if(!diceListChildren.isEmpty())
+                {
+                    diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
+                }
 
-                    result << diceListStr.join(' ');
-                   // qDebug() << result << tmp.first << tmp.second;
-               }
+                result << diceListStr.join(' ');
+                // qDebug() << result << tmp.first << tmp.second;
+            }
 
-               if(dice.keys().size()>1)
-               {
-                  resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
-               }
-               else
-               {
-                   resultGlobal << result;
-               }
+            if(dice.keys().size()>1)
+            {
+                resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
+            }
+            else
+            {
+                resultGlobal << result;
+            }
         }
-    return resultGlobal.join(' ');
+        global << resultGlobal.join(' ');
+    }
+    return global.join(" ; ");
 }
 void startDiceParsingMarkdown(QString cmd)
 {
     QString result("");
     bool highlight = true;
-    DiceParser* parser = new DiceParser();
-    if(parser->parseLine(cmd))
+    DiceParser parser;
+
+    //setAlias
+    parser.insertAlias(new DiceAlias("l5r5R","L[-,⨀,⨀⬢,❂⬢,❁,❁⬢]"),0);
+    parser.insertAlias(new DiceAlias("l5r5S","L[-,-,⨀,⨀,⨀❁,⨀⬢,⨀⬢,❂,❂⬢,❁,❁,❁]"),1);
+
+
+    if(parser.parseLine(cmd))
     {
-            parser->Start();
-            if(!parser->getErrorMap().isEmpty())
+        parser.Start();
+        if(!parser.getErrorMap().isEmpty())
+        {
+            result +=  "```markdown\n# Error:\n" + parser.humanReadableError() + "\n```";
+        }
+        else
+        {
+            QList<ExportedDiceResult> list;
+            bool homogeneous = true;
+            parser.getLastDiceResult(list,homogeneous);
+            QString listText = diceToText(list,false,homogeneous);
+            QString diceText = diceToMarkdown(list,highlight,homogeneous);
+            QString scalarText;
+            QString str;
+
+            if(parser.hasIntegerResultNotInFirst())
             {
-                result +=  "```markdown\n# Error:\n" + parser->humanReadableError() + "\n```";
+                auto values = parser.getLastIntegerResults();
+                QStringList strLst;
+                for(auto val : values )
+                {
+                    strLst << QString::number(val);
+                }
+                scalarText = QString("%1").arg(strLst.join(','));
+            }
+            else if(!list.isEmpty())
+            {
+                auto values = parser.getSumOfDiceResult();
+                QStringList strLst;
+                for(auto val : values )
+                {
+                    strLst << QString::number(val);
+                }
+                scalarText = QString("%1").arg(strLst.join(','));
+            }
+            if(highlight)
+            {
+                str = QString("```markdown\n# %1\nDetails:[%3 (%2)]\n```").arg(scalarText).arg(diceText).arg(parser.getDiceCommand());
             }
             else
             {
-
-                ExportedDiceResult list;
-                bool homogeneous = true;
-                parser->getLastDiceResult(list,homogeneous);
-                QString diceText = diceToMarkdown(list,highlight,homogeneous);
-                QString scalarText;
-                QString str;
-
-                if(parser->hasIntegerResultNotInFirst())
-                {
-                    scalarText = QString("%1").arg(parser->getLastIntegerResult());
-                }
-                else if(!list.isEmpty())
-                {
-                    scalarText = QString("%1").arg(parser->getSumOfDiceResult());
-                }
-                if(highlight)
-                {
-                    str = QString("```markdown\n# %1\nDetails:[%3 (%2)]\n```").arg(scalarText).arg(diceText).arg(parser->getDiceCommand());
-                }
-                else
-                {
-                    str = QString("```markdown\n#%1, details:[%3 (%2)]\n```").arg(scalarText).arg(diceText).arg(parser->getDiceCommand());
-                }
-                if(parser->hasStringResult())
-                {
-                    str = parser->getStringResult();
-                }
-                result += str + "\n";
+                str = QString("```markdown\n#%1, details:[%3 (%2)]\n```").arg(scalarText).arg(diceText).arg(parser.getDiceCommand());
             }
+            if(parser.hasStringResult())
+            {
+                bool ok;
+                QStringList allStringlist = parser.getAllStringResult(ok);
+                QString stringResult = allStringlist.join(" ; ");
+                stringResult.replace("%1",scalarText);
+                stringResult.replace("%2",listText.trimmed());
+                str = stringResult;
+            }
+            result += str + "\n";
+        }
+
     }
     else
     {
-        result += "markdown\n#Error:" + parser->humanReadableError() + "\n```";
+        result += "markdown\n#Error:" + parser.humanReadableError() + "\n```";
     }
 
-
-     out << result;
+    out << result;
 }
 
 void startDiceParsing(QStringList& cmds,QString& treeFile,bool highlight)
@@ -273,18 +305,18 @@ void startDiceParsing(QStringList& cmds,QString& treeFile,bool highlight)
     for(QString cmd : cmds)
     {
 
-    if(parser->parseLine(cmd))
-    {
-       //
+        if(parser->parseLine(cmd))
+        {
+            //
 
             parser->Start();
             if(!parser->getErrorMap().isEmpty())
             {
-                out << "Error" << parser->humanReadableError()<< "\n";
+                out << "Error" << parser->humanReadableError() << "\n";
                 return;
             }
 
-            ExportedDiceResult list;
+            QList<ExportedDiceResult> list;
             bool homogeneous = true;
             parser->getLastDiceResult(list,homogeneous);
             QString diceText = diceToText(list,highlight,homogeneous);
@@ -295,11 +327,23 @@ void startDiceParsing(QStringList& cmds,QString& treeFile,bool highlight)
 
             if(parser->hasIntegerResultNotInFirst())
             {
-                scalarText = QString("%1").arg(parser->getLastIntegerResult());
+                auto values = parser->getLastIntegerResults();
+                QStringList strLst;
+                for(auto val : values )
+                {
+                    strLst << QString::number(val);
+                }
+                scalarText = QString("%1").arg(strLst.join(','));
             }
             else if(!list.isEmpty())
             {
-                scalarText = QString("%1").arg(parser->getSumOfDiceResult());
+                auto values = parser->getSumOfDiceResult();
+                QStringList strLst;
+                for(auto val : values )
+                {
+                    strLst << QString::number(val);
+                }
+                scalarText = QString("%1").arg(strLst.join(','));
             }
             if(highlight)
                 str = QString("Result: \e[0;31m%1\e[0m, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(parser->getDiceCommand());
@@ -308,58 +352,37 @@ void startDiceParsing(QStringList& cmds,QString& treeFile,bool highlight)
 
             if(parser->hasStringResult())
             {
-                str = parser->getStringResult();
+                str = parser->getStringResult().join(",");;
             }
             if(!parser->getComment().isEmpty())
             {
-                out << "\033[1m" <<parser->getComment()<< "\033[0m\n";
+                out << "\033[1m" <<parser->getComment() << "\033[0m\n";
             }
             out << str << "\n";
             if(!treeFile.isEmpty())
             {
                 parser->writeDownDotTree(treeFile);
             }
-    }
-    else
-    {
-        out << parser->humanReadableError()<< "\n";;
-    }
+
+        }
+        else
+        {
+            out << parser->humanReadableError() << "\n";;
+        }
     }
     delete parser;
 }
-
-void usage()
-{
-    QString help = "Usage: ./dice [options]\n\
-\n\
-Options:\n\
-  -c, --color-off                      Disable color to highlight result\n\
-  -v, --version                        Show the version and quit.\n\
-  --reset-settings                     Erase the settings and use the default\n\
-                                       parameters\n\
-  -d, --dot-file <dotfile>             Instead of rolling dice, generate the\n\
-                                       execution tree and write it in <dotfile>\n\
-  -t, --translation <translationfile>  path to the translation file:\n\
-                                       <translationfile>\n\
-  -h, --help                           Display this help\n\
-";
-
-    out << help;
-}
-
+#include <QTextCodec>
 
 int main(int argc, char *argv[])
 {
-    /*QCoreApplication app(argc,argv);
-    QCoreApplication::setApplicationName("dice");
-    QCoreApplication::setApplicationVersion("1.0");*/
-
-
     QStringList commands;
     QString cmd;
     QString dotFileStr;
-
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     bool colorb=true;
+    out.setCodec("UTF-8");// UTF-8 UTF-8
+   // std::cout << QString("réussite").toStdString();
 
     QCommandLineParser optionParser;
     QCommandLineOption color(QStringList() << "c"<< "color-off", "Disable color to highlight result");
@@ -370,10 +393,10 @@ int main(int argc, char *argv[])
     QCommandLineOption translation(QStringList() << "t"<<"translation", "path to the translation file: <translationfile>","translationfile");
     QCommandLineOption help(QStringList() << "h"<<"help", "Display this help");
 
-     if(!optionParser.addOption(color))
-     {
+    if(!optionParser.addOption(color))
+    {
         out << optionParser.errorText() << "\n";
-     }
+    }
 
     optionParser.addOption(version);
     optionParser.addOption(reset);
@@ -384,14 +407,10 @@ int main(int argc, char *argv[])
 
     for(int i=0;i<argc;++i)
     {
-
-        commands << QString::fromLatin1(argv[i]);
+        commands << QString::fromUtf8(argv[i]);
     }
 
     optionParser.process(commands);
-
-
-
 
     if(optionParser.isSet(color))
     {
@@ -410,9 +429,9 @@ int main(int argc, char *argv[])
     }
     else if(optionParser.isSet(dotFile))
     {
-         dotFileStr = optionParser.value(dotFile);
+        dotFileStr = optionParser.value(dotFile);
     }
-    else if(optionParser.isSet(discord))
+    if(optionParser.isSet(discord))
     {
         markdown = true;
     }
@@ -425,21 +444,21 @@ int main(int argc, char *argv[])
         cmd = "help";
     }
     QStringList cmdList = optionParser.positionalArguments();
-   // qDebug()<< "rest"<< cmdList;
+    // qDebug()<< "rest"<< cmdList;
 
 
-        if(markdown)
-        {
-            startDiceParsingMarkdown(cmdList.first());
-        }
-        else
-        {
-            startDiceParsing(cmdList,dotFileStr,colorb);
-        }
-        if(optionParser.isSet(help))
-        {
-            usage();
-        }
+    if(markdown)
+    {
+        startDiceParsingMarkdown(cmdList.first());
+    }
+    else
+    {
+        startDiceParsing(cmdList,dotFileStr,colorb);
+    }
+    if(optionParser.isSet(help))
+    {
+        out << optionParser.helpText();
+    }
 
 
 
