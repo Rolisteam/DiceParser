@@ -102,8 +102,11 @@ public:
      * @return bool every thing is fine or not
      */
     bool parseLine(QString str);
-
-
+    /**
+     * @brief getStartNodeCount
+     * @return
+     */
+    int getStartNodeCount() const;
     /**
      * @brief Start running the execution tree
      *
@@ -126,20 +129,20 @@ public:
      */
     void writeDownDotTree(QString filepath);
     /**
-     * @brief getLastIntegerResult
+     * @brief getLastIntegerResults
      * @return
      */
-    qreal getLastIntegerResult();
+    QList<qreal> getLastIntegerResults();
     /**
      * @brief getSumOfDiceResult
      * @return
      */
-    qreal getSumOfDiceResult();
+    QList<qreal> getSumOfDiceResult();
     /**
      * @brief getLastDiceResult
      * @return
      */
-    void getLastDiceResult(ExportedDiceResult& diceValues,bool& homogeneous);
+    void getLastDiceResult(QList<ExportedDiceResult>& diceValues,bool& homogeneous);
     /**
      * @brief hasIntegerResultNotInFirst
      * @return
@@ -164,7 +167,7 @@ public:
      * @brief getStringResult
      * @return
      */
-    QString getStringResult();
+    QStringList getStringResult();
     /**
      * @brief humanReadableError
      * @return
@@ -307,14 +310,14 @@ private:
      * @brief getLeafNode
      * @return
      */
-    ExecutionNode* getLeafNode();
+    ExecutionNode* getLeafNode(ExecutionNode* node);
 
     /**
      * @brief hasResultOfType
      * @param notthelast
      * @return
      */
-    bool hasResultOfType(Result::RESULT_TYPE,bool notthelast = false);
+    bool hasResultOfType(Result::RESULT_TYPE, ExecutionNode* node, bool notthelast = false);
 
 
 private:
@@ -328,7 +331,8 @@ private:
     QMap<ExecutionNode::DICE_ERROR_CODE,QString> m_warningMap;
 
 
-    ExecutionNode* m_start;
+    ExecutionNode* m_start = nullptr;
+    QList<ExecutionNode*> m_startNodes;
     ExecutionNode* m_current;
     QString m_command;
     ParsingToolBox* m_parsingToolbox;
