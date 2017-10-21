@@ -251,7 +251,7 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
     QVector<CompositeValidator::LogicOperation>* operators = new QVector<CompositeValidator::LogicOperation>();
     QList<Validator*>* validatorList = new QList<Validator*>();
 
-    while(NULL!=tmp)
+    while(nullptr!=tmp)
     {
         bool hasOperator = readLogicOperation(str,opLogic);
         if( hasOperator )
@@ -276,7 +276,7 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
             {
                 return tmp;
             }
-            tmp = NULL;
+            tmp = nullptr;
         }
 
     }
@@ -289,7 +289,7 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
     }
     else
     {
-        return NULL;
+        return nullptr;
     }
 }
 bool ParsingToolBox::readLogicOperation(QString& str,CompositeValidator::LogicOperation& op)
@@ -467,7 +467,7 @@ bool ParsingToolBox::readList(QString& str,QStringList& list,QList<Range>& range
     if(str.startsWith("["))
     {
         str=str.remove(0,1);
-        int pos = str.lastIndexOf("]");
+        int pos = str.indexOf("]");
         if(-1!=pos)
         {
             QString liststr = str.left(pos);
@@ -495,7 +495,7 @@ bool ParsingToolBox::readAscending(QString& str)
 bool ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
 {
     DiceRollerNode* node = getDiceRollerNode(previous);
-    if(NULL!=node)
+    if(nullptr!=node)
     {
         return (val->getValidRangeSize(node->getFaces())<node->getFaces());
     }
@@ -506,10 +506,10 @@ bool ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
 }
 DiceRollerNode* ParsingToolBox::getDiceRollerNode(ExecutionNode* previous)
 {
-    while(NULL!=previous)
+    while(nullptr!=previous)
     {
         DiceRollerNode* node = dynamic_cast<DiceRollerNode*>(previous);
-        if(NULL!=node)
+        if(nullptr!=node)
         {
             return node;
         }
