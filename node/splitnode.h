@@ -26,7 +26,7 @@
 #include "result/diceresult.h"
 
 /**
- * @brief The MergeNode class is an ExecutionNode. It is dedicated to merge result of several commands.
+ * @brief The SplitNode class is an ExecutionNode. It is dedicated to split result of one dice into one dimension array.
  */
 class SplitNode : public ExecutionNode
 {
