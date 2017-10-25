@@ -183,9 +183,9 @@ There are 3 different methods.
 * **One Of Them** : at least one die must fit the condition to trigger the true instruction. If no dices fit the condition the false instruction is run.
 * **On Scalar** : the condition is evaluated on the scalar result of the dice roll.
 
-To switch the operator to act in **All Of Them** method you must add **\*** character as compare method position.
-To switch the operator to act in **One Of Them** method you must add **.** character as compare method position.
-To switch the operator to act in **On Scalar** method you must add **:** character as compare method position.
+To switch the operator to act in **All Of Them** method you must add ```*``` character as compare method position.  
+To switch the operator to act in **One Of Them** method you must add ```.``` character as compare method position.  
+To switch the operator to act in **On Scalar** method you must add ```:``` character as compare method position.  
 
 
 ## example:
