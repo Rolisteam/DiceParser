@@ -187,6 +187,9 @@ To switch the operator to act in **All Of Them** method you must add ```*``` cha
 To switch the operator to act in **One Of Them** method you must add ```.``` character as compare method position.  
 To switch the operator to act in **On Scalar** method you must add ```:``` character as compare method position.  
 
+If you plan to use if operator to display text message. You must surround text with ```"```. Example available below.
+
+
 
 ## example:
 
@@ -206,11 +209,17 @@ if at least one die is equal to 6, then roll another d6 and add it to the result
 
 if all dice are equal to 6, then roll another d6 and add it to the result.
 
+> 2d10i:[>15]{"Success"}{"Fail"}
 
-> 2d10i:[>15]{"Success"}
+if the sum of two dice is greater than 15, It displays "Success", override it displays "Fail".
 
-if the sum of two dice is greater than 15, It displays "Success".
+> 2d10i:[>15]{"Success %1 "}{"Fail %1"}
 
+Same as above, but the final result is displayed beside Success or Fail.
+
+> 2d10i:[>15]{"Success %1 [%2]"}{"Fail %1 [%2]"}
+
+Same as above, but the result of each die is displayed inside square brackets.
 
 ## Arithmetic
 
