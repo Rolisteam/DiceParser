@@ -411,5 +411,17 @@ Old World in darkness system.
 Exalted 2nd edition system. 
 
 
+# Best Practices
+
+As DiceParser provides more and more features, you may find several ways to do the same thing. We want here to explain the difference between those several approaches. Then you will be able to use the right one.
 
 
+## Roll several kind of dice and sum them
+
+```Bad```
+> 2d8;2d10m
+
+```Good```
+> 2d8+2d10
+
+The merge operator is useful when you want to use dice operator on all rolled dice.
