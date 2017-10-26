@@ -13,9 +13,42 @@ make
 make install
 ```
 
-## Irc and Chat
+## DiceParser : What is it ?
+
+DiceParser is a software component dedicated to roll dice through simple commands. This software component is available on different platform.  
+Such as: Irc bot, discord bot, included in Rolisteam, web server, on twitter etc.
+
+Each platform has its own limitations.
+Let's take a look about it:
+
+
+### Roll dice on each platform
+
 
 Please, remember it is important to prefix all you command by `!`. This will allow the system to identify your command. To clarify the documentation, the `!` is not repeated before all commands.
+
+| platform | start character(s)  | more information |
+|---|---|--- |
+| Rolisteam |```!```| [Documentation](http://wiki.rolisteam.org/index.php/En:Dice) |
+| Discord  |```!```|  |
+| Twitter  | ```#roll```  | Twit any message starting with #roll following by dice command (e.g: ```#roll 2d6```) |
+| IrcBot   |```!```|  |
+| webserver   | nothing |  No public published yet. Has dedicated text field |
+| dice   | nothing | dice is a command line application to roll dice: ```dice "2d6"``` |
+
+
+### Known Limitations
+
+| platform | descriptions |
+|---|---|
+| Rolisteam | no support for comments yet. Rolisteam is a big software. You may not have all the most recent feature from diceparser. |
+| Discord  | no support for p operator. Color are badly managed by discord so we can't waste time about it.  If the command takes too much time. It is cancel  |
+| Twitter  | Result such be short |
+| IrcBot   |  |
+| webserver|  |
+| dice     |  |
+
+
 
 ## How to roll a die 
 
@@ -376,5 +409,7 @@ Old World in darkness system.
 > 8D10c[>=7]+@c[=10]
 
 Exalted 2nd edition system. 
+
+
 
 
