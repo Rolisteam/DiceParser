@@ -30,9 +30,9 @@ void HelpNode::run(ExecutionNode* previous)
     StringResult* txtResult = dynamic_cast<StringResult*>(m_result);
     txtResult->setHighLight(false);
 
-    if(NULL != previous)
+    if(nullptr != previous)
     {
-        if(previous->getResult() == NULL)
+        if(previous->getResult() == nullptr)
         {
 			txtResult->setText(QObject::tr("Rolisteam Dice Parser:\nFull documentation at: %1").arg(m_path));
         }
@@ -43,7 +43,7 @@ void HelpNode::run(ExecutionNode* previous)
         m_result->setPrevious(previous->getResult());
     }
 
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         m_nextNode->run(this);
     }
@@ -72,7 +72,7 @@ void HelpNode::setHelpPath(QString path)
 ExecutionNode* HelpNode::getCopy() const
 {
     HelpNode* node = new HelpNode();
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

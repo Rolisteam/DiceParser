@@ -23,7 +23,7 @@ public:
      * @brief run
      * @param previous
      */
-    virtual void run(ExecutionNode* previous = NULL)=0;
+    virtual void run(ExecutionNode* previous = nullptr)=0;
     /**
      * @brief getResult
      * @return

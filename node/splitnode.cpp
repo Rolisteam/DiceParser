@@ -29,7 +29,7 @@ SplitNode::SplitNode()
 void SplitNode::run(ExecutionNode* previous)
 {
     m_previousNode = previous;
-    if(NULL!=previous)
+    if(nullptr!=previous)
     {
         m_result->setPrevious(previous->getResult());
 
@@ -56,7 +56,7 @@ void SplitNode::run(ExecutionNode* previous)
             }
         }
     }
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         m_nextNode->run(this);
     }
@@ -76,7 +76,7 @@ QString SplitNode::toString(bool withLabel) const
 qint64 SplitNode::getPriority() const
 {
     qint64 priority=0;
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         priority = m_nextNode->getPriority();
     }
@@ -85,7 +85,7 @@ qint64 SplitNode::getPriority() const
 ExecutionNode* SplitNode::getCopy() const
 {
     SplitNode* node = new SplitNode();
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

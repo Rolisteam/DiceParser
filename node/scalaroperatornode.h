@@ -115,6 +115,11 @@ private:
      * @return
      */
     static qint64 multiple(qint64,qint64);
+    /**
+     * @brief power
+     * @return
+     */
+    static qint64 power(qint64,qint64);
 
 private:
     ExecutionNode* m_internalNode;

@@ -23,8 +23,8 @@
 
 JumpBackwardNode::JumpBackwardNode()
 {
-    m_previousNode=NULL;
-    m_backwardNode = NULL;
+    m_previousNode=nullptr;
+    m_backwardNode = nullptr;
     m_diceResult =new DiceResult();
     m_result = m_diceResult;
 }
@@ -51,7 +51,7 @@ void JumpBackwardNode::generateDotTree(QString& s)
     s.append(toString(true));
     s.append(";\n");
 
-    if(NULL!=m_backwardNode)
+    if(nullptr!=m_backwardNode)
     {
         s.append(toString(false));
         s.append(" -> ");
@@ -60,7 +60,7 @@ void JumpBackwardNode::generateDotTree(QString& s)
         //m_backwardNode->generateDotTree(s);
     }
 
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         s.append(toString(false));
         s.append(" -> ");
@@ -72,9 +72,9 @@ void JumpBackwardNode::generateDotTree(QString& s)
     {
         s.append(toString(false));
         s.append(" -> ");
-        s.append("NULL;\n");
+        s.append("nullptr;\n");
 
-        if(NULL!=m_result)
+        if(nullptr!=m_result)
         {
             s.append(toString(false));
             s.append(" ->");
@@ -92,12 +92,12 @@ void JumpBackwardNode::run(ExecutionNode* previous)
 		ExecutionNode* parent = previous;
 		bool found=false;
         //int i = 3;
-		Result* result=NULL;
-        while((NULL!=parent)&&(!found))
+		Result* result=nullptr;
+        while((nullptr!=parent)&&(!found))
 		{
 
 			result = parent->getResult();
-            if(NULL!=result)
+            if(nullptr!=result)
 			{
                 //--i;
                 if(/*(i==0)&&*/(result->hasResultOfType(Result::DICE_LIST)))
@@ -108,7 +108,7 @@ void JumpBackwardNode::run(ExecutionNode* previous)
                 else
                 {
                     JumpBackwardNode* jpNode = dynamic_cast<JumpBackwardNode*>(parent);
-                    if(NULL!=jpNode)
+                    if(nullptr!=jpNode)
                     {
                         found = true;
                         m_backwardNode = parent;
@@ -121,16 +121,16 @@ void JumpBackwardNode::run(ExecutionNode* previous)
             }
 
 		}
-        if(NULL==result)
+        if(nullptr==result)
         {
             m_errors.insert(DIE_RESULT_EXPECTED,QObject::tr(" The @ operator expects dice result. Please check the documentation to fix your command."));
         }
         else
         {
             DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
-            if(NULL!=diceResult)
+            if(nullptr!=diceResult)
             {
-                foreach(Die* die,diceResult->getResultList())
+                for(Die* die : diceResult->getResultList())
                 {
                     Die* tmpdie = new Die();
                     *tmpdie=*die;
@@ -141,11 +141,11 @@ void JumpBackwardNode::run(ExecutionNode* previous)
 
             m_result->setPrevious(previous->getResult());
 
-            if(NULL!=m_nextNode)
+            if(nullptr!=m_nextNode)
             {
                 m_nextNode->run(this);
             }
-            if(NULL!=diceResult)
+            if(nullptr!=diceResult)
             {
                 for(int i =0;i<diceResult->getResultList().size();++i)
                 {
@@ -163,7 +163,7 @@ void JumpBackwardNode::run(ExecutionNode* previous)
 ExecutionNode* JumpBackwardNode::getCopy() const
 {
     JumpBackwardNode* node = new JumpBackwardNode();
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

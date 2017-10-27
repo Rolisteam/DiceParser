@@ -99,7 +99,7 @@ QString MergeNode::toString(bool withLabel) const
 qint64 MergeNode::getPriority() const
 {
     qint64 priority=0;
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         priority = m_nextNode->getPriority();
     }
@@ -108,7 +108,7 @@ qint64 MergeNode::getPriority() const
 ExecutionNode* MergeNode::getCopy() const
 {
     MergeNode* node = new MergeNode();
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

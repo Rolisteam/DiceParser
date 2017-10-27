@@ -21,7 +21,7 @@
 #include "operationcondition.h"
 
 OperationCondition::OperationCondition()
-    : m_operator(Modulo),m_boolean(NULL),m_value(0)
+    : m_operator(Modulo),m_boolean(nullptr),m_value(0)
 {
 
 }

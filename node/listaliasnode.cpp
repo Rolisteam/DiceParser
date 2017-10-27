@@ -31,9 +31,9 @@ void ListAliasNode::run(ExecutionNode* previous )
 	StringResult* txtResult = dynamic_cast<StringResult*>(m_result);
     txtResult->setHighLight(false);
 
-	if(NULL != previous)
+	if(nullptr != previous)
 	{
-		if(previous->getResult() == NULL)
+		if(previous->getResult() == nullptr)
 		{
             txtResult->setText(buildList());
 
@@ -45,7 +45,7 @@ void ListAliasNode::run(ExecutionNode* previous )
 		m_result->setPrevious(previous->getResult());
 	}
 
-	if(NULL!=m_nextNode)
+	if(nullptr!=m_nextNode)
 	{
 		m_nextNode->run(this);
 	}
@@ -53,7 +53,7 @@ void ListAliasNode::run(ExecutionNode* previous )
 QString ListAliasNode::buildList() const
 {
 	QString result(QObject::tr("List of Alias:\n"));
-    foreach(DiceAlias* key, *m_aliasList)
+    for(DiceAlias* key : *m_aliasList)
 	{
         result+=QString("%1 : %2\n").arg(key->getCommand()).arg(key->getValue());
 	}
@@ -62,7 +62,7 @@ QString ListAliasNode::buildList() const
 QString ListAliasNode::toString(bool wl) const
 {
 	QStringList resultList;
-	foreach(DiceAlias* key, *m_aliasList)
+    for(DiceAlias* key : *m_aliasList)
 	{
 		resultList <<  "{" <<key->getCommand() << key->getValue()<<  "}";
 	}
@@ -84,7 +84,7 @@ qint64 ListAliasNode::getPriority() const
 ExecutionNode* ListAliasNode::getCopy() const
 {
     ListAliasNode* node = new ListAliasNode(m_aliasList);
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

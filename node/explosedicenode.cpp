@@ -1,20 +1,20 @@
 #include "explosedicenode.h"
 
 ExploseDiceNode::ExploseDiceNode()
-	: m_diceResult(new DiceResult()),m_validator(NULL)
+    : m_diceResult(new DiceResult()),m_validator(nullptr)
 {
     m_result = m_diceResult;
 }
 void ExploseDiceNode::run(ExecutionNode* previous)
 {
 	m_previousNode = previous;
-    if((NULL!=previous)&&(NULL!=previous->getResult()))
+    if((nullptr!=previous)&&(nullptr!=previous->getResult()))
     {
         DiceResult* previous_result = static_cast<DiceResult*>(previous->getResult());
         m_result->setPrevious(previous_result);
-        if(NULL!=previous_result)
+        if(nullptr!=previous_result)
         {
-            foreach(Die* die,previous_result->getResultList())
+            for(Die* die : previous_result->getResultList())
             {
                 Die* tmpdie = new Die();
                 *tmpdie=*die;
@@ -25,7 +25,7 @@ void ExploseDiceNode::run(ExecutionNode* previous)
             QList<Die*> list = m_diceResult->getResultList();
 
 
-            foreach(Die* die, list)
+            for(Die* die : list)
             {
                 while(m_validator->hasValid(die,false))
                 {
@@ -34,7 +34,7 @@ void ExploseDiceNode::run(ExecutionNode* previous)
             }
            // m_diceResult->setResultList(list);
 
-            if(NULL!=m_nextNode)
+            if(nullptr!=m_nextNode)
             {
                 m_nextNode->run(this);
             }
@@ -43,7 +43,7 @@ void ExploseDiceNode::run(ExecutionNode* previous)
 }
 ExploseDiceNode::~ExploseDiceNode()
 {
-	if(NULL!=m_validator)
+    if(nullptr!=m_validator)
 	{
 		delete m_validator;
 	}
@@ -66,23 +66,21 @@ QString ExploseDiceNode::toString(bool withlabel) const
 qint64 ExploseDiceNode::getPriority() const
 {
     qint64 priority=0;
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_previousNode)
     {
-        priority = m_nextNode->getPriority();
+        priority = m_previousNode->getPriority();
     }
-
-
     return priority;
 }
 
 ExecutionNode* ExploseDiceNode::getCopy() const
 {
     ExploseDiceNode* node = new ExploseDiceNode();
-    if(NULL!=m_validator)
+    if(nullptr!=m_validator)
     {
         node->setValidator(m_validator->getCopy());
     }
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

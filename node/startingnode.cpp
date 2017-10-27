@@ -22,12 +22,11 @@
 
 StartingNode::StartingNode()
 {
-
+    m_previousNode = nullptr;
 }
 void StartingNode::run(ExecutionNode*)
 {
-	m_previousNode = NULL;
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         m_nextNode->run(this);
     }
@@ -48,7 +47,7 @@ QString StartingNode::toString(bool withlabel) const
 qint64 StartingNode::getPriority() const
 {
     qint64 priority=0;
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         priority = m_nextNode->getPriority();
     }
@@ -57,7 +56,7 @@ qint64 StartingNode::getPriority() const
 ExecutionNode* StartingNode::getCopy() const
 {
     StartingNode* node = new StartingNode();
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

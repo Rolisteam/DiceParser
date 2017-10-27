@@ -37,7 +37,7 @@ public:
      * @brief run - performs the actions
      * @param previous
      */
-	virtual void run(ExecutionNode* previous = NULL);
+	virtual void run(ExecutionNode* previous = nullptr);
 
 	/**
 	 * @brief toString

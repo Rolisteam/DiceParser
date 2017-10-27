@@ -4,7 +4,7 @@
 
 
 CountExecuteNode::CountExecuteNode()
-	: m_scalarResult(new ScalarResult()),m_validator(NULL)
+    : m_scalarResult(new ScalarResult()),m_validator(nullptr)
 {
 	m_result = m_scalarResult;
 }
@@ -14,7 +14,7 @@ void CountExecuteNode::setValidator(Validator* validator)
 }
 CountExecuteNode::~CountExecuteNode()
 {
-	if(NULL!=m_validator)
+    if(nullptr!=m_validator)
 	{
 		delete m_validator;
 	}
@@ -23,19 +23,19 @@ CountExecuteNode::~CountExecuteNode()
 void CountExecuteNode::run(ExecutionNode *previous)
 {
 	m_previousNode = previous;
-	if(NULL==previous)
+    if(nullptr==previous)
 	{
 		return;
 	}
     DiceResult* previousResult = dynamic_cast<DiceResult*>(previous->getResult());
-    if(NULL!=previousResult)
+    if(nullptr!=previousResult)
 	{
         m_result->setPrevious(previousResult);
         QList<Die*> diceList=previousResult->getResultList();
 		qint64 sum = 0;
-		foreach(Die* dice,diceList)
+        for(Die* dice : diceList)
 		{
-            if(NULL!=m_validator)
+            if(nullptr!=m_validator)
             {
                 sum+=m_validator->hasValid(dice,true,true);
             }
@@ -43,7 +43,7 @@ void CountExecuteNode::run(ExecutionNode *previous)
 		m_scalarResult->setValue(sum);
 
 
-		if(NULL!=m_nextNode)
+        if(nullptr!=m_nextNode)
 		{
 			m_nextNode->run(this);
 		}
@@ -63,23 +63,21 @@ QString CountExecuteNode::toString(bool withlabel) const
 qint64 CountExecuteNode::getPriority() const
 {
 	qint64 priority=0;
-	if(NULL!=m_nextNode)
+    if(nullptr!=m_previousNode)
 	{
-		priority = m_nextNode->getPriority();
+        priority = m_previousNode->getPriority();
 	}
-
-
     return priority;
 }
 
 ExecutionNode* CountExecuteNode::getCopy() const
 {
     CountExecuteNode* node = new CountExecuteNode();
-    if(NULL!=m_validator)
+    if(nullptr!=m_validator)
     {
         node->setValidator(m_validator->getCopy());
     }
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

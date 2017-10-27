@@ -143,7 +143,7 @@ void DiceResult::setOperator(const Die::ArithmeticOperator& dieOperator)
 QString DiceResult::toString(bool wl)
 {
     QStringList scalarSum;
-    foreach(Die* die,m_diceValues)
+    for(Die* die:m_diceValues)
     {
         scalarSum << QString::number(die->getValue());
     }

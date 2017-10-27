@@ -31,7 +31,7 @@ class ParenthesesNode : public ExecutionNode
 {
 public:
     ParenthesesNode();
-    virtual void run(ExecutionNode* previous = NULL);
+    virtual void run(ExecutionNode* previous = nullptr);
 
     void setInternelNode(ExecutionNode* node);
 	virtual QString toString(bool)const;

@@ -14,7 +14,7 @@ class ExploseDiceNode : public ExecutionNode
 public:
     ExploseDiceNode();
 	virtual ~ExploseDiceNode();
-    virtual void run(ExecutionNode* previous = NULL);
+    virtual void run(ExecutionNode* previous = nullptr);
     virtual void setValidator(Validator* );
 	virtual QString toString(bool )const;
     virtual qint64 getPriority() const;
