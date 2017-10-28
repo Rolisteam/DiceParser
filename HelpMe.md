@@ -1,18 +1,6 @@
 [![Logo](https://raw.githubusercontent.com/Rolisteam/rolisteam/master/resources/logo/1000-rolisteam.png)](http://www.rolisteam.org)
 # Documentation:
 
-## Build
-
-```
-git clone git@github.com:Rolisteam/DiceParser.git
-cd DiceParser
-mkdir build
-cd build
-cmake ../
-make
-make install
-```
-
 ## DiceParser : What is it ?
 
 DiceParser is a software component dedicated to roll dice through simple commands. This software component is available on different platform.  
@@ -89,6 +77,7 @@ Thanks of several operations and options, you can tune a bit your rolling comman
 * p : Paint dice
 * m : Merge
 * i : if
+* g : Group
 
 ### Keep
 
@@ -222,7 +211,11 @@ To switch the operator to act in **On Scalar** method you must add ```:``` chara
 
 If you plan to use if operator to display text message. You must surround text with ```"```. Example available below.
 
+# Group
 
+> 5d10g10 
+
+Roll 5 dice and then try to group them to make group of 10 [7th sea system].
 
 ## example:
 
@@ -321,7 +314,7 @@ There are three kind of Validator:
 -Range
 -Boolean expression
 
-Any operator which requires validator (such as `a,r,e,c') can use those three kind.
+Any operator which requires validator (such as `a,r,e,c`) can use those three kind.
 
 ### Scalar 
 
