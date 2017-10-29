@@ -297,6 +297,11 @@ Substract 4 to 6 and then roll two dice.
 
 Divide by 2 the result of 1 die.
 
+> (2+2)^2
+Result: 16 
+
+> 1d10^2
+
 ## Roll two (or more) kinds of dice at once.
 
 To make it, you have to separate all dice commands by `;`
