@@ -34,7 +34,7 @@ public:
     /**
      * @brief The ArithmeticOperator enum
      */
-    enum ArithmeticOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION};
+    enum ArithmeticOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION,POWER};
     /**
      * @brief Die
      */
@@ -154,6 +154,6 @@ private:
     std::mt19937 m_rng;
 
 };
-
+Q_DECLARE_TYPEINFO(Die,Q_MOVABLE_TYPE);
 
 #endif // DIE_H

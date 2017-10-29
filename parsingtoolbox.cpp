@@ -25,7 +25,7 @@
 #include "node/sortresult.h"
 
 
-QHash<QString,QString>*  ParsingToolBox::m_variableHash = NULL;
+QHash<QString,QString>*  ParsingToolBox::m_variableHash = nullptr;
 
 ParsingToolBox::ParsingToolBox()
     : m_logicOp(new QMap<QString,BooleanCondition::LogicOperator>()),
@@ -58,6 +58,7 @@ ParsingToolBox::ParsingToolBox()
     m_arithmeticOperation->insert(QStringLiteral("x"),Die::MULTIPLICATION);
     m_arithmeticOperation->insert(QStringLiteral("/"),Die::DIVIDE);
     m_arithmeticOperation->insert(QStringLiteral("÷"),Die::DIVIDE);
+    m_arithmeticOperation->insert(QStringLiteral("^"),Die::POWER);
 
 }
 
@@ -67,10 +68,10 @@ ParsingToolBox::ParsingToolBox(const ParsingToolBox& data)
 }
 ParsingToolBox::~ParsingToolBox()
 {
-    if(NULL!=m_logicOp)
+    if(nullptr!=m_logicOp)
     {
         delete m_logicOp;
-        m_logicOp = NULL;
+        m_logicOp = nullptr;
     }
     if(nullptr != m_logicOperation)
     {
@@ -98,7 +99,7 @@ ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e,bool b)
 bool ParsingToolBox::readDiceLogicOperator(QString& str,OperationCondition::ConditionOperator& op)
 {
     QString longKey;
-    foreach(QString tmp, m_conditionOperation->keys())
+    for(const QString& tmp: m_conditionOperation->keys())
     {
         if(str.startsWith(tmp))
         {
@@ -138,7 +139,7 @@ bool ParsingToolBox::readArithmeticOperator(QString &str, Die::ArithmeticOperato
 bool ParsingToolBox::readLogicOperator(QString& str,BooleanCondition::LogicOperator& op)
 {
     QString longKey;
-    foreach(QString tmp, m_logicOp->keys())
+    for(const QString& tmp: m_logicOp->keys())
     {
         if(str.startsWith(tmp))
         {
@@ -159,7 +160,7 @@ bool ParsingToolBox::readLogicOperator(QString& str,BooleanCondition::LogicOpera
 }
 Validator* ParsingToolBox::readValidator(QString& str)
 {
-    Validator* returnVal=NULL;
+    Validator* returnVal=nullptr;
     BooleanCondition::LogicOperator myLogicOp = BooleanCondition::Equal;
     readLogicOperator(str,myLogicOp);
 
@@ -176,7 +177,7 @@ Validator* ParsingToolBox::readValidator(QString& str)
             condition->setValue(value);
             Validator* valid = readValidator(str);
             BooleanCondition* boolC = dynamic_cast<BooleanCondition*>(valid);
-            if(NULL!=boolC)
+            if(nullptr!=boolC)
             {
                 condition->setBoolean(boolC);
             }
@@ -295,7 +296,7 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
 bool ParsingToolBox::readLogicOperation(QString& str,CompositeValidator::LogicOperation& op)
 {
     QString longKey;
-    foreach(QString tmp, m_logicOperation->keys())
+    for(const QString& tmp: m_logicOperation->keys())
     {
         if(str.startsWith(tmp))
         {
@@ -569,7 +570,7 @@ void ParsingToolBox::readPainterParameter(PainterNode* painter,QString& str)
             QString data = str.left(pos);
             str=str.remove(0,pos+1);
             QStringList duos = data.split(',');
-            foreach(QString duoStr,duos)
+            for(const QString& duoStr : duos)
             {
                 QStringList keyValu = duoStr.split(':');
                 if(keyValu.size()==2)
