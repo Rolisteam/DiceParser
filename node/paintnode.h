@@ -48,7 +48,7 @@ class PainterNode : public ExecutionNode
 public:
     PainterNode();
     virtual ~PainterNode();
-    virtual void run(ExecutionNode* previous = NULL);
+    virtual void run(ExecutionNode* previous = nullptr);
     Result* getResult();
     virtual QString toString(bool )const;
     virtual qint64 getPriority() const;

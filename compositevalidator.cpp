@@ -22,14 +22,14 @@
 #include "compositevalidator.h"
 
 CompositeValidator::CompositeValidator()
-    : m_operators(NULL),m_validatorList(NULL)
+    : m_operators(nullptr),m_validatorList(nullptr)
 {
 }
 
 CompositeValidator::~CompositeValidator()
 {
     qDeleteAll(*m_validatorList);
-    if(NULL!=m_operators)
+    if(nullptr!=m_operators)
     {
         delete m_operators;
     }

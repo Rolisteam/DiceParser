@@ -17,10 +17,10 @@ DiceRollerNode::DiceRollerNode(qint64 max,qint64 min)
 void DiceRollerNode::run(ExecutionNode* previous)
 {
 	m_previousNode = previous;
-    if(NULL!=previous)
+    if(nullptr!=previous)
     {
         Result* result=previous->getResult();
-        if(NULL!=result)
+        if(nullptr!=result)
         {
             m_diceCount = result->getResult(Result::SCALAR).toReal();
             m_result->setPrevious(result);
@@ -40,7 +40,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
                 //qDebug() << die->getValue() << "value";
 				m_diceResult->insertResult(die);
             }
-            if(NULL!=m_nextNode)
+            if(nullptr!=m_nextNode)
             {
                 m_nextNode->run(this);
             }
@@ -66,7 +66,7 @@ QString DiceRollerNode::toString(bool wl) const
 qint64 DiceRollerNode::getPriority() const
 {
     qint64 priority=4;
-//    if(NULL!=m_nextNode)
+//    if(nullptr!=m_nextNode)
 //    {
 //        priority = m_nextNode->getPriority();
 //    }
@@ -77,7 +77,7 @@ qint64 DiceRollerNode::getPriority() const
 ExecutionNode* DiceRollerNode::getCopy() const
 {
     DiceRollerNode* node = new DiceRollerNode(m_max,m_min);
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

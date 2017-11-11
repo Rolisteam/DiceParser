@@ -22,7 +22,7 @@
 #include "parenthesesnode.h"
 
 ParenthesesNode::ParenthesesNode()
-    : m_internalNode(NULL)
+    : m_internalNode(nullptr)
 {
 
 }
@@ -32,12 +32,12 @@ void ParenthesesNode::setInternelNode(ExecutionNode* node)
 }
 void ParenthesesNode::run(ExecutionNode* /*previous*/)
 {
-	m_previousNode = NULL;
-    if(NULL!=m_internalNode)
+	m_previousNode = nullptr;
+    if(nullptr!=m_internalNode)
     {
         m_internalNode->run(this);
         ExecutionNode* temp=m_internalNode;
-       while(NULL!=temp->getNextNode())
+       while(nullptr!=temp->getNextNode())
        {
             temp=temp->getNextNode();
        }
@@ -45,7 +45,7 @@ void ParenthesesNode::run(ExecutionNode* /*previous*/)
     }
 
 
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         m_nextNode->run(this);
     }
@@ -69,11 +69,11 @@ qint64 ParenthesesNode::getPriority() const
 ExecutionNode* ParenthesesNode::getCopy() const
 {
     ParenthesesNode* node = new ParenthesesNode();
-    if(NULL!=m_internalNode)
+    if(nullptr!=m_internalNode)
     {
         node->setInternelNode(m_internalNode->getCopy());
     }
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }
@@ -96,7 +96,7 @@ void ParenthesesNode::generateDotTree(QString & s)
 
     }
 
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         s.append(toString(false));
         s.append(" -> ");
@@ -109,8 +109,8 @@ void ParenthesesNode::generateDotTree(QString & s)
     {
         s.append(toString(false));
         s.append(" -> ");
-        s.append("NULL;\n");
-        if(NULL!=m_result)
+        s.append("nullptr;\n");
+        if(nullptr!=m_result)
         {
 
             s.append(toString(false));

@@ -39,11 +39,11 @@ NumberNode::~NumberNode()
 void NumberNode::run(ExecutionNode* previous)
 {
 	m_previousNode = previous;
-    if(NULL!=previous)
+    if(nullptr!=previous)
     {
         m_result->setPrevious(previous->getResult());
     }
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         m_nextNode->run(this);
     }
@@ -68,7 +68,7 @@ QString NumberNode::toString(bool withLabel) const
 qint64 NumberNode::getPriority() const
 {
     qint64 priority=0;
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         priority = m_nextNode->getPriority();
     }
@@ -80,7 +80,7 @@ ExecutionNode* NumberNode::getCopy() const
 {
     NumberNode* node = new NumberNode();
     node->setNumber(m_number);
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

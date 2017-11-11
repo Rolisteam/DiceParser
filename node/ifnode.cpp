@@ -21,14 +21,14 @@
 #include "result/diceresult.h"
 
 IfNode::IfNode()
-    : m_validator(NULL),m_true(NULL),m_false(NULL),m_conditionType(AllOfThem)
+    : m_validator(nullptr),m_true(nullptr),m_false(nullptr),m_conditionType(AllOfThem)
 {
     //m_result = new DiceResult();
 }
 
 IfNode::~IfNode()
 {
-    m_result=NULL;
+    m_result=nullptr;
 }
 
 void IfNode::run(ExecutionNode *previous)
@@ -104,29 +104,29 @@ void IfNode::run(ExecutionNode *previous)
                     {
                         if(oneIsTrue)
                         {
-                            nextNode = (NULL==m_true) ? NULL: m_true->getCopy();
+                            nextNode = (nullptr==m_true) ? nullptr: m_true->getCopy();
                         }
                         else if(oneIsFalse)
                         {
-                             nextNode = (NULL==m_false) ? NULL: m_false->getCopy();
+                             nextNode = (nullptr==m_false) ? nullptr: m_false->getCopy();
                         }
                     }
                     else if(m_conditionType==AllOfThem)
                     {
                         if(trueForAll)
                         {
-                            nextNode = (NULL==m_true) ? NULL: m_true->getCopy();
+                            nextNode = (nullptr==m_true) ? nullptr: m_true->getCopy();
                         }
                         else if(falseForAll)
                         {
-                             nextNode = (NULL==m_false) ? NULL: m_false->getCopy();
+                             nextNode = (nullptr==m_false) ? nullptr: m_false->getCopy();
                         }
                     }
 
 
-                    if(NULL!=nextNode)
+                    if(nullptr!=nextNode)
                     {
-                        if(NULL==m_nextNode)
+                        if(nullptr==m_nextNode)
                         {
                             m_nextNode = nextNode;
                         }
@@ -151,9 +151,9 @@ void IfNode::run(ExecutionNode *previous)
             {
                     nextNode=m_false;
             }
-            if(NULL!=nextNode)
+            if(nullptr!=nextNode)
             {
-                if(NULL==m_nextNode)
+                if(nullptr==m_nextNode)
                 {
                     m_nextNode = nextNode;
                 }
@@ -163,7 +163,7 @@ void IfNode::run(ExecutionNode *previous)
         }
     }
 
-    if((NULL!=m_nextNode)&&(runNext))
+    if((nullptr!=m_nextNode)&&(runNext))
     {
         m_nextNode->run(previousLoop);
     }
@@ -187,7 +187,7 @@ void IfNode::generateDotTree(QString& s)
     s.append(toString(true));
     s.append(";\n");
 
-    if((NULL!=m_true)&&(m_true != m_nextNode))
+    if((nullptr!=m_true)&&(m_true != m_nextNode))
     {
         s.append(toString(false));
         s.append(" -> ");
@@ -196,7 +196,7 @@ void IfNode::generateDotTree(QString& s)
 
         m_true->generateDotTree(s);
     }
-    if((NULL!=m_false)&&(m_false != m_nextNode))
+    if((nullptr!=m_false)&&(m_false != m_nextNode))
     {
         s.append(toString(false));
         s.append(" -> ");
@@ -205,7 +205,7 @@ void IfNode::generateDotTree(QString& s)
         m_false->generateDotTree(s);
     }
 
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         s.append(toString(false));
         s.append(" -> ");
@@ -217,9 +217,9 @@ void IfNode::generateDotTree(QString& s)
     {
         s.append(toString(false));
         s.append(" -> ");
-        s.append("NULL;\n");
+        s.append("nullptr;\n");
 
-        if(NULL!=m_result)
+        if(nullptr!=m_result)
         {
 
             s.append(toString(false));
@@ -251,7 +251,7 @@ qint64 IfNode::getPriority() const
 ExecutionNode* IfNode::getLeafNode(ExecutionNode* node)
 {
     ExecutionNode* next = node;
-    while(NULL != next->getNextNode() )
+    while(nullptr != next->getNextNode() )
     {
         next = next->getNextNode();
     }
@@ -270,19 +270,19 @@ void IfNode::setConditionType(const IfNode::ConditionType &conditionType)
 ExecutionNode* IfNode::getCopy() const
 {
     IfNode* node = new IfNode();
-    if(NULL!=m_validator)
+    if(nullptr!=m_validator)
     {
         node->setValidator(m_validator->getCopy());
     }
-    if(NULL!=m_false)
+    if(nullptr!=m_false)
     {
         node->setInstructionFalse(m_false->getCopy());
     }
-    if(NULL!=m_true)
+    if(nullptr!=m_true)
     {
         node->setInstructionTrue(m_true->getCopy());
     }
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

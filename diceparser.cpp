@@ -50,7 +50,7 @@
 #define DEFAULT_FACES_NUMBER 10
 
 DiceParser::DiceParser()
-    : m_current(nullptr)//m_start(NULL),
+    : m_current(nullptr)//m_start(nullptr),
 {
     m_currentTreeHasSeparator =false;
     m_parsingToolbox = new ParsingToolBox();
@@ -199,12 +199,12 @@ bool DiceParser::parseLine(QString str)
 
 bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
 {
-    ExecutionNode* operandNode=NULL;
+    ExecutionNode* operandNode=nullptr;
     QString result;
     QString comment;
     if(m_parsingToolbox->readOpenParentheses(str))
     {
-        ExecutionNode* internalNode=NULL;
+        ExecutionNode* internalNode=nullptr;
         if(readExpression(str,internalNode))
         {
             ParenthesesNode* parentheseNode  = new ParenthesesNode();
@@ -213,7 +213,7 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
             if(m_parsingToolbox->readCloseParentheses(str))
             {
 
-                ExecutionNode* diceNode=NULL;
+                ExecutionNode* diceNode=nullptr;
                 if(readDice(str,diceNode))
                 {
                     parentheseNode->setNextNode(diceNode);
@@ -224,7 +224,7 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
     }
     else if(readOperand(str,operandNode))
     {
-        ExecutionNode* diceNode=NULL;
+        ExecutionNode* diceNode=nullptr;
         if(readDice(str,diceNode))
         {
             operandNode->setNextNode(diceNode);
@@ -249,7 +249,7 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
     }
     else
     {
-        ExecutionNode* diceNode=NULL;
+        ExecutionNode* diceNode=nullptr;
         if(readDice(str,diceNode))
         {
             NumberNode* numberNode=new NumberNode();
@@ -330,7 +330,7 @@ QString DiceParser::displayResult()
             {
 
                 DiceResult* myDiceResult = dynamic_cast<DiceResult*>(result);
-                if(NULL!=myDiceResult)
+                if(nullptr!=myDiceResult)
                 {
 
                     QString resulStr;
@@ -392,7 +392,7 @@ QList<qreal> DiceParser::getLastIntegerResults()
         ExecutionNode* next = getLeafNode(node);
         Result* result=next->getResult();
         bool scalarDone = false;
-        while((result!=NULL)&&(!scalarDone))
+        while((result!=nullptr)&&(!scalarDone))
         {
             if(result->hasResultOfType(Result::SCALAR))
             {
@@ -465,7 +465,7 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
             if(result->hasResultOfType(Result::DICE_LIST))
             {
                 DiceResult* stringResult = dynamic_cast<DiceResult*>(result);
-                if(NULL!=stringResult)
+                if(nullptr!=stringResult)
                 {
                     for(auto die : stringResult->getResultList())
                     {
@@ -503,12 +503,12 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
         ExecutionNode* next = getLeafNode(start);
         Result* result=next->getResult();
 
-        while(NULL!=result)
+        while(nullptr!=result)
         {
             if(result->hasResultOfType(Result::DICE_LIST))
             {
                 DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
-                if(NULL!=diceResult)
+                if(nullptr!=diceResult)
                 {
                     if(homogeneous)
                     {
@@ -770,13 +770,13 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
 {
     bool returnVal=false;
 
-    ExecutionNode* next = NULL;
+    ExecutionNode* next = nullptr;
     if(readDice(str,next))
     {
         ExecutionNode* latest = next;
         while(readOption(str,latest))
         {
-            while(NULL!=latest->getNextNode())
+            while(nullptr!=latest->getNextNode())
             {
                 latest = latest->getNextNode();
             }
@@ -949,7 +949,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                         previous = addRollDiceNode(DEFAULT_FACES_NUMBER,previous);
                     }*/
                     DiceRollerNode* nodeTmp = dynamic_cast<DiceRollerNode*>(previous);
-                    if(NULL!=nodeTmp)
+                    if(nullptr!=nodeTmp)
                     {
 
                         previous = addExploseDiceNode(nodeTmp->getFaces(),previous);
@@ -969,7 +969,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
             case Filter:
             {
                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
-                if(NULL!=validator)
+                if(nullptr!=validator)
                 {
                     m_parsingToolbox->isValidValidator(previous,validator);
 
@@ -996,7 +996,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
             case Count:
             {
                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
-                if(NULL!=validator)
+                if(nullptr!=validator)
                 {
                     m_parsingToolbox->isValidValidator(previous,validator);
 
@@ -1017,7 +1017,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
             case RerollAndAdd:
             {
                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
-                if(NULL!=validator)
+                if(nullptr!=validator)
                 {
                     m_parsingToolbox->isValidValidator(previous,validator);
                     RerollDiceNode* rerollNode = new RerollDiceNode();
@@ -1040,7 +1040,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
             case Explosing:
             {
                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
-                if(NULL!=validator)
+                if(nullptr!=validator)
                 {
                     if(!m_parsingToolbox->isValidValidator(previous,validator))
                     {
@@ -1083,10 +1083,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 IfNode* nodeif = new IfNode();
                 nodeif->setConditionType(m_parsingToolbox->readConditionType(str));
                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
-                if(NULL!=validator)
+                if(nullptr!=validator)
                 {
-                    ExecutionNode* trueNode = NULL;
-                    ExecutionNode* falseNode = NULL;
+                    ExecutionNode* trueNode = nullptr;
+                    ExecutionNode* falseNode = nullptr;
                     if(readIfInstruction(str,trueNode,falseNode))
                     {
                         nodeif->setInstructionTrue(trueNode);
@@ -1153,7 +1153,7 @@ bool DiceParser::readBlocInstruction(QString& str,ExecutionNode*& resultnode)
         str=str.remove(0,1);
         ExecutionNode* node;
         Die::ArithmeticOperator op;
-        ScalarOperatorNode* scalarNode = NULL;
+        ScalarOperatorNode* scalarNode = nullptr;
         if(m_parsingToolbox->readArithmeticOperator(str,op))
         {
             scalarNode = new ScalarOperatorNode();
@@ -1163,7 +1163,7 @@ bool DiceParser::readBlocInstruction(QString& str,ExecutionNode*& resultnode)
         {
             if(str.startsWith('}'))
             {
-                if(NULL==scalarNode)
+                if(nullptr==scalarNode)
                 {
                     resultnode = node;
                 }

@@ -3,21 +3,21 @@
 #include <QUuid>
 
 ExecutionNode::ExecutionNode()
-    : m_previousNode(NULL),m_result(NULL),m_nextNode(NULL),m_errors(QMap<ExecutionNode::DICE_ERROR_CODE,QString>()),m_id(QString("\"%1\"").arg(QUuid::createUuid().toString()))
+    : m_previousNode(nullptr),m_result(nullptr),m_nextNode(nullptr),m_errors(QMap<ExecutionNode::DICE_ERROR_CODE,QString>()),m_id(QString("\"%1\"").arg(QUuid::createUuid().toString()))
 {
 
 }
 ExecutionNode::~ExecutionNode()
 {
-	if(NULL!=m_result)
+	if(nullptr!=m_result)
 	{
 		delete m_result;
-		m_result = NULL;
+		m_result = nullptr;
 	}
-	if(NULL!=m_nextNode)
+	if(nullptr!=m_nextNode)
 	{
 		delete m_nextNode;
-		m_nextNode = NULL;
+		m_nextNode = nullptr;
 	}
 }
 
@@ -39,7 +39,7 @@ ExecutionNode* ExecutionNode::getNextNode()
 }
 QMap<ExecutionNode::DICE_ERROR_CODE,QString> ExecutionNode::getExecutionErrorMap()
 {
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         foreach (ExecutionNode::DICE_ERROR_CODE key, m_nextNode->getExecutionErrorMap().keys())
         {
@@ -61,7 +61,7 @@ void ExecutionNode::generateDotTree(QString& s)
 	s.append(toString(true));
 	s.append(";\n");
 
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
 		s.append(toString(false));
         s.append(" -> ");
@@ -74,8 +74,8 @@ void ExecutionNode::generateDotTree(QString& s)
     {
 		s.append(toString(false));
         s.append(" -> ");
-		s.append("NULL;\n");
-        if(NULL!=m_result)
+		s.append("nullptr;\n");
+        if(nullptr!=m_result)
         {
 
             s.append(toString(false));

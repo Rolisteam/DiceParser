@@ -53,28 +53,28 @@ void ColorItem::setColor(const QString &color)
 PainterNode::PainterNode()
     : ExecutionNode()
 {
-    m_result = NULL;
-    m_nextNode = NULL;
+    m_result = nullptr;
+    m_nextNode = nullptr;
 }
 
 
 PainterNode::~PainterNode()
 {
-    m_result = NULL;
+    m_result = nullptr;
 }
 
 
 void PainterNode::run(ExecutionNode* previous)
 {
     m_previousNode = previous;
-    if(NULL==previous)
+    if(nullptr==previous)
     {
         return;
     }
     Result* previousResult = previous->getResult();
     //m_result = previousResult;
     DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previousResult);
-    if(NULL!=previousDiceResult)
+    if(nullptr!=previousDiceResult)
     {
         QList<Die*> diceList=previousDiceResult->getResultList();
         int pastDice=0;
@@ -90,7 +90,7 @@ void PainterNode::run(ExecutionNode* previous)
             }
         }
     }
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         m_nextNode->run(previous);
     }
@@ -127,7 +127,7 @@ void PainterNode::insertColorItem(QString color, int value)
 ExecutionNode* PainterNode::getCopy() const
 {
     PainterNode* node = new PainterNode();
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

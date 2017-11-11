@@ -8,7 +8,7 @@ FilterNode::FilterNode()
 
 FilterNode::~FilterNode()
 {
-    if(NULL!=m_validator)
+    if(nullptr!=m_validator)
     {
         delete m_validator;
     }
@@ -20,13 +20,13 @@ void FilterNode::setValidator(Validator* validator)
 void FilterNode::run(ExecutionNode* previous)
 {
     m_previousNode = previous;
-    if(NULL==previous)
+    if(nullptr==previous)
     {
         return;
     }
     DiceResult* previousDiceResult = static_cast<DiceResult*>(previous->getResult());
     m_result->setPrevious(previousDiceResult);
-    if(NULL!=previousDiceResult)
+    if(nullptr!=previousDiceResult)
     {
         QList<Die*> diceList=previousDiceResult->getResultList();
         QList<Die*> diceList2;
@@ -48,7 +48,7 @@ void FilterNode::run(ExecutionNode* previous)
         }
 
         m_diceResult->setResultList(diceList2);
-        if(NULL!=m_nextNode)
+        if(nullptr!=m_nextNode)
         {
             m_nextNode->run(this);
         }
@@ -69,7 +69,7 @@ QString FilterNode::toString(bool wl) const
 qint64 FilterNode::getPriority() const
 {
     qint64 priority=0;
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         priority = m_nextNode->getPriority();
     }
@@ -80,11 +80,11 @@ qint64 FilterNode::getPriority() const
 ExecutionNode* FilterNode::getCopy() const
 {
     FilterNode* node = new FilterNode();
-    if(NULL!=m_validator)
+    if(nullptr!=m_validator)
     {
         node->setValidator(m_validator->getCopy());
     }
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

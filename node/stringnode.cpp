@@ -9,11 +9,11 @@ StringNode::StringNode()
 void StringNode::run(ExecutionNode *previous)
 {
     m_previousNode = previous;
-    if(NULL!=previous)
+    if(nullptr!=previous)
     {
         m_result->setPrevious(previous->getResult());
     }
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         m_nextNode->run(this);
     }
@@ -111,7 +111,7 @@ QString StringNode::toString(bool withLabel) const
 qint64 StringNode::getPriority() const
 {
     qint64 priority=0;
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         priority = m_nextNode->getPriority();
     }
@@ -121,7 +121,7 @@ ExecutionNode* StringNode::getCopy() const
 {
     StringNode* node = new StringNode();
     node->setString(m_data);
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

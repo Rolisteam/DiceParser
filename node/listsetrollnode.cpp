@@ -28,10 +28,10 @@ ListSetRollNode::ListSetRollNode()
 }
 ListSetRollNode::~ListSetRollNode()
 {
-	if(NULL!=m_diceResult)
+	if(nullptr!=m_diceResult)
 	{
 		delete m_diceResult;
-		m_diceResult =NULL;
+		m_diceResult =nullptr;
 	}
 }
 
@@ -59,10 +59,10 @@ qint64 ListSetRollNode::getPriority() const
 void ListSetRollNode::run(ExecutionNode* previous)
 {
     m_previousNode = previous;
-    if(NULL!=previous)
+    if(nullptr!=previous)
     {
         Result* result=previous->getResult();
-        if(NULL!=result)
+        if(nullptr!=result)
         {
             quint64 diceCount = result->getResult(Result::SCALAR).toReal();
             m_result->setPrevious(result);
@@ -76,7 +76,7 @@ void ListSetRollNode::run(ExecutionNode* previous)
                 getValueFromDie(die,rollResult);
             }
             m_stringResult->setText(rollResult.join(","));
-            if(NULL!=m_nextNode)
+            if(nullptr!=m_nextNode)
             {
                 m_nextNode->run(this);
             }
@@ -150,7 +150,7 @@ ExecutionNode* ListSetRollNode::getCopy() const
     node->setRangeList(dataList);
     node->setUnique(m_unique);
     node->setListValue(m_values);
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

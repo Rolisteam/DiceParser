@@ -23,7 +23,7 @@
 #include <QUuid>
 
 Result::Result()
-    : m_resultTypes(NONE),m_id(QString("\"%1\"").arg(QUuid::createUuid().toString())),m_previous(NULL)
+    : m_resultTypes(NONE),m_id(QString("\"%1\"").arg(QUuid::createUuid().toString())),m_previous(nullptr)
 {
 }
 Result::~Result()
@@ -55,7 +55,7 @@ void Result::generateDotTree(QString& s)
 	s.append(toString(true));
 	s.append(";\n");
 
-    if(NULL!=m_previous)
+    if(nullptr!=m_previous)
     {
 		s.append(toString(false));
         s.append(" -> ");
@@ -67,7 +67,7 @@ void Result::generateDotTree(QString& s)
     {
 		s.append(toString(false));
         s.append(" -> ");
-		s.append("NULL");
+		s.append("nullptr");
         s.append(" [label=\"previousResult\"];\n");
     }
 

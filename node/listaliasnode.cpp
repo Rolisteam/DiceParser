@@ -31,9 +31,9 @@ void ListAliasNode::run(ExecutionNode* previous )
 	StringResult* txtResult = dynamic_cast<StringResult*>(m_result);
     txtResult->setHighLight(false);
 
-	if(NULL != previous)
+	if(nullptr != previous)
 	{
-		if(previous->getResult() == NULL)
+		if(previous->getResult() == nullptr)
 		{
             txtResult->setText(buildList());
 
@@ -45,7 +45,7 @@ void ListAliasNode::run(ExecutionNode* previous )
 		m_result->setPrevious(previous->getResult());
 	}
 
-	if(NULL!=m_nextNode)
+	if(nullptr!=m_nextNode)
 	{
 		m_nextNode->run(this);
 	}
@@ -84,7 +84,7 @@ qint64 ListAliasNode::getPriority() const
 ExecutionNode* ListAliasNode::getCopy() const
 {
     ListAliasNode* node = new ListAliasNode(m_aliasList);
-    if(NULL!=m_nextNode)
+    if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

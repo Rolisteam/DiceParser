@@ -36,7 +36,7 @@ public:
 	  * @brief run
 	  * @param previous
 	  */
-	virtual void run(ExecutionNode* previous = NULL);
+	virtual void run(ExecutionNode* previous = nullptr);
 
 	/**
 	 * @brief toString
