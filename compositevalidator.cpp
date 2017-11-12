@@ -40,7 +40,7 @@ qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) cons
     int i = 0;
     qint64 sum = 0;
     bool highLight = false;
-    foreach(const Validator* validator, *m_validatorList)
+    for(const Validator* validator: *m_validatorList)
     {
         qint64 val = validator->hasValid(b,recursive,unhighlight);
         if(i==0)

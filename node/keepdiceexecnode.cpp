@@ -36,13 +36,13 @@ KeepDiceExecNode::~KeepDiceExecNode()
 void KeepDiceExecNode::run(ExecutionNode* previous)
 {
     m_previousNode = previous;
-    if(nullptr==previous)
+    if(NULL==previous)
     {
         return;
     }
     DiceResult* previousDiceResult = static_cast<DiceResult*>(previous->getResult());
     m_result->setPrevious(previousDiceResult);
-    if(nullptr!=previousDiceResult)
+    if(NULL!=previousDiceResult)
     {
         QList<Die*> diceList=previousDiceResult->getResultList();
 
@@ -70,7 +70,7 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
         }
 
         m_diceResult->setResultList(diceList2);
-        if(nullptr!=m_nextNode)
+        if(NULL!=m_nextNode)
         {
             m_nextNode->run(this);
         }
@@ -94,7 +94,7 @@ QString KeepDiceExecNode::toString(bool wl) const
 qint64 KeepDiceExecNode::getPriority() const
 {
     qint64 priority=0;
-    if(nullptr!=m_nextNode)
+    if(nullptr!=m_previousNode)
     {
         priority = m_nextNode->getPriority();
     }
@@ -107,7 +107,7 @@ ExecutionNode* KeepDiceExecNode::getCopy() const
 {
     KeepDiceExecNode* node = new KeepDiceExecNode();
     node->setDiceKeepNumber(m_numberOfDice);
-    if(nullptr!=m_nextNode)
+    if(NULL!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

@@ -41,7 +41,7 @@ QMap<ExecutionNode::DICE_ERROR_CODE,QString> ExecutionNode::getExecutionErrorMap
 {
     if(nullptr!=m_nextNode)
     {
-        foreach (ExecutionNode::DICE_ERROR_CODE key, m_nextNode->getExecutionErrorMap().keys())
+        for (const auto& key : m_nextNode->getExecutionErrorMap().keys())
         {
             m_errors.insert(key,m_nextNode->getExecutionErrorMap().value(key));
         }

@@ -152,7 +152,6 @@ void DiceParser::insertAlias(DiceAlias* dice, int i)
     {
         m_aliasList->insert(i, dice);
     }
-
 }
 
 bool DiceParser::parseLine(QString str)
@@ -190,9 +189,10 @@ bool DiceParser::parseLine(QString str)
     {
         return true;
     }
-    else if(!m_errorMap.isEmpty())
+    else
     {
-        m_errorMap.insert(ExecutionNode::NOTHING_UNDERSTOOD,QObject::tr("Nothing was understood"));
+        m_errorMap.insert(ExecutionNode::NOTHING_UNDERSTOOD,QObject::tr("Nothing was understood. To roll dice: !1d6 - full documation:"
+                                                                        "https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md"));
     }
     return false;
 }
@@ -335,7 +335,7 @@ QString DiceParser::displayResult()
 
                     QString resulStr;
                     quint64 face=0;
-                    foreach(Die* die, myDiceResult->getResultList())
+                    for(Die* die : myDiceResult->getResultList())
                     {
                         if(!die->hasBeenDisplayed())
                         {
@@ -347,7 +347,7 @@ QString DiceParser::displayResult()
                             if(die->hasChildrenValue())
                             {
                                 resulStr+=QStringLiteral(" [");
-                                foreach(qint64 i, die->getListValue())
+                                for(qint64 i : die->getListValue())
                                 {
                                     resulStr+=QStringLiteral("%1 ").arg(i);
                                 }
@@ -484,7 +484,7 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
         {
             if(die->isHighlighted())
             {
-                foreach (qint64 value, die->getListValue())
+                for(qint64 value : die->getListValue())
                 {
 
                     stringListResult << QString::number(value);
@@ -517,7 +517,7 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
                     }
                     quint64 face=0;
                     ListDiceResult listpair;
-                    foreach(Die* die, diceResult->getResultList())
+                    for(Die* die : diceResult->getResultList())
                     {
                         if(!die->hasBeenDisplayed())
                         {
@@ -527,7 +527,7 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
                             face = die->getFaces();
                             if(die->hasChildrenValue())
                             {
-                                foreach(qint64 i, die->getListValue())
+                                for(qint64 i : die->getListValue())
                                 {
                                     valuesResult.append(i);
                                 }
@@ -633,6 +633,7 @@ QList<qreal> DiceParser::getSumOfDiceResult()
         }
         resultValues << resultValue;
     }
+    return resultValues;
 }
 int DiceParser::getStartNodeCount() const
 {
@@ -732,7 +733,7 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
 bool DiceParser::readDiceOperator(QString& str,DiceOperator& op)
 {
     QStringList listKey = m_mapDiceOp->keys();
-    foreach(QString key, listKey)
+    for(const QString& key : listKey)
     {
         if(str.startsWith(key,Qt::CaseInsensitive))
         {
@@ -828,8 +829,8 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
             {
                 parent = nodeExecOrChild;
                 nodeExecOrChild = nodeExecOrChild->getNextNode();
+                //qDebug() << node->getPriority() << nodeExecOrChild->getPriority() << "###########";
             }
-
             // management of operator priority
             if((nullptr != nodeExecOrChild)&&(nodeExec != nodeExecOrChild))
             {
@@ -920,17 +921,23 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
         {
 
             str=str.remove(0,tmp.size());
-            //    option = m_OptionOp->value(tmp);
             switch(m_OptionOp->value(tmp))
             {
             case Keep:
             {
+                qDebug() << "keep " << previous->toString(true) << str;
+                if(str == "4+7")
+                {
+                    qDebug() << "nauteanuit";
+                }
                 qint64 myNumber=0;
                 bool ascending = m_parsingToolbox->readAscending(str);
+
                 if(m_parsingToolbox->readNumber(str,myNumber))
                 {
                     node = m_parsingToolbox->addSort(previous,ascending);
                     KeepDiceExecNode* nodeK = new KeepDiceExecNode();
+                    qDebug() << "nodeK " << previous->toString(true)  << str;
                     nodeK->setDiceKeepNumber(myNumber);
                     node->setNextNode(nodeK);
                     node = nodeK;

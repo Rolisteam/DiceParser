@@ -1,21 +1,42 @@
 [![Logo](https://raw.githubusercontent.com/Rolisteam/rolisteam/master/resources/logo/1000-rolisteam.png)](http://www.rolisteam.org)
 # Documentation:
 
-## Build
+## DiceParser : What is it ?
 
-```
-git clone git@github.com:Rolisteam/DiceParser.git
-cd DiceParser
-mkdir build
-cd build
-cmake ../
-make
-make install
-```
+DiceParser is a software component dedicated to roll dice through simple commands. This software component is available on different platform.  
+Such as: Irc bot, discord bot, included in Rolisteam, web server, on twitter etc.
 
-## Irc and Chat
+Each platform has its own limitations.
+Let's take a look about it:
+
+
+### Roll dice on each platform
+
 
 Please, remember it is important to prefix all you command by `!`. This will allow the system to identify your command. To clarify the documentation, the `!` is not repeated before all commands.
+
+| platform | start character(s)  | more information |
+|---|---|--- |
+| Rolisteam |```!```| [Documentation](http://wiki.rolisteam.org/index.php/En:Dice) |
+| Discord  |```!```|  |
+| Twitter  | ```#roll```  | Twit any message starting with #roll following by dice command (e.g: ```#roll 2d6```) |
+| IrcBot   |```!```|  |
+| webserver   | nothing |  No public published yet. Has dedicated text field |
+| dice   | nothing | dice is a command line application to roll dice: ```dice "2d6"``` |
+
+
+### Known Limitations
+
+| platform | descriptions |
+|---|---|
+| Rolisteam | no support for comments yet. Rolisteam is a big software. You may not have all the most recent feature from diceparser. |
+| Discord  | no support for p operator. Color are badly managed by discord so we can't waste time about it.  If the command takes too much time. It is canceled.  There is really few aliases. You may ask for new aliases|
+| Twitter  | Result such be short. No aliases |
+| IrcBot   | No aliases |
+| webserver| No aliases |
+| dice     | No aliases |
+
+We can't set some aliases for any platform but It has to be labelled with game's name.
 
 ## How to roll a die 
 
@@ -56,6 +77,7 @@ Thanks of several operations and options, you can tune a bit your rolling comman
 * p : Paint dice
 * m : Merge
 * i : if
+* g : Group
 
 ### Keep
 
@@ -183,10 +205,17 @@ There are 3 different methods.
 * **One Of Them** : at least one die must fit the condition to trigger the true instruction. If no dices fit the condition the false instruction is run.
 * **On Scalar** : the condition is evaluated on the scalar result of the dice roll.
 
-To switch the operator to act in **All Of Them** method you must add **\*** character as compare method position.
-To switch the operator to act in **One Of Them** method you must add **.** character as compare method position.
-To switch the operator to act in **On Scalar** method you must add **:** character as compare method position.
+To switch the operator to act in **All Of Them** method you must add ```*``` character as compare method position.  
+To switch the operator to act in **One Of Them** method you must add ```.``` character as compare method position.  
+To switch the operator to act in **On Scalar** method you must add ```:``` character as compare method position.  
 
+If you plan to use if operator to display text message. You must surround text with ```"```. Example available below.
+
+# Group
+
+> 5d10g10 
+
+Roll 5 dice and then try to group them to make group of 10 [7th sea system].
 
 ## example:
 
@@ -206,11 +235,17 @@ if at least one die is equal to 6, then roll another d6 and add it to the result
 
 if all dice are equal to 6, then roll another d6 and add it to the result.
 
+> 2d10i:[>15]{"Success"}{"Fail"}
 
-> 2d10i:[>15]{"Success"}
+if the sum of two dice is greater than 15, It displays "Success", override it displays "Fail".
 
-if the sum of two dice is greater than 15, It displays "Success".
+> 2d10i:[>15]{"Success %1 "}{"Fail %1"}
 
+Same as above, but the final result is displayed beside Success or Fail.
+
+> 2d10i:[>15]{"Success %1 [%2]"}{"Fail %1 [%2]"}
+
+Same as above, but the result of each die is displayed inside square brackets.
 
 ## Arithmetic
 
@@ -262,6 +297,11 @@ Substract 4 to 6 and then roll two dice.
 
 Divide by 2 the result of 1 die.
 
+> (2+2)^2
+Result: 16 
+
+> 1d10^2
+
 ## Roll two (or more) kinds of dice at once.
 
 To make it, you have to separate all dice commands by `;`
@@ -279,7 +319,7 @@ There are three kind of Validator:
 -Range
 -Boolean expression
 
-Any operator which requires validator (such as `a,r,e,c') can use those three kind.
+Any operator which requires validator (such as `a,r,e,c`) can use those three kind.
 
 ### Scalar 
 
@@ -369,3 +409,17 @@ Old World in darkness system.
 Exalted 2nd edition system. 
 
 
+# Best Practices
+
+As DiceParser provides more and more features, you may find several ways to do the same thing. We want here to explain the difference between those several approaches. Then you will be able to use the right one.
+
+
+## Roll several kind of dice and sum them
+
+```Bad```
+> 2d8;2d10m
+
+```Good```
+> 2d8+2d10
+
+The merge operator is useful when you want to use dice operator on all rolled dice.

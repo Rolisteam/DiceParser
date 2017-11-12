@@ -106,7 +106,7 @@ void ListSetRollNode::computeFacesNumber(Die* die)
         Q_ASSERT(m_values.size() == m_rangeList.size());
         qint64 max;
         int i=0;
-        foreach(Range range, m_rangeList)
+        for(Range range: m_rangeList)
         {
             if(((i==0)||(max<range.getEnd()))&&(range.isFullyDefined()))
             {
@@ -133,7 +133,7 @@ void ListSetRollNode::getValueFromDie(Die* die,QStringList& rollResult)
     {
         Q_ASSERT(m_values.size() == m_rangeList.size());
         int i=0;
-        foreach (Range range, m_rangeList)
+        for (Range range: m_rangeList)
         {
             if(range.hasValid(die,false))
             {

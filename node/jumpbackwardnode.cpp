@@ -130,7 +130,7 @@ void JumpBackwardNode::run(ExecutionNode* previous)
             DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
             if(nullptr!=diceResult)
             {
-                foreach(Die* die,diceResult->getResultList())
+                for(Die* die : diceResult->getResultList())
                 {
                     Die* tmpdie = new Die();
                     *tmpdie=*die;
