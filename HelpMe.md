@@ -1,4 +1,19 @@
 [![Logo](https://raw.githubusercontent.com/Rolisteam/rolisteam/master/resources/logo/1000-rolisteam.png)](http://www.rolisteam.org)
+
+**Table of Contents**  
+
+* [DiceParser](#diceparser--what-is-it-) 
+* [Platforms](#roll-dice-on-each-platform) 
+* [Limitations](#known-limitations) 
+* [Roll a die](#how-to-roll-a-die) 
+* [List of operator](#list-of-operator) 
+* [Arithmetic](#arithmetic) 
+* [Arithmetic and Dice](#arithmetic-and-dice) 
+* [Validator](#validator) 
+* [Value from set](#select-value-from-list) 
+* [Miscellaneous examples](#examples) 
+* [Best Practices](#best-practices)
+
 # Documentation:
 
 ## DiceParser : What is it ?
@@ -78,6 +93,7 @@ Thanks of several operations and options, you can tune a bit your rolling comman
 * m : Merge
 * i : if
 * g : Group
+* \# : Comment
 
 ### Keep
 
@@ -216,6 +232,21 @@ If you plan to use if operator to display text message. You must surround text w
 > 5d10g10 
 
 Roll 5 dice and then try to group them to make group of 10 [7th sea system].
+
+# Comment (\#)
+
+> 2D6 # Sword attack 
+
+Display "Sword attack" and the result of the two dice.
+DiceParser ignore everything after the \#. The whole part is treated as one comment.
+So DiceParser can answer question:
+
+> 1L[yes,no] # Am I evil ?
+
+```
+What the answer is ?
+yes
+```
 
 ## example:
 
@@ -357,6 +388,15 @@ The Rolisteam Dice Parser allows you to use several logic operator:
 The L operator (meaning list) can offer you the opportunity to pick up value from list.
 
 > 1L[sword,bow,knife,gun,shotgun]
+
+With comment
+
+> 1L[yes,no] # Am I evil ?
+
+```
+What the answer is ?
+yes
+```
 
 ## Examples
 
