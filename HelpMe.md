@@ -33,7 +33,7 @@ Please, remember it is important to prefix all you command by `!`. This will all
 | platform | start character(s)  | more information |
 |---|---|--- |
 | Rolisteam |```!```| [Documentation](http://wiki.rolisteam.org/index.php/En:Dice) |
-| Discord  |```!```|  |
+| Discord  |```!```| To install DiceParser on your server [http://www.rolisteam.org/discord.html](http://www.rolisteam.org/discord.html)  |
 | Twitter  | ```#roll```  | Twit any message starting with #roll following by dice command (e.g: ```#roll 2d6```) |
 | IrcBot   |```!```|  |
 | webserver   | nothing |  No public published yet. Has dedicated text field |
