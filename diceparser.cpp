@@ -565,7 +565,7 @@ QString DiceParser::getDiceCommand() const
 
 bool DiceParser::hasIntegerResultNotInFirst()
 {
-    bool result;
+    bool result=false;
     for(auto node : m_startNodes)
     {
         result |= hasResultOfType(Result::SCALAR,node);
@@ -575,7 +575,7 @@ bool DiceParser::hasIntegerResultNotInFirst()
 
 bool DiceParser::hasDiceResult()
 {
-    bool result;
+    bool result=false;
     for(auto node : m_startNodes)
     {
         result |= hasResultOfType(Result::DICE_LIST,node);
@@ -584,7 +584,7 @@ bool DiceParser::hasDiceResult()
 }
 bool DiceParser::hasStringResult()
 {
-    bool result;
+    bool result=false;
     for(auto node : m_startNodes)
     {
         result |= hasResultOfType(Result::STRING,node);
