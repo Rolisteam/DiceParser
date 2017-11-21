@@ -346,9 +346,10 @@ or
 ## Validator
 
 There are three kind of Validator:
--Scalar
--Range
--Boolean expression
+
+* Scalar
+* Range
+* Boolean expression
 
 Any operator which requires validator (such as `a,r,e,c`) can use those three kind.
 
