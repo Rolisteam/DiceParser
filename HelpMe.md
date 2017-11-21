@@ -244,7 +244,7 @@ So DiceParser can answer question:
 > 1L[yes,no] # Am I evil ?
 
 ```
-What the answer is ?
+Am I evil ?
 yes
 ```
 
