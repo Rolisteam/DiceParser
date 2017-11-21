@@ -24,7 +24,6 @@ Such as: Irc bot, discord bot, included in Rolisteam, web server, on twitter etc
 Each platform has its own limitations.
 Let's take a look about it:
 
-
 ### Roll dice on each platform
 
 
@@ -52,6 +51,12 @@ Please, remember it is important to prefix all you command by `!`. This will all
 | dice     | No aliases |
 
 We can't set some aliases for any platform but It has to be labelled with game's name.
+
+## Bug report and new features
+
+Please fulfill a ticket in our [Bug tracker](https://github.com/Rolisteam/DiceParser/issues) system.
+Or contact us on [discord](https://discordapp.com/invite/MrMrQwX) or any [other ways](http://www.rolisteam.org/contact.html)
+
 
 ## How to roll a die 
 
