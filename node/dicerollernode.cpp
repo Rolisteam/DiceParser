@@ -16,7 +16,7 @@ DiceRollerNode::DiceRollerNode(qint64 max,qint64 min)
 }
 void DiceRollerNode::run(ExecutionNode* previous)
 {
-	m_previousNode = previous;
+    m_previousNode = previous;
     if(nullptr!=previous)
     {
         Result* result=previous->getResult();
@@ -45,7 +45,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
                 m_nextNode->run(this);
             }
         }
-	}
+    }
 }
 
 quint64 DiceRollerNode::getFaces() const
@@ -56,11 +56,11 @@ QString DiceRollerNode::toString(bool wl) const
 {
 	if(wl)
 	{
-        return QString("%1 [label=\"DiceRollerNode faces: %2\"]").arg(m_id).arg(getFaces());
+            return QString("%1 [label=\"DiceRollerNode faces: %2\"]").arg(m_id).arg(getFaces());
 	}
 	else
 	{
-		return m_id;
+	    return m_id;
 	}
 }
 qint64 DiceRollerNode::getPriority() const
