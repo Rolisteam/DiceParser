@@ -254,6 +254,8 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         {
             NumberNode* numberNode=new NumberNode();
             numberNode->setNumber(1);
+	        ExecutionNode* previous = diceNode->getPreviousNode();
+            numberNode->setPreviousNode(previous);
             numberNode->setNextNode(diceNode);
             node = numberNode;
         }
@@ -869,6 +871,7 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
             }
             previous->setNextNode(nullptr);
             m_startNodes.append(nodeExec);
+            auto test = dynamic_cast<DiceRollerNode*>(nodeExec);
             m_currentTreeHasSeparator = true;
             return true;
         }
@@ -925,11 +928,6 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
             {
             case Keep:
             {
-                qDebug() << "keep " << previous->toString(true) << str;
-                if(str == "4+7")
-                {
-                    qDebug() << "nauteanuit";
-                }
                 qint64 myNumber=0;
                 bool ascending = m_parsingToolbox->readAscending(str);
 
@@ -937,7 +935,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 {
                     node = m_parsingToolbox->addSort(previous,ascending);
                     KeepDiceExecNode* nodeK = new KeepDiceExecNode();
-                    qDebug() << "nodeK " << previous->toString(true)  << str;
+                    //qDebug() << "nodeK " << previous->toString(true)  << str;
                     nodeK->setDiceKeepNumber(myNumber);
                     node->setNextNode(nodeK);
                     node = nodeK;
