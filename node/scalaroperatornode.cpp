@@ -28,6 +28,12 @@
 ScalarOperatorNode::ScalarOperatorNode()
     : m_internalNode(nullptr),m_scalarResult(new ScalarResult()),m_arithmeticOperator(Die::PLUS)
 {
+    /*m_scalarOperationList.insert('+',PLUS);
+    m_scalarOperationList.insert('-',MINUS);
+    m_scalarOperationList.insert('x',MULTIPLICATION);
+    m_scalarOperationList.insert('*',MULTIPLICATION);
+    m_scalarOperationList.insert('/',DIVIDE);*/
+
     m_result = m_scalarResult;
 }
 ScalarOperatorNode::~ScalarOperatorNode()
@@ -42,30 +48,24 @@ ScalarOperatorNode::~ScalarOperatorNode()
 void ScalarOperatorNode::run(ExecutionNode* previous)
 {
     m_previousNode = previous;
-    if(nullptr!=m_internalNode)
+    if(NULL!=m_internalNode)
     {
-        m_internalNode->run(this);
+            m_internalNode->run(this);
     }
-    if(nullptr!=previous)
+    if(NULL!=previous)
     {
         DiceResult* previousResult = static_cast<DiceResult*>(previous->getResult());
 
-        if(nullptr!=previousResult)
+        if(NULL!=previousResult)
         {
             ExecutionNode* internal = m_internalNode;
-            if(nullptr != internal)
+            if(NULL != internal)
             {
                 while(nullptr != internal->getNextNode() )
                 {
                     internal = internal->getNextNode();
-                }
+             }
 
-                Result* internalResult = internal->getResult();
-                m_result->setPrevious(internalResult);
-                if(nullptr!=m_internalNode->getResult())
-                {
-                    m_internalNode->getResult()->setPrevious(previousResult);
-                }
 
                 switch(m_arithmeticOperator)
                 {
@@ -81,16 +81,13 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
                 case Die::DIVIDE:
                     m_scalarResult->setValue(divide(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
-                case Die::POWER:
-                    m_scalarResult->setValue(power(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
-                    break;
                 default:
                     break;
 
-                }
+            }
             }
 
-            if(nullptr!=m_nextNode)
+            if(NULL!=m_nextNode)
             {
                 m_nextNode->run(this);
             }
@@ -98,6 +95,15 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
     }
 
 }
+/*bool ScalarOperatorNode::setOperatorChar(QChar c)
+{
+    if(m_scalarOperationList.contains(c))
+    {
+		m_operator = m_scalarOperationList.value(c);
+        return true;
+    }
+    return false;
+}*/
 
 void ScalarOperatorNode::setInternalNode(ExecutionNode* node)
 {
@@ -120,13 +126,9 @@ qreal ScalarOperatorNode::divide(qint64 a,qint64 b)
     }
     return (qreal)a/b;
 }
-qint64 ScalarOperatorNode::multiple(qint64 a, qint64 b)
+qint64 ScalarOperatorNode::multiple(qint64 a,qint64 b)
 {
     return a*b;
-}
-qint64 ScalarOperatorNode::power(qint64 a, qint64 b)
-{
-    return std::pow(a,b);
 }
 Die::ArithmeticOperator ScalarOperatorNode::getArithmeticOperator() const
 {
@@ -148,71 +150,64 @@ QString ScalarOperatorNode::toString(bool wl) const
         break;
     case Die::MINUS:
         op="-";
-        break;
-    case Die::MULTIPLICATION:
-        op="*";
-        break;
-    case Die::DIVIDE:
-        op="/";
-        break;
-    case Die::POWER:
-        op="^";
-        break;
-    default:
-        break;
+            break;
+        case Die::MULTIPLICATION:
+            op="*";
+            break;
+        case Die::DIVIDE:
+            op="/";
+            break;
+        default:
+            break;
 
     }
-    if(wl)
-    {
-        return QString("%1 [label=\"ScalarOperatorNode %2\"]").arg(m_id).arg(op);
-    }
-    else
-    {
-        return m_id;
-    }
+	if(wl)
+	{
+		return QString("%1 [label=\"ScalarOperatorNode %2\"]").arg(m_id).arg(op);
+	}
+	else
+	{
+		return m_id;
+	}
 }
 qint64 ScalarOperatorNode::getPriority() const
 {
     if((m_arithmeticOperator==Die::PLUS)||(m_arithmeticOperator==Die::MINUS))
-    {
+	{
         return 1;
-    }
-    else if((m_arithmeticOperator==Die::MULTIPLICATION)||(m_arithmeticOperator==Die::DIVIDE))
-    {
-        return 2;
-    }
+	}
     else
-    {
-        return 3;
-    }
+	{
+        return 2;
+	}
 }
 void ScalarOperatorNode::generateDotTree(QString& s)
 {
-    s.append(toString(true));
-    s.append(";\n");
+	s.append(toString(true));
+	s.append(";\n");
 
-    if(nullptr!=m_nextNode)
+    if(NULL!=m_nextNode)
     {
-        s.append(toString(false));
+		s.append(toString(false));
         s.append(" -> ");
-        s.append(m_nextNode->toString(false));
+		s.append(m_nextNode->toString(false));
         s.append("[label=\"nextNode\"];\n");
         m_nextNode->generateDotTree(s);
     }
     else
     {
-        s.append(toString(false));
+		s.append(toString(false));
         s.append(" -> ");
         s.append("nullptr");
         s.append(" [label=\"nextNode\"];\n");
     }
     QString str;
     str.append("\n");
-    if(nullptr!=m_internalNode)
+    if(NULL!=m_internalNode)
     {
-        str.append(toString(false));
+		str.append(toString(false));
         str.append(" -> ");
-        str.append(m_internalNode->toString(false));
+		str.append(m_internalNode->toString(false));
         str.append(" [label=\"internalNode\"];\n");
         m_internalNode->generateDotTree(str);
     }
@@ -220,14 +215,14 @@ void ScalarOperatorNode::generateDotTree(QString& s)
 }
 QMap<ExecutionNode::DICE_ERROR_CODE,QString> ScalarOperatorNode::getExecutionErrorMap()
 {
-    if(nullptr!=m_internalNode)
+    if(NULL!=m_internalNode)
     {
         for (ExecutionNode::DICE_ERROR_CODE key: m_internalNode->getExecutionErrorMap().keys())
         {
             m_errors.insert(key,m_internalNode->getExecutionErrorMap().value(key));
         }
     }
-    if(nullptr!=m_nextNode)
+    if(NULL!=m_nextNode)
     {
         for (ExecutionNode::DICE_ERROR_CODE key: m_nextNode->getExecutionErrorMap().keys())
         {
@@ -241,7 +236,7 @@ ExecutionNode* ScalarOperatorNode::getCopy() const
     ScalarOperatorNode* node = new ScalarOperatorNode();
     node->setInternalNode(m_internalNode->getCopy());
     node->setArithmeticOperator(m_arithmeticOperator);
-    if(nullptr!=m_nextNode)
+    if(NULL!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

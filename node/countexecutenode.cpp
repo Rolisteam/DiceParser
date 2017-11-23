@@ -28,14 +28,14 @@ void CountExecuteNode::run(ExecutionNode *previous)
 		return;
 	}
     DiceResult* previousResult = dynamic_cast<DiceResult*>(previous->getResult());
-    if(nullptr!=previousResult)
+    if(NULL!=previousResult)
 	{
         m_result->setPrevious(previousResult);
         QList<Die*> diceList=previousResult->getResultList();
 		qint64 sum = 0;
-        for(Die* dice : diceList)
+		foreach(Die* dice,diceList)
 		{
-            if(nullptr!=m_validator)
+            if(NULL!=m_validator)
             {
                 sum+=m_validator->hasValid(dice,true,true);
             }
@@ -65,19 +65,21 @@ qint64 CountExecuteNode::getPriority() const
 	qint64 priority=0;
     if(nullptr!=m_previousNode)
 	{
-        priority = m_previousNode->getPriority();
+		priority = m_nextNode->getPriority();
 	}
+
+
     return priority;
 }
 
 ExecutionNode* CountExecuteNode::getCopy() const
 {
     CountExecuteNode* node = new CountExecuteNode();
-    if(nullptr!=m_validator)
+    if(NULL!=m_validator)
     {
         node->setValidator(m_validator->getCopy());
     }
-    if(nullptr!=m_nextNode)
+    if(NULL!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

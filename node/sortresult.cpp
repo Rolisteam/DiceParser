@@ -57,7 +57,7 @@ void SortResultNode::run(ExecutionNode* node)
             bool found = false;
             int start = 0;
             int end = diceList2.size();
-            Die* tmp2 = nullptr;
+            Die* tmp2 = NULL;
             while(!found)
             {
                 int distance = end-start;
@@ -92,7 +92,7 @@ void SortResultNode::run(ExecutionNode* node)
 
         }
         m_diceResult->setResultList(diceList2);
-        if(nullptr!=m_nextNode)
+        if(NULL!=m_nextNode)
         {
             m_nextNode->run(this);
         }
@@ -125,17 +125,20 @@ qint64 SortResultNode::getPriority() const
     qint64 priority=0;
     if(nullptr != m_previousNode)
     {
-        priority = m_previousNode->getPriority();
+        priority = m_nextNode->getPriority();
     }
+
+
     return priority;
 }
 ExecutionNode* SortResultNode::getCopy() const
 {
     SortResultNode* node = new SortResultNode();
     node->setSortAscending(m_ascending);
-    if(nullptr!=m_nextNode)
+    if(NULL!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }
     return node;
+
 }

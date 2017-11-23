@@ -1,4 +1,19 @@
 [![Logo](https://raw.githubusercontent.com/Rolisteam/rolisteam/master/resources/logo/1000-rolisteam.png)](http://www.rolisteam.org)
+
+**Table of Contents**  
+
+* [DiceParser](#diceparser--what-is-it-) 
+* [Platforms](#roll-dice-on-each-platform) 
+* [Limitations](#known-limitations) 
+* [Roll a die](#how-to-roll-a-die) 
+* [List of operator](#list-of-operator) 
+* [Arithmetic](#arithmetic) 
+* [Arithmetic and Dice](#arithmetic-and-dice) 
+* [Validator](#validator) 
+* [Value from set](#select-value-from-list) 
+* [Miscellaneous examples](#examples) 
+* [Best Practices](#best-practices)
+
 # Documentation:
 
 ## DiceParser : What is it ?
@@ -9,7 +24,6 @@ Such as: Irc bot, discord bot, included in Rolisteam, web server, on twitter etc
 Each platform has its own limitations.
 Let's take a look about it:
 
-
 ### Roll dice on each platform
 
 
@@ -18,7 +32,7 @@ Please, remember it is important to prefix all you command by `!`. This will all
 | platform | start character(s)  | more information |
 |---|---|--- |
 | Rolisteam |```!```| [Documentation](http://wiki.rolisteam.org/index.php/En:Dice) |
-| Discord  |```!```|  |
+| Discord  |```!```| To install DiceParser on your server [http://www.rolisteam.org/discord.html](http://www.rolisteam.org/discord.html)  |
 | Twitter  | ```#roll```  | Twit any message starting with #roll following by dice command (e.g: ```#roll 2d6```) |
 | IrcBot   |```!```|  |
 | webserver   | nothing |  No public published yet. Has dedicated text field |
@@ -37,6 +51,12 @@ Please, remember it is important to prefix all you command by `!`. This will all
 | dice     | No aliases |
 
 We can't set some aliases for any platform but It has to be labelled with game's name.
+
+## Bug report and new features
+
+Please fulfill a ticket in our [Bug tracker](https://github.com/Rolisteam/DiceParser/issues) system.
+Or contact us on [discord](https://discordapp.com/invite/MrMrQwX) or any [other ways](http://www.rolisteam.org/contact.html)
+
 
 ## How to roll a die 
 
@@ -78,6 +98,7 @@ Thanks of several operations and options, you can tune a bit your rolling comman
 * m : Merge
 * i : if
 * g : Group
+* \# : Comment
 
 ### Keep
 
@@ -217,6 +238,21 @@ If you plan to use if operator to display text message. You must surround text w
 
 Roll 5 dice and then try to group them to make group of 10 [7th sea system].
 
+# Comment (\#)
+
+> 2D6 # Sword attack 
+
+Display "Sword attack" and the result of the two dice.
+DiceParser ignore everything after the \#. The whole part is treated as one comment.
+So DiceParser can answer question:
+
+> 1L[yes,no] # Am I evil ?
+
+```
+Am I evil ?
+yes
+```
+
 ## example:
 
 >  1d6i[<4]{3}
@@ -315,9 +351,10 @@ or
 ## Validator
 
 There are three kind of Validator:
--Scalar
--Range
--Boolean expression
+
+* Scalar
+* Range
+* Boolean expression
 
 Any operator which requires validator (such as `a,r,e,c`) can use those three kind.
 
@@ -357,6 +394,15 @@ The Rolisteam Dice Parser allows you to use several logic operator:
 The L operator (meaning list) can offer you the opportunity to pick up value from list.
 
 > 1L[sword,bow,knife,gun,shotgun]
+
+With comment
+
+> 1L[yes,no] # Am I evil ?
+
+```
+What the answer is ?
+yes
+```
 
 ## Examples
 
