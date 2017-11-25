@@ -633,6 +633,7 @@ QList<qreal> DiceParser::getSumOfDiceResult()
         }
         resultValues << resultValue;
     }
+    return resultValues;
 }
 int DiceParser::getStartNodeCount() const
 {
