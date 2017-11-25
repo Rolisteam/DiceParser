@@ -78,7 +78,7 @@ void PainterNode::run(ExecutionNode* previous)
     {
         QList<Die*> diceList=previousDiceResult->getResultList();
         int pastDice=0;
-        for(ColorItem item: m_colors)
+        foreach(ColorItem item, m_colors)
         {
             int current=item.colorNumber();
             QList<Die*>::iterator it;

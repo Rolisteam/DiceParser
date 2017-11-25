@@ -151,7 +151,7 @@ QString diceToText(QList<ExportedDiceResult>& diceList,bool highlight,bool homog
     for(auto dice : diceList)
     {
         QStringList resultGlobal;
-        for(int face : dice.keys())
+        foreach(int face, dice.keys())
         {
             QStringList result;
             ListDiceResult diceResult =  dice.value(face);

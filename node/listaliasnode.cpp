@@ -53,7 +53,7 @@ void ListAliasNode::run(ExecutionNode* previous )
 QString ListAliasNode::buildList() const
 {
 	QString result(QObject::tr("List of Alias:\n"));
-    for(DiceAlias* key : *m_aliasList)
+    foreach(DiceAlias* key, *m_aliasList)
 	{
         result+=QString("%1 : %2\n").arg(key->getCommand()).arg(key->getValue());
 	}
@@ -62,7 +62,7 @@ QString ListAliasNode::buildList() const
 QString ListAliasNode::toString(bool wl) const
 {
 	QStringList resultList;
-    for(DiceAlias* key : *m_aliasList)
+	foreach(DiceAlias* key, *m_aliasList)
 	{
 		resultList <<  "{" <<key->getCommand() << key->getValue()<<  "}";
 	}

@@ -70,6 +70,8 @@ qint64 DiceRollerNode::getPriority() const
 //    {
 //        priority = m_nextNode->getPriority();
 //    }
+
+
     return priority;
 }
 ExecutionNode* DiceRollerNode::getCopy() const

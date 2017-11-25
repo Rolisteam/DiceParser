@@ -164,7 +164,8 @@ QString BotIrcDiceParser::diceToText(QList<ExportedDiceResult>& diceList,bool hi
         {
             QStringList result;
             ListDiceResult diceResult =  dice.value(face);
-            for (const auto& tmp : diceResult)
+            //patternColor = patternColorarg();
+            foreach (HighLightDice tmp, diceResult)
             {
                 QStringList diceListStr;
                 QStringList diceListChildren;

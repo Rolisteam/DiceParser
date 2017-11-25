@@ -1,13 +1,9 @@
 
-[![Build Status](https://raw.githubusercontent.com/Rolisteam/rolisteam/master/resources/logo/1000-rolisteam.png)](http://www.rolisteam.org)
+[![Build Status](http://www.rolisteam.org/sites/default/files/pixture_reloaded_logo.png)](http://www.rolisteam.org)
 
 # DiceParser
 
-Dice Parser merges several tool to roll any kind of dice to play at role playing games. 
-It can be use as command line application on GNU/Linux
-It also provides IRC bot, discord bot, twitter bot and webservice.
-
-[More informations](http://www.rolisteam.org/)
+Rolisteam Dice Parser
 
 ## Grammar
 The grammar is something like this:
@@ -39,20 +35,6 @@ parenthese =: (expression)
 count =: c Validator
 ```
 
-## Build
-
-```
-git clone git@github.com:Rolisteam/DiceParser.git
-cd DiceParser
-mkdir build
-cd build
-cmake ../
-make
-make install
-```
-# Downloads
-
--DiceParser is part of rolisteam : http://www.rolisteam.org/download but it can be use as standalone tool.
 
 ## Example:
 
@@ -80,6 +62,8 @@ roll 1 die with 25 faces
 
 ### 8+8+8
 compute: 24
+
+
 
 ### 100/28*3
 compute: 100/28 = 3

@@ -39,7 +39,7 @@ qint64 BooleanCondition::hasValid(Die* b,bool recursive,bool unhighlight) const
     }
 
     qint64 sum= 0;
-    for(qint64 value : listValues)
+    foreach(qint64 value, listValues)
     {
         switch(m_operator)
         {

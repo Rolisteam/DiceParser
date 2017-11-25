@@ -60,7 +60,7 @@ void IfNode::run(ExecutionNode *previous)
                     for(Die* dice : diceList)
                     {
                         if(m_validator->hasValid(dice,true,true))
-                       {
+                        {
                             nextNode = (nullptr==m_true) ? nullptr: m_true->getCopy();
                         }
                         else
@@ -245,12 +245,7 @@ QString IfNode::toString(bool wl)  const
 
 qint64 IfNode::getPriority() const
 {
-    qint64 priority=0;
-    if(nullptr != getPreviousNode())
-    {
-        priority=getPreviousNode()->getPriority();
-    }
-    return priority;
+    return 4;
 }
 
 ExecutionNode* IfNode::getLeafNode(ExecutionNode* node)
