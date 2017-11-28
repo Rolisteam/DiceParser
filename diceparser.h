@@ -91,10 +91,10 @@ public:
      * @brief DiceParser default constructor
      */
     DiceParser();
-	/**
-	 * @brief ~DiceParser
-	 */
-	virtual ~DiceParser();
+    /**
+     * @brief ~DiceParser
+     */
+    virtual ~DiceParser();
 
     /**
      * @brief parseLine, method to call for starting the dice roll. It will parse the command and run the execution tree.
@@ -273,11 +273,11 @@ private:
      */
     bool readOption(QString&,ExecutionNode* node);//OptionOperator& option,
 
-	/**
-	 * @brief addRollDiceNode
-	 * @param faces
-	 * @return
-	 */
+  /**
+   * @brief addRollDiceNode
+   * @param faces
+   * @return
+   */
     DiceRollerNode* addRollDiceNode(qint64 faces,ExecutionNode*);
     /**
      * @brief addExploseDiceNode
@@ -286,11 +286,11 @@ private:
      * @return
      */
     ExploseDiceNode* addExploseDiceNode(qint64 faces,ExecutionNode* previous);
-	/**
-	 * @brief readOperand
-	 * @param node
-	 * @return
-	 */
+    /**
+     * @brief readOperand
+     * @param node
+     * @return
+     */
     bool readOperand(QString&,ExecutionNode* & node);
 
     /**

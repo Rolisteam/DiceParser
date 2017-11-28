@@ -9,16 +9,16 @@ ExecutionNode::ExecutionNode()
 }
 ExecutionNode::~ExecutionNode()
 {
-	if(nullptr!=m_result)
-	{
-		delete m_result;
-		m_result = nullptr;
-	}
-	if(nullptr!=m_nextNode)
-	{
-		delete m_nextNode;
-		m_nextNode = nullptr;
-	}
+    if(nullptr!=m_result)
+    {
+        delete m_result;
+        m_result = nullptr;
+    }
+    if(nullptr!=m_nextNode)
+    {
+        delete m_nextNode;
+        m_nextNode = nullptr;
+    }
 }
 
 Result* ExecutionNode::getResult()

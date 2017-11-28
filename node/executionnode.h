@@ -10,7 +10,10 @@
 class ExecutionNode
 {
 public:
-    enum DICE_ERROR_CODE {NO_DICE_ERROR,DIE_RESULT_EXPECTED,BAD_SYNTAXE,ENDLESS_LOOP_ERROR,DIVIDE_BY_ZERO,NOTHING_UNDERSTOOD,NO_DICE_TO_ROLL,TOO_MANY_DICE};
+    enum DICE_ERROR_CODE {NO_DICE_ERROR,DIE_RESULT_EXPECTED,BAD_SYNTAXE,
+                          ENDLESS_LOOP_ERROR,DIVIDE_BY_ZERO,NOTHING_UNDERSTOOD,
+                          NO_DICE_TO_ROLL,TOO_MANY_DICE,NO_VARIBALE,
+                          INVALID_INDEX};
     /**
      * @brief ExecutionNode
      */
@@ -28,7 +31,7 @@ public:
      * @brief getResult
      * @return
      */
-	virtual Result* getResult();
+    virtual Result* getResult();
     /**
      * @brief setNextNode
      */
@@ -38,11 +41,11 @@ public:
      * @return
      */
     ExecutionNode* getNextNode();
-	/**
-	 * @brief getPreviousNode
-	 * @return
-	 */
-	virtual ExecutionNode* getPreviousNode() const;
+    /**
+     * @brief getPreviousNode
+     * @return
+     */
+    virtual ExecutionNode* getPreviousNode() const;
     void setPreviousNode(ExecutionNode* node);
     /**
      * @brief toString
@@ -78,10 +81,10 @@ public:
     virtual ExecutionNode* getCopy() const  = 0;
 
 protected:
-	/**
-	 * @brief m_nextNode
-	 */
-	ExecutionNode* m_previousNode;
+    /**
+     * @brief m_nextNode
+     */
+    ExecutionNode* m_previousNode;
     /**
      * @brief m_result
      */
@@ -95,7 +98,7 @@ protected:
      */
     QMap<ExecutionNode::DICE_ERROR_CODE,QString> m_errors;
 
-	QString m_id;
+    QString m_id;
 };
 
 #endif // EXECUTIONNODE_H
