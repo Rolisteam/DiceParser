@@ -157,14 +157,14 @@ void DiceParser::insertAlias(DiceAlias* dice, int i)
 bool DiceParser::parseLine(QString str)
 {
     m_errorMap.clear();
-    if(!m_startNodes.isEmpty())
+    if(!m_startNodes.empty())
     {
         qDeleteAll(m_startNodes);
         m_startNodes.clear();
     }
     m_currentTreeHasSeparator=false;
     StartingNode* start = new StartingNode();
-    m_startNodes.append(start);
+    m_startNodes.push_back(start);
     ExecutionNode* newNode = nullptr;
     m_current = start;
 
@@ -887,7 +887,7 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
                 return false;
             }
             previous->setNextNode(nullptr);
-            m_startNodes.append(nodeExec);
+            m_startNodes.push_back(nodeExec);
             m_currentTreeHasSeparator = true;
             return true;
         }

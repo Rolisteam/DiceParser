@@ -67,9 +67,9 @@ void MergeNode::run(ExecutionNode* previous)
         }
     }
 
-    auto first = m_startList->first();
+    auto first = m_startList->front();
     m_startList->clear();
-    m_startList->append(first);
+    m_startList->push_back(first);
 
     if(nullptr!=m_nextNode)
     {
@@ -116,12 +116,12 @@ ExecutionNode* MergeNode::getCopy() const
 
 }
 
-QList<ExecutionNode *>* MergeNode::getStartList() const
+std::vector<ExecutionNode *>* MergeNode::getStartList() const
 {
     return m_startList;
 }
 
-void MergeNode::setStartList(QList<ExecutionNode *>* startList)
+void MergeNode::setStartList(std::vector<ExecutionNode *>* startList)
 {
     m_startList = startList;
 }

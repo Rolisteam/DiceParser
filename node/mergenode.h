@@ -36,15 +36,15 @@ public:
     virtual QString toString(bool withLabel)const;
     virtual qint64 getPriority() const;
     virtual ExecutionNode *getCopy() const;
-    QList<ExecutionNode *>* getStartList() const;
-    void setStartList(QList<ExecutionNode *>* startList);
+    std::vector<ExecutionNode *>* getStartList() const;
+    void setStartList(std::vector<ExecutionNode *>* startList);
 
 private:
     ExecutionNode *getLatestNode(ExecutionNode *node);
 
 private:
     DiceResult* m_diceResult;
-    QList<ExecutionNode *>* m_startList;
+    std::vector<ExecutionNode *>* m_startList;
 };
 
 #endif // NUMBERNODE_H

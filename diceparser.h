@@ -326,14 +326,13 @@ private:
     QMap<QString,OptionOperator>* m_OptionOp;
     QMap<QString,NodeAction>* m_nodeActionMap;
     QList<DiceAlias*>* m_aliasList;
-	QStringList* m_commandList;
+    QStringList* m_commandList;
 
     QMap<ExecutionNode::DICE_ERROR_CODE,QString> m_errorMap;
     QMap<ExecutionNode::DICE_ERROR_CODE,QString> m_warningMap;
 
-
     ExecutionNode* m_start = nullptr;
-    QList<ExecutionNode*> m_startNodes;
+    std::vector<ExecutionNode*> m_startNodes;
     ExecutionNode* m_current;
     QString m_command;
     ParsingToolBox* m_parsingToolbox;
