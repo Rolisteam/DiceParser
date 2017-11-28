@@ -39,7 +39,8 @@ HEADERS += \
     $$PWD/operationcondition.h \
     $$PWD/node/stringnode.h \
     $$PWD/node/filternode.h\
-    $$PWD/node/groupnode.h
+    $$PWD/node/groupnode.h \
+    $$PWD/node/variablenode.h\
 
 
 HEADERS += \
@@ -82,7 +83,8 @@ SOURCES += \
     $$PWD/node/paintnode.cpp \
     $$PWD/node/ifnode.cpp \
     $$PWD/node/splitnode.cpp \
-    $$PWD/node/listsetrollnode.cpp
+    $$PWD/node/listsetrollnode.cpp\
+    $$PWD/node/variablenode.cpp\
 
 
 OTHER_FILES += \

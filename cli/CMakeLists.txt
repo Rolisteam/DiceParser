@@ -96,6 +96,7 @@ SET( dice_sources
     ../node/groupnode.cpp
     main.cpp
     ../highlightdice.cpp
+    ../node/variablenode.cpp
 )
 
 add_executable( dice ${dice_sources} ${dice_QM}   )
