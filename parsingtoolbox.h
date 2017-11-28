@@ -125,6 +125,14 @@ public:
     static bool readCloseParentheses(QString& str);
 
     /**
+     * @brief readNumber read number in the given str and remove from the string the read character.
+     * @param str the command line
+     * @param myNumber reference to the found number
+     * @return true, succeed to read number, false otherwise.
+     */
+    static bool readDynamicVariable(QString&  str, qint64& index);
+
+    /**
      * @brief readList
      * @param str
      * @param list

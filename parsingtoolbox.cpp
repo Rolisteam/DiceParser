@@ -345,7 +345,30 @@ bool ParsingToolBox::readNumber(QString& str, qint64& myNumber)
 
     return false;
 }
+bool ParsingToolBox::readDynamicVariable(QString&  str, qint64& index)
+{
+    if(str.isEmpty())
+        return false;
+    if(str.startsWith('$'))
+    {
+        QString number;
+        int i=0;
+        while(i<str.length() && (str[i].isNumber()))
+        {
+            number+=str[i];
+            ++i;
+        }
 
+        bool ok;
+        index = number.toLongLong(&ok);
+        if(ok)
+        {
+            str=str.remove(0,number.size());
+            return true;
+        }
+    }
+    return false;
+}
 bool ParsingToolBox::readString(QString &str, QString& strResult)
 {
     if(str.isEmpty())
