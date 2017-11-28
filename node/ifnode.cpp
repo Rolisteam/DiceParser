@@ -96,10 +96,12 @@ void IfNode::run(ExecutionNode *previous)
                         bool result = m_validator->hasValid(dice,true,true);
                         trueForAll = trueForAll ? result : false;
                         falseForAll = falseForAll ? result : false;
+                        qDebug() << "result" << result;
 
-                        oneIsTrue = (oneIsTrue==false) ? result : true;
-                        oneIsFalse = (oneIsFalse==false) ? result : true;
+                        oneIsTrue |= result;
+                        oneIsFalse = !result ? true : oneIsFalse;
                     }
+                    qDebug() << "OneIsVrai: " << oneIsTrue <<" oneIsFaux" <<oneIsFalse<<" vraiForAll" <<trueForAll <<" fauxForAll" <<falseForAll << m_conditionType;
                     if(m_conditionType==OneOfThem)
                     {
                         if(oneIsTrue)
@@ -119,7 +121,7 @@ void IfNode::run(ExecutionNode *previous)
                         }
                         else if(falseForAll)
                         {
-                             nextNode = (nullptr==m_false) ? nullptr: m_false->getCopy();
+                            nextNode = (nullptr==m_false) ? nullptr: m_false->getCopy();
                         }
                     }
 

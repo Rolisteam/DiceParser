@@ -247,6 +247,11 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         node = operandNode;
         return true;
     }
+    else if(readOptionFromNull(str,operandNode))
+    {
+        node = operandNode;
+        return true;
+    }
     else
     {
         ExecutionNode* diceNode=nullptr;
@@ -254,7 +259,7 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         {
             NumberNode* numberNode=new NumberNode();
             numberNode->setNumber(1);
-	    ExecutionNode* previous = diceNode->getPreviousNode();
+            ExecutionNode* previous = diceNode->getPreviousNode();
             numberNode->setPreviousNode(previous);
             numberNode->setNextNode(diceNode);
             node = numberNode;
@@ -270,6 +275,17 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         m_comment = result;
     }
     return true;
+}
+bool DiceParser::readOptionFromNull(QString& str,ExecutionNode* & node)
+{
+    StartingNode nodePrevious;
+    if(readOption(str,&nodePrevious))
+    {
+        auto nodeNext = nodePrevious.getNextNode();
+        node = nodeNext;
+        return true;
+    }
+    return false;
 }
 bool DiceParser::readNode(QString& str,ExecutionNode* & node)
 {

@@ -228,8 +228,8 @@ void startDiceParsingMarkdown(QString cmd)
     DiceParser parser;
 
     //setAlias
-    parser.insertAlias(new DiceAlias("l5r5R","L[-,⨀,⨀⬢,❂⬢,❁,❁⬢]"),0);
-    parser.insertAlias(new DiceAlias("l5r5S","L[-,-,⨀,⨀,⨀❁,⨀⬢,⨀⬢,❂,❂⬢,❁,❁,❁]"),1);
+    parser.insertAlias(new DiceAlias("L5R5R","L[-,⨀,⨀⬢,❂⬢,❁,❁⬢]"),0);
+    parser.insertAlias(new DiceAlias("L5R5S","L[-,-,⨀,⨀,⨀❁,⨀⬢,⨀⬢,❂,❂⬢,❁,❁,❁]"),1);
 
 
     if(parser.parseLine(cmd))
@@ -352,7 +352,13 @@ void startDiceParsing(QStringList& cmds,QString& treeFile,bool highlight)
 
             if(parser->hasStringResult())
             {
-                str = parser->getStringResult().join(",");;
+                bool ok;
+                QStringList allStringlist = parser->getAllStringResult(ok);
+                QString stringResult = allStringlist.join(" ; ");
+                stringResult.replace("%1",scalarText);
+                stringResult.replace("%2",diceText.trimmed());
+                str = stringResult;       
+//                str = parser->getStringResult().join(",");          
             }
             if(!parser->getComment().isEmpty())
             {

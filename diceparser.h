@@ -230,6 +230,7 @@ public:
     QString getComment() const;
     void setComment(const QString &comment);
 
+    bool readOptionFromNull(QString &str, ExecutionNode *&node);
 private:
 
     /**

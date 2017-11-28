@@ -20,7 +20,7 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
 #include "booleancondition.h"
-
+#include <QDebug>
 
 BooleanCondition::BooleanCondition()
     : m_operator(Equal)
@@ -39,8 +39,9 @@ qint64 BooleanCondition::hasValid(Die* b,bool recursive,bool unhighlight) const
     }
 
     qint64 sum= 0;
-    foreach(qint64 value, listValues)
+    for(qint64 value: listValues)
     {
+        qDebug() << "value" << value << m_value;
         switch(m_operator)
         {
             case Equal:
