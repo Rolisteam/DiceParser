@@ -106,7 +106,7 @@ void IfNode::run(ExecutionNode *previous)
                         {
                             nextNode = (nullptr==m_true) ? nullptr: m_true->getCopy();
                         }
-                        else if(oneIsFalse)
+                        else //if(oneIsFalse)
                         {
                              nextNode = (nullptr==m_false) ? nullptr: m_false->getCopy();
                         }
@@ -117,7 +117,7 @@ void IfNode::run(ExecutionNode *previous)
                         {
                             nextNode = (nullptr==m_true) ? nullptr: m_true->getCopy();
                         }
-                        else if(falseForAll)
+                        else //if(falseForAll)
                         {
                             nextNode = (nullptr==m_false) ? nullptr: m_false->getCopy();
                         }
