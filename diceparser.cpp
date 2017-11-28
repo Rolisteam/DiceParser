@@ -45,6 +45,7 @@
 #include "node/stringnode.h"
 #include "node/splitnode.h"
 #include "node/groupnode.h"
+#include "node/variablenode.h"
 
 
 #define DEFAULT_FACES_NUMBER 10
@@ -1254,12 +1255,17 @@ QString DiceParser::humanReadableError()
 
 bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
 {
-    qint64 myNumber=1;
+    qint64 intValue=1;
     QString resultStr;
-    if(m_parsingToolbox->readNumber(str,myNumber))
+    if(m_parsingToolbox->readDynamicVariable(str,intValue))
+    {
+        VariableNode* variableNode = new VariableNode();
+        variableNode->setIndex(intValue);
+    }
+    else if(m_parsingToolbox->readNumber(str,intValue))
     {
         NumberNode* numberNode = new NumberNode();
-        numberNode->setNumber(myNumber);
+        numberNode->setNumber(intValue);
 
         node = numberNode;
         return true;
