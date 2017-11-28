@@ -1,0 +1,84 @@
+#include "variablenode.h"
+
+VariableNode::VariableNode()
+{
+
+}
+
+void VariableNode::run(ExecutionNode *previous)
+{
+    m_previousNode = previous;
+
+    if(m_index<0)
+    {
+      m_errors.insert(INVALID_INDEX,QObject::tr("Invalid index must be greater than 0 :%1").arg(m_index));
+      return;
+    }
+
+    if(m_data.size()>m_index)
+    {
+      auto value= m_data[m_index];
+      m_result = value->getResult();
+      if(nullptr!=m_nextNode)
+      {
+          m_nextNode->run(this);
+      }
+    }
+    else
+    {
+      m_errors.insert(NO_VARIBALE,QObject::tr("No variable at index:%1").arg(m_index));
+    }
+}
+
+QString VariableNode::toString(bool withLabel) const
+{
+    if(withLabel)
+    {
+        return QString("%1 [label=\"VariableNode index: %2\"]").arg(m_id).arg(m_index);
+    }
+    else
+    {
+        return m_id;
+    }
+}
+
+qint64 VariableNode::getPriority() const
+{
+    qint64 priority=0;
+    if(nullptr!=m_nextNode)
+    {
+        priority = m_nextNode->getPriority();
+    }
+    return priority;
+}
+
+ExecutionNode *VariableNode::getCopy() const
+{
+  VariableNode* node = new VariableNode();
+  node->setIndex(m_index);
+  if(nullptr!=m_nextNode)
+  {
+      node->setNextNode(m_nextNode->getCopy());
+  }
+  return node;
+}
+
+qint64 VariableNode::getIndex() const
+{
+  return m_index;
+}
+
+void VariableNode::setIndex(qint64 index)
+{
+  m_index = index;
+}
+
+std::vector<ExecutionNode *> VariableNode::getData() const
+{
+  return m_data;
+}
+
+void VariableNode::setData(const std::vector<ExecutionNode *> &data)
+{
+  m_data = data;
+}
