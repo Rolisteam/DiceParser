@@ -26,7 +26,7 @@ StartingNode::StartingNode()
 }
 void StartingNode::run(ExecutionNode*)
 {
-	m_previousNode = nullptr;
+    m_previousNode = nullptr;
     if(nullptr!=m_nextNode)
     {
         m_nextNode->run(this);
@@ -34,14 +34,14 @@ void StartingNode::run(ExecutionNode*)
 }
 QString StartingNode::toString(bool withlabel) const
 {
-	if(withlabel)
-	{
-		return QString("%1 [label=\"StartingNode\"]").arg(m_id);
-	}
-	else
-	{
-		return m_id;
-	}
+    if(withlabel)
+    {
+        return QString("%1 [label=\"StartingNode\"]").arg(m_id);
+    }
+    else
+    {
+        return m_id;
+    }
 }
 
 

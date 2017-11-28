@@ -234,7 +234,7 @@ void startDiceParsingMarkdown(QString cmd)
 
     if(parser.parseLine(cmd))
     {
-        parser.Start();
+        parser.start();
         if(!parser.getErrorMap().isEmpty())
         {
             result +=  "```markdown\n# Error:\n" + parser.humanReadableError() + "\n```";
@@ -309,7 +309,7 @@ void startDiceParsing(QStringList& cmds,QString& treeFile,bool highlight)
         {
             //
 
-            parser->Start();
+            parser->start();
             if(!parser->getErrorMap().isEmpty())
             {
                 out << "Error" << parser->humanReadableError() << "\n";

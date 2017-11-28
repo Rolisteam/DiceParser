@@ -21,7 +21,7 @@
 #include "result/diceresult.h"
 
 IfNode::IfNode()
-    : m_validator(nullptr),m_true(nullptr),m_false(nullptr),m_conditionType(AllOfThem)
+    : m_validator(nullptr),m_conditionType(AllOfThem),m_true(nullptr),m_false(nullptr)
 {
     //m_result = new DiceResult();
 }
@@ -96,12 +96,10 @@ void IfNode::run(ExecutionNode *previous)
                         bool result = m_validator->hasValid(dice,true,true);
                         trueForAll = trueForAll ? result : false;
                         falseForAll = falseForAll ? result : false;
-                        qDebug() << "result" << result;
 
                         oneIsTrue |= result;
                         oneIsFalse = !result ? true : oneIsFalse;
                     }
-                    qDebug() << "OneIsVrai: " << oneIsTrue <<" oneIsFaux" <<oneIsFalse<<" vraiForAll" <<trueForAll <<" fauxForAll" <<falseForAll << m_conditionType;
                     if(m_conditionType==OneOfThem)
                     {
                         if(oneIsTrue)
@@ -272,6 +270,8 @@ void IfNode::setConditionType(const IfNode::ConditionType &conditionType)
 ExecutionNode* IfNode::getCopy() const
 {
     IfNode* node = new IfNode();
+
+    node->setConditionType(m_conditionType);
     if(nullptr!=m_validator)
     {
         node->setValidator(m_validator->getCopy());

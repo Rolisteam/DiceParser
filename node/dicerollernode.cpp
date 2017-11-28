@@ -38,7 +38,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
                 die->setMaxValue(m_max);
                 die->roll();
                 //qDebug() << die->getValue() << "value";
-				m_diceResult->insertResult(die);
+                m_diceResult->insertResult(die);
             }
             if(nullptr!=m_nextNode)
             {

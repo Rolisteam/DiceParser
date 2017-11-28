@@ -282,6 +282,7 @@ bool DiceParser::readOptionFromNull(QString& str,ExecutionNode* & node)
     if(readOption(str,&nodePrevious))
     {
         auto nodeNext = nodePrevious.getNextNode();
+        nodePrevious.setNextNode(nullptr);
         node = nodeNext;
         return true;
     }
@@ -301,7 +302,7 @@ bool DiceParser::readNode(QString& str,ExecutionNode* & node)
     return false;
 }
 
-void DiceParser::Start()
+void DiceParser::start()
 {
     for(auto start : m_startNodes)
     {
@@ -1176,7 +1177,7 @@ bool DiceParser::readBlocInstruction(QString& str,ExecutionNode*& resultnode)
     if(str.startsWith('{'))
     {
         str=str.remove(0,1);
-        ExecutionNode* node;
+        ExecutionNode* node = nullptr;
         Die::ArithmeticOperator op;
         ScalarOperatorNode* scalarNode = nullptr;
         if(m_parsingToolbox->readArithmeticOperator(str,op))

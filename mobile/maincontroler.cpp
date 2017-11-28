@@ -23,7 +23,7 @@ void MainControler::rollDice(QString cmd)
 {
     if(m_diceParser->parseLine(cmd))
     {
-        m_diceParser->Start();
+        m_diceParser->start();
         for(int i = 0; i < m_diceParser->getStartNodeCount(); ++i)
         {
            //qDebug() << m_diceParser->getSumOfDiceResult(i);

@@ -234,7 +234,7 @@ QString BotIrcDiceParser::startDiceParsing(QString& cmd,bool highlight)
     if(m_parser->parseLine(cmd))
     {
 
-        m_parser->Start();
+        m_parser->start();
         if(!m_parser->getErrorMap().isEmpty())
         {
             out << "Error" << m_parser->humanReadableError()<< "\n";

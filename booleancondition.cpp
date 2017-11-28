@@ -41,7 +41,6 @@ qint64 BooleanCondition::hasValid(Die* b,bool recursive,bool unhighlight) const
     qint64 sum= 0;
     for(qint64 value: listValues)
     {
-        qDebug() << "value" << value << m_value;
         switch(m_operator)
         {
             case Equal:
@@ -87,29 +86,29 @@ void BooleanCondition::setValue(qint64 v)
 }
 QString BooleanCondition::toString()
 {
-	QString str(QStringLiteral(""));
+    QString str(QStringLiteral(""));
     switch (m_operator)
     {
     case Equal:
-		str.append(QStringLiteral("="));
+        str.append(QStringLiteral("="));
         break;
     case GreaterThan:
-		str.append(QStringLiteral(">"));
+        str.append(QStringLiteral(">"));
         break;
     case LesserThan:
-		str.append(QStringLiteral("<"));
+        str.append(QStringLiteral("<"));
         break;
     case GreaterOrEqual:
-		str.append(QStringLiteral(">="));
+        str.append(QStringLiteral(">="));
         break;
     case LesserOrEqual:
-		str.append(QStringLiteral("<="));
+        str.append(QStringLiteral("<="));
         break;
     case Different:
         str.append(QStringLiteral("!="));
         break;
     }
-	return QStringLiteral("[%1%2]").arg(str).arg(m_value);
+    return QStringLiteral("[%1%2]").arg(str).arg(m_value);
 }
 quint64 BooleanCondition::getValidRangeSize(quint64 faces) const
 {

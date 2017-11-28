@@ -111,7 +111,7 @@ public:
      * @brief Start running the execution tree
      *
      */
-    void Start();
+    void start();
 
     /**
      * @brief displayResult

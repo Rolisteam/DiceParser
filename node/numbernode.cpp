@@ -38,7 +38,7 @@ NumberNode::~NumberNode()
 
 void NumberNode::run(ExecutionNode* previous)
 {
-	m_previousNode = previous;
+    m_previousNode = previous;
     if(nullptr!=previous)
     {
         m_result->setPrevious(previous->getResult());
