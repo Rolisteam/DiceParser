@@ -320,7 +320,6 @@ bool ParsingToolBox::readNumber(QString& str, qint64& myNumber)
     if(str.isEmpty())
         return false;
 
-
     QString number;
     int i=0;
     while(i<str.length() && ((str[i].isNumber()) || ( (i==0) && (str[i]=='-'))))
@@ -434,7 +433,6 @@ bool ParsingToolBox::readVariable(QString &str, qint64 &myNumber, QString& reaso
 
     if(nullptr!=m_variableHash)
     {
-        //qDebug() << m_variableHash->keys();
         if(m_variableHash->contains(key))
         {
             QString value = m_variableHash->value(key);
@@ -450,7 +448,6 @@ bool ParsingToolBox::readVariable(QString &str, qint64 &myNumber, QString& reaso
             {
                 reasonFail = QStringLiteral("Variable value is %1, not a number").arg(value);
             }
-
         }
         else
         {
