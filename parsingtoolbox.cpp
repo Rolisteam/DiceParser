@@ -295,7 +295,7 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
 bool ParsingToolBox::readLogicOperation(QString& str,CompositeValidator::LogicOperation& op)
 {
     QString longKey;
-    foreach(QString tmp, m_logicOperation->keys())
+    for(auto const& tmp : m_logicOperation->keys())
     {
         if(str.startsWith(tmp))
         {
@@ -350,6 +350,7 @@ bool ParsingToolBox::readDynamicVariable(QString&  str, qint64& index)
         return false;
     if(str.startsWith('$'))
     {
+        str=str.remove(0,1);
         QString number;
         int i=0;
         while(i<str.length() && (str[i].isNumber()))
@@ -368,6 +369,20 @@ bool ParsingToolBox::readDynamicVariable(QString&  str, qint64& index)
     }
     return false;
 }
+
+ExecutionNode* ParsingToolBox::getLatestNode(ExecutionNode* node)
+{
+    if(nullptr == node)
+        return nullptr;
+
+    ExecutionNode* next = node;
+    while(nullptr != next->getNextNode() )
+    {
+        next = next->getNextNode();
+    }
+    return next;
+}
+
 bool ParsingToolBox::readString(QString &str, QString& strResult)
 {
     if(str.isEmpty())

@@ -123,15 +123,7 @@ DiceParser::~DiceParser()
         m_start = nullptr;
     }
 }
-ExecutionNode* DiceParser::getLatestNode(ExecutionNode* node)
-{
-    ExecutionNode* next = node;
-    while(nullptr != next->getNextNode() )
-    {
-        next = next->getNextNode();
-    }
-    return next;
-}
+
 QString DiceParser::convertAlias(QString str)
 {
     for(DiceAlias* cmd : *m_aliasList)
@@ -176,13 +168,13 @@ bool DiceParser::parseLine(QString str)
     if(keepParsing)
     {
         m_current->setNextNode(newNode);
-        m_current = getLatestNode(m_current);
+        m_current = ParsingToolBox::getLatestNode(m_current);
         keepParsing =!str.isEmpty();
         if(keepParsing)
         {
             // keepParsing =
             readOperator(str,m_current);
-            m_current = getLatestNode(m_current);
+            m_current = ParsingToolBox::getLatestNode(m_current);
         }
     }
 
@@ -232,10 +224,10 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         }
         node = operandNode;
 
-        operandNode= getLatestNode(operandNode);
+        operandNode= ParsingToolBox::getLatestNode(operandNode);
         while(readOperator(str,operandNode))
         {
-            operandNode= getLatestNode(operandNode);
+            operandNode= ParsingToolBox::getLatestNode(operandNode);
         };
     }
     else if(readCommand(str,operandNode))
@@ -698,7 +690,7 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
                 ExecutionNode* current = drNode;
                 while(readOption(str,current))
                 {
-                    current = getLatestNode(current);
+                    current = ParsingToolBox::getLatestNode(current);
                 }
                 return true;
             }
@@ -717,7 +709,7 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
                 ExecutionNode* current = drNode;
                 while(readOption(str,current))
                 {
-                    current = getLatestNode(current);
+                    current = ParsingToolBox::getLatestNode(current);
                 }
                 return true;
             }
@@ -897,7 +889,7 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
     {
         while(readOption(str,previous))
         {
-            previous = getLatestNode(previous);
+            previous = ParsingToolBox::getLatestNode(previous);
         }
     }
     return false;
@@ -1260,13 +1252,15 @@ bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
     if(m_parsingToolbox->readDynamicVariable(str,intValue))
     {
         VariableNode* variableNode = new VariableNode();
-        variableNode->setIndex(intValue);
+        variableNode->setIndex(intValue-1);
+        variableNode->setData(&m_startNodes);
+        node = variableNode;
+        return true;
     }
     else if(m_parsingToolbox->readNumber(str,intValue))
     {
         NumberNode* numberNode = new NumberNode();
         numberNode->setNumber(intValue);
-
         node = numberNode;
         return true;
     }

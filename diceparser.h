@@ -256,11 +256,6 @@ private:
      */
     bool readOperator(QString&,ExecutionNode* previous);
     /**
-     * @brief setCurrentNode
-     * @param node
-     */
-    ExecutionNode* getLatestNode(ExecutionNode* node);
-    /**
      * @brief DiceParser::readCommand
      * @param str
      * @param node

@@ -188,6 +188,7 @@ public:
     static IfNode::ConditionType readConditionType(QString &str);
 
     bool readComment(QString& str, QString &,QString &);
+    static ExecutionNode *getLatestNode(ExecutionNode *node);
 private:
 
     QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
