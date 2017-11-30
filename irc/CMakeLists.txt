@@ -73,6 +73,7 @@ add_executable(
     ../node/splitnode.cpp
     ../node/groupnode.cpp
     botircdiceparser.cpp
+    ../node/variablenode.cpp
     main.cpp)
 
 
