@@ -1,5 +1,5 @@
 #include "variablenode.h"
-
+#include "parsingtoolbox.h"
 VariableNode::VariableNode()
 {
 
@@ -15,13 +15,17 @@ void VariableNode::run(ExecutionNode *previous)
       return;
     }
 
-    if(m_data.size()>m_index)
+    if(m_data->size()>m_index)
     {
-      auto value= m_data[m_index];
-      m_result = value->getResult();
-      if(nullptr!=m_nextNode)
+      auto value= (*m_data)[m_index];
+      value = ParsingToolBox::getLatestNode(value);
+      if(nullptr != value)
       {
-          m_nextNode->run(this);
+        m_result = value->getResult();
+        if(nullptr!=m_nextNode)
+        {
+            m_nextNode->run(this);
+        }
       }
     }
     else
@@ -73,12 +77,12 @@ void VariableNode::setIndex(qint64 index)
   m_index = index;
 }
 
-std::vector<ExecutionNode *> VariableNode::getData() const
+std::vector<ExecutionNode *>* VariableNode::getData() const
 {
   return m_data;
 }
 
-void VariableNode::setData(const std::vector<ExecutionNode *> &data)
+void VariableNode::setData(std::vector<ExecutionNode *>* data)
 {
   m_data = data;
 }

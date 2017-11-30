@@ -22,12 +22,12 @@ public:
     qint64 getIndex() const;
     void setIndex(qint64 index);
 
-    std::vector<ExecutionNode *> getData() const;
-    void setData(const std::vector<ExecutionNode *> &data);
+    std::vector<ExecutionNode *>* getData() const;
+    void setData(std::vector<ExecutionNode *>* data);
 
 private:
     qint64 m_index;
-    std::vector<ExecutionNode*> m_data;
+    std::vector<ExecutionNode*>* m_data;
 };
 
 #endif // VARIABLENODE_H
