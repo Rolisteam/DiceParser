@@ -51,7 +51,7 @@
 #define DEFAULT_FACES_NUMBER 10
 
 DiceParser::DiceParser()
-    : m_current(nullptr)//m_start(nullptr),
+    //: //m_start(nullptr),m_current(nullptr)
 {
     m_currentTreeHasSeparator =false;
     m_parsingToolbox = new ParsingToolBox();
@@ -156,13 +156,13 @@ bool DiceParser::parseLine(QString str)
         m_startNodes.clear();
     }
     m_currentTreeHasSeparator=false;
-    StartingNode* start = new StartingNode();
+    str = convertAlias(str);
+    m_command = str;
+    /*StartingNode* start = new StartingNode();
     m_startNodes.push_back(start);
     ExecutionNode* newNode = nullptr;
     m_current = start;
 
-    str = convertAlias(str);
-    m_command = str;
     bool keepParsing = readExpression(str,newNode);
 
     if(keepParsing)
@@ -176,9 +176,10 @@ bool DiceParser::parseLine(QString str)
             readOperator(str,m_current);
             m_current = ParsingToolBox::getLatestNode(m_current);
         }
-    }
+    }*/
+    bool hasInstruction = readInstructionList(str);
 
-    if((m_errorMap.isEmpty())&&(nullptr!=newNode))
+    if((m_errorMap.isEmpty())&&(hasInstruction))
     {
         return true;
     }
@@ -256,6 +257,7 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
             numberNode->setPreviousNode(previous);
             numberNode->setNextNode(diceNode);
             node = numberNode;
+            return true;
         }
         else
         {
@@ -812,10 +814,51 @@ bool DiceParser::readInstructionOperator(QChar c)
     }
     return false;
 }
+bool DiceParser::readInstructionList(QString& str)
+{
+    if(str.isEmpty())
+        return false;
+
+    bool readInstruction = true;
+    while(readInstruction)
+    {
+        ExecutionNode* startNode = nullptr;
+        bool keepParsing = readExpression(str,startNode);
+        if(nullptr != startNode)
+        {
+            m_startNodes.push_back(startNode);
+            auto latest = startNode;
+            if(keepParsing)
+            {
+                latest = ParsingToolBox::getLatestNode(latest);
+                keepParsing =!str.isEmpty();
+                if(keepParsing)
+                {
+                    readOperator(str,latest);
+                    latest = ParsingToolBox::getLatestNode(latest);
+                }
+            }
+
+            if( !str.isEmpty() && readInstructionOperator(str[0]))
+            {
+                str=str.remove(0,1);
+            }
+            else
+            {
+                readInstruction = false;
+            }
+        }
+        else
+        {
+            readInstruction = false;
+        }
+    }
+    return true;
+}
 
 bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
 {
-    if(str.isEmpty())
+    if(str.isEmpty() || nullptr == previous)
     {
         return false;
     }
@@ -841,7 +884,7 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
             {
                 parent = nodeExecOrChild;
                 nodeExecOrChild = nodeExecOrChild->getNextNode();
-                //qDebug() << node->getPriority() << nodeExecOrChild->getPriority() << "###########";
+                qDebug() << node->getPriority() << nodeExecOrChild->getPriority() << "###########";
             }
             // management of operator priority
             if((nullptr != nodeExecOrChild)&&(nodeExec != nodeExecOrChild))
@@ -867,22 +910,6 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
         else
         {
             delete node;
-        }
-    }
-    else if(readInstructionOperator(str[0]))
-    {
-        str=str.remove(0,1);
-        ExecutionNode* nodeExec = nullptr;
-        if(readExpression(str,nodeExec))
-        {
-            if(nullptr==nodeExec)
-            {
-                return false;
-            }
-            previous->setNextNode(nullptr);
-            m_startNodes.push_back(nodeExec);
-            m_currentTreeHasSeparator = true;
-            return true;
         }
     }
     else
@@ -937,11 +964,6 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
             {
             case Keep:
             {
-                qDebug() << "keep " << previous->toString(true) << str;
-                if(str == "4+7")
-                {
-                    qDebug() << "nauteanuit";
-                }
                 qint64 myNumber=0;
                 bool ascending = m_parsingToolbox->readAscending(str);
 

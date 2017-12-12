@@ -231,6 +231,7 @@ public:
     void setComment(const QString &comment);
 
     bool readOptionFromNull(QString &str, ExecutionNode *&node);
+    bool readInstructionList(QString &str);
 private:
 
     /**
@@ -328,7 +329,7 @@ private:
 
     ExecutionNode* m_start = nullptr;
     std::vector<ExecutionNode*> m_startNodes;
-    ExecutionNode* m_current;
+    //ExecutionNode* m_current;
     QString m_command;
     ParsingToolBox* m_parsingToolbox;
     QString m_helpPath;
