@@ -286,6 +286,10 @@ void startDiceParsingMarkdown(QString cmd)
                 stringResult.replace("%2",listText.trimmed());
                 str = stringResult;
             }
+            if(!parser.getComment().isEmpty())
+            {
+                str.prepend(parser.getComment()+ QStringLiteral("\n"));
+            }
             result += str + "\n";
         }
 
