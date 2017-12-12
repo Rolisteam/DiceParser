@@ -31,6 +31,7 @@ void MergeNode::run(ExecutionNode* previous)
     m_previousNode = previous;
     m_result->setPrevious(previous->getResult());
     ExecutionNode* previousLast =nullptr;
+    std::vector<Result*> pastResult;
     for(auto start : *m_startList)
     {
         ExecutionNode* last = getLatestNode(start);
@@ -62,7 +63,19 @@ void MergeNode::run(ExecutionNode* previous)
                         }
                     }
                 }
-                tmpResult = tmpResult->getPrevious();
+                auto it = std::find_if(pastResult.begin(),pastResult.end(),[tmpResult](const Result* a){
+                    return (a == tmpResult->getPrevious());
+                });
+                if(it == pastResult.end())
+                {
+                    pastResult.push_back(previousLast->getResult());
+                    tmpResult = tmpResult->getPrevious();
+                }
+                else
+                {
+                    tmpResult->setPrevious(nullptr);
+                    tmpResult = nullptr;
+                }
             }
         }
     }
