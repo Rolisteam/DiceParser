@@ -72,8 +72,6 @@ qint64 NumberNode::getPriority() const
     {
         priority = m_nextNode->getPriority();
     }
-
-
     return priority;
 }
 ExecutionNode* NumberNode::getCopy() const
