@@ -230,6 +230,7 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         {
             operandNode= ParsingToolBox::getLatestNode(operandNode);
         };
+        return true;
     }
     else if(readCommand(str,operandNode))
     {
@@ -264,12 +265,7 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
             return false;
         }
     }
-    if(m_parsingToolbox->readComment(str,result,comment))
-    {
-        m_command.remove(comment);
-        m_comment = result;
-    }
-    return true;
+    return false;
 }
 bool DiceParser::readOptionFromNull(QString& str,ExecutionNode* & node)
 {
@@ -845,6 +841,13 @@ bool DiceParser::readInstructionList(QString& str)
             }
             else
             {
+                QString result;
+                QString comment;
+                if(m_parsingToolbox->readComment(str,result,comment))
+                {
+                    m_command.remove(comment);
+                    m_comment = result;
+                }
                 readInstruction = false;
             }
         }
@@ -884,7 +887,7 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
             {
                 parent = nodeExecOrChild;
                 nodeExecOrChild = nodeExecOrChild->getNextNode();
-                qDebug() << node->getPriority() << nodeExecOrChild->getPriority() << "###########";
+                //qDebug() << node->getPriority() << nodeExecOrChild->getPriority() << "###########";
             }
             // management of operator priority
             if((nullptr != nodeExecOrChild)&&(nodeExec != nodeExecOrChild))
