@@ -350,9 +350,8 @@ bool ParsingToolBox::readDynamicVariable(QString&  str, qint64& index)
         return false;
     if(str.startsWith('$'))
     {
-        str=str.remove(0,1);
         QString number;
-        int i=0;
+        int i=1;
         while(i<str.length() && (str[i].isNumber()))
         {
             number+=str[i];
@@ -363,7 +362,7 @@ bool ParsingToolBox::readDynamicVariable(QString&  str, qint64& index)
         index = number.toLongLong(&ok);
         if(ok)
         {
-            str=str.remove(0,number.size());
+            str=str.remove(0,number.size()+1);
             return true;
         }
     }
@@ -438,6 +437,7 @@ bool ParsingToolBox::readVariable(QString &str, qint64 &myNumber, QString& reaso
 {
     if(str.isEmpty())
         return false;
+
     if(str.startsWith("${"))
     {
         str=str.remove(0,2);
@@ -694,7 +694,6 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
 
                 tmp.setEnd(realStart+truc);
                 realStart = tmp.getEnd();
-                //qDebug() <<"start:"<< tmp.getStart() << "end:"<< realStart;
                 ranges[i]=tmp;
             }
         }
