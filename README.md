@@ -9,13 +9,18 @@ Rolisteam Dice Parser
 The grammar is something like this:
 
 ```
-Command =: Expression
-Expression =: number | number Dice DiceOperation | ScalarOperator Expression | string
+Command =: Instruction [';',Instruction]*
+Instruction =: Expression
+Expression =: number | number Dice DiceOperation | ScalarOperator Expression | string | variable Expression
 Dice =: DiceOperator Number(faces) | DiceOperator ListOfValues
 DiceOperator =: D | L
-DiceOperation =: Keep | KeepAndExplose | sort | if | explose | jumpbackward | merge | filter | parenthese | count
+DiceOperation =: Keep | KeepAndExplose | sort | if | explose | jumpbackward | merge | filter | parenthese | count | paint | group
 ScalarOperator =: [x,-,*,x,/]
-number =: [0-9]+
+number =: [0-9]+ | constantValue
+constantValue =: ${id | label}
+id=[_,a-z][_,A-z,0-9]*
+label=[_,a-z][_,A-z,0-9,é,è,ç,û,ê,â]*
+variable = ${[0-9]+}
 Validator =: BooleanValidator | RangeValidator | CompositeValidator
 CompositeValidator =: Validator LogicOpetator Validator
 LogicOpetator =: = | > | => | < | =<
@@ -26,7 +31,9 @@ String =: [A-z0-9]+
 Keep =: k Number
 KeepAndExplose =: K number
 sort =: s
-if =: i compareMethod [Validator] {Expression}
+if =: i compareMethod [Validator] {Expression}[{Expression}]
+paint =: p [ count : color ]
+group =: number
 explose =: e Validator
 jumpbackward =: @DiceOperation
 merge =: m | m Expression
