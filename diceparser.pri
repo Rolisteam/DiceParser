@@ -20,6 +20,28 @@ SOURCES += $$PWD/diceparser.cpp \
     $$PWD/node/stringnode.cpp \
     $$PWD/node/filternode.cpp \
     $$PWD/node/groupnode.cpp \
+    $$PWD/node/dicerollernode.cpp \
+    $$PWD/node/executionnode.cpp \
+    $$PWD/node/startingnode.cpp \
+    $$PWD/node/rerolldicenode.cpp \
+    $$PWD/node/scalaroperatornode.cpp \
+    $$PWD/node/numbernode.cpp \
+    $$PWD/node/sortresult.cpp \
+    $$PWD/node/keepdiceexecnode.cpp \
+    $$PWD/node/countexecutenode.cpp \
+    $$PWD/node/explosedicenode.cpp \
+    $$PWD/node/parenthesesnode.cpp \
+    $$PWD/node/helpnode.cpp \
+    $$PWD/node/jumpbackwardnode.cpp \
+    $$PWD/node/mergenode.cpp \
+    $$PWD/node/listaliasnode.cpp \
+    $$PWD/node/paintnode.cpp \
+    $$PWD/node/ifnode.cpp \
+    $$PWD/node/splitnode.cpp \
+    $$PWD/node/listsetrollnode.cpp\
+    $$PWD/node/variablenode.cpp\
+    $$PWD/diceroller.cpp\
+    $$PWD/qmltypesregister.cpp
 
 
 HEADERS += \
@@ -41,9 +63,6 @@ HEADERS += \
     $$PWD/node/filternode.h\
     $$PWD/node/groupnode.h \
     $$PWD/node/variablenode.h\
-
-
-HEADERS += \
     $$PWD/node/dicerollernode.h \
     $$PWD/node/executionnode.h \
     $$PWD/node/rerolldicenode.h \
@@ -62,29 +81,11 @@ HEADERS += \
     $$PWD/node/ifnode.h \
     $$PWD/node/splitnode.h \
     $$PWD/node/paintnode.h \
-    $$PWD/node/listsetrollnode.h
+    $$PWD/node/listsetrollnode.h \
+    $$PWD/diceroller.h \
+    $$PWD/qmltypesregister.h
 
-SOURCES += \
-    $$PWD/node/dicerollernode.cpp \
-    $$PWD/node/executionnode.cpp \
-    $$PWD/node/startingnode.cpp \
-    $$PWD/node/rerolldicenode.cpp \
-    $$PWD/node/scalaroperatornode.cpp \
-    $$PWD/node/numbernode.cpp \
-    $$PWD/node/sortresult.cpp \
-    $$PWD/node/keepdiceexecnode.cpp \
-    $$PWD/node/countexecutenode.cpp \
-    $$PWD/node/explosedicenode.cpp \
-    $$PWD/node/parenthesesnode.cpp \
-    $$PWD/node/helpnode.cpp \
-    $$PWD/node/jumpbackwardnode.cpp \
-    $$PWD/node/mergenode.cpp \
-    $$PWD/node/listaliasnode.cpp \
-    $$PWD/node/paintnode.cpp \
-    $$PWD/node/ifnode.cpp \
-    $$PWD/node/splitnode.cpp \
-    $$PWD/node/listsetrollnode.cpp\
-    $$PWD/node/variablenode.cpp\
+
 
 
 OTHER_FILES += \
