@@ -20,7 +20,6 @@
 #include "diceroller.h"
 
 DiceRoller::DiceRoller()
-    : m_diceparser(new DiceParser())
 {
 
 }
@@ -61,7 +60,7 @@ QString DiceRoller::diceToText(QList<ExportedDiceResult>& diceList)
     for(auto dice : diceList)
     {
         QStringList resultGlobal;
-        foreach(int face, dice.keys())
+        for(int face:  dice.keys())
         {
             QStringList result;
             ListDiceResult diceResult =  dice.value(face);
@@ -105,23 +104,23 @@ QString DiceRoller::diceToText(QList<ExportedDiceResult>& diceList)
 }
 void DiceRoller::start()
 {
-    if(m_diceparser->parseLine(m_command))
+    if(m_diceparser.parseLine(m_command))
     {
-        m_diceparser->start();
-        if(m_diceparser->getErrorMap().isEmpty())
+        m_diceparser.start();
+        if(m_diceparser.getErrorMap().isEmpty())
         {
             bool homogeneous;
             QList<ExportedDiceResult> list;
-            m_diceparser->getLastDiceResult(list,homogeneous);
+            m_diceparser.getLastDiceResult(list,homogeneous);
             QString diceText = diceToText(list);
             QString scalarText;
             QString str;
 
             qreal result = 0;
             QString resultStr;
-            if(m_diceparser->hasIntegerResultNotInFirst())
+            if(m_diceparser.hasIntegerResultNotInFirst())
             {
-                auto values = m_diceparser->getLastIntegerResults();
+                auto values = m_diceparser.getLastIntegerResults();
                 QStringList strLst;
                 for(auto val : values )
                 {
@@ -132,7 +131,7 @@ void DiceRoller::start()
             }
             else if(!list.isEmpty())
             {
-                auto values = m_diceparser->getSumOfDiceResult();
+                auto values = m_diceparser.getSumOfDiceResult();
                 QStringList strLst;
                 for(auto val : values )
                 {
@@ -142,18 +141,22 @@ void DiceRoller::start()
                 scalarText = QString("%1").arg(strLst.join(','));
             }
 
-            if(m_diceparser->hasStringResult())
+            if(m_diceparser.hasStringResult())
             {
                 bool ok;
-                QStringList allStringlist = m_diceparser->getAllStringResult(ok);
+                QStringList allStringlist = m_diceparser.getAllStringResult(ok);
                 QString stringResult = allStringlist.join(" ; ");
                 stringResult.replace("%1",scalarText);
                 stringResult.replace("%2",diceText.trimmed());
                 str = stringResult;
             }
-            if(!m_diceparser->getComment().isEmpty())
+            else
             {
-                resultStr+=m_diceparser->getComment()+"\n";
+                resultStr = scalarText;
+            }
+            if(!m_diceparser.getComment().isEmpty())
+            {
+                resultStr+=m_diceparser.getComment()+"\n";
             }
             resultStr += str+"\n";
             m_resultStr = resultStr;
@@ -166,9 +169,9 @@ void DiceRoller::start()
 
     }
 
-    if(!m_diceparser->getErrorMap().isEmpty())
+    if(!m_diceparser.getErrorMap().isEmpty())
     {
-        auto errors = m_diceparser->getErrorMap();
+        auto errors = m_diceparser.getErrorMap();
         setError(errors.first());
     }
 

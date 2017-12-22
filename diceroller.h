@@ -58,7 +58,7 @@ public slots:
 protected:
     QString diceToText(QList<ExportedDiceResult> &diceList);
 private:
-    DiceParser* m_diceparser;
+    DiceParser m_diceparser;
     qreal m_result;
     QString m_diceList;
     QString m_resultStr;
