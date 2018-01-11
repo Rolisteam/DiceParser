@@ -71,12 +71,13 @@ QJsonArray diceToJson(QList<ExportedDiceResult>& diceList,bool& highlight,bool& 
                 if( it == alreadyDoneColor.end())
                 {
                    sameColorDice.push_back(std::vector<HighLightDice>());
+                   alreadyDoneColor.push_back(dice.getColor());
                    it = alreadyDoneColor.end();
                    --it;
-                   alreadyDoneColor.push_back(dice.getColor());
                 }
-                    
+                
                 int i = std::distance(alreadyDoneColor.begin(), it);
+                qDebug() << "index:" <<i << sameColorDice.size();
                 sameColorDice[i].push_back(dice);
             }
             int i = 0;
