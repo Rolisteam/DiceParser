@@ -21,10 +21,13 @@
 ***************************************************************************/
 
 #include <QStringList>
-#include "diceparser.h"
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QTextStream>
+#include <QJsonArray>
+#include <QJsonObject>
+
+#include "diceparser.h"
 #include "highlightdice.h"
 
 /**
@@ -44,8 +47,66 @@
 
 QTextStream out(stdout, QIODevice::WriteOnly);
 bool markdown = false;
+
+
+
+QJsonArray diceToJson(QList<ExportedDiceResult>& diceList,bool& highlight,bool& homogeneous)
+{
+    QJsonArray array;
+    for(auto dice : diceList)
+    {
+        for(int face:  dice.keys())
+        {
+            QStringList result;
+            QJsonObject diceList;
+            ListDiceResult diceResults =  dice.value(face);
+            std::vector<std::vector<HighLightDice>> sameColorDice;
+            std::vector<QString> alreadyDoneColor;
+            for(auto & dice : diceResults)
+            {
+                auto it=std::find_if(alreadyDoneColor.begin(), alreadyDoneColor.end(),[dice](QString color){
+                    return color == dice.getColor();
+                });
+
+                if( it == alreadyDoneColor.end())
+                {
+                   sameColorDice.push_back(std::vector<HighLightDice>());
+                   it = alreadyDoneColor.end();
+                   --it;
+                   alreadyDoneColor.push_back(dice.getColor());
+                }
+                    
+                int i = std::distance(alreadyDoneColor.begin(), it);
+                sameColorDice[i].push_back(dice);
+            }
+            int i = 0;
+            for(auto it = alreadyDoneColor.begin() ; it != alreadyDoneColor.end(); ++it)
+            {
+                auto list = sameColorDice[i];
+              	QJsonObject object;
+                object["color"]=*it;
+                object["face"]=face;
+                QJsonArray values;
+                for(auto const dice : list)
+                {
+                    for(auto result : dice.getResult())
+                    {
+                        values.push_back((qint64)result);
+                    }
+                }
+                object["values"]=values;
+                ++i;
+                array.push_back(object);
+            } 
+        }
+    }
+    return array;
+}
+
 QString diceToMarkdown(QList<ExportedDiceResult>& diceList,bool highlight,bool homogeneous)
 {
+    auto array = diceToJson(diceList,highlight,homogeneous);
+    qDebug() << array;
     QStringList global;
     for(auto dice : diceList)
     {
@@ -187,6 +248,14 @@ QString diceToText(QList<ExportedDiceResult>& diceList,bool highlight,bool homog
                         if(tmp.getColor()=="black")
                         {
                             prefix = "\e[30m%1\e[0m";
+                        }
+                        if(tmp.getColor()=="green")
+                        {
+                            prefix = "\e[32m%1\e[0m";
+                        }
+                        if(tmp.getColor()=="yellow")
+                        {
+                            prefix = "\e[33m%1\e[0m";
                         }
                     }
 
