@@ -119,20 +119,24 @@ QString diceToMarkdown(QList<ExportedDiceResult>& diceList,bool highlight,bool h
             QList<QStringList> allStreakList;
             ListDiceResult diceResult =  dice.value(face);
             bool previousHighlight=false;
-            QString previousColor;
+            QString previousColor("");
             QString patternColor("");
             for (const HighLightDice& tmp : diceResult)
             {
                 if(previousColor != tmp.getColor())
                 {
+                    homogeneous = false;
                     if(!currentStreak.isEmpty())
                     {
                         QStringList list;
-                        list << patternColor+currentStreak.join(',');
+                        list << patternColor+currentStreak.join(',')+"</tspan>";
                         allStreakList.append(list);
                         currentStreak.clear();
                     }
-                    patternColor = QStringLiteral("");
+                    QString color = tmp.getColor();
+                    if(color.isEmpty())
+                        color = "black";
+                    patternColor = QStringLiteral("<tspan fill=\"%1\">").arg(color);
 
                 }
                 QStringList diceListStr;
@@ -177,7 +181,10 @@ QString diceToMarkdown(QList<ExportedDiceResult>& diceList,bool highlight,bool h
             if(previousHighlight)
             {
                 QStringList list;
-                list <<  patternColor+currentStreak.join(',');
+                QString end="</tspan>";
+                if(patternColor.isEmpty())
+                    end=patternColor;
+                list <<  patternColor+currentStreak.join(',')+end;
                 allStreakList.append(list);
             }
             else
@@ -296,7 +303,10 @@ void startDiceParsingMarkdown(QString cmd)
     QString result("");
     bool highlight = true;
     DiceParser parser;
-
+    /*QHash<QString, QString>* vars = new QHash<QString,QString>();
+    vars->insert("adresse","4");
+    vars->insert("competence arme","7");
+    parser.setVariableDictionary(vars);*/
     //setAlias
     parser.insertAlias(new DiceAlias("L5R5R","L[-,⨀,⨀⬢,❂⬢,❁,❁⬢]"),0);
     parser.insertAlias(new DiceAlias("L5R5S","L[-,-,⨀,⨀,⨀❁,⨀⬢,⨀⬢,❂,❂⬢,❁,❁,❁]"),1);
@@ -339,13 +349,25 @@ void startDiceParsingMarkdown(QString cmd)
                 }
                 scalarText = QString("%1").arg(strLst.join(','));
             }
-            if(highlight)
+            if(homogeneous)
             {
-                str = QString("```markdown\n# %1\nDetails:[%3 (%2)]\n```").arg(scalarText).arg(diceText).arg(parser.getDiceCommand());
+                if(highlight)
+                {
+                    str = QString("```markdown\n# %1\nDetails:[%3 (%2)]\n```").arg(scalarText).arg(diceText).arg(parser.getDiceCommand());
+                }
+                else
+                {
+                    str = QString("```markdown\n#%1, details:[%3 (%2)]\n```").arg(scalarText).arg(diceText).arg(parser.getDiceCommand());
+                }
             }
             else
             {
-                str = QString("```markdown\n#%1, details:[%3 (%2)]\n```").arg(scalarText).arg(diceText).arg(parser.getDiceCommand());
+                str = QString("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg version=\"1.1\"  xmlns=\"http://www.w3.org/2000/svg\" "
+                              "xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n"
+                              "<text font-size=\"16\" x=\"0\" y=\"20\">\n"
+                                  "<tspan fill=\"red\">%1</tspan> details:[%3 (%2)]"
+                                "</text>\n"
+                              "</svg>\n").arg(scalarText).arg(diceText).arg(parser.getDiceCommand());
             }
             if(parser.hasStringResult())
             {
@@ -432,7 +454,6 @@ void startDiceParsing(QStringList& cmds,QString& treeFile,bool highlight)
                 stringResult.replace("%1",scalarText);
                 stringResult.replace("%2",diceText.trimmed());
                 str = stringResult;       
-//                str = parser->getStringResult().join(",");          
             }
             if(!parser->getComment().isEmpty())
             {
@@ -468,6 +489,8 @@ int main(int argc, char *argv[])
     QCommandLineOption color(QStringList() << "c"<< "color-off", "Disable color to highlight result");
     QCommandLineOption version(QStringList() << "v"<< "version", "Show the version and quit.");
     QCommandLineOption reset(QStringList() << "reset-settings", "Erase the settings and use the default parameters");
+    QCommandLineOption alias(QStringList() << "a" << "alias", "path to alias json files: <aliasfile>","aliasfile");
+    QCommandLineOption character(QStringList() << "s" << "charactersheet", "set Parameters to simulate character sheet: <sheetfile>","sheetfile");
     QCommandLineOption discord(QStringList() << "m" <<"markdown", "The output is formatted in markdown.");
     QCommandLineOption dotFile(QStringList() << "d"<<"dot-file", "Instead of rolling dice, generate the execution tree and write it in <dotfile>","dotfile");
     QCommandLineOption translation(QStringList() << "t"<<"translation", "path to the translation file: <translationfile>","translationfile");
@@ -481,6 +504,8 @@ int main(int argc, char *argv[])
     optionParser.addOption(version);
     optionParser.addOption(reset);
     optionParser.addOption(dotFile);
+    optionParser.addOption(alias);
+    optionParser.addOption(character);
     optionParser.addOption(discord);
     optionParser.addOption(translation);
     optionParser.addOption(help);
@@ -524,6 +549,12 @@ int main(int argc, char *argv[])
         cmd = "help";
     }
     QStringList cmdList = optionParser.positionalArguments();
+
+    QString aliasstr;
+    if(optionParser.isSet(alias))
+    {
+        aliasstr = optionParser.value(alias);
+    }
     // qDebug()<< "rest"<< cmdList;
 
 
