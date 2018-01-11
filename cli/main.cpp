@@ -49,7 +49,6 @@ QTextStream out(stdout, QIODevice::WriteOnly);
 bool markdown = false;
 
 
-
 QJsonArray diceToJson(QList<ExportedDiceResult>& diceList,bool& highlight,bool& homogeneous)
 {
     QJsonArray array;
