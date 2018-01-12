@@ -12,13 +12,18 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-# Find the QtWidgets library
-find_package(Qt5Core)
-
 set(EXECUTABLE_OUTPUT_PATH bin/)
 
+
+# Find the QtWidgets library
+find_package(Qt5Core)
 include_directories(${Qt5Core_INCLUDES} ../)
 add_definitions(${Qt5Core_DEFINITIONS})
+
+find_package(Qt5Gui)
+include_directories(${Qt5Gui_INCLUDES} ../)
+add_definitions(${Qt5Gui_DEFINITIONS})
+
 
 set(MODE "cli")
 
@@ -95,13 +100,14 @@ SET( dice_sources
     ../node/splitnode.cpp
     ../node/groupnode.cpp
     main.cpp
+    generateimage.cpp
     ../highlightdice.cpp
     ../node/variablenode.cpp
 )
 
 add_executable( dice ${dice_sources} ${dice_QM}   )
 
-target_link_libraries(dice ${Qt5Core_LIBRARIES})
+target_link_libraries(dice ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES})
 INSTALL_TARGETS(/bin dice)
 
 #qt5_use_modules()
