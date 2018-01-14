@@ -100,7 +100,7 @@ SET( dice_sources
     ../node/splitnode.cpp
     ../node/groupnode.cpp
     main.cpp
-    generateimage.cpp
+    displaytoolbox.cpp
     ../highlightdice.cpp
     ../node/variablenode.cpp
 )

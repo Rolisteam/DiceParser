@@ -158,25 +158,6 @@ bool DiceParser::parseLine(QString str)
     m_currentTreeHasSeparator=false;
     str = convertAlias(str);
     m_command = str;
-    /*StartingNode* start = new StartingNode();
-    m_startNodes.push_back(start);
-    ExecutionNode* newNode = nullptr;
-    m_current = start;
-
-    bool keepParsing = readExpression(str,newNode);
-
-    if(keepParsing)
-    {
-        m_current->setNextNode(newNode);
-        m_current = ParsingToolBox::getLatestNode(m_current);
-        keepParsing =!str.isEmpty();
-        if(keepParsing)
-        {
-            // keepParsing =
-            readOperator(str,m_current);
-            m_current = ParsingToolBox::getLatestNode(m_current);
-        }
-    }*/
     bool hasInstruction = readInstructionList(str);
 
     if((m_errorMap.isEmpty())&&(hasInstruction))
@@ -815,6 +796,7 @@ bool DiceParser::readInstructionList(QString& str)
     if(str.isEmpty())
         return false;
 
+    bool hasInstruction = false;
     bool readInstruction = true;
     while(readInstruction)
     {
@@ -822,6 +804,7 @@ bool DiceParser::readInstructionList(QString& str)
         bool keepParsing = readExpression(str,startNode);
         if(nullptr != startNode)
         {
+            hasInstruction = true;
             m_startNodes.push_back(startNode);
             auto latest = startNode;
             if(keepParsing)
@@ -834,7 +817,6 @@ bool DiceParser::readInstructionList(QString& str)
                     latest = ParsingToolBox::getLatestNode(latest);
                 }
             }
-
             if( !str.isEmpty() && readInstructionOperator(str[0]))
             {
                 str=str.remove(0,1);
@@ -856,7 +838,7 @@ bool DiceParser::readInstructionList(QString& str)
             readInstruction = false;
         }
     }
-    return true;
+    return hasInstruction;
 }
 
 bool DiceParser::readOperator(QString& str,ExecutionNode* previous)

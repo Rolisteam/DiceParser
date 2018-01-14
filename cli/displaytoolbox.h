@@ -5,11 +5,18 @@
 #include <QString>
 #include <QJsonArray>
 
-class ImageGenerator
+#include "diceparser.h"
+
+class DisplayToolBox
 {
 public:
-    ImageGenerator();
-    static QString makeImage(QJsonArray array,bool allSameFaceCount);
+    DisplayToolBox();
+    static QString makeImage(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString comment, bool allSameFaceCount,bool allSameColor);
+    static QString colorToTermCode(QString str);
+    static QString diceToText(QJsonArray array, bool withColor,bool allSameFaceCount, bool allSameColor);
+    static QJsonArray diceToJson(QList<ExportedDiceResult> &diceList, bool &allSameFaceCount, bool &allSameColor);
+    static QString diceToSvg(QJsonArray array, bool withColor, bool allSameColor, bool allSameFaceCount);
+    static QString diceResultToString(QJsonObject val);
 };
 
 
