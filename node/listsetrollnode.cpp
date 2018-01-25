@@ -65,17 +65,24 @@ void ListSetRollNode::run(ExecutionNode* previous)
         if(nullptr!=result)
         {
             quint64 diceCount = result->getResult(Result::SCALAR).toReal();
-            m_result->setPrevious(result);
-            QStringList rollResult;
-            for(quint64 i=0; i < diceCount ; ++i)
+            if(diceCount > m_values.size() && m_unique)
             {
-                Die* die = new Die();
-                computeFacesNumber(die);
-                die->roll();
-                m_diceResult->insertResult(die);
-                getValueFromDie(die,rollResult);
+                m_errors.insert(TOO_MANY_DICE,QObject::tr("More unique values asked than possible values (L operator)"));
             }
-            m_stringResult->setText(rollResult.join(","));
+            else
+            {
+                m_result->setPrevious(result);
+                QStringList rollResult;
+                for(quint64 i=0; i < diceCount ; ++i)
+                {
+                    Die* die = new Die();
+                    computeFacesNumber(die);
+                    die->roll();
+                    m_diceResult->insertResult(die);
+                    getValueFromDie(die,rollResult);
+                }
+                m_stringResult->setText(rollResult.join(","));
+            }
             if(nullptr!=m_nextNode)
             {
                 m_nextNode->run(this);
@@ -110,12 +117,10 @@ void ListSetRollNode::computeFacesNumber(Die* die)
         {
             if(((i==0)||(max<range.getEnd()))&&(range.isFullyDefined()))
             {
-               // qDebug()<< range.isFullyDefined() << range.getEnd();
                 max= range.getEnd();
             }
             ++i;
         }
-        //qDebug() << "set Faces"<<max;
         die->setMaxValue(max);
     }
 
@@ -126,20 +131,39 @@ void ListSetRollNode::getValueFromDie(Die* die,QStringList& rollResult)
     {
         if(die->getValue()-1<m_values.size())
         {
-            rollResult << m_values[die->getValue()-1];
+            auto str = m_values[die->getValue()-1];
+            while(m_unique && rollResult.contains(str))
+            {
+                die->roll(false);
+                str = m_values[die->getValue()-1];
+            }
+            rollResult << str;
         }
     }
     else
     {
         Q_ASSERT(m_values.size() == m_rangeList.size());
-        int i=0;
-        foreach (Range range, m_rangeList)
+        bool found = false;
+        while(!found)
         {
-            if(range.hasValid(die,false))
+            int i=0;
+            for (Range& range:  m_rangeList)
             {
-                rollResult << m_values[i];
+                auto it = std::find(m_rangeIndexResult.begin(),m_rangeIndexResult.end(),i);
+                auto isValid = range.hasValid(die,false);
+                if((isValid && !m_unique)||
+                        (isValid && it == m_rangeIndexResult.end()))
+                {
+                    m_rangeIndexResult.push_back(i);
+                    rollResult << m_values[i];
+                    found=true;
+                }
+                ++i;
             }
-            ++i;
+            if(!found)
+            {
+                die->roll(false);
+            }
         }
     }
 }

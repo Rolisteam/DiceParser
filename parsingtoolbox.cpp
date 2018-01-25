@@ -583,9 +583,9 @@ bool ParsingToolBox::readDiceRange(QString& str,qint64& start, qint64& end)
 }
 ParsingToolBox::LIST_OPERATOR  ParsingToolBox::readListOperator(QString& str)
 {
-
     if(str.startsWith('u'))
     {
+        str=str.remove(0,1);
         return UNIQUE;
     }
     return NONE;

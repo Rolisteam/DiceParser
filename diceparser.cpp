@@ -650,6 +650,8 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
         {
             qint64 max;
             qint64 min;
+            bool unique = (ParsingToolBox::UNIQUE == m_parsingToolbox->readListOperator(str)) ?
+                           true : false;
             Die::ArithmeticOperator op;
 
             bool hasOp= m_parsingToolbox->readArithmeticOperator(str,op);
@@ -661,6 +663,7 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
                     return false;
                 }
                 DiceRollerNode* drNode = new DiceRollerNode(max);
+                drNode->setUnique(unique);
                 if(hasOp)
                 {
                     drNode->setOperator(op);
@@ -675,11 +678,10 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
             }
             else if(m_parsingToolbox->readDiceRange(str,min,max))
             {
-
                 // qint64 face = abs(num - end);
                 //qDebug() << face << end;
                 DiceRollerNode* drNode = new DiceRollerNode(max,min);
-
+                drNode->setUnique(unique);
                 if(hasOp)
                 {
                     drNode->setOperator(op);

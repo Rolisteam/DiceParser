@@ -54,6 +54,7 @@ private:
     QStringList m_values;
     DiceResult* m_diceResult;
     StringResult* m_stringResult;
+    std::vector<int> m_rangeIndexResult;
     bool m_unique;
     QList<Range> m_rangeList;
 };

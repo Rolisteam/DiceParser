@@ -47,12 +47,16 @@ public:
     Die::ArithmeticOperator getOperator() const;
     void setOperator(const Die::ArithmeticOperator & dieOperator);
 
+    bool getUnique() const;
+    void setUnique(bool unique);
+
 private:
     quint64 m_diceCount;
     qint64 m_max; /// faces
     DiceResult* m_diceResult;
     qint64 m_min;
     Die::ArithmeticOperator m_operator;
+    bool m_unique;
 };
 
 #endif // DICEROLLERNODE_H

@@ -29,6 +29,13 @@ void DiceRollerNode::run(ExecutionNode* previous)
             {
                 m_errors.insert(NO_DICE_TO_ROLL,QObject::tr("No dice to roll"));
             }
+            auto possibleValue = (m_max-m_min)+1;
+            //qDebug() << possibleValue;
+            if( possibleValue < m_diceCount && m_unique)
+            {
+                m_errors.insert(TOO_MANY_DICE,QObject::tr("More unique values asked than possible values (D operator)"));
+                return;
+            }
 
             for(quint64 i=0; i < m_diceCount ; ++i)
             {
@@ -37,7 +44,16 @@ void DiceRollerNode::run(ExecutionNode* previous)
                 die->setBase(m_min);
                 die->setMaxValue(m_max);
                 die->roll();
-                //qDebug() << die->getValue() << "value";
+                if(m_unique)
+                {
+                    const auto& equal = [](const Die* a,const Die* b){
+                        return a->getValue() == b->getValue();
+                    };
+                    while(m_diceResult->contains(die,equal))
+                    {
+                        die->roll(false);
+                    }
+                }
                 m_diceResult->insertResult(die);
             }
             if(nullptr!=m_nextNode)
@@ -93,4 +109,14 @@ void DiceRollerNode::setOperator(const Die::ArithmeticOperator &dieOperator)
 {
     m_operator = dieOperator;
     m_diceResult->setOperator(dieOperator);
+}
+
+bool DiceRollerNode::getUnique() const
+{
+    return m_unique;
+}
+
+void DiceRollerNode::setUnique(bool unique)
+{
+    m_unique = unique;
 }
