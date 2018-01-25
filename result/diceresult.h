@@ -76,8 +76,8 @@ public:
     void setHomogeneous(bool);
 
     Die::ArithmeticOperator getOperator() const;
-    void setOperator(const Die::ArithmeticOperator & dieOperator);
-
+    void setOperator(const Die::ArithmeticOperator & dieOperator);    
+    bool contains(Die *die, const std::function<bool (const Die *, const Die *)> equal);
 private:
     qreal getScalarResult();
 private:

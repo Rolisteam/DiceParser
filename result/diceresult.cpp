@@ -78,10 +78,17 @@ QVariant DiceResult::getResult(RESULT_TYPE type)
     return QVariant();
 
 }
-/*bool DiceResult::hasResultOfType(RESULT_TYPE type) const
+bool DiceResult::contains(Die* die, const std::function<bool(const Die*,const Die*)> equal)
 {
-    return (m_resultTypes & type);
-}*/
+    for(auto value : m_diceValues)
+    {
+        if(equal(value,die))
+        {
+            return true;
+        }
+    }
+    return false;
+}
 qreal DiceResult::getScalarResult()
 {
     if(m_diceValues.size()==1)
