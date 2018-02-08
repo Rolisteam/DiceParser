@@ -31,17 +31,10 @@ void ListAliasNode::run(ExecutionNode* previous )
 	StringResult* txtResult = dynamic_cast<StringResult*>(m_result);
     txtResult->setHighLight(false);
 
-	if(nullptr != previous)
-	{
-		if(previous->getResult() == nullptr)
-		{
-            txtResult->setText(buildList());
-
-		}
-		else
-		{
-			txtResult->setText(previous->getHelp());
-		}
+    txtResult->setText(buildList());
+    if(nullptr != previous)
+    {
+        //txtResult->setText(previous->getHelp());
 		m_result->setPrevious(previous->getResult());
 	}
 
