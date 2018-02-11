@@ -550,6 +550,7 @@ DiceRollerNode* ParsingToolBox::getDiceRollerNode(ExecutionNode* previous)
         }
         previous = previous->getPreviousNode();
     }
+    return nullptr;
 }
 bool ParsingToolBox::readDiceRange(QString& str,qint64& start, qint64& end)
 {

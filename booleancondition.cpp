@@ -127,6 +127,7 @@ quint64 BooleanCondition::getValidRangeSize(quint64 faces) const
     case Different:
         return faces-1;
     }
+    return 0;
 }
 Validator* BooleanCondition::getCopy() const
 {
