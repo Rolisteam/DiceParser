@@ -147,7 +147,7 @@ void DiceParser::insertAlias(DiceAlias* dice, int i)
     }
 }
 
-bool DiceParser::parseLine(QString str)
+bool DiceParser::parseLine(QString str, bool allowAlias)
 {
     m_errorMap.clear();
     if(!m_startNodes.empty())
@@ -156,7 +156,10 @@ bool DiceParser::parseLine(QString str)
         m_startNodes.clear();
     }
     m_currentTreeHasSeparator=false;
-    str = convertAlias(str);
+    if(allowAlias)
+    {
+        str = convertAlias(str);
+    }
     m_command = str;
     bool hasInstruction = readInstructionList(str);
 
@@ -166,8 +169,8 @@ bool DiceParser::parseLine(QString str)
     }
     else
     {
-        m_errorMap.insert(ExecutionNode::NOTHING_UNDERSTOOD,QObject::tr("Nothing was understood. To roll dice: !1d6 - full documation:"
-                                                                        "https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md"));
+        m_errorMap.insert(ExecutionNode::NOTHING_UNDERSTOOD,QObject::tr("Nothing was understood. To roll dice: !1d6 - full documation: "
+                                                                        "<a href=\"https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md\">https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md</a>"));
     }
     return false;
 }

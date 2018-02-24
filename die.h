@@ -49,11 +49,6 @@ public:
      */
     void setValue(qint64 r);
     /**
-     * @brief setFaces
-     * @param face
-     */
-    void setFaces(quint64 face);
-    /**
      * @brief insertRollValue
      * @param r
      */
@@ -128,6 +123,7 @@ public:
      * @brief setBase
      */
     void setBase(qint64);
+    qint64 getBase();
 
     QString getColor() const;
     void setColor(const QString &color);

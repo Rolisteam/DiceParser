@@ -101,7 +101,7 @@ public:
      * @param str dice command
      * @return bool every thing is fine or not
      */
-    bool parseLine(QString str);
+    bool parseLine(QString str, bool allowAlias = true);
     /**
      * @brief getStartNodeCount
      * @return

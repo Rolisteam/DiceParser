@@ -61,7 +61,7 @@ ParsingToolBox::ParsingToolBox()
 
 }
 
-ParsingToolBox::ParsingToolBox(const ParsingToolBox& data)
+ParsingToolBox::ParsingToolBox(const ParsingToolBox& )
 {
 
 }

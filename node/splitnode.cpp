@@ -47,7 +47,8 @@ void SplitNode::run(ExecutionNode* previous)
                     {
                         Die* tmpdie = new Die();
                         tmpdie->insertRollValue(value);
-                        tmpdie->setFaces(oldDie->getFaces());
+                        tmpdie->setBase(oldDie->getBase());
+                        tmpdie->setMaxValue(oldDie->getMaxValue());
                         tmpdie->setValue(value);
                         tmpdie->setOp(oldDie->getOp());
                         m_diceResult->insertResult(tmpdie);

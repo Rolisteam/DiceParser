@@ -29,7 +29,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
             {
                 m_errors.insert(NO_DICE_TO_ROLL,QObject::tr("No dice to roll"));
             }
-            auto possibleValue = (m_max-m_min)+1;
+            auto possibleValue = static_cast<quint64>(abs((m_max-m_min)+1));
             //qDebug() << possibleValue;
             if( possibleValue < m_diceCount && m_unique)
             {

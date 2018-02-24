@@ -33,7 +33,12 @@ void ScalarResult::setValue(qreal i)
 }
 QVariant ScalarResult::getResult(Result::RESULT_TYPE type)
 {
-    return m_value;
+    if(SCALAR == type)
+    {
+        return m_value;
+    }
+    else
+        return {};
 }
 
 QString ScalarResult::toString(bool wl)

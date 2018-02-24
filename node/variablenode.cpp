@@ -8,13 +8,6 @@ VariableNode::VariableNode()
 void VariableNode::run(ExecutionNode *previous)
 {
     m_previousNode = previous;
-
-    if(m_index<0)
-    {
-      m_errors.insert(INVALID_INDEX,QObject::tr("Invalid index must be greater than 0 :%1").arg(m_index));
-      return;
-    }
-
     if(m_data->size()>m_index)
     {
       auto value= (*m_data)[m_index];

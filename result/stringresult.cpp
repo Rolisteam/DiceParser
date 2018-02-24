@@ -43,9 +43,9 @@ QVariant StringResult::getResult(RESULT_TYPE type)
     case SCALAR:
         return getText().toInt();
         break;
-
+    default:
+        return QVariant();
     }
-    return QVariant();
 }
 QString StringResult::toString(bool wl)
 {

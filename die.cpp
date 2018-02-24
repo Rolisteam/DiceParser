@@ -155,11 +155,6 @@ quint64 Die::getFaces() const
 {
     return abs(m_maxValue-m_base)+1;
 }
-
-void Die::setFaces(quint64 face)
-{
-    //m_maxValue=m_base+face-1;
-}
 qint64 Die::getLastRolledValue()
 {
     if(!m_rollResult.isEmpty())
@@ -189,6 +184,10 @@ bool Die::isHighlighted() const
 void Die::setBase(qint64 base)
 {
         m_base = base;
+}
+qint64 Die::getBase()
+{
+    return m_base;
 }
 QString Die::getColor() const
 {

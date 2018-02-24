@@ -26,7 +26,7 @@ public:
     void setData(std::vector<ExecutionNode *>* data);
 
 private:
-    qint64 m_index;
+    quint64 m_index;
     std::vector<ExecutionNode*>* m_data;
 };
 
