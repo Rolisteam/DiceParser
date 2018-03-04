@@ -52,6 +52,23 @@ Please, remember it is important to prefix all you command by `!`. This will all
 
 We can't set some aliases for any platform but It has to be labelled with game's name.
 
+## Documentation about the Discord Bot
+
+### To change the prefix
+> !prefix set newprefix
+
+### Set the perfix by default
+
+> newprefixprefix set !
+
+### Example
+
+> !prefix set roll
+
+> roll 2d6
+
+> rollprefix set ! 
+
 ## Bug report and new features
 
 Please fulfill a ticket in our [Bug tracker](https://github.com/Rolisteam/DiceParser/issues) system.
