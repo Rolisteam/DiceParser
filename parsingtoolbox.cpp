@@ -274,6 +274,7 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
             }
             else
             {
+                delete operators;
                 return tmp;
             }
             tmp = nullptr;
@@ -289,6 +290,7 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
     }
     else
     {
+        delete operators;
         return nullptr;
     }
 }

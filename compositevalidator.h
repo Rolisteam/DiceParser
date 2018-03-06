@@ -35,7 +35,7 @@
 class CompositeValidator : public Validator
 {
 public:
-	enum LogicOperation { OR, EXCLUSIVE_OR , AND};
+    enum LogicOperation { OR, EXCLUSIVE_OR , AND, NONE};
 	CompositeValidator();
     virtual ~CompositeValidator();
 

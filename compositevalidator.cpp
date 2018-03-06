@@ -109,7 +109,7 @@ quint64 CompositeValidator::getValidRangeSize(quint64 faces) const
     for(Validator* tmp :*m_validatorList)
     {
         quint64 rel = tmp->getValidRangeSize(faces);
-        LogicOperation opt;
+        LogicOperation opt = NONE;
         if(i>=0)
         {
             opt = m_operators->at(i);
@@ -122,6 +122,7 @@ quint64 CompositeValidator::getValidRangeSize(quint64 faces) const
         {
             sum = qMax(rel,sum);
         }
+
         ++i;
     }
 
