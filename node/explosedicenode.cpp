@@ -14,7 +14,7 @@ void ExploseDiceNode::run(ExecutionNode* previous)
         m_result->setPrevious(previous_result);
         if(nullptr!=previous_result)
         {
-            foreach(Die* die,previous_result->getResultList())
+            for(Die* die : previous_result->getResultList())
             {
                 Die* tmpdie = new Die();
                 *tmpdie=*die;
@@ -25,7 +25,7 @@ void ExploseDiceNode::run(ExecutionNode* previous)
             QList<Die*> list = m_diceResult->getResultList();
 
 
-            foreach(Die* die, list)
+            for(Die* die: list)
             {
                 while(m_validator->hasValid(die,false))
                 {
