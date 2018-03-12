@@ -549,7 +549,10 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
             }
             result = result->getPrevious();
         }
-        diceValuesList.append(diceValues);
+        if(!diceValues.isEmpty())
+        {
+            diceValuesList.append(diceValues);
+        }
     }
 }
 QString DiceParser::getDiceCommand() const

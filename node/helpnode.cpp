@@ -26,20 +26,18 @@ HelpNode::HelpNode()
 }
 void HelpNode::run(ExecutionNode* previous)
 {
-	m_previousNode = previous;
+    m_previousNode = previous;
     StringResult* txtResult = dynamic_cast<StringResult*>(m_result);
     txtResult->setHighLight(false);
 
-    if(nullptr != previous)
+    if((nullptr == previous)&&(txtResult != nullptr))
     {
-        if(previous->getResult() == nullptr)
-        {
-			txtResult->setText(QObject::tr("Rolisteam Dice Parser:\nFull documentation at: %1").arg(m_path));
-        }
-        else
-        {
-            txtResult->setText(previous->getHelp());
-        }
+        txtResult->setText(QObject::tr("Rolisteam Dice Parser:\nFull documentation at: %1").arg(m_path));
+        m_result->setPrevious(nullptr);
+    }
+    else if(nullptr != previous)
+    {
+        txtResult->setText(previous->getHelp());
         m_result->setPrevious(previous->getResult());
     }
 
@@ -50,14 +48,14 @@ void HelpNode::run(ExecutionNode* previous)
 }
 QString HelpNode::toString(bool wl) const
 {
-	if(wl)
-	{
-		return QString("%1 [label=\"Rolisteam Dice Parser:\nFull documentation at: %2\"]").arg(m_id).arg(m_path);
-	}
-	else
-	{
-		return m_id;
-	}
+      if(wl)
+      {
+              return QString("%1 [label=\"Rolisteam Dice Parser:\nFull documentation at: %2\"]").arg(m_id).arg(m_path);
+      }
+      else
+      {
+              return m_id;
+      }
 }
 
 qint64 HelpNode::getPriority() const
