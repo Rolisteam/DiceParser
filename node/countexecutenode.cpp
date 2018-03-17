@@ -33,7 +33,7 @@ void CountExecuteNode::run(ExecutionNode *previous)
         m_result->setPrevious(previousResult);
         QList<Die*> diceList=previousResult->getResultList();
 		qint64 sum = 0;
-		foreach(Die* dice,diceList)
+        for(Die* dice:diceList)
 		{
             if(nullptr!=m_validator)
             {

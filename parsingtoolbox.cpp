@@ -98,7 +98,7 @@ ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e,bool b)
 bool ParsingToolBox::readDiceLogicOperator(QString& str,OperationCondition::ConditionOperator& op)
 {
     QString longKey;
-    foreach(QString tmp, m_conditionOperation->keys())
+    for(const QString& tmp: m_conditionOperation->keys())
     {
         if(str.startsWith(tmp))
         {
@@ -138,7 +138,7 @@ bool ParsingToolBox::readArithmeticOperator(QString &str, Die::ArithmeticOperato
 bool ParsingToolBox::readLogicOperator(QString& str,BooleanCondition::LogicOperator& op)
 {
     QString longKey;
-    foreach(QString tmp, m_logicOp->keys())
+    for(const QString& tmp: m_logicOp->keys())
     {
         if(str.startsWith(tmp))
         {
@@ -607,7 +607,7 @@ void ParsingToolBox::readPainterParameter(PainterNode* painter,QString& str)
             QString data = str.left(pos);
             str=str.remove(0,pos+1);
             QStringList duos = data.split(',');
-            foreach(QString duoStr,duos)
+            for(QString duoStr: duos)
             {
                 QStringList keyValu = duoStr.split(':');
                 if(keyValu.size()==2)
