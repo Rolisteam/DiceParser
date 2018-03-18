@@ -14,7 +14,7 @@ void VariableNode::run(ExecutionNode *previous)
       value = ParsingToolBox::getLatestNode(value);
       if(nullptr != value)
       {
-        m_result = value->getResult();
+        m_result = value->getResult()->getCopy();
         if(nullptr!=m_nextNode)
         {
             m_nextNode->run(this);
@@ -23,7 +23,7 @@ void VariableNode::run(ExecutionNode *previous)
     }
     else
     {
-      m_errors.insert(NO_VARIBALE,QObject::tr("No variable at index:%1").arg(m_index));
+      m_errors.insert(NO_VARIBALE,QObject::tr("No variable at index:%1").arg(m_index+1));
     }
 }
 
@@ -31,7 +31,7 @@ QString VariableNode::toString(bool withLabel) const
 {
     if(withLabel)
     {
-        return QString("%1 [label=\"VariableNode index: %2\"]").arg(m_id).arg(m_index);
+        return QString("%1 [label=\"VariableNode index: %2\"]").arg(m_id).arg(m_index+1);
     }
     else
     {
@@ -42,9 +42,9 @@ QString VariableNode::toString(bool withLabel) const
 qint64 VariableNode::getPriority() const
 {
     qint64 priority=0;
-    if(nullptr!=m_nextNode)
+    if(nullptr!=m_previousNode)
     {
-        priority = m_nextNode->getPriority();
+        priority = m_previousNode->getPriority();
     }
     return priority;
 }

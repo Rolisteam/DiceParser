@@ -50,7 +50,7 @@ void MergeNode::run(ExecutionNode* previous)
                 DiceResult* dice = dynamic_cast<DiceResult*>(tmpResult);
                 if(nullptr!=dice)
                 {
-                    ///@todo improve here to set homogeneous while is really
+                    ///@todo TODO improve here to set homogeneous while is really
                     m_diceResult->setHomogeneous(false);
                     for(Die* die : dice->getResultList())
                     {
@@ -112,9 +112,9 @@ QString MergeNode::toString(bool withLabel) const
 qint64 MergeNode::getPriority() const
 {
     qint64 priority=0;
-    if(nullptr!=m_nextNode)
+    if(nullptr!=m_previousNode)
     {
-        priority = m_nextNode->getPriority();
+        priority = m_previousNode->getPriority();
     }
     return priority;
 }
@@ -126,7 +126,6 @@ ExecutionNode* MergeNode::getCopy() const
         node->setNextNode(m_nextNode->getCopy());
     }
     return node;
-
 }
 
 std::vector<ExecutionNode *>* MergeNode::getStartList() const
