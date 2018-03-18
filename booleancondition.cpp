@@ -26,6 +26,15 @@ BooleanCondition::BooleanCondition()
     : m_operator(Equal)
 {
 }
+
+BooleanCondition::~BooleanCondition()
+{
+    if(m_value!= nullptr)
+    {
+        delete m_value;
+        m_value = nullptr;
+    }
+}
 qint64 BooleanCondition::hasValid(Die* b,bool recursive,bool unhighlight) const
 {
     QList<qint64> listValues;
@@ -39,27 +48,28 @@ qint64 BooleanCondition::hasValid(Die* b,bool recursive,bool unhighlight) const
     }
 
     qint64 sum= 0;
+    auto valueScalar = valueToScalar();
     for(qint64 value: listValues)
     {
         switch(m_operator)
         {
             case Equal:
-                sum+=(value==m_value)?1:0;
+                sum+=(value==valueScalar)?1:0;
                 break;
             case GreaterThan:
-                sum+= (value>m_value)?1:0;
+                sum+= (value>valueScalar)?1:0;
                 break;
             case LesserThan:
-                sum+= (value<m_value)?1:0;
+                sum+= (value<valueScalar)?1:0;
                 break;
             case GreaterOrEqual:
-                sum+= (value>=m_value)?1:0;
+                sum+= (value>=valueScalar)?1:0;
                 break;
             case LesserOrEqual:
-                sum+= (value<=m_value)?1:0;
+                sum+= (value<=valueScalar)?1:0;
                 break;
             case Different:
-                sum+= (value!=m_value)?1:0;
+                sum+= (value!=valueScalar)?1:0;
                 break;
         }
     }
@@ -80,7 +90,7 @@ void BooleanCondition::setOperator(LogicOperator m)
     m_operator = m;
 }
 
-void BooleanCondition::setValue(qint64 v)
+void BooleanCondition::setValueNode(ExecutionNode* v)
 {
     m_value=v;
 }
@@ -108,7 +118,7 @@ QString BooleanCondition::toString()
         str.append(QStringLiteral("!="));
         break;
     }
-    return QStringLiteral("[%1%2]").arg(str).arg(m_value);
+    return QStringLiteral("[%1%2]").arg(str).arg(valueToScalar());
 }
 quint64 BooleanCondition::getValidRangeSize(quint64 faces) const
 {
@@ -117,13 +127,13 @@ quint64 BooleanCondition::getValidRangeSize(quint64 faces) const
     case Equal:
         return 1;
     case GreaterThan:
-        return faces-m_value;
+        return faces-valueToScalar();
     case LesserThan:
-        return m_value-1;
+        return valueToScalar()-1;
     case GreaterOrEqual:
-        return faces-(m_value-1);
+        return faces-(valueToScalar()-1);
     case LesserOrEqual:
-        return m_value;
+        return valueToScalar();
     case Different:
         return faces-1;
     }
@@ -133,9 +143,15 @@ Validator* BooleanCondition::getCopy() const
 {
     BooleanCondition* val = new BooleanCondition();
     val->setOperator(m_operator);
-    val->setValue(m_value);
-
-
+    val->setValueNode(m_value);
     return val;
+}
+qint64 BooleanCondition::valueToScalar() const
+{
+    if(m_value == nullptr)
+        return 0;
 
+    m_value->run(nullptr);
+    auto result = m_value->getResult();
+    return result->getResult(Result::SCALAR).toInt();
 }

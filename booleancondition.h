@@ -24,6 +24,7 @@
 
 #include <Qt>
 #include "validator.h"
+#include "node/executionnode.h"
 /**
  * @brief The BooleanCondition class is a Validator class checking validity from logic expression.
  * It manages many operators (see : @ref LogicOperator).
@@ -33,11 +34,12 @@ class BooleanCondition : public Validator
 public:
     enum LogicOperator { Equal, GreaterThan, LesserThan, GreaterOrEqual, LesserOrEqual, Different};
     BooleanCondition();
+    virtual ~BooleanCondition();
 
     virtual qint64 hasValid(Die* b,bool recursive, bool unhighlight = false) const;
 
     void setOperator(LogicOperator m);
-    void setValue(qint64);
+    void setValueNode(ExecutionNode*);
     QString toString();
 
     virtual quint64 getValidRangeSize(quint64 faces) const;
@@ -46,10 +48,11 @@ public:
      * @return
      */
     virtual Validator* getCopy() const;
-
+private:
+    qint64 valueToScalar() const;
 private:
     LogicOperator m_operator;
-    qint64 m_value;
+    ExecutionNode* m_value;
 };
 
 #endif // BOOLEANCONDITION_H

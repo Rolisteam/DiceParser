@@ -25,7 +25,14 @@ OperationCondition::OperationCondition()
 {
 
 }
-
+OperationCondition::~OperationCondition()
+{
+    if(m_value!= nullptr)
+    {
+        delete m_value;
+        m_value = nullptr;
+    }
+}
 BooleanCondition *OperationCondition::getBoolean() const
 {
     return m_boolean;
@@ -58,7 +65,10 @@ qint64 OperationCondition::hasValid(Die* b,bool recursive,bool unhighlight) cons
             {
                 Die die;
                 die.setMaxValue(b->getMaxValue());
-                die.insertRollValue(value%m_value);
+                auto valueScalar = valueToScalar();
+                if(valueScalar==0)
+                    valueScalar = 1;
+                die.insertRollValue(value%valueScalar);
                 sum+=m_boolean->hasValid(&die,recursive,false);
             }
             break;
@@ -82,10 +92,11 @@ void OperationCondition::setOperator(ConditionOperator m)
     m_operator = m;
 }
 
-void OperationCondition::setValue(qint64 v)
+void OperationCondition::setValueNode(ExecutionNode *node)
 {
-    m_value=v;
+    m_value = node;
 }
+
 QString OperationCondition::toString()
 {
     QString str(QStringLiteral(""));
@@ -95,19 +106,33 @@ QString OperationCondition::toString()
         str.append(QStringLiteral("\%"));
         break;
     }
-    return QStringLiteral("[%1%2%3]").arg(str).arg(m_value).arg(m_boolean->toString());
+    return QStringLiteral("[%1%2%3]").arg(str).arg(valueToScalar()).arg(m_boolean->toString());
 }
 quint64 OperationCondition::getValidRangeSize(quint64 faces) const
 {
-   return faces/m_value;
+   auto value = valueToScalar();
+   if(value==0)
+       return 0;
+   return faces/value;
+
 }
 Validator* OperationCondition::getCopy() const
 {
     OperationCondition* val = new OperationCondition();
     val->setOperator(m_operator);
-    val->setValue(m_value);
+    val->setValueNode(m_value->getCopy());
     BooleanCondition* boolean = dynamic_cast<BooleanCondition*>(m_boolean->getCopy());
     val->setBoolean(boolean);
     return val;
 
+}
+
+qint64 OperationCondition::valueToScalar() const
+{
+    if(m_value == nullptr)
+        return 0;
+
+    m_value->run(nullptr);
+    auto result = m_value->getResult();
+    return result->getResult(Result::SCALAR).toInt();
 }

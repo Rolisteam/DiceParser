@@ -24,17 +24,20 @@
 #include <Qt>
 #include "validator.h"
 #include "booleancondition.h"
+#include "node/executionnode.h"
 
 class OperationCondition : public Validator
 {
 public:
     enum ConditionOperator { Modulo };
     OperationCondition();
+    virtual ~OperationCondition();
 
     virtual qint64 hasValid(Die* b,bool recursive, bool unhighlight = false) const;
 
     void setOperator(ConditionOperator m);
-    void setValue(qint64);
+    //void setValue(qint64);
+    void setValueNode(ExecutionNode* node);
     QString toString();
 
     virtual quint64 getValidRangeSize(quint64 faces) const;
@@ -44,9 +47,12 @@ public:
 
     virtual Validator* getCopy() const;
 private:
+    qint64 valueToScalar() const;
+private:
     ConditionOperator m_operator;
-    BooleanCondition* m_boolean;
-    qint64 m_value;
+    BooleanCondition* m_boolean = nullptr;
+    //qint64 m_value;
+    ExecutionNode* m_value = nullptr;
 };
 
 #endif // OPERATIONCONDITION_H
