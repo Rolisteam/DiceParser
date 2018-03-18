@@ -83,6 +83,7 @@ public:
      * @return
      */
 	virtual QString toString(bool wl) = 0;
+    virtual Result* getCopy() const = 0;
 protected:
      int m_resultTypes;/// @brief
      QString m_id;

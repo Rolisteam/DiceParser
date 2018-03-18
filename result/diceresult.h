@@ -78,6 +78,8 @@ public:
     Die::ArithmeticOperator getOperator() const;
     void setOperator(const Die::ArithmeticOperator & dieOperator);    
     bool contains(Die *die, const std::function<bool (const Die *, const Die *)> equal);
+
+    virtual Result* getCopy() const;
 private:
     qreal getScalarResult();
 private:

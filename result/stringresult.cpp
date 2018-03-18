@@ -67,3 +67,10 @@ bool StringResult::hasHighLight() const
 {
     return m_highlight;
 }
+Result* StringResult::getCopy() const
+{
+    auto copy = new StringResult();
+    copy->setHighLight(m_highlight);
+    copy->setText(m_value);
+    return copy;
+}

@@ -50,7 +50,7 @@ public:
      * @return
      */
 	virtual QString toString(bool);
-
+    virtual Result* getCopy() const;
 private:
     qreal m_value;
 };

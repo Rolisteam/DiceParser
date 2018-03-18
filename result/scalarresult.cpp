@@ -40,7 +40,12 @@ QVariant ScalarResult::getResult(Result::RESULT_TYPE type)
     else
         return {};
 }
-
+Result* ScalarResult::getCopy() const
+{
+    auto copy = new ScalarResult();
+    copy->setValue(m_value);
+    return copy;
+}
 QString ScalarResult::toString(bool wl)
 {
 	if(wl)

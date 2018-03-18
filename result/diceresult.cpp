@@ -150,7 +150,7 @@ void DiceResult::setOperator(const Die::ArithmeticOperator& dieOperator)
 QString DiceResult::toString(bool wl)
 {
     QStringList scalarSum;
-    for(Die* die:m_diceValues)
+    for(auto die : m_diceValues)
     {
         scalarSum << QString::number(die->getValue());
     }
@@ -162,4 +162,19 @@ QString DiceResult::toString(bool wl)
 	{
 		return m_id;
 	}
+}
+Result* DiceResult::getCopy() const
+{
+    auto copy = new DiceResult();
+    copy->setHomogeneous(m_homogeneous);
+    copy->setOperator(m_operator);
+    QList<Die*> list;
+    for(auto die : m_diceValues)
+    {
+        auto newdie = new Die(*die);
+        die->displayed();
+        list.append(newdie);
+    }
+    copy->setResultList(list);
+    return copy;
 }
