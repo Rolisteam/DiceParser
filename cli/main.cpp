@@ -87,113 +87,6 @@ QString diceToMarkdown(QJsonArray array,bool withColor,bool allSameColor,bool al
         }
         return result.join(' ');
     }
-
-
-
-    /*  QStringList global;
-    for(auto dice : diceList)
-    {
-        QStringList resultGlobal;
-        for(int face:  dice.keys())
-        {
-            QStringList result;
-            QStringList currentStreak;
-            QList<QStringList> allStreakList;
-            ListDiceResult diceResult =  dice.value(face);
-            bool previousHighlight=false;
-            QString previousColor("");
-            QString patternColor("");
-            for (const HighLightDice& tmp : diceResult)
-            {
-                if(previousColor != tmp.getColor())
-                {
-                    homogeneous = false;
-                    if(!currentStreak.isEmpty())
-                    {
-                        QStringList list;
-                        list << patternColor+currentStreak.join(',')+"</tspan>";
-                        allStreakList.append(list);
-                        currentStreak.clear();
-                    }
-                    QString color = tmp.getColor();
-                    if(color.isEmpty())
-                        color = "black";
-                    patternColor = QStringLiteral("<tspan fill=\"%1\">").arg(color);
-
-                }
-                QStringList diceListStr;
-                if((previousHighlight)&&(!tmp.isHighlighted()))
-                {
-                    if(!currentStreak.isEmpty())
-                    {
-                        QStringList list;
-                        list << patternColor+currentStreak.join(',');
-                        allStreakList.append(list);
-                        currentStreak.clear();
-                    }
-
-                }
-                else if((!previousHighlight)&&(tmp.isHighlighted()))
-                {
-                    if(!currentStreak.isEmpty())
-                    {
-                        QStringList list;
-                        list << currentStreak.join(',');
-                        allStreakList.append(list);
-                        currentStreak.clear();
-                    }
-                }
-                previousHighlight = tmp.isHighlighted();
-                previousColor = tmp.getColor();
-                for(int i =0; i < tmp.getResult().size(); ++i)
-                {
-                    qint64 dievalue = tmp.getResult()[i];
-                    diceListStr << QString::number(dievalue);
-                }
-                if(diceListStr.size()>1)
-                {
-                    QString first = diceListStr.takeFirst();
-                    first = QString("%1 [%2]").arg(first).arg(diceListStr.join(','));
-                    diceListStr.clear();
-                    diceListStr << first;
-                }
-                currentStreak << diceListStr.join(' ');
-            }
-
-            if(previousHighlight)
-            {
-                QStringList list;
-                QString end="</tspan>";
-                if(patternColor.isEmpty())
-                    end=patternColor;
-                list <<  patternColor+currentStreak.join(',')+end;
-                allStreakList.append(list);
-            }
-            else
-            {
-                if(!currentStreak.isEmpty())
-                {
-                    QStringList list;
-                    list << currentStreak.join(',');
-                    allStreakList.append(list);
-                }
-            }
-            for(const QStringList& a : allStreakList)
-            {
-                result << a;
-            }
-            if(dice.keys().size()>1)
-            {
-                resultGlobal << QString(" d%2:(%1)").arg(result.join(",")).arg(face);
-            }
-            else
-            {
-                resultGlobal << result.join(",");
-            }
-        }
-        global << resultGlobal.join("");
-    }
-    return global.join(";");*/
 }
 
 void displayImage(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString comment, bool allSameFaceCount,bool allSameColor)
@@ -310,8 +203,8 @@ void displayCommandResult(QString scalarText, QString resultStr,QJsonArray array
 int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTFORMAT format)
 {
     DiceParser parser;
-    parser.insertAlias(new DiceAlias("L5R5R","L[-,⨀,⨀⬢,❂⬢,❁,❁⬢]"),0);
-    parser.insertAlias(new DiceAlias("L5R5S","L[-,-,⨀,⨀,⨀❁,⨀⬢,⨀⬢,❂,❂⬢,❁,❁,❁]"),1);
+    parser.insertAlias(new DiceAlias("L5R5R",QStringLiteral("L[-,⨀,⨀⬢,❂⬢,❁,❁⬢]")),0);
+    parser.insertAlias(new DiceAlias("L5R5S",QStringLiteral("L[-,-,⨀,⨀,⨀❁,⨀⬢,⨀⬢,❂,❂⬢,❁,❁,❁]")),1);
     int rt=0;
     for(QString cmd : cmds)
     {
