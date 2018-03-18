@@ -189,6 +189,11 @@ public:
 
     bool readComment(QString& str, QString &,QString &);
     static ExecutionNode *getLatestNode(ExecutionNode *node);
+
+    static std::vector<ExecutionNode *> *getStartNodes();
+    static void setStartNodes(std::vector<ExecutionNode *> *startNodes);
+
+    static bool readOperand(QString &str, ExecutionNode *&node);
 private:
 
     QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;

@@ -23,6 +23,9 @@
 
 #include "parsingtoolbox.h"
 #include "node/sortresult.h"
+#include "node/numbernode.h"
+#include "node/variablenode.h"
+#include "node/stringnode.h"
 
 
 QHash<QString,QString>*  ParsingToolBox::m_variableHash = nullptr;
@@ -158,23 +161,53 @@ bool ParsingToolBox::readLogicOperator(QString& str,BooleanCondition::LogicOpera
 
     return false;
 }
+
+bool ParsingToolBox::readOperand(QString& str,ExecutionNode* & node)
+{
+    qint64 intValue=1;
+    QString resultStr;
+    if(readDynamicVariable(str,intValue))
+    {
+        VariableNode* variableNode = new VariableNode();
+        variableNode->setIndex(intValue-1);
+        variableNode->setData(m_startNodes);
+        node = variableNode;
+        return true;
+    }
+    else if(readNumber(str,intValue))
+    {
+        NumberNode* numberNode = new NumberNode();
+        numberNode->setNumber(intValue);
+        node = numberNode;
+        return true;
+    }
+    else if(readString(str,resultStr))
+    {
+        StringNode* strNode = new StringNode();
+        strNode->setString(resultStr);
+        node = strNode;
+        return true;
+    }
+    return false;
+}
+
 Validator* ParsingToolBox::readValidator(QString& str)
 {
     Validator* returnVal=nullptr;
     BooleanCondition::LogicOperator myLogicOp = BooleanCondition::Equal;
     readLogicOperator(str,myLogicOp);
 
-
     OperationCondition::ConditionOperator condiOp = OperationCondition::Modulo;
     bool hasDiceLogicOperator = readDiceLogicOperator(str,condiOp);
     qint64 value=0;
+    ExecutionNode* operandNode=nullptr;
 
     if(hasDiceLogicOperator)
     {
-        if(readNumber(str,value))
+        if(readOperand(str,operandNode))
         {
             OperationCondition* condition = new OperationCondition();
-            condition->setValue(value);
+            condition->setValueNode(operandNode);
             Validator* valid = readValidator(str);
             BooleanCondition* boolC = dynamic_cast<BooleanCondition*>(valid);
             if(nullptr!=boolC)
@@ -183,9 +216,8 @@ Validator* ParsingToolBox::readValidator(QString& str)
             }
             returnVal = condition;
         }
-
     }
-    else if(readNumber(str,value))
+    else if(readOperand(str,operandNode))
     {
         bool isRange = false;
         if(str.startsWith("-"))
@@ -195,8 +227,9 @@ Validator* ParsingToolBox::readValidator(QString& str)
             if(readNumber(str,end))
             {
                 str=str.remove(0,1);
+                qint64 start = operandNode->getScalarResult();
                 Range* range = new Range();
-                range->setValue(value,end);
+                range->setValue(start,end);
                 returnVal = range;
                 isRange = true;
             }
@@ -209,7 +242,7 @@ Validator* ParsingToolBox::readValidator(QString& str)
         if(!isRange)
         {
             BooleanCondition* condition = new BooleanCondition();
-            condition->setValue(value);
+            condition->setValueNode(operandNode);
             condition->setOperator(myLogicOp);
             returnVal = condition;
         }
