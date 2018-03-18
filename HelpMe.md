@@ -85,22 +85,63 @@ The first number is the count of dice you want to roll. The second number should
 ### Examples
 > 1d6
 
-Roll one six-faced die.
+Roll one six sided die.
 
 > 1d10
 
-Roll one ten-faced die.
+Roll one ten sided die.
 
 > 5d10
 
-Roll five ten-faced die.
+Roll five ten sided die.
 
 > 777d6
 
-Roll 777 six-faced die.
+Roll 777 six sided die.
+
+Thanks of several operations and options, you can tune a bit your rolling command: see [List of operator](#list-of-operator).
 
 
-Thanks of several operations and options, you can tune a bit your rolling command.
+## Instruction: Roll two (or more) kinds of dice at once 
+
+To make it, you have to separate all dice commands by `;`
+
+
+> 1d10;1d6 # 2 instructions
+
+or
+
+> 5d6;1d10;4d100;3d20  # 4 instructions
+
+
+### Merge
+
+It is possible to merge every instruction inside a huge one. 
+The operator merge is dedicated to that. 
+It is useful when you need to manage all diceresult as the same result.
+
+For example, if you need to keep the high dice between a d6 and d8.
+
+> d6;d8mk1
+
+More details about k operator in [List of operator](#list-of-operator) .
+
+### Computation between instructions
+
+Thanks to variable system, it is possible to reference the result of a specific instruction.
+- To reference the first instruction: `$1`
+- To reference the second instruction: `$2`
+- To reference the third instruction: `$3`
+etc…
+the number of instruction is not limited.
+
+> 8d10;$1c[>6];$1c1;$2-$3
+
+* The first instruction rolls 8 (10 sided) dice 
+* The second instruction counts how many dice are higher than 6.
+* The third instruction counts how many dice are equal to 1.
+* The fourth instruction substracts the result of the third instruction to the result of seconde one.
+
 
 ## List of operator
 * k : Keep
@@ -114,6 +155,7 @@ Thanks of several operations and options, you can tune a bit your rolling comman
 * p : Paint dice
 * m : Merge
 * i : if
+* ; : Next instruction
 * g : Group
 * \# : Comment
 
@@ -209,7 +251,7 @@ The amount of color is depending of client application of DiceParser.
 With Rolisteam, you may set any Qt color's name or set the Hexcode of your color: #ff28AC.
 The cli application supports few colors.
 
-# Merge
+### Merge
 
 Merge operator is used for gathering several dice rolls from different die type into one dice result and then you may apply any kind of operator.
 
@@ -217,7 +259,7 @@ Merge operator is used for gathering several dice rolls from different die type 
 
 This command merges together the result from the d6 and the d8. Then, it applied the k operator on both result to keep the best.
 
-# if
+### if
 
 If operator means to allow you to do one thing if some conditions are true.
 The if operator has 2 mandatory parameters:
@@ -243,34 +285,13 @@ There are 3 different methods.
 * **One Of Them** : at least one die must fit the condition to trigger the true instruction. If no dices fit the condition the false instruction is run.
 * **On Scalar** : the condition is evaluated on the scalar result of the dice roll.
 
-To switch the operator to act in **All Of Them** method you must add ```*``` character as compare method position.  
-To switch the operator to act in **One Of Them** method you must add ```.``` character as compare method position.  
-To switch the operator to act in **On Scalar** method you must add ```:``` character as compare method position.  
+To switch the operator to act in **All Of Them** method you must add **```*```** character as compare method position.  
+To switch the operator to act in **One Of Them** method you must add **```.```** character as compare method position.  
+To switch the operator to act in **On Scalar** method you must add **```:```** character as compare method position.  
 
 If you plan to use if operator to display text message. You must surround text with ```"```. Example available below.
 
-# Group
-
-> 5d10g10 
-
-Roll 5 dice and then try to group them to make group of 10 [7th sea system].
-
-# Comment (\#)
-
-> 2D6 # Sword attack 
-
-Display "Sword attack" and the result of the two dice.
-DiceParser ignore everything after the \#. The whole part is treated as one comment.
-So DiceParser can answer question:
-
-> 1L[yes,no] # Am I evil ?
-
-```
-Am I evil ?
-yes
-```
-
-## example:
+## If examples:
 
 >  1d6i[<4]{3}
 
@@ -299,6 +320,79 @@ Same as above, but the final result is displayed beside Success or Fail.
 > 2d10i:[>15]{"Success %1 [%2]"}{"Fail %1 [%2]"}
 
 Same as above, but the result of each die is displayed inside square brackets.
+
+
+
+
+## String Result
+
+To improve readability, it is possible to set the text that should be displayed after the roll.
+
+Several data can be displayed:
+
+* %1 : last scalar result from each instruction.
+* %2 : all dice results
+* %3 : last scalar result from the last instruction.
+
+The default output is `%1 details[%2]`.
+So, it shows the last scalar result of each instruction and dice result.
+
+%1 and %3 are equivalent when there is only one instruction (no \;).
+
+
+### Specific value from instrustion
+
+It is also possible to set reference to the scalar result of specific instruction.
+- To reference the first instruction: `$1`
+- To reference the second instruction: `$2`
+- To reference the third instruction: `$3`
+etc…
+the number of instruction is not limited.
+
+
+### If examples:
+
+> 8d10;$1c[>6];$1c1;$2-$3
+
+The default output displays: `45,4,0,4 details[4,3,10,7,2,2,7,10]`
+
+> 8d10;$1c[>6];$1c1;$2-$3i:[>0]{"%3 Success[%2]"}{i:[<0]{"Critical fail %3 [%2]"}{"Fail %3 [%2]"}}"
+
+The output is now: `4 Success[4,3,10,7,2,2,7,10]`
+or
+`Fail 0 [10,3,1,1,2,2,7,5]` (2 success - 2 fails = 0)
+or
+`Critical fail -2 [1,3,1,1,2,2,7,5]` (1 success - 3 fails = -2)
+
+In this example, the critical fail happens when there are more fails than success.
+
+  
+  
+In the next example, the critical fail happens when there was no success and a least one fail.
+
+> 8d10;$1c[>6];$1c1;$2-$3;$4i:[=0]{"Fail $4 [%2]"}{$4i:[>0]{"$2 Success[%2]"}{$2i:[=0]{"Critical Fail $4 [%2]"}{"Fail $4 [%2]"}}}
+
+
+### Group
+
+> 5d10g10 
+
+Roll 5 dice and then try to group them to make group of 10 [7th sea system].
+
+### Comment (\#)
+
+> 2D6 # Sword attack 
+
+Display "Sword attack" and the result of the two dice.
+DiceParser ignore everything after the \#. The whole part is treated as one comment.
+So DiceParser can answer question:
+
+> 1L[yes,no] # Am I evil ?
+
+```
+Am I evil ?
+yes
+```
 
 ## Arithmetic
 
@@ -355,15 +449,7 @@ Result: 16
 
 > 1d10^2
 
-## Roll two (or more) kinds of dice at once.
 
-To make it, you have to separate all dice commands by `;`
-
-> 1d10;1d6
-
-or
-
-> 5d6;1d10;4d100;3d20
 
 ## Validator
 
