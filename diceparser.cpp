@@ -55,6 +55,8 @@ DiceParser::DiceParser()
 {
     m_currentTreeHasSeparator =false;
     m_parsingToolbox = new ParsingToolBox();
+    ParsingToolBox::setStartNodes(&m_startNodes);
+
 
     m_mapDiceOp = new QMap<QString,DiceOperator>();
     m_mapDiceOp->insert(QStringLiteral("D"),D);
@@ -200,7 +202,7 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
             }
         }
     }
-    else if(readOperand(str,operandNode))
+    else if(m_parsingToolbox->readOperand(str,operandNode))
     {
         ExecutionNode* diceNode=nullptr;
         if(readDice(str,diceNode))
@@ -682,10 +684,8 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
                 }
                 return true;
             }
-            else if(m_parsingToolbox->readDiceRange(str,min,max))
+            else if(m_parsingToolbox->readDiceRange(str,max,min))
             {
-                // qint64 face = abs(num - end);
-                //qDebug() << face << end;
                 DiceRollerNode* drNode = new DiceRollerNode(max,min);
                 drNode->setUnique(unique);
                 if(hasOp)
@@ -927,8 +927,10 @@ DiceRollerNode* DiceParser::addRollDiceNode(qint64 faces,ExecutionNode* previous
 ExploseDiceNode* DiceParser::addExploseDiceNode(qint64 value,ExecutionNode* previous)
 {
     ExploseDiceNode* exploseDiceNode= new ExploseDiceNode();
+    NumberNode* node = new NumberNode();
+    node->setNumber(value);
     BooleanCondition* condition = new BooleanCondition();
-    condition->setValue(value);
+    condition->setValueNode(node);
     condition->setOperator(BooleanCondition::Equal);
     m_parsingToolbox->isValidValidator(previous,condition);
     exploseDiceNode->setValidator(condition);
@@ -1260,48 +1262,24 @@ QString DiceParser::humanReadableError()
     return str;
 }
 
-bool DiceParser::readOperand(QString& str,ExecutionNode* & node)
-{
-    qint64 intValue=1;
-    QString resultStr;
-    if(m_parsingToolbox->readDynamicVariable(str,intValue))
-    {
-        VariableNode* variableNode = new VariableNode();
-        variableNode->setIndex(intValue-1);
-        variableNode->setData(&m_startNodes);
-        node = variableNode;
-        return true;
-    }
-    else if(m_parsingToolbox->readNumber(str,intValue))
-    {
-        NumberNode* numberNode = new NumberNode();
-        numberNode->setNumber(intValue);
-        node = numberNode;
-        return true;
-    }
-    else if(m_parsingToolbox->readString(str,resultStr))
-    {
-        StringNode* strNode = new StringNode();
-        strNode->setString(resultStr);
-        node = strNode;
-        return true;
-    }
-    return false;
-}
+
 void DiceParser::writeDownDotTree(QString filepath)
 {
+    if(m_startNodes.empty())
+        return;
+
+    QString str(QStringLiteral("digraph ExecutionTree {\n"));
     for(auto start : m_startNodes)
     {
-        QString str(QStringLiteral("digraph ExecutionTree {\n"));
         start->generateDotTree(str);
-        str.append(QStringLiteral("}\n"));
+    }
+    str.append(QStringLiteral("}\n"));
 
-        QFile file(filepath);
-        if(file.open(QIODevice::WriteOnly))
-        {
+    QFile file(filepath);
+    if(file.open(QIODevice::WriteOnly))
+    {
             QTextStream in(&file);
             in << str;
-        }
     }
 }
 void DiceParser::setPathToHelp(QString l)
