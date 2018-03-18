@@ -198,6 +198,7 @@ private:
 
 
     static QHash<QString,QString>* m_variableHash;
+    static std::vector<ExecutionNode*>* m_startNodes;
 };
 
 #endif // PARSINGTOOLBOX_H

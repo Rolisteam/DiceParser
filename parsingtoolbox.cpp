@@ -26,6 +26,7 @@
 
 
 QHash<QString,QString>*  ParsingToolBox::m_variableHash = nullptr;
+std::vector<ExecutionNode*>*  ParsingToolBox::m_startNodes = nullptr;
 
 ParsingToolBox::ParsingToolBox()
     : m_logicOp(new QMap<QString,BooleanCondition::LogicOperator>()),
@@ -384,6 +385,16 @@ ExecutionNode* ParsingToolBox::getLatestNode(ExecutionNode* node)
     return next;
 }
 
+std::vector<ExecutionNode *> *ParsingToolBox::getStartNodes()
+{
+    return m_startNodes;
+}
+
+void ParsingToolBox::setStartNodes(std::vector<ExecutionNode *> *startNodes)
+{
+    m_startNodes = startNodes;
+}
+
 bool ParsingToolBox::readString(QString &str, QString& strResult)
 {
     if(str.isEmpty())
@@ -394,8 +405,8 @@ bool ParsingToolBox::readString(QString &str, QString& strResult)
     {
         str=str.remove(0,1);
 
-    int i=0;
-    int j=0;
+        int i=0;
+        int j=0;
     bool previousEscape=false;
     QString result;
     /*&&
@@ -648,8 +659,8 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
             QString rangeStr = line.right(line.length()-pos);
             line = line.left(pos);
             str[j]=line;
-            qint64 start;
-            qint64 end;
+            qint64 start = 0;
+            qint64 end = 0;
             if(readDiceRange(rangeStr,start,end))
             {
                 Range range;
@@ -658,7 +669,7 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
                 totalDistance += end-start+1;
                 ++i;
             }
-            else//pourcentage
+            else//percentage
             {
                 hasPercentage = true;
                 Range range;
