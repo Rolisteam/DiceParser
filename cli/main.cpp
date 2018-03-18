@@ -218,23 +218,24 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
             auto array =  DisplayToolBox::diceToJson(list,allSameFaceCount,allSameColor);
             QString resultStr;
             QString scalarText;
+            QString lastScalarText;
             QString comment = parser.getComment();
             QString error = parser.humanReadableError();
+            QStringList strLst;
 
             if(parser.hasIntegerResultNotInFirst())
             {
                 auto values = parser.getLastIntegerResults();
-                QStringList strLst;
                 for(auto val : values )
                 {
                     strLst << QString::number(val);
                 }
                 scalarText = QString("%1").arg(strLst.join(','));
+                lastScalarText = strLst.last();
             }
             else if(!list.isEmpty())
             {
                 auto values = parser.getSumOfDiceResult();
-                QStringList strLst;
                 for(auto val : values )
                 {
                     strLst << QString::number(val);
@@ -248,6 +249,14 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                 QStringList allStringlist = parser.getAllStringResult(ok);
                 QString stringResult = allStringlist.join(" ; ");
                 stringResult.replace("%1",scalarText);
+                stringResult.replace("%3",lastScalarText);
+
+                int i = 1;
+                for(auto value : strLst)
+                {
+                    stringResult.replace(QStringLiteral("$%1").arg(i),value);
+                    ++i;
+                }
 
                 resultStr = stringResult;
             }
