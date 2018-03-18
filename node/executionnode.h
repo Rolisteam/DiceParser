@@ -80,11 +80,13 @@ public:
      */
     virtual ExecutionNode* getCopy() const  = 0;
 
+    virtual qint64 getScalarResult();
+
 protected:
     /**
      * @brief m_nextNode
      */
-    ExecutionNode* m_previousNode;
+    ExecutionNode* m_previousNode= nullptr;
     /**
      * @brief m_result
      */
@@ -92,7 +94,7 @@ protected:
     /**
      * @brief m_nextNode
      */
-    ExecutionNode* m_nextNode;
+    ExecutionNode* m_nextNode = nullptr;
     /**
      * @brief m_errors
      */

@@ -89,3 +89,9 @@ void ExecutionNode::generateDotTree(QString& s)
     }
 
 }
+qint64 ExecutionNode::getScalarResult()
+{
+    if(m_result == nullptr)
+        return 0;
+    return m_result->getResult(Result::SCALAR).toInt();
+}
