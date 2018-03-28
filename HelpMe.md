@@ -313,7 +313,7 @@ if all dice are equal to 6, then roll another d6 and add it to the result.
 
 > 2d10i:[>15]{"Success"}{"Fail"}
 
-if the sum of two dice is greater than 15, It displays "Success", override it displays "Fail".
+if the sum of two dice is greater than 15, It displays "Success", otherwise it displays "Fail".
 
 > 2d10i:[>15]{"Success %1 "}{"Fail %1"}
 
