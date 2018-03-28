@@ -57,6 +57,8 @@ We can't set some aliases for any platform but It has to be labelled with game's
 ### To change the prefix
 > !prefix set newprefix
 
+/!\ Please, don't set "newprefix" as your new prefix. 
+
 ### Set the perfix by default
 
 > newprefixprefix set !
