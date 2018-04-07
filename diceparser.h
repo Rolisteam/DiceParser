@@ -47,20 +47,7 @@ class ExploseDiceNode;
  *
  * @section grammar The Grammar
  *
- * The grammar is something like this:
- *
- * Line =: Command | Command;Command<br/>
- * Command =: Expression | ScalarOperator Expression | ScalarOperator NodeAction Expression<br/>
- * Expression =: number | number Dice | Command<br/>
- * Dice =: DiceOperator Number(faces) | DiceOperator List<br/>
- * List =: [Word[range|percentage],Number[range|percentage],',']+<br/>
- * Persentage =: Number <br/>
- * NodeAction =: @<br/>
- * DiceOperator =: [D,L]<br/>
- * ScalarOperator =: [x,-,*,x,/]<br/>
- * number =: [0-9]+<br/>
- * Word =: [A-z]+<br/>
- *
+ * The grammar is described in Readme.md
  */
 
 /**
