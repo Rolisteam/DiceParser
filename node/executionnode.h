@@ -10,9 +10,14 @@
 class ExecutionNode
 {
 public:
-    enum DICE_ERROR_CODE {NO_DICE_ERROR,DIE_RESULT_EXPECTED,BAD_SYNTAXE,
-                          ENDLESS_LOOP_ERROR,DIVIDE_BY_ZERO,NOTHING_UNDERSTOOD,
-                          NO_DICE_TO_ROLL,TOO_MANY_DICE,NO_VARIBALE,
+    enum DICE_ERROR_CODE {NO_DICE_ERROR,
+                          DIE_RESULT_EXPECTED,
+                          BAD_SYNTAXE,
+                          ENDLESS_LOOP_ERROR,
+                          DIVIDE_BY_ZERO,
+                          NOTHING_UNDERSTOOD,
+                          NO_DICE_TO_ROLL,
+                          TOO_MANY_DICE,NO_VARIBALE,
                           INVALID_INDEX};
     /**
      * @brief ExecutionNode

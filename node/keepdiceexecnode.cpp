@@ -40,7 +40,7 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
     {
         return;
     }
-    DiceResult* previousDiceResult = static_cast<DiceResult*>(previous->getResult());
+    DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previous->getResult());
     m_result->setPrevious(previousDiceResult);
     if(nullptr!=previousDiceResult)
     {

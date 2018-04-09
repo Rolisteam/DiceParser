@@ -54,7 +54,7 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
     }
     if(nullptr!=previous)
     {
-        DiceResult* previousResult = static_cast<DiceResult*>(previous->getResult());
+        DiceResult* previousResult = dynamic_cast<DiceResult*>(previous->getResult());
 
         if(nullptr!=previousResult)
         {

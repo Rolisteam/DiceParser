@@ -19,7 +19,7 @@ void RerollDiceNode::run(ExecutionNode* previous)
     m_previousNode = previous;
     if((nullptr!=previous)&&(nullptr!=previous->getResult()))
     {
-        DiceResult* previous_result = static_cast<DiceResult*>(previous->getResult());
+        DiceResult* previous_result = dynamic_cast<DiceResult*>(previous->getResult());
         m_result->setPrevious(previous_result);
         if(nullptr!=previous_result)
         {
@@ -46,6 +46,11 @@ void RerollDiceNode::run(ExecutionNode* previous)
             {
                 m_nextNode->run(this);
             }
+        }
+        else
+        {
+            m_errors.insert(ExecutionNode::DIE_RESULT_EXPECTED,
+                            QObject::tr(" The a operator expects dice result. Please check the documentation and fix your command."));
         }
     }
 }
