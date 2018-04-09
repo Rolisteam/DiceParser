@@ -170,29 +170,33 @@ QString DisplayToolBox::colorToTermCode(QString str)
     {
         return QStringLiteral("\e[0;31m");
     }
-    if(str==QStringLiteral("white"))
+    else if(str==QStringLiteral("white"))
     {
         return  QStringLiteral("\e[97m");
     }
-    if(str==QStringLiteral("blue"))
+    else if(str==QStringLiteral("blue"))
     {
         return  QStringLiteral("\e[34m");
     }
-    if(str==QStringLiteral("red"))
+    else if(str==QStringLiteral("red"))
     {
         return  QStringLiteral("\e[31m");
     }
-    if(str==QStringLiteral("black"))
+    else if(str==QStringLiteral("black"))
     {
         return  QStringLiteral("\e[30m");
     }
-    if(str==QStringLiteral("green"))
+    else if(str==QStringLiteral("green"))
     {
         return  QStringLiteral("\e[32m");
     }
-    if(str==QStringLiteral("yellow"))
+    else if(str==QStringLiteral("yellow"))
     {
         return  QStringLiteral("\e[33m");
+    }
+    else if(str==QStringLiteral("reset"))
+    {
+        return  QStringLiteral("\e[0m");
     }
     return {};
 }
@@ -342,59 +346,43 @@ QString DisplayToolBox::diceResultToString(QJsonObject val)
 QString DisplayToolBox::diceToText(QJsonArray array, bool withColor,bool allSameFaceCount, bool allSameColor)
 {
     Q_UNUSED(allSameColor)
-    if(allSameFaceCount)
-    {
-        QStringList result;
-        for(auto item : array)
-        {
-            QStringList subResult;
-            auto obj = item.toObject();
-            auto values= obj["values"].toArray();
-            for(auto valRef : values)
-            {
-                subResult.append(diceResultToString(valRef.toObject()));
-            }
-            if(withColor)
-            {
-                result.append(DisplayToolBox::colorToTermCode(obj["color"].toString()));
-                result.append(subResult.join(','));
-                result.append(QStringLiteral("\e[0m"));
-            }
-            else
-            {
-                result.append(subResult.join(','));
-            }
-        }
-        return result.join("");
-    }
-    else
-    {
-        QStringList result;
-        for(auto item : array)
-        {
-            QStringList subResult;
-            auto obj = item.toObject();
-            auto values= obj["values"].toArray();
+	QStringList result;
+	for(auto item : array)
+	{
+		QString subResult;
+		auto obj = item.toObject();
+		auto values= obj["values"].toArray();
 
-            for(auto valRef : values)
-            {
-                subResult.append(diceResultToString(valRef.toObject()));
-            }
-            result.append(QStringLiteral("d%1:(").arg(obj["face"].toString()));
-            if(withColor)
-            {
-                result.append(DisplayToolBox::colorToTermCode(obj["color"].toString()));
-            }
-            result.append(subResult.join(','));
-            if(withColor)
-            {
-                result.append(QStringLiteral("\e[0m)"));
-            }
-            else
-            {
-                result.append(QStringLiteral(")"));
-            }
-        }
-        return result.join(' ');
-    }
+		QStringList diceResult;
+		for(auto valRef : values)
+		{
+			diceResult += diceResultToString(valRef.toObject());
+		}
+		if (!diceResult.isEmpty())
+		{
+			if(!allSameFaceCount)
+			{
+				subResult += QStringLiteral("d%1:(").arg(obj["face"].toString());
+			}
+			if(withColor)
+			{
+				subResult += DisplayToolBox::colorToTermCode(obj["color"].toString());
+			}
+			subResult += diceResult.join(" ");
+			if(withColor)
+			{
+				subResult += DisplayToolBox::colorToTermCode(QStringLiteral("reset"));
+			}
+			if(!allSameFaceCount)
+			{
+				subResult += QStringLiteral(")");
+			}
+		}
+
+		if (!subResult.isEmpty())
+		{
+			result += subResult;
+		}
+	}
+	return result.join(" - ");
 }
