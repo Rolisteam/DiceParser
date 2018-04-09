@@ -24,7 +24,6 @@ void ExploseDiceNode::run(ExecutionNode* previous)
 
             QList<Die*> list = m_diceResult->getResultList();
 
-
             for(Die* die: list)
             {
                 while(m_validator->hasValid(die,false))
