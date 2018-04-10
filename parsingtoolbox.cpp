@@ -99,6 +99,7 @@ ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e,bool b)
     e->setNextNode(nodeSort);
     return nodeSort;
 }
+
 bool ParsingToolBox::readDiceLogicOperator(QString& str,OperationCondition::ConditionOperator& op)
 {
     QString longKey;
