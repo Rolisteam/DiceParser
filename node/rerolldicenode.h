@@ -58,10 +58,14 @@ public:
      */
     virtual ExecutionNode* getCopy() const;
 
+    ExecutionNode *getInstruction() const;
+    void setInstruction(ExecutionNode *instruction);
+
 private:
-    DiceResult* m_diceResult;
+    DiceResult* m_diceResult = nullptr;
     bool m_adding;
-    Validator* m_validator;
+    Validator* m_validator  = nullptr;
+    ExecutionNode* m_instruction = nullptr;
 };
 
 #endif // REROLLDICENODE_H

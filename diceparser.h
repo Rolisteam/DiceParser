@@ -219,6 +219,8 @@ public:
 
     bool readOptionFromNull(QString &str, ExecutionNode *&node);
     bool readInstructionList(QString &str);
+protected:
+    bool readParameterNode(QString &str, ExecutionNode *&node);
 private:
 
     /**

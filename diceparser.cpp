@@ -955,7 +955,8 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
         {
 
             str=str.remove(0,tmp.size());
-            switch(m_OptionOp->value(tmp))
+            auto operatorName = m_OptionOp->value(tmp);
+            switch(operatorName)
             {
             case Keep:
             {
@@ -1055,8 +1056,17 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(nullptr!=validator)
                 {
-                    m_parsingToolbox->isValidValidator(previous,validator);
+                    if(!m_parsingToolbox->isValidValidator(previous,validator))
+                    {
+                        m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Validator is missing after the %1 operator. Please, change it")
+                                          .arg(operatorName == Reroll ? "r" : "a" ));
+                    }
                     RerollDiceNode* rerollNode = new RerollDiceNode();
+                    ExecutionNode* nodeParam = nullptr;
+                    if(readParameterNode(str,nodeParam))
+                    {
+                        rerollNode->setInstruction(nodeParam);
+                    }
                     if(m_OptionOp->value(tmp)==RerollAndAdd)
                     {
                         rerollNode->setAddingMode(true);
@@ -1065,6 +1075,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                     previous->setNextNode(rerollNode);
                     node = rerollNode;
                     found = true;
+
                 }
                 else
                 {
@@ -1182,6 +1193,24 @@ bool DiceParser::readIfInstruction(QString& str,ExecutionNode*& trueNode,Executi
     }
     return false;
 }
+
+bool DiceParser::readParameterNode(QString& str, ExecutionNode* & node)
+{
+    if(str.startsWith("("))
+    {
+        str=str.remove(0,1);
+        if(readExpression(str,node))
+        {
+            if(str.startsWith(")"))
+            {
+                str=str.remove(0,1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 bool DiceParser::readBlocInstruction(QString& str,ExecutionNode*& resultnode)
 {
     if(str.startsWith('{'))

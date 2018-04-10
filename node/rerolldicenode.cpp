@@ -1,5 +1,5 @@
 #include "rerolldicenode.h"
-
+#include "parsingtoolbox.h"
 
 RerollDiceNode::RerollDiceNode()
     : m_diceResult(new DiceResult()),m_adding(false),m_validator(nullptr)
@@ -32,13 +32,29 @@ void RerollDiceNode::run(ExecutionNode* previous)
             }
             //m_diceResult->setResultList(list);
 
-            QList<Die*> list = m_diceResult->getResultList();
+            QList<Die*>& list = m_diceResult->getResultList();
 
             for(Die* die: list)
             {
                 if(m_validator->hasValid(die,false))
                 {
-                    die->roll(m_adding);
+                    if(m_instruction != nullptr)
+                    {
+                        m_instruction->run(this);
+                        auto lastNode = ParsingToolBox::getLatestNode(m_instruction);
+                        if(lastNode != nullptr)
+                        {
+                            auto lastResult = dynamic_cast<DiceResult*>(lastNode->getResult());
+                            if(lastResult != nullptr)
+                            {
+                                list.append(lastResult->getResultList());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        die->roll(m_adding);
+                    }
                 }
             }
 
@@ -95,4 +111,14 @@ ExecutionNode* RerollDiceNode::getCopy() const
         node->setNextNode(m_nextNode->getCopy());
     }
     return node;
+}
+
+ExecutionNode *RerollDiceNode::getInstruction() const
+{
+    return m_instruction;
+}
+
+void RerollDiceNode::setInstruction(ExecutionNode *instruction)
+{
+    m_instruction = instruction;
 }
