@@ -200,9 +200,7 @@ Validator* ParsingToolBox::readValidator(QString& str)
 
     OperationCondition::ConditionOperator condiOp = OperationCondition::Modulo;
     bool hasDiceLogicOperator = readDiceLogicOperator(str,condiOp);
-    qint64 value=0;
     ExecutionNode* operandNode=nullptr;
-
     if(hasDiceLogicOperator)
     {
         if(readOperand(str,operandNode))
