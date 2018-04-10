@@ -147,11 +147,11 @@ the number of instruction is not limited.
 
 ## List of operator
 * k : Keep
-* K : Keep And Explose
+* K : Keep And Explode
 * s : Sort
 * c : Count
 * r : Reroll
-* e : Explose
+* e : Explode
 * a : Reroll and add
 * @ : Backward Jump
 * p : Paint dice
@@ -167,17 +167,26 @@ the number of instruction is not limited.
 
 The option sorts the resulting die list and select the X higher dice.
 
-### Keep And Explose
+### Explode and Keep
 
 > KX
 
-Dice explose if their value are at the die maximum, the option sorts the resulting die list, the it selects the X higher dice.
+Dice explode if their value are at the die **maximum**, the option sorts the resulting die list, the it selects the X higher dice.
+
+**Examples**:
+> 6d10K4
+Roll 6 10-sided dices, each 10 explodes. So the value of exploded dices are greater than 10.
+Result: 40 details: 23 [10,10,3],9,5,3,1,1
+
+Another way to write this command is:
+> 6d10e10k4
+This way allows you to change the explode threshold.
 
 ### Keep Lower dice
 
 > klX
 
-Dice explose if their value are at the die maximum, the option sorts the resulting die list, the it selects the X lowest dice.
+The option sorts the resulting die list, the it selects the X lowest dice.
 
 ### Sorting
 
@@ -201,11 +210,20 @@ Count how many dice respect the condition and display the number (See Validator 
 
 Reroll the die if the previous value fits the validator (See Validator for more details about syntax).
 
-### Explose
+### Explode
 
 > 3D10e[Validator]
 
-Explose while the value fits the Validator (See Validator for more details about syntax).
+Explode while the value fits the Validator (See Validator for more details about syntax).
+
+**Examples**:
+> 3D10e10
+While dice value is equal to 10, the dice is rolled again and its result is added to the previous dice value.
+Result: 49 details: 8, 12 [10,2], 29 [10,10,9]
+
+> 3D10e[>8]
+While the dice value is greater than 8, the dice is rolled again and its result is added to the previous dice value.
+Result: 35 details: 3, 27 [9,10,8], 5
 
 ### Add
 
