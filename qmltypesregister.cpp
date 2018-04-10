@@ -22,11 +22,14 @@
 #include <QQmlEngine>
 
 #include "diceroller.h"
+#ifndef UNIT_TEST
 #include "field.h"
-
+#endif
 
 void registerQmlTypes()
 {
     qmlRegisterType<DiceRoller>("Rolisteam", 1, 0, "DiceRoller");
+    #ifndef UNIT_TEST
     qmlRegisterType<Field>("Rolisteam", 1, 0, "Field");
+    #endif
 }
