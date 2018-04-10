@@ -180,8 +180,6 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
 bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
 {
     ExecutionNode* operandNode=nullptr;
-    QString result;
-    QString comment;
     if(m_parsingToolbox->readOpenParentheses(str))
     {
         ExecutionNode* internalNode=nullptr;
@@ -192,7 +190,6 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
             node = parentheseNode;
             if(m_parsingToolbox->readCloseParentheses(str))
             {
-
                 ExecutionNode* diceNode=nullptr;
                 if(readDice(str,diceNode))
                 {
