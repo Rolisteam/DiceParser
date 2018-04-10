@@ -681,7 +681,7 @@ bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
                 }
                 return true;
             }
-            else if(m_parsingToolbox->readDiceRange(str,max,min))
+            else if(m_parsingToolbox->readDiceRange(str,min,max))
             {
                 DiceRollerNode* drNode = new DiceRollerNode(max,min);
                 drNode->setUnique(unique);
