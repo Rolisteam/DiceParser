@@ -205,10 +205,10 @@ bool GroupNode::composeWithPrevious(DieGroup previous, qint64 first, qint64 curr
 
 QList<DieGroup> GroupNode::getGroup(DieGroup values)
 {
-    auto first = values.takeFirst();
-
     if(values.isEmpty())
-        return QList<DieGroup>();
+        return {};
+
+    auto first = values.takeFirst();
 
     QList<DieGroup> result;
     QMap<qint64,DieGroup> loseMap;
