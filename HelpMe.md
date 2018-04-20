@@ -44,7 +44,7 @@ Please, remember it is important to prefix all you command by `!`. This will all
 | platform | descriptions |
 |---|---|
 | Rolisteam | no support for comments yet. Rolisteam is a big software. You may not have all the most recent feature from diceparser. |
-| Discord  | no support for p operator. Color are badly managed by discord so we can't waste time about it.  If the command takes too much time. It is canceled.  There is really few aliases. You may ask for new aliases|
+| Discord  | If the command takes too much time. It is canceled |
 | Twitter  | Result such be short. No aliases |
 | IrcBot   | No aliases |
 | webserver| No aliases |
