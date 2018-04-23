@@ -33,9 +33,11 @@ void RerollDiceNode::run(ExecutionNode* previous)
             //m_diceResult->setResultList(list);
 
             QList<Die*>& list = m_diceResult->getResultList();
+            QList<Die*> toRemove;
 
-            for(Die* die: list)
+            for(int i = 0; i < list.size() ; ++i)
             {
+                auto die = list.at(i);
                 if(m_validator->hasValid(die,false))
                 {
                     if(m_instruction != nullptr)
@@ -47,8 +49,10 @@ void RerollDiceNode::run(ExecutionNode* previous)
                             auto lastResult = dynamic_cast<DiceResult*>(lastNode->getResult());
                             if(lastResult != nullptr)
                             {
+                                toRemove.append(die);
                                 list.append(lastResult->getResultList());
                             }
+                            lastResult->clear();
                         }
                     }
                     else
@@ -57,6 +61,12 @@ void RerollDiceNode::run(ExecutionNode* previous)
                     }
                 }
             }
+
+            for(auto die: toRemove)
+            {
+               list.removeOne(die);      
+            }
+            
 
             if(nullptr!=m_nextNode)
             {

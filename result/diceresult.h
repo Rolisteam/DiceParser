@@ -79,6 +79,8 @@ public:
     void setOperator(const Die::ArithmeticOperator & dieOperator);    
     bool contains(Die *die, const std::function<bool (const Die *, const Die *)> equal);
 
+    void clear();
+
     virtual Result* getCopy() const;
 private:
     qreal getScalarResult();

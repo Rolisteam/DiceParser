@@ -45,7 +45,10 @@ bool Result::isStringResult() const
 {
     return false;
 }
-
+void Result::clear()
+{
+    
+}
 bool Result::hasResultOfType(RESULT_TYPE type) const
 {
     return (m_resultTypes & type);

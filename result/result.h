@@ -69,6 +69,8 @@ public:
      */
     virtual bool isStringResult() const;
 
+    virtual void clear();
+
     /**
      * @brief getStringResult
      * @return

@@ -143,6 +143,11 @@ Die::ArithmeticOperator DiceResult::getOperator() const
     return m_operator;
 }
 
+void DiceResult::clear()
+{
+    m_diceValues.clear();
+}
+
 void DiceResult::setOperator(const Die::ArithmeticOperator& dieOperator)
 {
     m_operator = dieOperator;
