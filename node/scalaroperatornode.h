@@ -99,22 +99,22 @@ private:
      * @brief add
      * @return
      */
-    static qint64 add(qint64,qint64);
+    static qint64 add(qreal,qreal);
     /**
      * @brief substract
      * @return
      */
-    static qint64 substract(qint64,qint64);
+    static qint64 substract(qreal,qreal);
     /**
      * @brief divide not static because of error management
      * @return
      */
-    qreal divide(qint64,qint64);
+    qreal divide(qreal,qreal);
     /**
      * @brief multiple
      * @return
      */
-    static qint64 multiple(qint64,qint64);
+    static qint64 multiple(qreal,qreal);
 
 private:
     ExecutionNode* m_internalNode;
