@@ -19,7 +19,7 @@
     ***************************************************************************/
 #include "highlightdice.h"
 
-HighLightDice::HighLightDice(QList<quint64> result,bool isHighlighted, QString color)
+HighLightDice::HighLightDice(QList<qint64> result,bool isHighlighted, QString color)
     : m_result(result),m_hasHighlight(isHighlighted),m_color(color)
 {
 
@@ -31,12 +31,12 @@ HighLightDice::~HighLightDice()
 
 }
 
-QList<quint64> HighLightDice::getResult() const
+QList<qint64> HighLightDice::getResult() const
 {
     return m_result;
 }
 
-void HighLightDice::setResult(const QList<quint64> &result)
+void HighLightDice::setResult(const QList<qint64> &result)
 {
     m_result = result;
 }

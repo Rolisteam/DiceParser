@@ -514,7 +514,7 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
                     {
                         if(!die->hasBeenDisplayed())
                         {
-                            QList<quint64> valuesResult;
+                            QList<qint64> valuesResult;
                             valuesResult.append(die->getValue());
                             die->displayed();
                             face = die->getFaces();

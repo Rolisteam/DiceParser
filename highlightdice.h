@@ -27,13 +27,13 @@ class HighLightDice
 {
 
 public:
-    HighLightDice(QList<quint64> result,bool isHighlighted, QString color);
+    HighLightDice(QList<qint64> result,bool isHighlighted, QString color);
     virtual ~HighLightDice();
 
 
 
-    QList<quint64> getResult() const;
-    void setResult(const QList<quint64> &result);
+    QList<qint64> getResult() const;
+    void setResult(const QList<qint64> &result);
 
     bool isHighlighted() const;
     void setHighlight(bool hasHighlight);
@@ -42,7 +42,7 @@ public:
     void setColor(const QString &color);
 
 private:
-    QList<quint64> m_result;
+    QList<qint64> m_result;
     bool m_hasHighlight;
     QString m_color;
 };
