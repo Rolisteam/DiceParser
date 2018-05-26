@@ -26,7 +26,7 @@
 #include <QDebug>
 
 /**
- * @brief The ifNode class explose dice while is valid by the validator.
+ * @brief The ifNode class explode dice while is valid by the validator.
  */
 class IfNode : public ExecutionNode
 {

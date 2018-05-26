@@ -33,7 +33,7 @@
 #include "node/sortresult.h"
 #include "node/countexecutenode.h"
 #include "node/rerolldicenode.h"
-#include "node/explosedicenode.h"
+#include "node/explodedicenode.h"
 #include "node/parenthesesnode.h"
 #include "node/helpnode.h"
 #include "node/jumpbackwardnode.h"
@@ -64,11 +64,11 @@ DiceParser::DiceParser()
 
     m_OptionOp = new QMap<QString,OptionOperator>();
     m_OptionOp->insert(QStringLiteral("k"),Keep);
-    m_OptionOp->insert(QStringLiteral("K"),KeepAndExplose);
+    m_OptionOp->insert(QStringLiteral("K"),KeepAndExplode);
     m_OptionOp->insert(QStringLiteral("s"),Sort);
     m_OptionOp->insert(QStringLiteral("c"),Count);
     m_OptionOp->insert(QStringLiteral("r"),Reroll);
-    m_OptionOp->insert(QStringLiteral("e"),Explosing);
+    m_OptionOp->insert(QStringLiteral("e"),Explode);
     m_OptionOp->insert(QStringLiteral("a"),RerollAndAdd);
     m_OptionOp->insert(QStringLiteral("m"),Merge);
     m_OptionOp->insert(QStringLiteral("i"),ifOperator);
@@ -921,18 +921,18 @@ DiceRollerNode* DiceParser::addRollDiceNode(qint64 faces,ExecutionNode* previous
     previous->setNextNode(mydiceRoller);
     return mydiceRoller;
 }
-ExploseDiceNode* DiceParser::addExploseDiceNode(qint64 value,ExecutionNode* previous)
+ExplodeDiceNode* DiceParser::addExplodeDiceNode(qint64 value,ExecutionNode* previous)
 {
-    ExploseDiceNode* exploseDiceNode= new ExploseDiceNode();
+    ExplodeDiceNode* explodeDiceNode= new ExplodeDiceNode();
     NumberNode* node = new NumberNode();
     node->setNumber(value);
     BooleanCondition* condition = new BooleanCondition();
     condition->setValueNode(node);
     condition->setOperator(BooleanCondition::Equal);
     m_parsingToolbox->isValidValidator(previous,condition);
-    exploseDiceNode->setValidator(condition);
-    previous->setNextNode(exploseDiceNode);
-    return exploseDiceNode;
+    explodeDiceNode->setValidator(condition);
+    previous->setNextNode(explodeDiceNode);
+    return explodeDiceNode;
 }
 bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
 {
@@ -946,13 +946,13 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
 
     for(int i = 0; ((i<m_OptionOp->keys().size())&&(!found));++i )
     {
-        QString tmp =m_OptionOp->keys().at(i);
+        QString key =m_OptionOp->keys().at(i);
 
-        if(str.startsWith(tmp))
+        if(str.startsWith(key))
         {
 
-            str=str.remove(0,tmp.size());
-            auto operatorName = m_OptionOp->value(tmp);
+            str=str.remove(0,key.size());
+            auto operatorName = m_OptionOp->value(key);
             switch(operatorName)
             {
             case Keep:
@@ -972,7 +972,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 }
             }
                 break;
-            case KeepAndExplose:
+            case KeepAndExplode:
             {
                 qint64 myNumber=0;
                 bool ascending = m_parsingToolbox->readAscending(str);
@@ -986,7 +986,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                     if(nullptr!=nodeTmp)
                     {
 
-                        previous = addExploseDiceNode(nodeTmp->getFaces(),previous);
+                        previous = addExplodeDiceNode(nodeTmp->getFaces(),previous);
                     }
 
                     node = m_parsingToolbox->addSort(previous,ascending);
@@ -1064,7 +1064,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                     {
                         rerollNode->setInstruction(nodeParam);
                     }
-                    if(m_OptionOp->value(tmp)==RerollAndAdd)
+                    if(m_OptionOp->value(key)==RerollAndAdd)
                     {
                         rerollNode->setAddingMode(true);
                     }
@@ -1076,12 +1076,17 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 }
                 else
                 {
-                    m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Validator is missing after the %1 operator. Please, change it").arg(m_OptionOp->value(tmp)==Reroll?QStringLiteral("r"):QStringLiteral("a")));
+                    m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,
+                            QObject::tr("Validator is missing after the %1 operator. Please, change it")
+                            .arg(operatorName==Reroll? QStringLiteral("r")
+                                :operatorName==RerollUntil? QStringLiteral("R")
+                                :operatorName==RerollAndAdd? QStringLiteral("a")
+				:""));
                 }
 
             }
                 break;
-            case Explosing:
+            case Explode:
             {
                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(nullptr!=validator)
@@ -1090,10 +1095,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                     {
                         m_errorMap.insert(ExecutionNode::ENDLESS_LOOP_ERROR,QObject::tr("This condition %1 introduces an endless loop. Please, change it").arg(validator->toString()));
                     }
-                    ExploseDiceNode* explosedNode = new ExploseDiceNode();
-                    explosedNode->setValidator(validator);
-                    previous->setNextNode(explosedNode);
-                    node = explosedNode;
+                    ExplodeDiceNode* explodedNode = new ExplodeDiceNode();
+                    explodedNode->setValidator(validator);
+                    previous->setNextNode(explodedNode);
+                    node = explodedNode;
                     found = true;
 
                 }

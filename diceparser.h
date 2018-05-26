@@ -38,7 +38,7 @@
 typedef QList<HighLightDice > ListDiceResult;
 typedef QMap<int,ListDiceResult > ExportedDiceResult;
 
-class ExploseDiceNode;
+class ExplodeDiceNode;
 /**
  * @page DiceParser Dice Parser
  *
@@ -68,7 +68,7 @@ public:
     /**
      * @brief The OptionOperator enum gathering all options  availables for result.
      */
-    enum OptionOperator {KeepAndExplose,Keep,Reroll,Explosing,Sort,Count,RerollAndAdd,Merge,ifOperator,Painter,Filter,Split,Group};
+    enum OptionOperator {KeepAndExplode,Keep,Reroll,RerollUntil,Explode,Sort,Count,RerollAndAdd,Merge,ifOperator,Painter,Filter,Split,Group};
     /**
      * @brief The CommandOperator enum
      */
@@ -265,12 +265,12 @@ private:
    */
     DiceRollerNode* addRollDiceNode(qint64 faces,ExecutionNode*);
     /**
-     * @brief addExploseDiceNode
+     * @brief addExplodeDiceNode
      * @param faces
      * @param previous
      * @return
      */
-    ExploseDiceNode* addExploseDiceNode(qint64 faces,ExecutionNode* previous);
+    ExplodeDiceNode* addExplodeDiceNode(qint64 faces,ExecutionNode* previous);
     /**
      * @brief readOperand
      * @param node

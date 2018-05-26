@@ -487,7 +487,7 @@ The scalar value sets the validator on eguality between the dice value and the v
 
 > 4d10e10
 
-This command means : roll 4 dice and they explose on 10.
+This command means : roll 4 dice and they explode on 10.
 
 ### Range
 
@@ -535,7 +535,7 @@ Roll 3 dice with 100 faces
 
 > 10D10e[=10]s
 
-Roll 10 dice with 10 faces, 10 exploses, and sort the result.
+Roll 10 dice with 10 faces, 10 explodes, and sort the result.
 
 > 100291D66666666s
 

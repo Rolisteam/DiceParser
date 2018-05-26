@@ -80,7 +80,7 @@ SET( dice_sources
     ../node/countexecutenode.cpp
     ../node/dicerollernode.cpp
     ../node/executionnode.cpp
-    ../node/explosedicenode.cpp
+    ../node/explodedicenode.cpp
     ../node/helpnode.cpp
     ../node/mergenode.cpp
     ../node/jumpbackwardnode.cpp
