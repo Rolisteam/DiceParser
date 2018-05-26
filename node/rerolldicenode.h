@@ -18,8 +18,9 @@ public:
     enum ReRollMode {EQUAL,LESSER,GREATER};
 	/**
 	 * @brief RerollDiceNode
+	 * @param reroll If true reroll the dice only once, otherwise until the condition is false
 	 */
-    RerollDiceNode();
+    RerollDiceNode(bool reroll, bool addingMode);
 
 	/**
 	 * @brief ~RerollDiceNode
@@ -40,12 +41,6 @@ public:
 	 * @return
 	 */
     virtual QString toString(bool )const;
-
-
-	/**
-	 * @brief setAddingMode
-	 */
-    virtual void setAddingMode(bool);
 	/**
 	 * @brief getPriority
 	 * @return
@@ -63,9 +58,11 @@ public:
 
 private:
     DiceResult* m_diceResult = nullptr;
-    bool m_adding;
     Validator* m_validator  = nullptr;
     ExecutionNode* m_instruction = nullptr;
+
+    const bool m_reroll;
+    const bool m_adding;
 };
 
 #endif // REROLLDICENODE_H

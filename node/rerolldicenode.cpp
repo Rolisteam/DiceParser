@@ -1,8 +1,11 @@
 #include "rerolldicenode.h"
 #include "parsingtoolbox.h"
 
-RerollDiceNode::RerollDiceNode()
-    : m_diceResult(new DiceResult()),m_adding(false),m_validator(nullptr)
+RerollDiceNode::RerollDiceNode(bool reroll, bool addingMode)
+    : m_diceResult(new DiceResult())
+    , m_validator(nullptr)
+    , m_reroll(reroll)
+    , m_adding(addingMode)
 {
     m_result=m_diceResult;
 }
@@ -38,26 +41,12 @@ void RerollDiceNode::run(ExecutionNode* previous)
             for(int i = 0; i < list.size() ; ++i)
             {
                 auto die = list.at(i);
-                if(m_validator->hasValid(die,false))
+                while(m_validator->hasValid(die,false))
                 {
-                    if(m_instruction != nullptr)
+                    die->roll(m_adding);
+                    if(m_reroll)
                     {
-                        m_instruction->run(this);
-                        auto lastNode = ParsingToolBox::getLatestNode(m_instruction);
-                        if(lastNode != nullptr)
-                        {
-                            auto lastResult = dynamic_cast<DiceResult*>(lastNode->getResult());
-                            if(lastResult != nullptr)
-                            {
-                                toRemove.append(die);
-                                list.append(lastResult->getResultList());
-                            }
-                            lastResult->clear();
-                        }
-                    }
-                    else
-                    {
-                        die->roll(m_adding);
+                        break;
                     }
                 }
             }
@@ -96,10 +85,6 @@ QString RerollDiceNode::toString(bool wl) const
 	}
 	//return QString("RerollDiceNode [label=\"RerollDiceNode validatior:%1\"");
 }
-void RerollDiceNode::setAddingMode(bool b)
-{
-    m_adding = b;
-}
 qint64 RerollDiceNode::getPriority() const
 {
     qint64 priority=0;
@@ -113,9 +98,8 @@ qint64 RerollDiceNode::getPriority() const
 }
 ExecutionNode* RerollDiceNode::getCopy() const
 {
-    RerollDiceNode* node = new RerollDiceNode();
+    RerollDiceNode* node = new RerollDiceNode(m_reroll, m_adding);
     node->setValidator(m_validator);
-    node->setAddingMode(m_adding);
     if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
