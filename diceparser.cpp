@@ -69,6 +69,7 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QStringLiteral("c"),Count);
     m_OptionOp->insert(QStringLiteral("r"),Reroll);
     m_OptionOp->insert(QStringLiteral("e"),Explode);
+    m_OptionOp->insert(QStringLiteral("R"),RerollUntil);
     m_OptionOp->insert(QStringLiteral("a"),RerollAndAdd);
     m_OptionOp->insert(QStringLiteral("m"),Merge);
     m_OptionOp->insert(QStringLiteral("i"),ifOperator);
@@ -1048,7 +1049,9 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
             }
                 break;
             case Reroll:
+            case RerollUntil:
             case RerollAndAdd:
+            // Todo: I think that Exploding and Rerolling could share the same code
             {
                 Validator* validator = m_parsingToolbox->readCompositeValidator(str);
                 if(nullptr!=validator)
@@ -1058,16 +1061,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                         m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Validator is missing after the %1 operator. Please, change it")
                                           .arg(operatorName == Reroll ? "r" : "a" ));
                     }
-                    RerollDiceNode* rerollNode = new RerollDiceNode();
-                    ExecutionNode* nodeParam = nullptr;
-                    if(readParameterNode(str,nodeParam))
-                    {
-                        rerollNode->setInstruction(nodeParam);
-                    }
-                    if(m_OptionOp->value(key)==RerollAndAdd)
-                    {
-                        rerollNode->setAddingMode(true);
-                    }
+
+                    auto reroll = (operatorName==RerollAndAdd || operatorName==Reroll);
+                    auto addingMode = (operatorName==RerollAndAdd);
+                    RerollDiceNode* rerollNode = new RerollDiceNode(reroll, addingMode);
                     rerollNode->setValidator(validator);
                     previous->setNextNode(rerollNode);
                     node = rerollNode;

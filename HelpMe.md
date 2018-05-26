@@ -151,6 +151,7 @@ the number of instruction is not limited.
 * s : Sort
 * c : Count
 * r : Reroll
+* R : Reroll until
 * e : Explode
 * a : Reroll and add
 * @ : Backward Jump
@@ -209,6 +210,12 @@ Count how many dice respect the condition and display the number (See Validator 
 > 3D10r[Validator]
 
 Reroll the die if the previous value fits the validator (See Validator for more details about syntax).
+
+### Reroll until
+
+> 3D10R[Validator]
+
+Works like "Reroll", but continue to roll the dice until the condition is false.
 
 ### Explode
 
