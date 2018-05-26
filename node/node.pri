@@ -8,7 +8,7 @@ HEADERS += \
     $$PWD/sortresult.h \
     $$PWD/keepdiceexecnode.h \
     $$PWD/countexecutenode.h \
-    $$PWD/explosedicenode.h \
+    $$PWD/explodedicenode.h \
     $$PWD/parenthesesnode.h \
     $$PWD/helpnode.h \
     $$PWD/jumpbackwardnode.h \
@@ -25,7 +25,7 @@ SOURCES += \
     $$PWD/sortresult.cpp \
     $$PWD/keepdiceexecnode.cpp \
     $$PWD/countexecutenode.cpp \
-    $$PWD/explosedicenode.cpp \
+    $$PWD/explodedicenode.cpp \
     $$PWD/parenthesesnode.cpp \
     $$PWD/helpnode.cpp \
     $$PWD/jumpbackwardnode.cpp \

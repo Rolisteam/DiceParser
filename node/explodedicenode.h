@@ -7,13 +7,13 @@
 #include <QDebug>
 
 /**
- * @brief The ExploseDiceNode class explose dice while is valid by the validator.
+ * @brief The ExplodeDiceNode class explode dice while is valid by the validator.
  */
-class ExploseDiceNode : public ExecutionNode
+class ExplodeDiceNode : public ExecutionNode
 {
 public:
-    ExploseDiceNode();
-	virtual ~ExploseDiceNode();
+    ExplodeDiceNode();
+	virtual ~ExplodeDiceNode();
     virtual void run(ExecutionNode* previous = nullptr);
     virtual void setValidator(Validator* );
 	virtual QString toString(bool )const;

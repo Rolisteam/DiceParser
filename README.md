@@ -14,7 +14,7 @@ Instruction =: Expression
 Expression =: number | number Dice DiceOperation | ScalarOperator Expression | string | variable Expression
 Dice =: DiceOperator Number(faces) | DiceOperator ListOfValues
 DiceOperator =: D | L
-DiceOperation =: Keep | KeepAndExplose | Sort | Count | Reroll | If | Explose | RerollAndAdd | Jumpbackward | Merge | Filter | Split | Parenthese | Count | Paint | Group
+DiceOperation =: Keep | KeepAndExplode | Sort | Count | Reroll | If | Explode | Jumpbackward | Merge | Filter | Split | Parenthese | Count | Paint | Group
 ScalarOperator =: [x,-,*,x,/]
 number =: [0-9]+ | constantValue
 constantValue =: ${id | label}
@@ -29,7 +29,7 @@ BooleanValidator =: number | [operator number] |
 ListOfValue=: String[Range],ListOfValue | String[Range]
 String =: [A-z0-9]+
 Keep =: k Number
-KeepAndExplose =: K number
+KeepAndExplode =: K number
 Reroll =: r
 Explosing =: e
 RerollOnceAndAdd =: a
@@ -41,7 +41,7 @@ Sort =: s
 If =: i compareMethod [Validator] {Expression}[{Expression}]
 Paint =: p [ Count : color ]
 Group =: number
-Explose =: e Validator
+Explode =: e Validator
 Jumpbackward =: @DiceOperation
 Merge =: m | m Expression
 Filter =: f Validator
@@ -57,7 +57,7 @@ Count =: c Validator
 Roll 3 dice with 100 faces
 
 ### 10D10e[=10]s
-Roll 10 dice with 10 faces, 10 exploses, and sort the result.
+Roll 10 dice with 10 faces, 10 explodes, and sort the result.
 
 ### 100291D66666666s
 roll 100291 dice with 66666666666 faces and sort result

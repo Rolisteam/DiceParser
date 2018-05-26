@@ -1,11 +1,11 @@
-#include "explosedicenode.h"
+#include "explodedicenode.h"
 
-ExploseDiceNode::ExploseDiceNode()
+ExplodeDiceNode::ExplodeDiceNode()
 	: m_diceResult(new DiceResult()),m_validator(nullptr)
 {
     m_result = m_diceResult;
 }
-void ExploseDiceNode::run(ExecutionNode* previous)
+void ExplodeDiceNode::run(ExecutionNode* previous)
 {
 	m_previousNode = previous;
     if((nullptr!=previous)&&(nullptr!=previous->getResult()))
@@ -44,29 +44,29 @@ void ExploseDiceNode::run(ExecutionNode* previous)
         }
     }
 }
-ExploseDiceNode::~ExploseDiceNode()
+ExplodeDiceNode::~ExplodeDiceNode()
 {
 	if(nullptr!=m_validator)
 	{
 		delete m_validator;
 	}
 }
-void ExploseDiceNode::setValidator(Validator* val)
+void ExplodeDiceNode::setValidator(Validator* val)
 {
       m_validator = val;
 }
-QString ExploseDiceNode::toString(bool withlabel) const
+QString ExplodeDiceNode::toString(bool withlabel) const
 {
 	if(withlabel)
 	{
-		return QString("%1 [label=\"ExploseDiceNode %2\"]").arg(m_id).arg(m_validator->toString());
+		return QString("%1 [label=\"ExplodeDiceNode %2\"]").arg(m_id).arg(m_validator->toString());
 	}
 	else
 	{
 		return m_id;
 	}
 }
-qint64 ExploseDiceNode::getPriority() const
+qint64 ExplodeDiceNode::getPriority() const
 {
     qint64 priority=0;
     if(nullptr!=m_previousNode)
@@ -76,9 +76,9 @@ qint64 ExploseDiceNode::getPriority() const
     return priority;
 }
 
-ExecutionNode* ExploseDiceNode::getCopy() const
+ExecutionNode* ExplodeDiceNode::getCopy() const
 {
-    ExploseDiceNode* node = new ExploseDiceNode();
+    ExplodeDiceNode* node = new ExplodeDiceNode();
     if(nullptr!=m_validator)
     {
         node->setValidator(m_validator->getCopy());
