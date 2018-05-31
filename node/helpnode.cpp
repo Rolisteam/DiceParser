@@ -32,7 +32,15 @@ void HelpNode::run(ExecutionNode* previous)
 
     if((nullptr == previous)&&(txtResult != nullptr))
     {
-        txtResult->setText(QObject::tr("Rolisteam Dice Parser:\nFull documentation at: %1").arg(m_path));
+        txtResult->setText(QObject::tr("Rolisteam Dice Parser:\n"
+                                       "\n"
+                                       "Example (with ! as prefix):\n"
+                                       "!2d6"
+                                       "!1d20"
+                                       "\n"
+                                       "Operator list:\n"
+                                       "\n"
+                                       "Full documentation at: %1").arg(m_path));
         m_result->setPrevious(nullptr);
     }
     else if(nullptr != previous)
