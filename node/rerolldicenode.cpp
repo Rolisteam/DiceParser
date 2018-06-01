@@ -41,12 +41,32 @@ void RerollDiceNode::run(ExecutionNode* previous)
             for(int i = 0; i < list.size() ; ++i)
             {
                 auto die = list.at(i);
-                while(m_validator->hasValid(die,false))
+                bool finished = false;
+                while(m_validator->hasValid(die,false) && !finished)
                 {
-                    die->roll(m_adding);
+                    qDebug() << "reroll"<< die->getValue() << m_instruction;
+                    if(m_instruction != nullptr)
+                    {
+                        m_instruction->run(this);
+                        auto lastNode = ParsingToolBox::getLatestNode(m_instruction);
+                        if(lastNode != nullptr)
+                        {
+                            auto lastResult = dynamic_cast<DiceResult*>(lastNode->getResult());
+                            if(lastResult != nullptr)
+                            {
+                                toRemove.append(die);
+                                list.append(lastResult->getResultList());
+                            }
+                            lastResult->clear();
+                        }
+                    }
+                    else
+                    {
+                        die->roll(m_adding);
+                    }
                     if(m_reroll)
                     {
-                        break;
+                        finished = true;
                     }
                 }
             }

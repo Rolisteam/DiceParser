@@ -1065,6 +1065,11 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                     auto reroll = (operatorName==RerollAndAdd || operatorName==Reroll);
                     auto addingMode = (operatorName==RerollAndAdd);
                     RerollDiceNode* rerollNode = new RerollDiceNode(reroll, addingMode);
+                    ExecutionNode* nodeParam = nullptr;
+                    if(readParameterNode(str,nodeParam))
+                    {
+                        rerollNode->setInstruction(nodeParam);
+                    }
                     rerollNode->setValidator(validator);
                     previous->setNextNode(rerollNode);
                     node = rerollNode;
