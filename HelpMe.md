@@ -360,9 +360,16 @@ In the next example, the critical fail happens when there was no success and a l
 
 ### Group
 
-> 5d10g10 
+Group dices, then count the number of group (7th sea system).
 
-Roll 5 dice and then try to group them to make group of 10 [7th sea system].
+#### Example
+
+> 3d20g10 
+
+This will roll 3 dices and then try to group them to make groups of 10. If you get `9 9 2`, you can only create one group whose value is more or equal to ten (`{9,2}`, the second `9` being "wasted").
+
+The `g` operator is allowed to re-order dices to create groups. When rolling `4d20g10`, if you get `7 4 3 6`, the result will be `2` (`{7,3}` and `{6,4}`).
+
 
 ### Comment (\#)
 
