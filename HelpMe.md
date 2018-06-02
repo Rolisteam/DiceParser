@@ -7,6 +7,22 @@
 * [Limitations](#known-limitations) 
 * [Roll a die](#how-to-roll-a-die) 
 * [List of operator](#list-of-operator) 
+    * [Keep](#keep)
+    * [Explode and Keep](#explode-and-keep)
+    * [Keep Lower dice](#keep-lower-dice)
+    * [Sort](#sort)
+    * [Count](#count)
+    * [Reroll](#reroll)
+    * [Reroll until](#reroll-until)
+    * [Explode](#explode)
+    * [Add](#add)
+    * [Roll dice in Range](#roll-dice-in-range)
+    * [Backward Jump](#backward-jump)
+    * [Paint](#paint)
+    * [Merge](#merge)
+    * [if](#if)
+    * [Group](#group)
+    * [Comment (\#)](#comment-)
 * [Arithmetic](#arithmetic) 
 * [Arithmetic and Dice](#arithmetic-and-dice) 
 * [Validator](#validator) 
@@ -147,7 +163,8 @@ the number of instruction is not limited.
 
 ## List of operator
 * k : Keep
-* K : Keep And Explode
+* K : Explode and keep
+* kl: Keep lower
 * s : Sort
 * c : Count
 * r : Reroll
@@ -189,7 +206,7 @@ This way allows you to change the explode threshold.
 
 The option sorts the resulting die list, the it selects the X lowest dice.
 
-### Sorting
+### Sort
 
 > 3D10s
 
@@ -199,7 +216,7 @@ The dice list is sorted in descending order.
 
 Roll 6 dice at 6 faces and then sort them ascendingly
 
-### Counter
+### Count
 
 > 3D10c[Validator]
 
@@ -261,7 +278,7 @@ For example:
 
 c[=10] in this command is counting the number of 10 in the result of 8D10, if you remove the @, it will try to count the number of 10 in the result of c[>=7]. The result of c[>=7] is a scalar number (1 or 2 ... (max value 8)); it is not dice list.
 
-### Painter
+### Paint
 
 > 8D10p[1:blue]
 
@@ -304,7 +321,7 @@ There is also 2 optional parameters
 * {} : the true instruction
 * {} : the false instruction
 
-## Compare method
+#### Compare method
 
 There are 3 different methods.
 * **On Each** : the condition is tested on each die from the previous part of the command. \[Default method\]
@@ -318,7 +335,7 @@ To switch the operator to act in **On Scalar** method you must add **```:```** c
 
 If you plan to use if operator to display text message. You must surround text with ```"```. Example available below.
 
-## If examples:
+#### If examples:
 
 >  1d6i[<4]{3}
 
@@ -351,7 +368,7 @@ Same as above, but the result of each die is displayed inside square brackets.
 
 
 
-## String Result
+#### String Result
 
 To improve readability, it is possible to set the text that should be displayed after the roll.
 
@@ -367,7 +384,7 @@ So, it shows the last scalar result of each instruction and dice result.
 %1 and %3 are equivalent when there is only one instruction (no \;).
 
 
-### Specific value from instrustion
+#### Specific value from instrustion
 
 It is also possible to set reference to the scalar result of specific instruction.
 - To reference the first instruction: `$1`
@@ -377,7 +394,7 @@ etc…
 the number of instruction is not limited.
 
 
-### If examples:
+#### If examples:
 
 > 8d10;$1c[>6];$1c1;$2-$3
 
