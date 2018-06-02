@@ -1,10 +1,8 @@
 [![Logo](https://raw.githubusercontent.com/Rolisteam/rolisteam/master/resources/logo/1000-rolisteam.png)](http://www.rolisteam.org)
 
-**Table of Contents**  
+# Table of Contents
 
 * [DiceParser](#diceparser--what-is-it-) 
-* [Platforms](#roll-dice-on-each-platform) 
-* [Limitations](#known-limitations) 
 * [Roll a die](#how-to-roll-a-die) 
 * [List of operator](#list-of-operator) 
     * [Keep](#keep)
@@ -16,7 +14,6 @@
     * [Reroll until](#reroll-until)
     * [Explode](#explode)
     * [Add](#add)
-    * [Roll dice in Range](#roll-dice-in-range)
     * [Backward Jump](#backward-jump)
     * [Paint](#paint)
     * [Merge](#merge)
@@ -29,69 +26,15 @@
 * [Value from set](#select-value-from-list) 
 * [Miscellaneous examples](#examples) 
 * [Best Practices](#best-practices)
+* [Platforms](#roll-dice-on-each-platform) 
+* [Bug report](#bug-report-and-new-features)
 
 # Documentation:
 
-## DiceParser : What is it ?
+## DiceParser: What is it ?
 
 DiceParser is a software component dedicated to roll dice through simple commands. This software component is available on different platform.  
 Such as: Irc bot, discord bot, included in Rolisteam, web server, on twitter etc.
-
-Each platform has its own limitations.
-Let's take a look about it:
-
-### Roll dice on each platform
-
-
-Please, remember it is important to prefix all you command by `!`. This will allow the system to identify your command. To clarify the documentation, the `!` is not repeated before all commands.
-
-| platform | start character(s)  | more information |
-|---|---|--- |
-| Rolisteam |```!```| [Documentation](http://wiki.rolisteam.org/index.php/En:Dice) |
-| Discord  |```!```| To install DiceParser on your server [http://www.rolisteam.org/discord.html](http://www.rolisteam.org/discord.html)  |
-| Twitter  | ```#roll```  | Twit any message starting with #roll following by dice command (e.g: ```#roll 2d6```) |
-| IrcBot   |```!```|  |
-| webserver   | nothing |  No public published yet. Has dedicated text field |
-| dice   | nothing | dice is a command line application to roll dice: ```dice "2d6"``` |
-
-
-### Known Limitations
-
-| platform | descriptions |
-|---|---|
-| Rolisteam | no support for comments yet. Rolisteam is a big software. You may not have all the most recent feature from diceparser. |
-| Discord  | If the command takes too much time. It is canceled |
-| Twitter  | Result such be short. No aliases |
-| IrcBot   | No aliases |
-| webserver| No aliases |
-| dice     | No aliases |
-
-We can't set some aliases for any platform but It has to be labelled with game's name.
-
-## Documentation about the Discord Bot
-
-### To change the prefix
-> !prefix set newprefix
-
-/!\ Please, don't set "newprefix" as your new prefix. 
-
-### Set the perfix by default
-
-> newprefixprefix set !
-
-### Example
-
-> !prefix set roll
-
-> roll 2d6
-
-> rollprefix set ! 
-
-## Bug report and new features
-
-Please fulfill a ticket in our [Bug tracker](https://github.com/Rolisteam/DiceParser/issues) system.
-Or contact us on [discord](https://discordapp.com/invite/MrMrQwX) or any [other ways](http://www.rolisteam.org/contact.html)
-
 
 ## How to roll a die 
 
@@ -101,6 +44,7 @@ It is real simple. you have to call:
 The first number is the count of dice you want to roll. The second number should be die's faces count.
 
 ### Examples
+
 > 1d6
 
 Roll one six sided die.
@@ -119,8 +63,22 @@ Roll 777 six sided die.
 
 Thanks of several operations and options, you can tune a bit your rolling command: see [List of operator](#list-of-operator).
 
+### Roll dice in Range
 
-## Instruction: Roll two (or more) kinds of dice at once 
+> 4d[-1-1]
+
+Rolling 4 dice with value between -1 to 1. (Fudge/Fate system)
+
+> 3d[0-9]
+
+Rolling 3 dice with 10 faces starting at 0.
+
+> 3d[-20--9]
+
+Rolling 3 dice, values ars between -20 and -9.
+
+
+### Instruction: Roll two (or more) kinds of dice at once 
 
 To make it, you have to separate all dice commands by `;`
 
@@ -162,22 +120,23 @@ the number of instruction is not limited.
 
 
 ## List of operator
-* k : Keep
-* K : Explode and keep
+
+* k: Keep
+* K: Explode and keep
 * kl: Keep lower
-* s : Sort
-* c : Count
-* r : Reroll
-* R : Reroll until
-* e : Explode
-* a : Reroll and add
-* @ : Backward Jump
-* p : Paint dice
-* m : Merge
-* i : if
-* ; : Next instruction
-* g : Group
-* \# : Comment
+* s: Sort
+* c: Count
+* r: Reroll
+* R: Reroll until
+* e: Explode
+* a: Reroll and add
+* @: Backward Jump
+* p: Paint dice
+* m: Merge
+* i: if
+* ;: Next instruction
+* g: Group
+* \#: Comment
 
 ### Keep
 
@@ -191,7 +150,8 @@ The option sorts the resulting die list and select the X higher dice.
 
 Dice explode if their value are at the die **maximum**, the option sorts the resulting die list, the it selects the X higher dice.
 
-**Examples**:
+#### Examples
+
 > 6d10K4
 Roll 6 10-sided dices, each 10 explodes. So the value of exploded dices are greater than 10.
 Result: 40 details: 23 [10,10,3],9,5,3,1,1
@@ -240,7 +200,8 @@ Works like "Reroll", but continue to roll the dice until the condition is false.
 
 Explode while the value fits the Validator (See Validator for more details about syntax).
 
-**Examples**:
+### Examples
+
 > 3D10e10
 While dice value is equal to 10, the dice is rolled again and its result is added to the previous dice value.
 Result: 49 details: 8, 12 [10,2], 29 [10,10,9]
@@ -254,20 +215,6 @@ Result: 35 details: 3, 27 [9,10,8], 5
 > 3D10a[Validator]
 
 Reroll the die if its value fits the Validator and add the new value to the previous one. It does that only once.
-
-### Roll dice in Range
-
-> 4d[-1-1]
-
-Rolling 4 dice with value between -1 to 1. (Fudge/Fate system)
-
-> 3d[0-9]
-
-Rolling 3 dice with 10 faces starting at 0.
-
-> 3d[-20--9]
-
-Rolling 3 dice, values ars between -20 and -9.
 
 ### Backward Jump
 
@@ -329,7 +276,7 @@ There are 3 different methods.
 * **One Of Them (`.`)**: at least one die must fit the condition to trigger the true instruction. If no dices fit the condition the false instruction is run.
 * **On Scalar (`:`)**: the condition is evaluated on the scalar result of the dice roll.
 
-#### If examples:
+#### Examples:
 
 >  1d6i[<4]{3}
 
@@ -368,9 +315,9 @@ To improve readability, it is possible to set the text that should be displayed 
 
 Several data can be displayed:
 
-* %1 : last scalar result from each instruction.
-* %2 : all dice results
-* %3 : last scalar result from the last instruction.
+* %1: last scalar result from each instruction.
+* %2: all dice results
+* %3: last scalar result from the last instruction.
 
 The default output is `%1 details[%2]`.
 So, it shows the last scalar result of each instruction and dice result.
@@ -385,10 +332,10 @@ It is also possible to set reference to the scalar result of specific instructio
 - To reference the second instruction: `$2`
 - To reference the third instruction: `$3`
 etc…
-the number of instruction is not limited.
+The number of instruction is not limited.
 
 
-#### If examples:
+#### Examples:
 
 > 8d10;$1c[>6];$1c1;$2-$3
 
@@ -505,7 +452,7 @@ The scalar value sets the validator on eguality between the dice value and the v
 
 > 4d10e10
 
-This command means : roll 4 dice and they explode on 10.
+This command means: roll 4 dice and they explode on 10.
 
 ### Range
 
@@ -524,11 +471,11 @@ The command counts how many dice are aboved 7.
 #### Logic Operator
 
 The Rolisteam Dice Parser allows you to use several logic operator:
-* Egual : =
-* Greater or egual :  >=
-* Lesser or egual : <=
-* Lesser : <
-* Greater : >
+* Egual: `=`
+* Greater or egual:  `>=`
+* Lesser or egual: `<=`
+* Lesser: `<`
+* Greater: `>`
 
 ## Select value from List
 
@@ -596,12 +543,12 @@ Old World in darkness system.
 Exalted 2nd edition system. 
 
 
-# Best Practices
+## Best Practices
 
 As DiceParser provides more and more features, you may find several ways to do the same thing. We want here to explain the difference between those several approaches. Then you will be able to use the right one.
 
 
-## Roll several kind of dice and sum them
+### Roll several kind of dice and sum them
 
 ```Bad```
 > 2d8;2d10m
@@ -610,3 +557,59 @@ As DiceParser provides more and more features, you may find several ways to do t
 > 2d8+2d10
 
 The merge operator is useful when you want to use dice operator on all rolled dice.
+
+## Plateform specific documentation
+
+### Roll dice on each platform
+
+
+Please, remember it is important to prefix all you command by `!`. This will allow the system to identify your command. To clarify the documentation, the `!` is not repeated before all commands.
+
+| platform | start character(s)  | more information |
+|---|---|--- |
+| Rolisteam |```!```| [Documentation](http://wiki.rolisteam.org/index.php/En:Dice) |
+| Discord  |```!```| To install DiceParser on your server [http://www.rolisteam.org/discord.html](http://www.rolisteam.org/discord.html)  |
+| Twitter  | ```#roll```  | Twit any message starting with #roll following by dice command (e.g: ```#roll 2d6```) |
+| IrcBot   |```!```|  |
+| webserver   | nothing |  No public published yet. Has dedicated text field |
+| dice   | nothing | dice is a command line application to roll dice: ```dice "2d6"``` |
+
+
+### Known Limitations
+
+| platform | descriptions |
+|---|---|
+| Rolisteam | no support for comments yet. Rolisteam is a big software. You may not have all the most recent feature from diceparser. |
+| Discord  | If the command takes too much time. It is canceled |
+| Twitter  | Result such be short. No aliases |
+| IrcBot   | No aliases |
+| webserver| No aliases |
+| dice     | No aliases |
+
+We can't set some aliases for any platform but It has to be labelled with game's name.
+
+### Discord Bot
+
+#### To change the prefix
+> !prefix set newprefix
+
+/!\ Please, don't set "newprefix" as your new prefix. 
+
+#### Set the prefix by default
+
+> newprefixprefix set !
+
+#### Example
+
+> !prefix set roll
+
+> roll 2d6
+
+> rollprefix set ! 
+
+## Bug report and new features
+
+Please fulfill a ticket in our [Bug tracker](https://github.com/Rolisteam/DiceParser/issues) system.
+Or contact us on [discord](https://discordapp.com/invite/MrMrQwX) or any [other ways](http://www.rolisteam.org/contact.html)
+
+
