@@ -29,6 +29,7 @@ set(MODE "cli")
 
 ADD_DEFINITIONS(
     -std=c++11 # Or -std=c++0x
+    -g
     # Other flags
 )
 
