@@ -26,29 +26,18 @@
 #include <QDebug>
 #include <chrono>
 
-Die::Die()
-    : m_hasValue(false),m_displayStatus(false),m_highlighted(true),m_base(1),m_color(""),m_op(Die::PLUS)//,m_mt(m_randomDevice)
+std::mt19937 DefaultRandomGenerator::m_rng = std::mt19937(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+std::shared_ptr<RandomGenerator> Die::m_rng = std::make_shared<DefaultRandomGenerator>();
+
+void Die::setRandomGenerator(std::shared_ptr<RandomGenerator>&& r)
 {
-//    uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
-
-  //  qsrand(seed);
-
-    auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    m_rng = std::mt19937(quintptr(this)+seed);
-
+    Die::m_rng = r;
 }
-Die::Die(const Die& die)
+
+Die::Die(qint64 min, qint64 max)
+    : m_hasValue(false),m_displayStatus(false),m_highlighted(true),m_min(min),m_max(max),m_color(""),m_op(Die::PLUS)
 {
-    m_value = die.m_value;
-    m_rollResult = die.m_rollResult;
-    m_selected = die.m_selected;
-    m_hasValue = die.m_hasValue;
-    m_displayStatus = die.m_displayStatus;
-    m_maxValue = die.m_maxValue;
-    m_highlighted = die.m_highlighted;
-    m_base = die.m_base;
-    m_color = die.getColor();
-    m_op = die.getOp();
+    assert(min<=max);
 }
 
 void Die::setValue(qint64 r)
@@ -134,26 +123,21 @@ void Die::replaceLastValue(qint64 value)
 
 void Die::roll(bool adding)
 {
-    if(m_maxValue!=0)
+    std::uniform_int_distribution<qint64> dist(m_min,m_max);
+    qint64 value = dist(*m_rng);
+    if((adding)||(m_rollResult.isEmpty()))
     {
-        //quint64 value=(qrand()%m_faces)+m_base;
-
-        std::uniform_int_distribution<qint64> dist(m_base,m_maxValue);
-        qint64 value = dist(m_rng);
-        if((adding)||(m_rollResult.isEmpty()))
-        {
-            insertRollValue(value);
-        }
-        else
-        {
-            replaceLastValue(value);
-        }
+        insertRollValue(value);
+    }
+    else
+    {
+        replaceLastValue(value);
     }
 }
 
 quint64 Die::getFaces() const
 {
-    return abs(m_maxValue-m_base)+1;
+    return abs(m_max-m_min)+1;
 }
 qint64 Die::getLastRolledValue()
 {
@@ -181,14 +165,6 @@ bool Die::isHighlighted() const
 {
     return m_highlighted;
 }
-void Die::setBase(qint64 base)
-{
-        m_base = base;
-}
-qint64 Die::getBase()
-{
-    return m_base;
-}
 QString Die::getColor() const
 {
     return m_color;
@@ -201,12 +177,7 @@ void Die::setColor(const QString &color)
 
 qint64 Die::getMaxValue() const
 {
-    return m_maxValue;
-}
-
-void Die::setMaxValue(const qint64 &maxValue)
-{
-    m_maxValue = maxValue;
+    return m_max;
 }
 
 Die::ArithmeticOperator Die::getOp() const

@@ -63,8 +63,7 @@ qint64 OperationCondition::hasValid(Die* b,bool recursive,bool unhighlight) cons
         {
             case Modulo:
             {
-                Die die;
-                die.setMaxValue(b->getMaxValue());
+                Die die(1,b->getMaxValue());
                 auto valueScalar = valueToScalar();
                 if(valueScalar==0)
                     valueScalar = 1;

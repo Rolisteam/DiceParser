@@ -36,7 +36,7 @@ void FilterNode::run(ExecutionNode* previous)
         {
             if(m_validator->hasValid(tmp,m_eachValue))
             {
-                Die* tmpdie = new Die();
+                Die* tmpdie = new Die(-1,-1); // yaaaaaarggl what does this block of code does?
                 *tmpdie=*tmp;
                 diceList2.append(tmpdie);
                 tmp->displayed();

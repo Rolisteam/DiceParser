@@ -49,8 +49,7 @@ void SortResultNode::run(ExecutionNode* node)
         for(int i = 0; i<diceList.size();++i)
         {
 
-            Die* tmp1 = new Die();
-            *tmp1=*diceList[i];
+            Die* tmp1 = new Die(*diceList[i]);
             diceList[i]->displayed();
 
             int j =0;

@@ -51,7 +51,7 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
 
         for(Die* die : diceList3)
         {
-            Die* tmpdie = new Die();
+            Die* tmpdie = new Die(-1,-1); // yaaaaaarggl what does this block of code does?
             *tmpdie=*die;
             diceList2.append(tmpdie);
             die->displayed();
