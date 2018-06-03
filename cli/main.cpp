@@ -49,7 +49,6 @@
 QTextStream out(stdout, QIODevice::WriteOnly);
 bool markdown = false;
 enum EXPORTFORMAT {TERMINAL, SVG, IMAGE, MARKDOWN, JSON, BOT};
-int returnValue = 0;
 
 
 QString diceToMarkdown(QJsonArray array,bool withColor,bool allSameColor,bool allSameFaceCount )
@@ -208,103 +207,56 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
     int rt=0;
     for(QString cmd : cmds)
     {
-        if(parser.parseLine(cmd))
+        Parsed parsed = parse(parser, cmd);
+
+        if(!parsed.isValid) {
+            rt = parsed.isValid; // FIXME: a new error can override a previous error
+            continue;
+        }
+
+        bool allSameFaceCount, allSameColor;
+        auto array =  DisplayToolBox::diceToJson(parsed.diceResult,allSameFaceCount,allSameColor);
+
+        if(format == BOT)
         {
-            parser.start();
-            QList<ExportedDiceResult> list;
-            bool homogeneous = true;
-            parser.getLastDiceResult(list,homogeneous);
-            bool allSameFaceCount, allSameColor;
-            auto array =  DisplayToolBox::diceToJson(list,allSameFaceCount,allSameColor);
-            QString resultStr;
-            QString scalarText;
-            QString lastScalarText;
-            QString comment = parser.getComment();
-            QString error = parser.humanReadableError();
-            QStringList strLst;
-
-            if(parser.hasIntegerResultNotInFirst())
+            if(allSameColor)
             {
-                auto values = parser.getLastIntegerResults();
-                for(auto val : values )
-                {
-                    strLst << QString::number(val);
-                }
-                scalarText = QString("%1").arg(strLst.join(','));
-                lastScalarText = strLst.last();
+                format = MARKDOWN;
             }
-            else if(!list.isEmpty())
+            else
             {
-                auto values = parser.getSumOfDiceResult();
-                for(auto val : values )
-                {
-                    strLst << QString::number(val);
-                }
-                scalarText = QString("%1").arg(strLst.join(','));
+                format = IMAGE;
             }
-
-            if(parser.hasStringResult())
+            if(!parsed.error.isEmpty())
             {
-                bool ok;
-                QStringList allStringlist = parser.getAllStringResult(ok);
-                QString stringResult = allStringlist.join(" ; ");
-                stringResult.replace("%1",scalarText);
-                stringResult.replace("%3",lastScalarText);
-
-                int i = 1;
-                for(auto value : strLst)
-                {
-                    stringResult.replace(QStringLiteral("$%1").arg(i),value);
-                    ++i;
-                }
-
-                resultStr = stringResult;
-            }
-            if(format == BOT)
-            {
-                if(allSameColor)
-                {
-                    format = MARKDOWN;
-                }
-                else
-                {
-                    format = IMAGE;
-                }
-                if(!error.isEmpty())
-                {
-                    format = MARKDOWN;
-                }
-            }
-
-            switch(format)
-            {
-                case TERMINAL:
-                    displayCommandResult(scalarText, resultStr, array, withColor, cmd, error, comment, allSameFaceCount, allSameColor);
-                break;
-                case SVG:
-                    displaySVG(scalarText, resultStr, array, withColor, cmd, error, comment, allSameFaceCount, allSameColor);
-                break;
-                case MARKDOWN:
-                    displayMarkdown(scalarText, resultStr, array, withColor, cmd, error, comment, allSameFaceCount, allSameColor);
-                break;
-                case JSON:
-                    displayJSon(scalarText, resultStr, array, withColor, cmd, error, comment, allSameFaceCount, allSameColor);
-                break;
-                case IMAGE:
-                    displayImage(scalarText, resultStr, array, withColor, cmd, comment, allSameFaceCount, allSameColor);
-                break;
-            }
-            if(!treeFile.isEmpty())
-            {
-                parser.writeDownDotTree(treeFile);
-            }
-
-            if(!error.isEmpty())
-            {
-                rt = 1;
+                format = MARKDOWN;
             }
         }
-        else
+
+        switch(format)
+        {
+            case TERMINAL:
+                displayCommandResult(parsed.scalarText, parsed.result, array, withColor, cmd, parsed.error, parsed.comment, allSameFaceCount, allSameColor);
+                break;
+            case SVG:
+                displaySVG(parsed.scalarText, parsed.result, array, withColor, cmd, parsed.error, parsed.comment, allSameFaceCount, allSameColor);
+                break;
+            case MARKDOWN:
+                displayMarkdown(parsed.scalarText, parsed.result, array, withColor, cmd, parsed.error, parsed.comment, allSameFaceCount, allSameColor);
+                break;
+            case JSON:
+                displayJSon(parsed.scalarText, parsed.result, array, withColor, cmd, parsed.error, parsed.comment, allSameFaceCount, allSameColor);
+                break;
+            case IMAGE:
+                displayImage(parsed.scalarText, parsed.result, array, withColor, cmd, parsed.comment, allSameFaceCount, allSameColor);
+                break;
+        }
+        if(!treeFile.isEmpty())
+        {
+            parser.writeDownDotTree(treeFile);
+        }
+
+        if(!parsed.error.isEmpty())
         {
             rt = 1;
         }
@@ -404,10 +356,9 @@ int main(int argc, char *argv[])
     {
         aliasstr = optionParser.value(alias);
     }
-    returnValue = startDiceParsing(cmdList,dotFileStr,colorb,format);
     if(optionParser.isSet(help))
     {
         out << optionParser.helpText();
     }
-    return returnValue;
+    return startDiceParsing(cmdList,dotFileStr,colorb,format);
 }
