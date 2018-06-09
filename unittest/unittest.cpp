@@ -105,6 +105,8 @@ TEST_CASE("group", "operator") {
     CHECK( roll("4d10g10", {2,2,9,9}) == "2" );
     CHECK( roll("4d10g10", {7,4,3,6}) == "2" );
     CHECK( roll("4d10g10", {8,4,3,7}) == "2" );
+    CHECK( roll("12d100g100", {/* group A = 100 */ 50, 25, 25, /* group B = 100 */ 33, 34, 32, 1, /* group C = 100 */ 10, 11, 12, 13, 54}) == "3" );
+    CHECK( roll("12d100g100", {/* group A = 103 */ 50, 28, 25, /* group B = 104 */ 33, 34, 32, 5, /* group C = 101 */ 9, 11, 12, 13, 56}) == "3" );
 }
 
 TEST_CASE("comment", "operator") {
