@@ -53,19 +53,20 @@ private:
 
 struct CustomRandomGenerator: public RandomGenerator {
 public:
-    CustomRandomGenerator(std::deque<result_type> values): m_values(move(values)) {}
+    CustomRandomGenerator(result_type maxDiceValue, std::deque<result_type> values): m_max{maxDiceValue}, m_values{move(values)} {}
     result_type operator() () override {
         auto val = m_values.front();
         m_values.pop_front();
-        return val;
+        return val - 1;
     }
     result_type min () override {
-        return INT_FAST32_MIN;
+        return 0;
     }
     result_type max () override {
-        return INT_FAST32_MAX;
+        return m_max;
     }
 private:
+    result_type m_max;
     std::deque<result_type> m_values;
 };
 
