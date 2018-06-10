@@ -1,3 +1,6 @@
 [submodule "webserver/qhttp"]
 	path = webserver/qhttp
 	url = https://github.com/azadkuh/qhttp.git
+[submodule "Catch2"]
+	path = Catch2
+	url = git@github.com:catchorg/Catch2.git

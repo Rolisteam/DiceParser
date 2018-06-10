@@ -139,10 +139,9 @@ void IfNode::run(ExecutionNode *previous)
 
         if(m_conditionType == OnScalar)
         {
-            Die* dice = new Die();
+            Die* dice = new Die(1,value);
             dice->setValue(value);
             dice->insertRollValue(value);
-            dice->setMaxValue(value);
             if(m_validator->hasValid(dice,true,true))
             {
                     nextNode=m_true;

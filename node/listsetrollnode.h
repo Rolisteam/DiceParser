@@ -48,7 +48,7 @@ public:
 
 private:
     void getValueFromDie(Die* die,QStringList& rollResult);
-    void computeFacesNumber(Die* die);
+    qint64 computeFacesNumber();
 
 private:
     QStringList m_values;

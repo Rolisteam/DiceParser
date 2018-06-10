@@ -38,10 +38,8 @@ void DiceRollerNode::run(ExecutionNode* previous)
 
             for(quint64 i=0; i < m_diceCount ; ++i)
             {
-                Die* die = new Die();
+                Die* die = new Die(m_min,m_max);
                 die->setOp(m_operator);
-                die->setBase(m_min);
-                die->setMaxValue(m_max);
                 die->roll();
                 if(m_unique)
                 {

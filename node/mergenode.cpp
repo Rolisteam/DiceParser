@@ -56,7 +56,7 @@ void MergeNode::run(ExecutionNode* previous)
                     {
                         if(!m_diceResult->getResultList().contains(die)&&(!die->hasBeenDisplayed()))
                         {
-                            Die* tmpdie = new Die();
+                            Die* tmpdie = new Die(-1,-1); // yaaaaaarggl what does this block of code does?
                             *tmpdie=*die;
                             die->displayed();
                             m_diceResult->getResultList().append(tmpdie);

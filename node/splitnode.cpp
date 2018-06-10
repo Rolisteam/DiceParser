@@ -45,10 +45,8 @@ void SplitNode::run(ExecutionNode* previous)
                     m_diceResult->setOperator(oldDie->getOp());
                     for(qint64 value : oldDie->getListValue())
                     {
-                        Die* tmpdie = new Die();
+                        Die* tmpdie = new Die(*oldDie);
                         tmpdie->insertRollValue(value);
-                        tmpdie->setBase(oldDie->getBase());
-                        tmpdie->setMaxValue(oldDie->getMaxValue());
                         tmpdie->setValue(value);
                         tmpdie->setOp(oldDie->getOp());
                         m_diceResult->insertResult(tmpdie);

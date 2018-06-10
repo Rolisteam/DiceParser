@@ -4,7 +4,7 @@ option(UPDATE_TRANSLATIONS "update Translation" OFF)
 MESSAGE(STATUS "UPDATE TRANSLATIONS: ${UPDATE_TRANSLATIONS}")
 
 
-project(dice)
+project(unittest)
 
 
 # Find includes in corresponding build directories
@@ -28,7 +28,7 @@ add_definitions(${Qt5Gui_DEFINITIONS})
 set(MODE "cli")
 
 ADD_DEFINITIONS(
-    -std=c++11 # Or -std=c++0x
+    -std=c++11
     -g
     # Other flags
 )
@@ -64,7 +64,12 @@ if(Qt5Core_FOUND)
     get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
 endif()
 
-SET( dice_sources 
+include_directories(../Catch2/single_include)
+include_directories(../cli)
+
+SET( unittest_sources 
+    unittest.cpp
+
     ../diceparser.cpp
     ../range.cpp
     ../booleancondition.cpp
@@ -100,15 +105,13 @@ SET( dice_sources
     ../node/ifnode.cpp
     ../node/splitnode.cpp
     ../node/groupnode.cpp
-    main.cpp
-    displaytoolbox.cpp
     ../highlightdice.cpp
     ../node/variablenode.cpp
 )
 
-add_executable( dice ${dice_sources} ${dice_QM}   )
+add_executable(unittest ${unittest_sources} ${dice_QM}   )
 
-target_link_libraries(dice ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES})
-INSTALL_TARGETS(/bin dice)
+target_link_libraries(unittest ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES})
+INSTALL_TARGETS(/bin unittest)
 
 #qt5_use_modules()

@@ -75,8 +75,7 @@ void ListSetRollNode::run(ExecutionNode* previous)
                 QStringList rollResult;
                 for(quint64 i=0; i < diceCount ; ++i)
                 {
-                    Die* die = new Die();
-                    computeFacesNumber(die);
+                    Die* die = new Die(1,computeFacesNumber());
                     die->roll();
                     m_diceResult->insertResult(die);
                     getValueFromDie(die,rollResult);
@@ -102,11 +101,11 @@ void ListSetRollNode::setRangeList(QList<Range>& ranges)
 {
     m_rangeList = ranges;
 }
-void ListSetRollNode::computeFacesNumber(Die* die)
+qint64 ListSetRollNode::computeFacesNumber()
 {
     if(m_rangeList.isEmpty())
     {
-        die->setMaxValue(m_values.size());
+        return m_values.size();
     }
     else
     {
@@ -121,7 +120,7 @@ void ListSetRollNode::computeFacesNumber(Die* die)
             }
             ++i;
         }
-        die->setMaxValue(max);
+        return max;
     }
 
 }
