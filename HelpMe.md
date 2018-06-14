@@ -136,6 +136,7 @@ the number of instruction is not limited.
 * i: if
 * ;: Next instruction
 * g: Group
+* b: bind
 * \#: Comment
 
 ### Keep
@@ -249,6 +250,16 @@ Merge operator is used for gathering several dice rolls from different die type 
 > 1d6;1d8mk1
 
 This command merges together the result from the d6 and the d8. Then, it applied the k operator on both result to keep the best.
+Be careful, this operator merges the instruction list. Instruction reference (such as $1 etc..) won't work after merge operator.
+
+### Bind
+
+Bind works exactly as merge but one thing.
+
+> !2d8;2d12b;$2k2;$2k2kl1;"your total is $3 with lowest: $4"
+
+Roll two 8-sided dice and two 12-sided dice then bind their results. using this final result, we keep the 2 higher dice and then we isolate the lowest of the two highest.
+At the end, we display the result inside a setence. 
 
 ### if
 
