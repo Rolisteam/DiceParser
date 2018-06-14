@@ -194,6 +194,7 @@ public:
     static void setStartNodes(std::vector<ExecutionNode *> *startNodes);
 
     static bool readOperand(QString &str, ExecutionNode *&node);
+    static QJsonArray ResultToJson(std::vector<ExecutionNode *> &startNodes);
 private:
 
     QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;

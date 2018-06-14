@@ -62,6 +62,10 @@ public:
      */
 	enum DiceOperator {D,L};
     /**
+     * @brief Instruction Operators take action on execution tree.
+     **/
+	enum InstuctionOperator {End,Repeat};
+    /**
      * @brief The DiceSymbol enum
      */
     enum NodeAction {JumpBackward};
@@ -283,7 +287,7 @@ private:
      * @param c
      * @return
      */
-    bool readInstructionOperator(QChar c);
+    bool readInstructionOperator(QChar c, InstuctionOperator& op);
     /**
      * @brief readNode
      * @param str
@@ -291,12 +295,6 @@ private:
      * @return
      */
     bool readNode(QString& str,ExecutionNode* & node);
-
-    /**
-     * @brief getLeafNode
-     * @return
-     */
-    ExecutionNode* getLeafNode(ExecutionNode* node);
 
     /**
      * @brief hasResultOfType
@@ -307,24 +305,25 @@ private:
 
 
 private:
-    QMap<QString,DiceOperator>* m_mapDiceOp;
-    QMap<QString,OptionOperator>* m_OptionOp;
-    QMap<QString,NodeAction>* m_nodeActionMap;
-    QList<DiceAlias*>* m_aliasList;
-    QStringList* m_commandList;
+    QMap<QString,DiceOperator>* m_mapDiceOp = nullptr;
+    QMap<QString,OptionOperator>* m_OptionOp = nullptr;
+    QMap<QString,NodeAction>* m_nodeActionMap = nullptr;
+    QList<DiceAlias*>* m_aliasList = nullptr;
+    QStringList* m_commandList = nullptr;
 
     QMap<ExecutionNode::DICE_ERROR_CODE,QString> m_errorMap;
     QMap<ExecutionNode::DICE_ERROR_CODE,QString> m_warningMap;
 
-    ExecutionNode* m_start = nullptr;
+    ExecutionNode* m_preprocessorNode = nullptr;// must have scalar result at the end.
     std::vector<ExecutionNode*> m_startNodes;
     //ExecutionNode* m_current;
     QString m_command;
-    ParsingToolBox* m_parsingToolbox;
+    ParsingToolBox* m_parsingToolbox = nullptr;
     QString m_helpPath;
     bool m_currentTreeHasSeparator;
     bool readBlocInstruction(QString &str, ExecutionNode *&resultnode);
     QString m_comment;
+    QMap<QString,InstuctionOperator>* m_instructionOp = nullptr;
 };
 
 #endif // DICEPARSER_H

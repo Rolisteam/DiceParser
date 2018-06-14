@@ -52,7 +52,6 @@
 #define DEFAULT_FACES_NUMBER 10
 
 DiceParser::DiceParser()
-    //: //m_start(nullptr),m_current(nullptr)
 {
     m_currentTreeHasSeparator =false;
     m_parsingToolbox = new ParsingToolBox();
@@ -79,6 +78,8 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QStringLiteral("u"),Split);
     m_OptionOp->insert(QStringLiteral("g"),Group);
     m_OptionOp->insert(QStringLiteral("b"),Bind);
+
+    m_instructionOp = new QMap<QString,InstuctionOperator>{{";",End},{"!",Repeat}};
 
     m_aliasList = new QList<DiceAlias*>();
 
@@ -122,10 +123,10 @@ DiceParser::~DiceParser()
         delete m_aliasList;
         m_aliasList = nullptr;
     }
-    if(nullptr!=m_start)
+    if(nullptr!=m_preprocessorNode)
     {
-        delete m_start;
-        m_start = nullptr;
+        delete m_preprocessorNode;
+        m_preprocessorNode = nullptr;
     }
 }
 
@@ -281,9 +282,27 @@ bool DiceParser::readNode(QString& str,ExecutionNode* & node)
 
 void DiceParser::start()
 {
-    for(auto start : m_startNodes)
+    int times = 1;
+    if(nullptr != m_preprocessorNode)
     {
-        start->run();
+        m_preprocessorNode->run();
+        auto leafNode =  ParsingToolBox::getLatestNode(m_preprocessorNode);
+        if(nullptr != leafNode)
+        {
+            auto result = leafNode->getResult();
+            if(nullptr != result)
+            {
+                times = result->getResult(Result::SCALAR).toInt();
+            }
+        }
+    }
+
+    for(int i = 0; i<times; ++i)
+    {
+        for(auto start : m_startNodes)
+        {
+            start->run();
+        }
     }
 }
 
@@ -385,7 +404,7 @@ QList<qreal> DiceParser::getLastIntegerResults()
     QList<qreal> resultValues;
     for(auto node : m_startNodes)
     {
-        ExecutionNode* next = getLeafNode(node);
+        ExecutionNode* next = ParsingToolBox::getLatestNode(node);
         Result* result=next->getResult();
         bool scalarDone = false;
         while((result!=nullptr)&&(!scalarDone))
@@ -405,7 +424,7 @@ QStringList DiceParser::getStringResult( )
     QStringList stringListResult;
     for(auto node : m_startNodes)
     {
-        ExecutionNode* next = getLeafNode(node);
+        ExecutionNode* next = ParsingToolBox::getLatestNode(node);
         QString str;
         Result* result=next->getResult();
         bool found = false;
@@ -428,7 +447,7 @@ QStringList DiceParser::getAllStringResult(bool& hasAlias)
     QStringList stringListResult;
     for(auto node : m_startNodes)
     {
-        ExecutionNode* next = getLeafNode(node);
+        ExecutionNode* next = ParsingToolBox::getLatestNode(node);
         Result* result=next->getResult();
 
         while(nullptr!=result)
@@ -452,7 +471,7 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
     QStringList stringListResult;
     for(auto node : m_startNodes)
     {
-        ExecutionNode* next = getLeafNode(node);
+        ExecutionNode* next = ParsingToolBox::getLatestNode(node);
         Result* result=next->getResult();
         QList<Die*> dieListResult;
 
@@ -496,7 +515,7 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
     for(auto start : m_startNodes)
     {
         ExportedDiceResult diceValues;
-        ExecutionNode* next = getLeafNode(start);
+        ExecutionNode* next = ParsingToolBox::getLatestNode(start);
         Result* result=next->getResult();
 
         while(nullptr!=result)
@@ -593,7 +612,7 @@ bool DiceParser::hasStringResult()
 bool DiceParser::hasResultOfType(Result::RESULT_TYPE type, ExecutionNode* node, bool notthelast)
 {
     bool scalarDone = false;
-    ExecutionNode* next = getLeafNode(node);
+    ExecutionNode* next = ParsingToolBox::getLatestNode(node);
     Result* result=next->getResult();
     while((result!=nullptr)&&(!scalarDone))
     {
@@ -611,7 +630,7 @@ QList<qreal> DiceParser::getSumOfDiceResult()
     for(auto node : m_startNodes)
     {
         qreal resultValue=0;
-        ExecutionNode* next = getLeafNode(node);
+        ExecutionNode* next = ParsingToolBox::getLatestNode(node);
         Result* result=next->getResult();
         bool found = false;
         while((nullptr!=result)&&(!found))
@@ -637,15 +656,6 @@ QList<qreal> DiceParser::getSumOfDiceResult()
 int DiceParser::getStartNodeCount() const
 {
     return m_startNodes.size();
-}
-ExecutionNode* DiceParser::getLeafNode(ExecutionNode* start)
-{
-    ExecutionNode* next = start;
-    while(nullptr != next->getNextNode() )
-    {
-        next = next->getNextNode();
-    }
-    return next;
 }
 
 bool DiceParser::readDice(QString&  str,ExecutionNode* & node)
@@ -791,8 +801,15 @@ bool DiceParser::readDiceExpression(QString& str,ExecutionNode* & node)
     }
     return returnVal;
 }
-bool DiceParser::readInstructionOperator(QChar c)
+bool DiceParser::readInstructionOperator(QChar c, InstuctionOperator& op)
 {
+    QString strKey(c);
+    if(m_instructionOp->contains(strKey))
+    {
+        op  = m_instructionOp->value(strKey);
+        return true;
+    }
+    return false;
     if(c == ';')
     {
         return true;
@@ -813,7 +830,6 @@ bool DiceParser::readInstructionList(QString& str)
         if(nullptr != startNode)
         {
             hasInstruction = true;
-            m_startNodes.push_back(startNode);
             auto latest = startNode;
             if(keepParsing)
             {
@@ -825,9 +841,16 @@ bool DiceParser::readInstructionList(QString& str)
                     latest = ParsingToolBox::getLatestNode(latest);
                 }
             }
-            if( !str.isEmpty() && readInstructionOperator(str[0]))
+            InstuctionOperator operatorInstruction;
+            if( !str.isEmpty() && readInstructionOperator(str[0],operatorInstruction))
             {
                 str=str.remove(0,1);
+                if(operatorInstruction == Repeat)
+                {
+                    m_preprocessorNode = startNode;
+                    startNode = nullptr;
+                    continue;
+                }
             }
             else
             {
@@ -840,6 +863,7 @@ bool DiceParser::readInstructionList(QString& str)
                 }
                 readInstruction = false;
             }
+            m_startNodes.push_back(startNode);
         }
         else
         {

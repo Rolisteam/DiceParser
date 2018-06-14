@@ -227,6 +227,7 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
             parser.getLastDiceResult(list,homogeneous);
             bool allSameFaceCount, allSameColor;
             auto array =  DisplayToolBox::diceToJson(list,allSameFaceCount,allSameColor);
+            qDebug() << array;
             QString resultStr;
             QString scalarText;
             QString lastScalarText;

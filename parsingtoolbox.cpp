@@ -20,6 +20,8 @@
 * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
 ***************************************************************************/
 #include <QString>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #include "parsingtoolbox.h"
 #include "node/sortresult.h"
@@ -783,4 +785,58 @@ bool ParsingToolBox::readComment(QString& str, QString & result, QString& commen
         return true;
     }
     return false;
+}
+QJsonObject resultToJSonObject(Result* result)
+{
+    QJsonObject obj;
+    obj["scalar"]=result->getResult(Result::SCALAR).toReal();
+    obj["string"]=result->getResult(Result::STRING).toString();
+    QJsonArray diceValues;
+    if(result->hasResultOfType(Result::DICE_LIST))
+    {
+        DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
+        if(nullptr!=diceResult)
+        {
+            for(auto die : diceResult->getResultList())
+            {
+                QJsonObject diceObj;
+                diceObj["id"]=static_cast<int>(quintptr(die));//id
+                diceObj["value"] = die->getValue();
+                diceObj["faces"] = static_cast<int>(die->getFaces());
+                diceObj["color"] = die->getColor();
+                diceObj["selected"] = die->isSelected();
+                diceObj["displayed"] = die->hasBeenDisplayed();
+                diceObj["operator"] = static_cast<int>(die->getOp());
+                QJsonArray values;
+                for(auto value : die->getListValue())
+                {
+                    values.append(value);
+                }
+                diceObj["values"]= values;
+                diceObj["lastvalue"]= die->getLastRolledValue();
+                diceValues.append(diceObj);
+            }
+        }
+    }
+    return obj;
+}
+QJsonArray ParsingToolBox::ResultToJson(std::vector<ExecutionNode*>& startNodes)
+{
+    QJsonArray arrayInstructions;
+
+    for(auto node : startNodes)
+    {
+        QJsonArray arrayResults;
+        auto leaf = getLatestNode(node);
+        if(nullptr != leaf)
+        {
+            auto result = leaf->getResult();
+            if(nullptr != result)
+            {
+               arrayResults.append(resultToJSonObject(result));
+            }
+        }
+        arrayInstructions.append(arrayResults);
+    }
+
 }
