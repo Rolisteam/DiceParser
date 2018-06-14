@@ -44,7 +44,6 @@ void RerollDiceNode::run(ExecutionNode* previous)
                 bool finished = false;
                 while(m_validator->hasValid(die,false) && !finished)
                 {
-                    qDebug() << "reroll"<< die->getValue() << m_instruction;
                     if(m_instruction != nullptr)
                     {
                         m_instruction->run(this);

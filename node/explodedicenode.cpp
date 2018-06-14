@@ -38,10 +38,6 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
                 m_nextNode->run(this);
             }
         }
-        else
-        {
-            qDebug() << "test!!";
-        }
     }
 }
 ExplodeDiceNode::~ExplodeDiceNode()

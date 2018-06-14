@@ -877,7 +877,6 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
             {
                 parent = nodeExecOrChild;
                 nodeExecOrChild = nodeExecOrChild->getNextNode();
-                //qDebug() << node->getPriority() << nodeExecOrChild->getPriority() << "###########";
             }
             // management of operator priority
             if((nullptr != nodeExecOrChild)&&(nodeExec != nodeExecOrChild))
@@ -967,7 +966,6 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 {
                     node = m_parsingToolbox->addSort(previous,ascending);
                     KeepDiceExecNode* nodeK = new KeepDiceExecNode();
-                    //qDebug() << "nodeK " << previous->toString(true)  << str;
                     nodeK->setDiceKeepNumber(myNumber);
                     node->setNextNode(nodeK);
                     node = nodeK;
