@@ -93,6 +93,7 @@ SET( diceGui_sources
    ../node/splitnode.cpp
    ../node/groupnode.cpp
    ../node/variablenode.cpp
+   ../node/bind.cpp
     main.cpp
     maincontroler.cpp
     commandmodel.cpp

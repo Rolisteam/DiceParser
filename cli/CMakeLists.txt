@@ -99,6 +99,7 @@ SET( dice_sources
     ../node/ifnode.cpp
     ../node/splitnode.cpp
     ../node/groupnode.cpp
+    ../node/bind.cpp
     main.cpp
     displaytoolbox.cpp
     ../highlightdice.cpp
