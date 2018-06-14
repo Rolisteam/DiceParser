@@ -48,7 +48,9 @@ QString ListAliasNode::buildList() const
 	QString result(QObject::tr("List of Alias:\n"));
     for(DiceAlias* key: *m_aliasList)
 	{
-        result+=QString("%1 : %2\n").arg(key->getCommand()).arg(key->getValue());
+        result+=QString("%1 : %2  # %3\n").arg(key->getCommand())
+                                         .arg(key->getValue())
+                                         .arg(key->getComment());
 	}
 	return result;
 }

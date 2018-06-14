@@ -28,6 +28,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QGuiApplication>
+#include <QFile>
 
 #include "displaytoolbox.h"
 #include "diceparser.h"
@@ -200,11 +201,21 @@ void displayCommandResult(QString scalarText, QString resultStr,QJsonArray array
     out << str << "\n";
 }
 
-int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTFORMAT format)
+int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTFORMAT format, QJsonArray array)
 {
     DiceParser parser;
     parser.insertAlias(new DiceAlias("L5R5R",QStringLiteral("L[-,⨀,⨀⬢,❂⬢,❁,❁⬢]")),0);
     parser.insertAlias(new DiceAlias("L5R5S",QStringLiteral("L[-,-,⨀,⨀,⨀❁,⨀⬢,⨀⬢,❂,❂⬢,❁,❁,❁]")),1);
+    int i = 0;
+    for(auto alias : array)
+    {
+        auto objAlias = alias.toObject();
+        auto dice = new DiceAlias(objAlias["pattern"].toString(),objAlias["cmd"].toString(),!objAlias["regexp"].toBool());
+        dice->setComment(objAlias["comment"].toString());
+        parser.insertAlias(dice,i++);
+    }
+
+
     int rt=0;
     for(QString cmd : cmds)
     {
@@ -399,13 +410,23 @@ int main(int argc, char *argv[])
     }
     QStringList cmdList = optionParser.positionalArguments();
    // cmdList << "8d10;\$1c[>6];\$1c[=1];\$2-\$3i:[>0]{\"%3 Success[%2]\"}{i:[<0]{\"Critical fail %3 [%2]\"}{\"Fail %3 [%2]\"}}";
-
     QString aliasstr;
+    QJsonArray aliases;
     if(optionParser.isSet(alias))
     {
         aliasstr = optionParser.value(alias);
+
+        QFile file(aliasstr);
+    
+        if(file.open(QIODevice::ReadOnly))
+        {
+            QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+            aliases = doc.array();
+        }
+
     }
-    returnValue = startDiceParsing(cmdList,dotFileStr,colorb,format);
+
+    returnValue = startDiceParsing(cmdList,dotFileStr,colorb,format,aliases);
     if(optionParser.isSet(help))
     {
         out << optionParser.helpText();
