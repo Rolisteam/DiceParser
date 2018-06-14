@@ -22,20 +22,19 @@
 #include "booleancondition.h"
 #include <QDebug>
 
-BooleanCondition::BooleanCondition()
-    : m_operator(Equal)
+BooleanCondition::BooleanCondition() : m_operator(Equal)
 {
 }
 
 BooleanCondition::~BooleanCondition()
 {
-    if(m_value!= nullptr)
+    if(m_value != nullptr)
     {
         delete m_value;
         m_value = nullptr;
     }
 }
-qint64 BooleanCondition::hasValid(Die* b,bool recursive,bool unhighlight) const
+qint64 BooleanCondition::hasValid(Die* b, bool recursive, bool unhighlight) const
 {
     QList<qint64> listValues;
     if(recursive)
@@ -47,39 +46,39 @@ qint64 BooleanCondition::hasValid(Die* b,bool recursive,bool unhighlight) const
         listValues.append(b->getLastRolledValue());
     }
 
-    qint64 sum= 0;
+    qint64 sum = 0;
     auto valueScalar = valueToScalar();
-    for(qint64 value: listValues)
+    for(qint64 value : listValues)
     {
         switch(m_operator)
         {
-            case Equal:
-                sum+=(value==valueScalar)?1:0;
-                break;
-            case GreaterThan:
-                sum+= (value>valueScalar)?1:0;
-                break;
-            case LesserThan:
-                sum+= (value<valueScalar)?1:0;
-                break;
-            case GreaterOrEqual:
-                sum+= (value>=valueScalar)?1:0;
-                break;
-            case LesserOrEqual:
-                sum+= (value<=valueScalar)?1:0;
-                break;
-            case Different:
-                sum+= (value!=valueScalar)?1:0;
-                break;
+        case Equal:
+            sum += (value == valueScalar) ? 1 : 0;
+            break;
+        case GreaterThan:
+            sum += (value > valueScalar) ? 1 : 0;
+            break;
+        case LesserThan:
+            sum += (value < valueScalar) ? 1 : 0;
+            break;
+        case GreaterOrEqual:
+            sum += (value >= valueScalar) ? 1 : 0;
+            break;
+        case LesserOrEqual:
+            sum += (value <= valueScalar) ? 1 : 0;
+            break;
+        case Different:
+            sum += (value != valueScalar) ? 1 : 0;
+            break;
         }
     }
-    if((unhighlight)&&(sum==0))
+    if((unhighlight) && (sum == 0))
     {
         b->setHighlighted(false);
     }
     else
     {
-         b->setHighlighted(true);
+        b->setHighlighted(true);
     }
 
     return sum;
@@ -92,12 +91,12 @@ void BooleanCondition::setOperator(LogicOperator m)
 
 void BooleanCondition::setValueNode(ExecutionNode* v)
 {
-    m_value=v;
+    m_value = v;
 }
 QString BooleanCondition::toString()
 {
     QString str(QStringLiteral(""));
-    switch (m_operator)
+    switch(m_operator)
     {
     case Equal:
         str.append(QStringLiteral("="));
@@ -122,20 +121,20 @@ QString BooleanCondition::toString()
 }
 quint64 BooleanCondition::getValidRangeSize(quint64 faces) const
 {
-    switch (m_operator)
+    switch(m_operator)
     {
     case Equal:
         return 1;
     case GreaterThan:
-        return faces-valueToScalar();
+        return faces - valueToScalar();
     case LesserThan:
-        return valueToScalar()-1;
+        return valueToScalar() - 1;
     case GreaterOrEqual:
-        return faces-(valueToScalar()-1);
+        return faces - (valueToScalar() - 1);
     case LesserOrEqual:
         return valueToScalar();
     case Different:
-        return faces-1;
+        return faces - 1;
     }
     return 0;
 }
