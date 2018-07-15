@@ -75,7 +75,7 @@ Rolling 3 dice with 10 faces starting at 0.
 
 > 3d[-20--9]
 
-Rolling 3 dice, values ars between -20 and -9.
+Rolling 3 dice, values are between -20 and -9.
 
 
 ### Instruction: Roll two (or more) kinds of dice at once 
@@ -96,7 +96,7 @@ It is possible to merge every instruction inside a huge one.
 The operator merge is dedicated to that. 
 It is useful when you need to manage all diceresult as the same result.
 
-For example, if you need to keep the high dice between a d6 and d8.
+For example, if you need to keep the higher dice between a d6 and d8.
 
 > d6;d8mk1
 
