@@ -29,6 +29,9 @@ BindNode::BindNode()
 void BindNode::run(ExecutionNode* previous)
 {
     m_previousNode = previous;
+    if(nullptr == m_previousNode)
+        return;
+
     m_result->setPrevious(previous->getResult());
     for(auto start : *m_startList)
     {
