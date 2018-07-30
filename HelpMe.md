@@ -19,6 +19,7 @@
     * [Merge](#merge)
     * [if](#if)
     * [Group](#group)
+    * [Unique](#Unique)
     * [Comment (\#)](#comment-)
 * [Arithmetic](#arithmetic) 
 * [Arithmetic and Dice](#arithmetic-and-dice) 
@@ -251,6 +252,16 @@ Merge operator is used for gathering several dice rolls from different die type 
 
 This command merges together the result from the d6 and the d8. Then, it applied the k operator on both result to keep the best.
 Be careful, this operator merges the instruction list. Instruction reference (such as $1 etc..) won't work after merge operator.
+
+### Unique
+
+It makes exploded dice as new dice.
+
+> 4d6e6u6k3
+
+Result: 6 4 3 3 2
+Final result: 6+4+3 = 13
+
 
 ### Bind
 
