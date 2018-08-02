@@ -155,6 +155,7 @@ void DiceParser::insertAlias(DiceAlias* dice, int i)
 bool DiceParser::parseLine(QString str, bool allowAlias)
 {
     m_errorMap.clear();
+    m_comment = QStringLiteral("");
     if(!m_startNodes.empty())
     {
         qDeleteAll(m_startNodes);
