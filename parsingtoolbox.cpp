@@ -28,7 +28,7 @@
 #include "node/stringnode.h"
 
 
-QHash<QString,QString>*  ParsingToolBox::m_variableHash = nullptr;
+QHash<QString,QString>  ParsingToolBox::m_variableHash;
 std::vector<ExecutionNode*>*  ParsingToolBox::m_startNodes = nullptr;
 
 ParsingToolBox::ParsingToolBox()
@@ -491,11 +491,11 @@ bool ParsingToolBox::readVariable(QString &str, qint64 &myNumber, QString& reaso
     int post = str.indexOf('}');
     key = str.left(post);
 
-    if(nullptr!=m_variableHash)
+    if(!m_variableHash.isEmpty())
     {
-        if(m_variableHash->contains(key))
+        if(m_variableHash.contains(key))
         {
-            QString value = m_variableHash->value(key);
+            QString value = m_variableHash.value(key);
             bool ok;
             int valueInt = value.toInt(&ok);
             if(ok)
@@ -662,12 +662,12 @@ void ParsingToolBox::readPainterParameter(PainterNode* painter,QString& str)
     }
 }
 
-QHash<QString, QString> *ParsingToolBox::getVariableHash()
+QHash<QString, QString> ParsingToolBox::getVariableHash()
 {
     return m_variableHash;
 }
 
-void ParsingToolBox::setVariableHash(QHash<QString, QString> *variableHash)
+void ParsingToolBox::setVariableHash(const QHash<QString, QString>& variableHash)
 {
     m_variableHash = variableHash;
 }

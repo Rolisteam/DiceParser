@@ -178,8 +178,8 @@ public:
 
     static void readPainterParameter(PainterNode *painter, QString &str);
 
-    static QHash<QString, QString> *getVariableHash();
-    static void setVariableHash(QHash<QString, QString> *variableHash);
+    static QHash<QString, QString> getVariableHash();
+    static void setVariableHash(const QHash<QString, QString> &variableHash);
     /**
      * @brief readConditionType
      * @param str
@@ -202,7 +202,7 @@ private:
     QHash<QString,Die::ArithmeticOperator>* m_arithmeticOperation;
 
 
-    static QHash<QString,QString>* m_variableHash;
+    static QHash<QString,QString> m_variableHash;
     static std::vector<ExecutionNode*>* m_startNodes;
 };
 

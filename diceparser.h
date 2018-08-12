@@ -213,7 +213,7 @@ public:
      * @brief setVariableDictionary
      * @param variables
      */
-    void setVariableDictionary(QHash<QString,QString>* variables);
+    void setVariableDictionary(const QHash<QString, QString> &variables);
     QString getComment() const;
     void setComment(const QString &comment);
 
