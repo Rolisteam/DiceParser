@@ -89,9 +89,11 @@ QString makeReplament(const QString& pattern, const QString& replacement, QStrin
                     patternPosList.push_back(pos);
                 pos+=1;
             }
-            for(auto pos : patternPosList)
+
+            // TODO to be replace by C++14 when it is ready
+            for (auto i = patternPosList.rbegin(); i != patternPosList.rend(); ++i)
             {
-                cmd.replace(pos,1,replacement);
+                cmd.replace(*i,1,replacement);
             }
         }
     }
