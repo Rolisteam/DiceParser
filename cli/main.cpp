@@ -206,7 +206,7 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
     DiceParser parser;
     parser.insertAlias(new DiceAlias("L5R5R",QStringLiteral("L[-,⨀,⨀⬢,❂⬢,❁,❁⬢]")),0);
     parser.insertAlias(new DiceAlias("L5R5S",QStringLiteral("L[-,-,⨀,⨀,⨀❁,⨀⬢,⨀⬢,❂,❂⬢,❁,❁,❁]")),1);
-    int i = 0;
+    int i = 2;
     for(auto alias : array)
     {
         auto objAlias = alias.toObject();
@@ -214,7 +214,6 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
         dice->setComment(objAlias["comment"].toString());
         parser.insertAlias(dice,i++);
     }
-
 
     int rt=0;
     for(QString cmd : cmds)
