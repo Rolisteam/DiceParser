@@ -40,6 +40,7 @@ SOURCES += $$PWD/diceparser.cpp \
     $$PWD/node/splitnode.cpp \
     $$PWD/node/listsetrollnode.cpp\
     $$PWD/node/variablenode.cpp\
+    $$PWD/node/bind.cpp\
     $$PWD/diceroller.cpp\
     $$PWD/qmltypesregister.cpp
 
@@ -79,6 +80,7 @@ HEADERS += \
     $$PWD/node/mergenode.h \
     $$PWD/node/listaliasnode.h \
     $$PWD/node/ifnode.h \
+    $$PWD/node/bind.h\
     $$PWD/node/splitnode.h \
     $$PWD/node/paintnode.h \
     $$PWD/node/listsetrollnode.h \

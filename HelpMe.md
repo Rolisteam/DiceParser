@@ -19,6 +19,7 @@
     * [Merge](#merge)
     * [if](#if)
     * [Group](#group)
+    * [Unique](#Unique)
     * [Comment (\#)](#comment-)
 * [Arithmetic](#arithmetic) 
 * [Arithmetic and Dice](#arithmetic-and-dice) 
@@ -75,7 +76,7 @@ Rolling 3 dice with 10 faces starting at 0.
 
 > 3d[-20--9]
 
-Rolling 3 dice, values ars between -20 and -9.
+Rolling 3 dice, values are between -20 and -9.
 
 
 ### Instruction: Roll two (or more) kinds of dice at once 
@@ -96,7 +97,7 @@ It is possible to merge every instruction inside a huge one.
 The operator merge is dedicated to that. 
 It is useful when you need to manage all diceresult as the same result.
 
-For example, if you need to keep the high dice between a d6 and d8.
+For example, if you need to keep the higher dice between a d6 and d8.
 
 > d6;d8mk1
 
@@ -251,6 +252,16 @@ Merge operator is used for gathering several dice rolls from different die type 
 
 This command merges together the result from the d6 and the d8. Then, it applied the k operator on both result to keep the best.
 Be careful, this operator merges the instruction list. Instruction reference (such as $1 etc..) won't work after merge operator.
+
+### Unique
+
+It makes exploded dice as new dice.
+
+> 4d6e6u6k3
+
+Result: 6 4 3 3 2
+Final result: 6+4+3 = 13
+
 
 ### Bind
 

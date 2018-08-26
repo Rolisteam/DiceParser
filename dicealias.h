@@ -37,7 +37,7 @@ public:
      * @param key
      * @param isReplace
      */
-    DiceAlias(QString cmd, QString key, bool isReplace = true, bool isEnable = true);
+    DiceAlias(QString pattern, QString remplacement, bool isReplace = true, bool isEnable = true);
     /**
      * @brief ~DiceAlias
      */

@@ -24,6 +24,85 @@
 
 #include <QDebug>
 
+QString makeReplament(const QString& pattern, const QString& replacement, QString cmd)
+{
+
+    // FIXME try to do the same with RegularExpression
+    auto hasPattern = cmd.contains(pattern);
+    if(hasPattern)
+    {
+        auto hasVariable = cmd.contains("${");
+        auto hasQuote = cmd.contains("\"");
+
+        if(!hasQuote && !hasVariable)
+        {
+            cmd.replace(pattern, replacement);
+        }
+        else
+        {
+            std::vector<int> patternPosList;
+            std::vector<std::pair<int,int>> variablePos;
+
+            int pos= 0;
+            QRegularExpressionMatch match;
+            while(pos!=-1)
+            {
+                auto start = cmd.indexOf(QRegularExpression("\\${\\N+}"),pos,&match);
+                if(start >=0)
+                {
+                    auto end = start+match.captured().length();
+                    variablePos.push_back(std::make_pair(start,end));
+                    pos = end+1;
+                }
+                else
+                {
+                    pos = start;
+                }
+            }
+
+            pos = 0;
+            while(pos!=-1)
+            {
+                auto start = cmd.indexOf("\"",pos);
+                if(start >= 0)
+                {
+                    auto end = cmd.indexOf("\"",start+1);
+                    variablePos.push_back(std::make_pair(start,end));
+                    pos = end+1;
+                }
+                else
+                {
+                    pos = start;
+                }
+            }
+
+            pos= 0;
+            while((pos = cmd.indexOf(pattern,pos)) && pos!=-1)
+            {
+                bool isInsidePair = false;
+                for(auto pair : variablePos)
+                {
+                    if(!isInsidePair)
+                        isInsidePair = (pos > pair.first && pos < pair.second);
+                }
+                if(!isInsidePair)
+                    patternPosList.push_back(pos);
+                pos+=1;
+            }
+
+            // TODO to be replace by C++14 when it is ready
+            for (auto i = patternPosList.rbegin(); i != patternPosList.rend(); ++i)
+            {
+                cmd.replace(*i,1,replacement);
+            }
+        }
+    }
+    return cmd;
+}
+
+
+
+
 DiceAlias::DiceAlias(QString cmd, QString key, bool isReplace,bool isEnable)
     : m_command(cmd),m_value(key),m_isEnable(isEnable)
 {
@@ -49,7 +128,8 @@ bool DiceAlias::resolved(QString & str)
 
     if((m_type == REPLACE)&&(str.contains(m_command)))
     {
-       str.replace(m_command,m_value);
+       str = makeReplament(m_command,m_value,str);
+       //str.replace(m_command,m_value);
        return true;
     }
     else if(m_type == REGEXP)

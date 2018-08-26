@@ -155,6 +155,7 @@ void DiceParser::insertAlias(DiceAlias* dice, int i)
 bool DiceParser::parseLine(QString str, bool allowAlias)
 {
     m_errorMap.clear();
+    m_comment = QStringLiteral("");
     if(!m_startNodes.empty())
     {
         qDeleteAll(m_startNodes);
@@ -1329,7 +1330,7 @@ void DiceParser::setPathToHelp(QString l)
 {
     m_helpPath = l;
 }
-void DiceParser::setVariableDictionary(QHash<QString,QString>* variables)
+void DiceParser::setVariableDictionary(const QHash<QString,QString>& variables)
 {
     ParsingToolBox::setVariableHash(variables);
 }
