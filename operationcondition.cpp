@@ -21,7 +21,7 @@
 #include "operationcondition.h"
 
 OperationCondition::OperationCondition()
-    : m_operator(Modulo),m_boolean(nullptr),m_value(0)
+    : m_operator(Modulo),m_boolean(nullptr),m_value(nullptr)
 {
 
 }
@@ -103,17 +103,22 @@ QString OperationCondition::toString()
     switch (m_operator)
     {
     case Modulo:
-        str.append(QStringLiteral("\%"));
+        str.append(QStringLiteral("\\%"));
         break;
     }
     return QStringLiteral("[%1%2%3]").arg(str).arg(valueToScalar()).arg(m_boolean->toString());
 }
-quint64 OperationCondition::getValidRangeSize(quint64 faces) const
+bool OperationCondition::isValidRangeSize(std::pair<qint64,qint64> range) const
 {
    auto value = valueToScalar();
+   bool valid = true;
+
    if(value==0)
-       return 0;
-   return faces/value;
+       valid = false;
+ /*  else if(nullptr != m_boolean)
+       valid = m_boolean->isValidRangeSize(range);*/
+
+   return valid;
 
 }
 Validator* OperationCondition::getCopy() const

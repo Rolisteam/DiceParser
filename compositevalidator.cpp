@@ -104,31 +104,18 @@ QString CompositeValidator::toString()
     return QString("[%1%2]").arg(str).arg(m_value);*/
     return str;
 }
-quint64 CompositeValidator::getValidRangeSize(quint64 faces) const
+bool CompositeValidator::isValidRangeSize(std::pair<qint64,qint64> range) const
 {
-    quint64 sum =0;
+    bool val = true;
     int i = -1;
     for(Validator* tmp :*m_validatorList)
     {
-        quint64 rel = tmp->getValidRangeSize(faces);
-        LogicOperation opt = NONE;
-        if(i>=0)
-        {
-            opt = m_operators->at(i);
-        }
-        if(opt == OR)
-        {
-            sum += rel;
-        }
-        else if((opt == AND)&&(opt == EXCLUSIVE_OR))
-        {
-            sum = qMax(rel,sum);
-        }
-
+        quint64 rel = tmp->isValidRangeSize(range);
+        val |= rel;
         ++i;
     }
 
-    return sum;
+    return val;
 }
 void CompositeValidator::setOperationList(QVector<LogicOperation>* m)
 {

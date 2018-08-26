@@ -58,7 +58,7 @@ public:
      * @param faces
      * @return
      */
-    virtual quint64 getValidRangeSize(quint64 faces) const = 0 ;
+    virtual bool isValidRangeSize(std::pair<qint64,qint64> range) const = 0 ;
     /**
      * @brief getCopy
      * @return return  a copy of this validator

@@ -5,7 +5,7 @@
 
 #include "executionnode.h"
 #include "result/diceresult.h"
-
+#include <utility>
 /**
  * @brief The DiceRollerNode class rolls dice of one kind.
  */
@@ -28,6 +28,7 @@ public:
 	 * @return the face count
 	 */
     quint64 getFaces() const;
+    std::pair<qint64,qint64> getRange() const;
 
 	/**
 	  * @brief toString

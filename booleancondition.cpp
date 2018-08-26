@@ -119,24 +119,33 @@ QString BooleanCondition::toString()
     }
     return QStringLiteral("[%1%2]").arg(str).arg(valueToScalar());
 }
-quint64 BooleanCondition::getValidRangeSize(quint64 faces) const
+bool BooleanCondition::isValidRangeSize(std::pair<qint64, qint64> range) const
 {
+    bool isValid = false;
+    auto valueScalar = valueToScalar();
+    qint64 boundValue = qBound(range.first,valueScalar,range.second);
     switch(m_operator)
     {
     case Equal:
-        return 1;
+        isValid = (boundValue == valueScalar);
+        break;
     case GreaterThan:
-        return faces - valueToScalar();
+        isValid = range.first<=valueScalar;
+        break;
     case LesserThan:
-        return valueToScalar() - 1;
+        isValid = range.second>=valueScalar;
+        break;
     case GreaterOrEqual:
-        return faces - (valueToScalar() - 1);
+        isValid = range.first<valueScalar;
+        break;
     case LesserOrEqual:
-        return valueToScalar();
+        isValid = range.second>valueScalar;
+        break;
     case Different:
-        return faces - 1;
+        isValid = (boundValue == valueScalar);
+        break;
     }
-    return 0;
+    return isValid;
 }
 Validator* BooleanCondition::getCopy() const
 {

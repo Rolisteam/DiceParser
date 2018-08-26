@@ -22,7 +22,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
         Result* result=previous->getResult();
         if(nullptr!=result)
         {
-            m_diceCount = result->getResult(Result::SCALAR).toReal();
+            m_diceCount = static_cast<quint64>(result->getResult(Result::SCALAR).toReal());
             m_result->setPrevious(result);
 
             if(m_diceCount == 0)
@@ -67,6 +67,11 @@ quint64 DiceRollerNode::getFaces() const
 {
     return abs(m_max-m_min)+1;
 }
+
+std::pair<qint64,qint64> DiceRollerNode::getRange() const
+{
+    return std::make_pair(m_min,m_max);
+}
 QString DiceRollerNode::toString(bool wl) const
 {
 	if(wl)
@@ -85,8 +90,6 @@ qint64 DiceRollerNode::getPriority() const
 //    {
 //        priority = m_nextNode->getPriority();
 //    }
-
-
     return priority;
 }
 ExecutionNode* DiceRollerNode::getCopy() const

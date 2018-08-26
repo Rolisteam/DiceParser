@@ -42,7 +42,7 @@ public:
     void setValueNode(ExecutionNode*);
     QString toString();
 
-    virtual quint64 getValidRangeSize(quint64 faces) const;
+    virtual bool isValidRangeSize(std::pair<qint64,qint64> range) const;
     /**
      * @brief getCopy
      * @return

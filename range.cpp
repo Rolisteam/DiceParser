@@ -63,10 +63,12 @@ QString Range::toString()
 {
 	return QStringLiteral("[%1-%2]").arg(m_start).arg(m_end);
 }
-quint64 Range::getValidRangeSize(quint64 faces) const
-{
-    Q_UNUSED(faces);
-    return m_end-m_start;
+bool Range::isValidRangeSize(std::pair<qint64,qint64> range) const
+{    
+    auto newStart = qBound(range.first, m_start, range.second);
+    auto newEnd = qBound(range.first, m_end, range.second);
+
+    return (newStart==m_start && newEnd == m_end && m_end>=m_start);
 }
 void Range::setStart(qint64 start)
 {
