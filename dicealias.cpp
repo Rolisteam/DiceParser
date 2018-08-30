@@ -33,6 +33,7 @@ QString makeReplament(const QString& pattern, const QString& replacement, QStrin
     {
         auto hasVariable = cmd.contains("${");
         auto hasQuote = cmd.contains("\"");
+        auto commentPos = cmd.lastIndexOf("#");
 
         if(!hasQuote && !hasVariable)
         {
@@ -75,7 +76,6 @@ QString makeReplament(const QString& pattern, const QString& replacement, QStrin
                     pos = start;
                 }
             }
-
             pos= 0;
             while((pos = cmd.indexOf(pattern,pos)) && pos!=-1)
             {
@@ -84,9 +84,13 @@ QString makeReplament(const QString& pattern, const QString& replacement, QStrin
                 {
                     if(!isInsidePair)
                         isInsidePair = (pos > pair.first && pos < pair.second);
+
+                    if(commentPos >= 0 && pos > commentPos)
+                        isInsidePair = true;
                 }
                 if(!isInsidePair)
                     patternPosList.push_back(pos);
+
                 pos+=1;
             }
 
