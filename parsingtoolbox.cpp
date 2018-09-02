@@ -62,6 +62,7 @@ ParsingToolBox::ParsingToolBox()
     m_arithmeticOperation->insert(QStringLiteral("x"),Die::MULTIPLICATION);
     m_arithmeticOperation->insert(QStringLiteral("/"),Die::DIVIDE);
     m_arithmeticOperation->insert(QStringLiteral("÷"),Die::DIVIDE);
+    m_arithmeticOperation->insert(QStringLiteral("^"),Die::POW);
 
 }
 

@@ -94,6 +94,7 @@ public:
      * @return
      */
     virtual ExecutionNode *getCopy() const;
+
 private:
     /**
      * @brief add
@@ -115,6 +116,8 @@ private:
      * @return
      */
     static qint64 multiple(qreal,qreal);
+
+    static qint64 pow(qreal a, qreal b);
 
 private:
     ExecutionNode* m_internalNode;

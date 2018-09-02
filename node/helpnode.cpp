@@ -37,6 +37,14 @@ void HelpNode::run(ExecutionNode* previous)
                                        "Example (with ! as prefix):\n"
                                        "!2d6\n"
                                        "!1d20\n"
+                                       "!6d10e10k3 (L5R)\n"
+                                       "\n"
+                                       "Full documentation at: %1").arg(m_path));
+        /*txtResult->setText(QObject::tr("Rolisteam Dice Parser:\n"
+                                       "\n"
+                                       "Example (with ! as prefix):\n"
+                                       "!2d6\n"
+                                       "!1d20\n"
                                        "\n"
                                        "Operator list:\n"
                                        "\n"
@@ -81,7 +89,7 @@ void HelpNode::run(ExecutionNode* previous)
                                         "1d6+6      => roll one 6-sided die and add 6 to its result\n"
                                         "(2d4+2)d10 => roll two 4-sided dice, add 2 to the result[2;8] then roll from four to ten 10-sided dice\n"
                                         "\n"
-                                        "Full documentation at: %1").arg(m_path));
+                                        "Full documentation at: %1").arg(m_path));*/
         m_result->setPrevious(nullptr);
     }
     else if(nullptr != previous)

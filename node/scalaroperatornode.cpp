@@ -81,7 +81,8 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
                 case Die::DIVIDE:
                     m_scalarResult->setValue(divide(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
-                default:
+                case Die::POW:
+                    m_scalarResult->setValue(pow(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
 
                 }
@@ -111,24 +112,28 @@ void ScalarOperatorNode::setInternalNode(ExecutionNode* node)
 }
 qint64 ScalarOperatorNode::add(qreal a,qreal b)
 {
-    return a+b;
+    return static_cast<qint64>(a+b);
 }
 qint64 ScalarOperatorNode::substract(qreal a,qreal b)
 {
-    return a-b;
+    return static_cast<qint64>(a-b);
 }
 qreal ScalarOperatorNode::divide(qreal a,qreal b)
 {
-    if(b==0)
+    if(qFuzzyCompare(b,0))
     {
         m_errors.insert(DIVIDE_BY_ZERO,QObject::tr("Division by zero"));
         return 0;
     }
-    return (qreal)a/b;
+    return static_cast<qreal>(a/b);
 }
 qint64 ScalarOperatorNode::multiple(qreal a,qreal b)
 {
-    return a*b;
+    return static_cast<qint64>(a*b);
+}
+qint64 ScalarOperatorNode::pow(qreal a,qreal b)
+{
+    return static_cast<qint64>(std::pow(a,b));
 }
 Die::ArithmeticOperator ScalarOperatorNode::getArithmeticOperator() const
 {
@@ -157,9 +162,9 @@ QString ScalarOperatorNode::toString(bool wl) const
     case Die::DIVIDE:
         op="/";
         break;
-    default:
+    case Die::POW:
+        op="^";
         break;
-
     }
     if(wl)
     {
