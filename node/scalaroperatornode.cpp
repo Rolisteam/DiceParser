@@ -81,6 +81,9 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
                 case Die::DIVIDE:
                     m_scalarResult->setValue(divide(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
+                case Die::INTEGER_DIVIDE:
+                    m_scalarResult->setValue(static_cast<int>(divide(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal())));
+                    break;
                 case Die::POW:
                     m_scalarResult->setValue(pow(previousResult->getResult(Result::SCALAR).toReal(),internalResult->getResult(Result::SCALAR).toReal()));
                     break;
@@ -161,6 +164,9 @@ QString ScalarOperatorNode::toString(bool wl) const
         break;
     case Die::DIVIDE:
         op="/";
+        break;
+    case Die::INTEGER_DIVIDE:
+        op="|";
         break;
     case Die::POW:
         op="^";

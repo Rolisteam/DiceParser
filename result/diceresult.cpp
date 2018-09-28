@@ -115,6 +115,7 @@ qreal DiceResult::getScalarResult()
                     scalar-=tmp->getValue();
                     break;
                 case Die::DIVIDE:
+                case Die::INTEGER_DIVIDE:
                     if(tmp->getValue()!=0)
                     {
                         scalar/=tmp->getValue();

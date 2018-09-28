@@ -97,6 +97,7 @@ qint64 Die::getValue() const
                 case MINUS:
                     value-=tmp;
                     break;
+                case INTEGER_DIVIDE:
                 case DIVIDE:
                     if(tmp!=0)
                     {

@@ -463,7 +463,11 @@ Result: 16
 
 > 1d10^2
 
+> 15|2
+Integer division of 15 by 2. Result: 7
 
+> 15/2
+Division of 15 by 2. Result: 7.5
 
 ## Validator
 

@@ -34,7 +34,7 @@ public:
     /**
      * @brief The ArithmeticOperator enum
      */
-    enum ArithmeticOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION,POW};
+    enum ArithmeticOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION,INTEGER_DIVIDE, POW};
     /**
      * @brief Die
      */
