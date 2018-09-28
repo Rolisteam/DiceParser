@@ -110,7 +110,7 @@ bool CompositeValidator::isValidRangeSize(std::pair<qint64,qint64> range) const
     int i = -1;
     for(Validator* tmp :*m_validatorList)
     {
-        quint64 rel = tmp->isValidRangeSize(range);
+        bool rel = tmp->isValidRangeSize(range);
         val |= rel;
         ++i;
     }
