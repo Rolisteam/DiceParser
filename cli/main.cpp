@@ -27,8 +27,13 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
-#include <QGuiApplication>
 #include <QFile>
+
+#ifdef PAINTER_OP
+#include <QGuiApplication>
+#else
+#include <QCoreApplication>
+#endif
 
 #include "displaytoolbox.h"
 #include "diceparser.h"
@@ -49,7 +54,11 @@
 
 QTextStream out(stdout, QIODevice::WriteOnly);
 bool markdown = false;
+#ifdef PAINTER_OP
 enum EXPORTFORMAT {TERMINAL, SVG, IMAGE, MARKDOWN, JSON, BOT};
+#else
+enum EXPORTFORMAT {TERMINAL, SVG, MARKDOWN, JSON, BOT};
+#endif
 int returnValue = 0;
 
 
@@ -89,11 +98,12 @@ QString diceToMarkdown(QJsonArray array,bool withColor,bool allSameColor,bool al
         return result.join(' ');
     }
 }
-
+#ifdef PAINTER_OP
 void displayImage(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString comment, bool allSameFaceCount,bool allSameColor)
 {
     out << DisplayToolBox::makeImage( scalarText,  resultStr, array,  withColor,  cmd,  comment,  allSameFaceCount, allSameColor);
 }
+#endif
 void displayJSon(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString error, QString comment, bool allSameFaceCount,bool allSameColor)
 {
     Q_UNUSED(withColor);
@@ -278,7 +288,11 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                 }
                 else
                 {
+                    #ifdef PAINTER_OP
                     format = IMAGE;
+                    #else
+                    format = MARKDOWN;
+                    #endif
                 }
                 if(!error.isEmpty())
                 {
@@ -300,9 +314,11 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                 case JSON:
                     displayJSon(scalarText, resultStr, array, withColor, cmd, error, comment, allSameFaceCount, allSameColor);
                 break;
+                #ifdef PAINTER_OP
                 case IMAGE:
                     displayImage(scalarText, resultStr, array, withColor, cmd, comment, allSameFaceCount, allSameColor);
                 break;
+                #endif
             }
             if(!treeFile.isEmpty())
             {
@@ -325,7 +341,11 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
 #include <QTextCodec>
 int main(int argc, char *argv[])
 {
+#ifdef PAINTER_OP
     QGuiApplication a(argc, argv);
+#else
+    QCoreApplication a(argc, argv);
+#endif
 
     QStringList commands;
     QString cmd;

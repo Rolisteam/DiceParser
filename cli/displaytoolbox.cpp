@@ -1,10 +1,14 @@
 #include "displaytoolbox.h"
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QBuffer>
+
+#ifdef PAINTER_OP
 #include <QFontMetrics>
 #include <QPainter>
-#include <QBuffer>
 #include <QFont>
+#endif
+
 #include <QDebug>
 
 #define LINE_SPACING 5
@@ -13,7 +17,7 @@ DisplayToolBox::DisplayToolBox()
 {
 
 }
-
+#ifdef PAINTER_OP
 QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString comment, bool allSameFaceCount,bool allSameColor)
 {
     QString textTotal("%1 Details:[%3 %2]");
@@ -163,6 +167,7 @@ QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArr
     //return {};
     return ba.toBase64();
 }
+#endif
 
 QString DisplayToolBox::colorToTermCode(QString str)
 {

@@ -20,10 +20,13 @@ find_package(Qt5Core)
 include_directories(${Qt5Core_INCLUDES} ../)
 add_definitions(${Qt5Core_DEFINITIONS})
 
-find_package(Qt5Gui)
-include_directories(${Qt5Gui_INCLUDES} ../)
-add_definitions(${Qt5Gui_DEFINITIONS})
-
+IF(NOT DEFINED NO_PAINTER_OPERATOR)
+    MESSAGE(STATUS "Compilation of operator Paint")
+    find_package(Qt5Gui)
+    include_directories(${Qt5Gui_INCLUDES} ../)
+    add_definitions(${Qt5Gui_DEFINITIONS})
+    add_definitions(-DPAINTER_OP)
+endif()
 
 set(MODE "cli")
 

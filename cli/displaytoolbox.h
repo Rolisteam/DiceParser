@@ -1,7 +1,6 @@
 #ifndef GENERATEIMAGE_H
 #define GENERATEIMAGE_H
 
-#include <QImage>
 #include <QString>
 #include <QJsonArray>
 
@@ -11,7 +10,9 @@ class DisplayToolBox
 {
 public:
     DisplayToolBox();
+    #ifdef PAINTER_OP
     static QString makeImage(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString comment, bool allSameFaceCount,bool allSameColor);
+    #endif
     static QString colorToTermCode(QString str);
     static QString diceToText(QJsonArray array, bool withColor,bool allSameFaceCount, bool allSameColor);
     static QJsonArray diceToJson(QList<ExportedDiceResult> &diceList, bool &allSameFaceCount, bool &allSameColor);
