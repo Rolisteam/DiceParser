@@ -261,11 +261,11 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                 stringResult.replace("%1",scalarText);
                 stringResult.replace("%3",lastScalarText);
 
-                int i = 1;
-                for(auto value : strLst)
+                int i = strLst.size();
+                for(auto it = strLst.rbegin(); it != strLst.rend() ; ++it)
                 {
-                    stringResult.replace(QStringLiteral("$%1").arg(i),value);
-                    ++i;
+                    stringResult.replace(QStringLiteral("$%1").arg(i),(*it));
+                    --i;
                 }
 
                 resultStr = stringResult;
