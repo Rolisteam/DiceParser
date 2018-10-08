@@ -19,7 +19,7 @@
     * [Merge](#merge)
     * [if](#if)
     * [Group](#group)
-    * [Unique](#Unique)
+    * [Unique](#unique)
     * [Comment (\#)](#comment-)
 * [Arithmetic](#arithmetic) 
 * [Arithmetic and Dice](#arithmetic-and-dice) 
@@ -27,7 +27,8 @@
 * [Value from set](#select-value-from-list) 
 * [Miscellaneous examples](#examples) 
 * [Best Practices](#best-practices)
-* [Platforms](#roll-dice-on-each-platform) 
+* [Platforms](#roll-dice-on-each-platform)
+* [Discord bot](#discord-bot)
 * [Bug report](#bug-report-and-new-features)
 
 # Documentation:
@@ -617,22 +618,24 @@ Please, remember it is important to prefix all you command by `!`. This will all
 | Twitter  | Result such be short. No aliases |
 | IrcBot   | No aliases |
 | webserver| No aliases |
-| dice     | No aliases |
+| dice     | json file to give as parameter |
 
 We can't set some aliases for any platform but It has to be labelled with game's name.
 
-### Discord Bot
+# Discord Bot
 
-#### To change the prefix
+## Prefix management
+
+### To change the prefix
 > !prefix set newprefix
 
 /!\ Please, don't set "newprefix" as your new prefix. 
 
-#### Set the prefix by default
+### Set the prefix by default
 
 > newprefixprefix set !
 
-#### Example
+### Example
 
 > !prefix set roll
 
@@ -640,7 +643,69 @@ We can't set some aliases for any platform but It has to be labelled with game's
 
 > rollprefix set ! 
 
-## Bug report and new features
+# Macro management
+
+## list active macro
+> !macro list
+
+Result:
+```
+id: 0 Pattern: (.)wod(.) Command: \1d10e10c[>=\2]-@c[=1] Regexp: True id: 1 Pattern: quicktest Command: 1d6 Regexp: False id: 2 Pattern: stress[+-]([0-9]+) Command: 1d10e[=1];\1;$1c[=1];$1c[=10];$3i:[>0]{2^$3($1-$3)}{$4i:[=1]{0}{$1}};$5+$2;$4i:[=1]{"Botch!"};"(%2=$5)+$2=$6" Regexp: True
+id: 3 Pattern: ([0-9]+)sr([0-9]+) Command: \1;\2;$1/2;$1d6s;$4c1;$4c[>=5];$6i:[>$2]{$2}{$6};$5i:[>=$3]{$6i:[=0]{"Critical Glitch!"}{"Glitch!"}};"$1d [$2] = (%2) = $7 hits";$6i:[>$2]{"($6)"} Regexp: True
+id: 4 Pattern: C Command: d10+ Regexp: False
+id: 5 Pattern: attack([0-9]+),([0-9]+),([0-9]+),([0-9]+) Command: 1d100;(50-$1)|10;\3D10;$3+\4;1d100;$1i[=1]{5d10}{0};$3c10;$7i:[>0]{(5$7)d10}{0};(\2-14)i:[<0]{0};($4-$9)i:[>0]{+$8+$6};$1i[<=\1]{"Hit:$1Dmg:$4Armor:-$9-AdditionalDmg:$6+$8-Location:$5-Success:$2-TotalDMG:$10Dice:[%2]"}{"Fail$1"} Regexp: True
+```
+
+## Adding new macro
+
+There are two kinds of macro: normal ones and regular-expression-based.
+
+The first kind the conversion it is just a replacement.
+
+> !macro add k d10e10k
+
+The user input (8k4) becomes 8d10e10k4 (l5r system). As you can see the k has been replaced by the macro value.
+
+In more complexe situations, control/change some parts inside the command can be achieved by using regular-expression based macro.
+
+> !macro add ([0-9]+)w([0-9]+) \1d10e10c[>=\2]-@c[=1] 1
+
+The 1 at the end means "this command has regular-expression".
+The user input (8w6) becomes 8d10e10c[>=6]-@c[=1] (old world of darkness system).
+
+**ATTENTION**: the system does not support space character into command. Use _ instead for the moment.
+
+## Remove macro
+
+> !macro rm 0
+
+Remove the macro which has 0 as id. It is better to list macro before removing one.
+
+## Alias management
+
+Roll several commands at once.
+
+### Add alias
+
+> !alias stats  
+> !4d6e6uk3 #STR"  
+> !4d6e6uk3 #DEX"  
+> !4d6e6uk3 #WIS"  
+> !4d6e6uk3 #INT"  
+> !4d6e6uk3 #CON"  
+> !4d6e6uk3 #CHR"  
+
+All lines must be part of the same messages, so prepare it first.
+
+### Remove alias
+
+> !alias rm stats
+
+### Run alias
+
+> !stats
+
+# Bug report and new features
 
 Please fulfill a ticket in our [Bug tracker](https://github.com/Rolisteam/DiceParser/issues) system.
 Or contact us on [discord](https://discordapp.com/invite/MrMrQwX) or any [other ways](http://www.rolisteam.org/contact.html)
