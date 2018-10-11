@@ -960,14 +960,14 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
             {
             case Keep:
             {
-                qint64 myNumber=0;
+                ExecutionNode* value=nullptr;
                 bool ascending = m_parsingToolbox->readAscending(str);
 
-                if(m_parsingToolbox->readNumber(str,myNumber))
+                if(m_parsingToolbox->readOperand(str,value))
                 {
                     node = m_parsingToolbox->addSort(previous,ascending);
                     KeepDiceExecNode* nodeK = new KeepDiceExecNode();
-                    nodeK->setDiceKeepNumber(myNumber);
+                    nodeK->setDiceKeepNumber(value);
                     node->setNextNode(nodeK);
                     node = nodeK;
                     found = true;
@@ -976,9 +976,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                 break;
             case KeepAndExplode:
             {
-                qint64 myNumber=0;
+                //qint64 myNumber=0;
+                ExecutionNode* value=nullptr;
                 bool ascending = m_parsingToolbox->readAscending(str);
-                if(m_parsingToolbox->readNumber(str,myNumber))
+                if(m_parsingToolbox->readOperand(str,value))
                 {
                     /* if(!hasDice)
                     {
@@ -994,7 +995,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                     node = m_parsingToolbox->addSort(previous,ascending);
 
                     KeepDiceExecNode* nodeK = new KeepDiceExecNode();
-                    nodeK->setDiceKeepNumber(myNumber);
+                    nodeK->setDiceKeepNumber(value);
 
                     node->setNextNode(nodeK);
                     node = nodeK;

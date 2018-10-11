@@ -75,7 +75,7 @@ public:
      * @brief getStringResult
      * @return
      */
-	QString getStringResult();
+    QString getStringResult();
     /**
      * @brief generateDotTree
      */
@@ -84,11 +84,11 @@ public:
      * @brief toString
      * @return
      */
-	virtual QString toString(bool wl) = 0;
+    virtual QString toString(bool wl) = 0;
     virtual Result* getCopy() const = 0;
 protected:
-     int m_resultTypes;/// @brief
-     QString m_id;
+    int m_resultTypes;/// @brief
+    QString m_id;
 private:
     Result* m_previous;/// @brief
 

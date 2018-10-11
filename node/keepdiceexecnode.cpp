@@ -22,6 +22,7 @@
 
 
 #include "keepdiceexecnode.h"
+#include "parsingtoolbox.h"
 
 
 KeepDiceExecNode::KeepDiceExecNode()
@@ -36,17 +37,33 @@ KeepDiceExecNode::~KeepDiceExecNode()
 void KeepDiceExecNode::run(ExecutionNode* previous)
 {
     m_previousNode = previous;
-    if(nullptr==previous)
+    if(nullptr==previous || nullptr == m_numberOfDiceNode)
     {
         return;
     }
+    m_numberOfDiceNode->run(previous);
+    auto lastnode = ParsingToolBox::getLatestNode(m_numberOfDiceNode);
+    if(nullptr == lastnode)
+        return;
+    auto result = lastnode->getResult();
+    if(nullptr == result)
+        return;
+    if(!result->hasResultOfType(Result::SCALAR))
+        return;
+
+    auto numberOfDice = result->getResult(Result::SCALAR).toInt();
+
     DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previous->getResult());
     m_result->setPrevious(previousDiceResult);
     if(nullptr!=previousDiceResult)
     {
         QList<Die*> diceList=previousDiceResult->getResultList();
+        if(numberOfDice < 0)
+        {
+            numberOfDice = diceList.size()+numberOfDice;
+        }
 
-        QList<Die*> diceList3= diceList.mid(0,m_numberOfDice);
+        QList<Die*> diceList3= diceList.mid(0,numberOfDice);
         QList<Die*> diceList2;
 
         for(Die* die : diceList3)
@@ -59,12 +76,12 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
 
 
 
-        if(m_numberOfDice > static_cast<quint64>(diceList.size()))
+        if(numberOfDice >diceList.size())
         {
-            m_errors.insert(TOO_MANY_DICE,QObject::tr(" You ask to keep %1 dice but the result only has %2").arg(m_numberOfDice).arg(diceList.size()));
+            m_errors.insert(TOO_MANY_DICE,QObject::tr(" You ask to keep %1 dice but the result only has %2").arg(numberOfDice).arg(diceList.size()));
         }
 
-        for(Die* tmp : diceList.mid(m_numberOfDice,-1))
+        for(Die* tmp : diceList.mid(numberOfDice,-1))
         {
             tmp->setHighlighted(false);
         }
@@ -76,15 +93,16 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
         }
     }
 }
-void KeepDiceExecNode::setDiceKeepNumber(quint64 n)
+void KeepDiceExecNode::setDiceKeepNumber(ExecutionNode* n)
 {
-    m_numberOfDice = n;
+    m_numberOfDiceNode = n;
 }
 QString KeepDiceExecNode::toString(bool wl) const
 {
 	if(wl)
 	{
-		return QString("%1 [label=\"KeepDiceExecNode %2\"]").arg(m_id).arg(m_numberOfDice);
+        auto param = m_numberOfDiceNode->toString(wl);
+        return QString("%1 [label=\"KeepDiceExecNode %2\"]").arg(m_id).arg(param);
 	}
 	else
 	{
@@ -106,7 +124,10 @@ qint64 KeepDiceExecNode::getPriority() const
 ExecutionNode* KeepDiceExecNode::getCopy() const
 {
     KeepDiceExecNode* node = new KeepDiceExecNode();
-    node->setDiceKeepNumber(m_numberOfDice);
+    if(nullptr!=m_numberOfDiceNode)
+    {
+        node->setDiceKeepNumber(m_numberOfDiceNode->getCopy());
+    }
     if(nullptr!=m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());

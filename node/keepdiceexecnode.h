@@ -34,12 +34,12 @@ public:
     virtual ~KeepDiceExecNode();
 
     virtual void run(ExecutionNode *previous);
-    virtual void setDiceKeepNumber(quint64 );
+    virtual void setDiceKeepNumber(ExecutionNode* valueNode );
 	virtual QString toString(bool)const;
     virtual qint64 getPriority() const;
     virtual ExecutionNode *getCopy() const;
 private:
-    quint64 m_numberOfDice;
+    ExecutionNode* m_numberOfDiceNode;
     DiceResult* m_diceResult;
 };
 
