@@ -46,6 +46,11 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
     {
         QList<Die*> diceList=previousDiceResult->getResultList();
 
+        if(m_numberOfDice < 0)
+        {
+            m_numberOfDice = diceList.size() + m_numberOfDice;
+        }
+
         QList<Die*> diceList3= diceList.mid(0,m_numberOfDice);
         QList<Die*> diceList2;
 
@@ -76,7 +81,7 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
         }
     }
 }
-void KeepDiceExecNode::setDiceKeepNumber(quint64 n)
+void KeepDiceExecNode::setDiceKeepNumber(qint64 n)
 {
     m_numberOfDice = n;
 }
