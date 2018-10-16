@@ -27,7 +27,7 @@ public:
 
 private:
     quint64 m_index;
-    std::vector<ExecutionNode*>* m_data;
+    std::vector<ExecutionNode*>* m_data = nullptr;
 };
 
 #endif // VARIABLENODE_H

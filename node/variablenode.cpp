@@ -8,7 +8,7 @@ VariableNode::VariableNode()
 void VariableNode::run(ExecutionNode *previous)
 {
     m_previousNode = previous;
-    if(m_data->size()>m_index)
+    if((nullptr != m_data) && (m_data->size()>m_index))
     {
       auto value= (*m_data)[m_index];
       value = ParsingToolBox::getLatestNode(value);
