@@ -336,6 +336,7 @@ int main(int argc, char *argv[])
     bool colorb=true;
     out.setCodec("UTF-8");
     EXPORTFORMAT format = TERMINAL;
+    
 
     QCommandLineParser optionParser;
     QCommandLineOption color(QStringList() << "c"<< "color-off", "Disable color to highlight result");
@@ -410,6 +411,7 @@ int main(int argc, char *argv[])
         cmd = "help";
     }
     QStringList cmdList = optionParser.positionalArguments();
+    qDebug() << "list of commands"<<cmdList;
    // cmdList << "8d10;\$1c[>6];\$1c[=1];\$2-\$3i:[>0]{\"%3 Success[%2]\"}{i:[<0]{\"Critical fail %3 [%2]\"}{\"Fail %3 [%2]\"}}";
     QString aliasstr;
     QJsonArray aliases;
