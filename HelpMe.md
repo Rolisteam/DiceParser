@@ -600,6 +600,14 @@ As DiceParser provides more and more features, you may find several ways to do t
 
 The merge operator is useful when you want to use dice operator on all rolled dice.
 
+```Bad```
+> 1d20K1+1d10K1
+
+```Good```
+> 1d20+1d10
+
+The k operator to keeps as many dice as you roll is pretty useless because it is the default behaviour.
+
 ## Plateform specific documentation
 
 ### Roll dice on each platform
