@@ -242,6 +242,7 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
             QString comment = parser.getComment();
             QString error = parser.humanReadableError();
             QStringList strLst;
+            QStringList listOfDiceResult;
 
             if(parser.hasIntegerResultNotInFirst())
             {
@@ -262,7 +263,41 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                 }
                 scalarText = QString("%1").arg(strLst.join(','));
             }
+            if(!list.isEmpty())
+            {
+                qDebug() << "list is not empty" << list.size();
+                for(auto map : list)
+                {
+                    qDebug() << "loop map"<< map.size();
+                    for(auto key : map.keys())
+                    {
+                        qDebug() << "key: "<<key;
+                        auto dice = map[key];
+                        QString stringVal;
+                        for(auto val : dice)
+                        {
+                            qint64 total=0;
+                            QStringList dicelist;
+                            for(auto score: val.getResult())
+                            {
+                                  total += score;
+                                  dicelist << QString::number(score);
+                            }
+                            if(val.getResult().size() > 1)
+                            {
+                                stringVal=QString("%1 [%2]").arg(total).arg(dicelist.join(','));
+                                listOfDiceResult << stringVal;
+                            }
+                            else 
+                            {
+                                listOfDiceResult << QString::number(total);
+                            }
+                        }
+                    }
+                }
+            }
 
+            qDebug() << listOfDiceResult;
             if(parser.hasStringResult())
             {
                 bool ok;
@@ -275,6 +310,11 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                 for(auto it = strLst.rbegin(); it != strLst.rend() ; ++it)
                 {
                     stringResult.replace(QStringLiteral("$%1").arg(i),(*it));
+                    --i;
+                }
+                for(auto it = strLst.rbegin(); it != strLst.rend() ; ++it)
+                {
+                    stringResult.replace(QStringLiteral("µ%1").arg(i),(*it));
                     --i;
                 }
 

@@ -494,19 +494,23 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
 }
 void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,bool& homogeneous)
 {
+    int i = 0;
     for(auto start : m_startNodes)
     {
         ExportedDiceResult diceValues;
         ExecutionNode* next = getLeafNode(start);
         Result* result=next->getResult();
-
+        qDebug() << "tour:"<<i++;
         while(nullptr!=result)
         {
+            qDebug()<< "result is not null"<<i;
             if(result->hasResultOfType(Result::DICE_LIST))
             {
+                qDebug() << "has diceresult"<<i;
                 DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
                 if(nullptr!=diceResult)
                 {
+                    qDebug() << "cast diceresult";
                     if(homogeneous)
                     {
 
@@ -516,8 +520,9 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
                     ListDiceResult listpair;
                     for(Die* die : diceResult->getResultList())
                     {
-                        if(!die->hasBeenDisplayed())
+            //            if(!die->hasBeenDisplayed())
                         {
+                            qDebug() << "dice has NOT been displayed";
                             QList<qint64> valuesResult;
                             valuesResult.append(die->getValue());
                             die->displayed();
@@ -533,9 +538,14 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
                             //QPair<QList<quint64>,bool> pair(valuesResult,die->isHighlighted());
                             listpair.append(hlDice);
                         }
+            //            else
+                        {
+                            qDebug() << "dice has been displayed";
+                        }
                     }
                     if(!listpair.isEmpty())
                     {
+                            qDebug() << "list pair not empty ";
                         if(!diceValues.contains(face))
                         {
                             diceValues.insert(face,listpair);
