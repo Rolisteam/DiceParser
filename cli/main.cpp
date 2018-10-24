@@ -304,6 +304,7 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                 QStringList allStringlist = parser.getAllStringResult(ok);
                 QString stringResult = allStringlist.join(" ; ");
                 stringResult.replace("%1",scalarText);
+                resultStr.replace("%2",diceList.trimmed());
                 stringResult.replace("%3",lastScalarText);
 
                 int i = strLst.size();
@@ -312,6 +313,7 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                     stringResult.replace(QStringLiteral("$%1").arg(i),(*it));
                     --i;
                 }
+                i = strLst.size();
                 for(auto it = strLst.rbegin(); it != strLst.rend() ; ++it)
                 {
                     stringResult.replace(QStringLiteral("µ%1").arg(i),(*it));
