@@ -135,12 +135,12 @@ public:
     void setOp(const Die::ArithmeticOperator &op);
 
 private:
-    qint64 m_value;
+    qint64 m_value = 0;
     QList<qint64> m_rollResult;
-    bool m_selected;
-    bool m_hasValue;
-    bool m_displayStatus;
-    bool m_highlighted;
+    bool m_selected = false;
+    bool m_hasValue = false;
+    bool m_displayStatus = false;
+    bool m_highlighted = true;
     qint64 m_maxValue;
     qint64 m_base;
     QString m_color;
