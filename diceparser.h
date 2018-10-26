@@ -129,7 +129,7 @@ public:
      * @brief getLastDiceResult
      * @return
      */
-    void getLastDiceResult(QList<ExportedDiceResult>& diceValues,bool& homogeneous);
+    void getLastDiceResult(QList<ExportedDiceResult>& diceValues, bool& homogeneous);
     /**
      * @brief hasIntegerResultNotInFirst
      * @return
@@ -219,6 +219,7 @@ public:
 
     bool readOptionFromNull(QString &str, ExecutionNode *&node);
     bool readInstructionList(QString &str);
+    void getDiceResultFromAllInstruction(QList<ExportedDiceResult> &resultList);
 protected:
     bool readParameterNode(QString &str, ExecutionNode *&node);
 private:

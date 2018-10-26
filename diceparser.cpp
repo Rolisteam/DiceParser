@@ -492,6 +492,37 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
 
     return stringListResult;
 }
+
+void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resultList)
+{
+    int i = 0;
+    for(auto start : m_startNodes)
+    {
+        ExecutionNode* next = getLeafNode(start);
+        Result* result=next->getResult();
+        ExportedDiceResult nodeResult;
+        while(nullptr!=result)
+        {
+            if(result->hasResultOfType(Result::DICE_LIST))
+            {
+                DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
+                QList<HighLightDice> list;
+                quint64 faces = 0;
+
+                for(Die* die : diceResult->getResultList())
+                {
+                    faces = die->getFaces();
+                    HighLightDice hlDice(die->getListValue(),die->isHighlighted(),die->getColor(), die->hasBeenDisplayed(),die->getFaces());
+                    list.append(hlDice);
+                }
+                nodeResult.insert(static_cast<int>(faces),list);
+            }
+            result = result->getPrevious();
+        }
+        resultList.append(nodeResult);
+    }
+}
+
 void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,bool& homogeneous)
 {
     int i = 0;
@@ -500,17 +531,13 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
         ExportedDiceResult diceValues;
         ExecutionNode* next = getLeafNode(start);
         Result* result=next->getResult();
-        qDebug() << "tour:"<<i++;
         while(nullptr!=result)
         {
-            qDebug()<< "result is not null"<<i;
             if(result->hasResultOfType(Result::DICE_LIST))
             {
-                qDebug() << "has diceresult"<<i;
                 DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
                 if(nullptr!=diceResult)
                 {
-                    qDebug() << "cast diceresult";
                     if(homogeneous)
                     {
 
@@ -520,9 +547,8 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
                     ListDiceResult listpair;
                     for(Die* die : diceResult->getResultList())
                     {
-            //            if(!die->hasBeenDisplayed())
+                        if(!die->hasBeenDisplayed())
                         {
-                            qDebug() << "dice has NOT been displayed";
                             QList<qint64> valuesResult;
                             valuesResult.append(die->getValue());
                             die->displayed();
@@ -534,18 +560,12 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
                                     valuesResult.append(i);
                                 }
                             }
-                            HighLightDice hlDice(valuesResult,die->isHighlighted(),die->getColor());
-                            //QPair<QList<quint64>,bool> pair(valuesResult,die->isHighlighted());
+                            HighLightDice hlDice(valuesResult,die->isHighlighted(),die->getColor(), die->hasBeenDisplayed(),0);
                             listpair.append(hlDice);
-                        }
-            //            else
-                        {
-                            qDebug() << "dice has been displayed";
                         }
                     }
                     if(!listpair.isEmpty())
                     {
-                            qDebug() << "list pair not empty ";
                         if(!diceValues.contains(face))
                         {
                             diceValues.insert(face,listpair);
