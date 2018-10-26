@@ -232,8 +232,10 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
         {
             parser.start();
             QList<ExportedDiceResult> list;
+            QList<ExportedDiceResult> listFull;
             bool homogeneous = true;
             parser.getLastDiceResult(list,homogeneous);
+            parser.getDiceResultFromAllInstruction(listFull);
             bool allSameFaceCount, allSameColor;
             auto array =  DisplayToolBox::diceToJson(list,allSameFaceCount,allSameColor);
             QString resultStr;
@@ -313,7 +315,7 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                     stringResult.replace(QStringLiteral("$%1").arg(i),(*it));
                     --i;
                 }
-                i = strLst.size();
+                i = listFull.size();
                 for(auto it = strLst.rbegin(); it != strLst.rend() ; ++it)
                 {
                     stringResult.replace(QStringLiteral("µ%1").arg(i),(*it));
