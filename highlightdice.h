@@ -27,10 +27,8 @@ class HighLightDice
 {
 
 public:
-    HighLightDice(QList<qint64> result,bool isHighlighted, QString color);
+    HighLightDice(QList<qint64> result,bool isHighlighted, QString color, bool displayed,quint64 faces);
     virtual ~HighLightDice();
-
-
 
     QList<qint64> getResult() const;
     void setResult(const QList<qint64> &result);
@@ -41,10 +39,18 @@ public:
     QString getColor() const;
     void setColor(const QString &color);
 
+    bool getDisplayed() const;
+    void setDisplayed(bool displayed);
+
+    quint64 getFaces() const;
+    void setFaces(const quint64 &faces);
+
 private:
     QList<qint64> m_result;
-    bool m_hasHighlight;
+    bool m_hasHighlight = true;
     QString m_color;
+    bool m_displayed = false;
+    quint64 m_faces;
 };
 
 #endif // HighLightDice_H
