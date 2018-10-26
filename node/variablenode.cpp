@@ -53,6 +53,10 @@ ExecutionNode *VariableNode::getCopy() const
 {
   VariableNode* node = new VariableNode();
   node->setIndex(m_index);
+  if(nullptr != m_data)
+  {
+      node->setData(m_data);
+  }
   if(nullptr!=m_nextNode)
   {
       node->setNextNode(m_nextNode->getCopy());
