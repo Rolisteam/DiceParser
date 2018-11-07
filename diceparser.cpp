@@ -24,6 +24,7 @@
 #include <QStringList>
 #include <QObject>
 #include <QFile>
+#include <functional>
 
 #include "node/startingnode.h"
 #include "node/scalaroperatornode.h"
@@ -47,7 +48,6 @@
 #include "node/groupnode.h"
 #include "node/variablenode.h"
 #include "node/bind.h"
-
 
 #define DEFAULT_FACES_NUMBER 10
 
