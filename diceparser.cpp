@@ -495,7 +495,6 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
 
 void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resultList)
 {
-    int i = 0;
     for(auto start : m_startNodes)
     {
         ExecutionNode* next = getLeafNode(start);
@@ -525,7 +524,6 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
 
 void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,bool& homogeneous)
 {
-    int i = 0;
     for(auto start : m_startNodes)
     {
         ExportedDiceResult diceValues;
