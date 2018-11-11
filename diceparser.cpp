@@ -492,6 +492,36 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
 
     return stringListResult;
 }
+
+void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resultList)
+{
+    for(auto start : m_startNodes)
+    {
+        ExecutionNode* next = getLeafNode(start);
+        Result* result=next->getResult();
+        ExportedDiceResult nodeResult;
+        while(nullptr!=result)
+        {
+            if(result->hasResultOfType(Result::DICE_LIST))
+            {
+                DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
+                QList<HighLightDice> list;
+                quint64 faces = 0;
+
+                for(Die* die : diceResult->getResultList())
+                {
+                    faces = die->getFaces();
+                    HighLightDice hlDice(die->getListValue(),die->isHighlighted(),die->getColor(), die->hasBeenDisplayed(),die->getFaces());
+                    list.append(hlDice);
+                }
+                nodeResult.insert(static_cast<int>(faces),list);
+            }
+            result = result->getPrevious();
+        }
+        resultList.append(nodeResult);
+    }
+}
+
 void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,bool& homogeneous)
 {
     for(auto start : m_startNodes)
@@ -499,7 +529,6 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
         ExportedDiceResult diceValues;
         ExecutionNode* next = getLeafNode(start);
         Result* result=next->getResult();
-
         while(nullptr!=result)
         {
             if(result->hasResultOfType(Result::DICE_LIST))
@@ -529,8 +558,7 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
                                     valuesResult.append(i);
                                 }
                             }
-                            HighLightDice hlDice(valuesResult,die->isHighlighted(),die->getColor());
-                            //QPair<QList<quint64>,bool> pair(valuesResult,die->isHighlighted());
+                            HighLightDice hlDice(valuesResult,die->isHighlighted(),die->getColor(), die->hasBeenDisplayed(),0);
                             listpair.append(hlDice);
                         }
                     }

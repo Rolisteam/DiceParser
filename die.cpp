@@ -29,13 +29,8 @@
 Die::Die()
     : m_hasValue(false),m_displayStatus(false),m_highlighted(true),m_base(1),m_color(""),m_op(Die::PLUS)//,m_mt(m_randomDevice)
 {
-//    uint seed = quintptr(this) + QDateTime::currentDateTime().toMSecsSinceEpoch();
-
-  //  qsrand(seed);
-
     auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     m_rng = std::mt19937(quintptr(this)+seed);
-
 }
 Die::Die(const Die& die)
 {

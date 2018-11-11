@@ -114,6 +114,9 @@ qreal DiceResult::getScalarResult()
                 case Die::MINUS:
                     scalar-=tmp->getValue();
                     break;
+                case Die::POW:
+                    scalar=static_cast<int>(pow(static_cast<double>(scalar),static_cast<double>(tmp->getValue())));
+                    break;
                 case Die::DIVIDE:
                 case Die::INTEGER_DIVIDE:
                     if(tmp->getValue()!=0)
@@ -135,8 +138,6 @@ qreal DiceResult::getScalarResult()
         }
         return scalar;
     }
-
-    return 0;
 }
 
 Die::ArithmeticOperator DiceResult::getOperator() const

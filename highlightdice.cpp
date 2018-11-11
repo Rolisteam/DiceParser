@@ -19,8 +19,8 @@
     ***************************************************************************/
 #include "highlightdice.h"
 
-HighLightDice::HighLightDice(QList<qint64> result,bool isHighlighted, QString color)
-    : m_result(result),m_hasHighlight(isHighlighted),m_color(color)
+HighLightDice::HighLightDice(QList<qint64> result, bool isHighlighted, QString color, bool displayed, quint64 faces)
+    : m_result(result),m_hasHighlight(isHighlighted),m_color(color), m_displayed(displayed),m_faces(faces)
 {
 
 }
@@ -59,4 +59,24 @@ QString HighLightDice::getColor() const
 void HighLightDice::setColor(const QString &color)
 {
     m_color = color;
+}
+
+bool HighLightDice::getDisplayed() const
+{
+    return m_displayed;
+}
+
+void HighLightDice::setDisplayed(bool displayed)
+{
+    m_displayed = displayed;
+}
+
+quint64 HighLightDice::getFaces() const
+{
+    return m_faces;
+}
+
+void HighLightDice::setFaces(const quint64 &faces)
+{
+    m_faces = faces;
 }
