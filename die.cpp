@@ -103,6 +103,9 @@ qint64 Die::getValue() const
                         //error();
                     }
                     break;
+                case POW:
+                    value=static_cast<qint64>(std::pow(value,tmp));
+                    break;
                 }
             }
             else
