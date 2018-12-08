@@ -22,6 +22,7 @@
 #ifndef DICERESULT_H
 #define DICERESULT_H
 #include <QList>
+#include <functional>
 
 #include "die.h"
 #include "result.h"

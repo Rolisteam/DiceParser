@@ -108,7 +108,7 @@ QString OperationCondition::toString()
     }
     return QStringLiteral("[%1%2%3]").arg(str).arg(valueToScalar()).arg(m_boolean->toString());
 }
-bool OperationCondition::isValidRangeSize(std::pair<qint64,qint64> range) const
+bool OperationCondition::isValidRangeSize(std::pair<qint64,qint64>) const
 {
    auto value = valueToScalar();
    bool valid = true;

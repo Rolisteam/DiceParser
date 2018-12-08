@@ -51,7 +51,7 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
             m_numberOfDice = diceList.size() + m_numberOfDice;
         }
 
-        QList<Die*> diceList3= diceList.mid(0,m_numberOfDice);
+        QList<Die*> diceList3= diceList.mid(0,static_cast<int>(m_numberOfDice));
         QList<Die*> diceList2;
 
         for(Die* die : diceList3)
@@ -64,12 +64,12 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
 
 
 
-        if(m_numberOfDice > static_cast<quint64>(diceList.size()))
+        if(m_numberOfDice > static_cast<qint64>(diceList.size()))
         {
             m_errors.insert(TOO_MANY_DICE,QObject::tr(" You ask to keep %1 dice but the result only has %2").arg(m_numberOfDice).arg(diceList.size()));
         }
 
-        for(Die* tmp : diceList.mid(m_numberOfDice,-1))
+        for(Die* tmp : diceList.mid(static_cast<int>(m_numberOfDice),-1))
         {
             tmp->setHighlighted(false);
         }
