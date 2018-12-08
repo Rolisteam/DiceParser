@@ -7,6 +7,7 @@
 #include <QFontMetrics>
 #include <QPainter>
 #include <QFont>
+//#include <QFontDatabase>
 #endif
 
 #include <QDebug>
@@ -20,6 +21,7 @@ DisplayToolBox::DisplayToolBox()
 #ifdef PAINTER_OP
 QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString comment, bool allSameFaceCount,bool allSameColor)
 {
+    //qDebug() <<"scarlarText:" <<scalarText << "resultStr:"<< resultStr<<"array" << array<< "with color:" << withColor << "cmd" << cmd << "comment" << comment << "allsamecolor"<< allSameColor;
     QString textTotal("%1 Details:[%3 %2]");
 
 
@@ -43,16 +45,16 @@ QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArr
     {
         textTotal.prepend(QStringLiteral("%1\n").arg(comment));
     }
-    QFont font("Helvetica", 15);// = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+    QFont font("Helvetica", 15); //QFontDatabase::systemFont(QFontDatabase::GeneralFont);
     QFontMetrics fm(font);
     QRect rect = fm.boundingRect(textTotal);
 
     QImage img(rect.width(),(rect.height()+LINE_SPACING)*lineCount,QImage::Format_ARGB32);
-    img.fill(Qt::transparent);
+    img.fill(QColor(255,255,255,100));
     QPainter painter(&img);
     painter.setFont(font);
     int y = rect.height();
-    if(!comment.isNull())
+    if(!comment.isEmpty())
     {
         QPen pen = painter.pen();
         pen.setColor(Qt::black);
@@ -73,14 +75,13 @@ QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArr
         QPen pen = painter.pen();
         pen.setColor(Qt::red);
         painter.setPen(pen);
-        painter.drawText(QPoint(0,y),scalarText);
+        painter.drawText(QPoint(5,y),scalarText);
         y += rect.height()+LINE_SPACING;
         painter.restore();
-        int x = 0;
+        int x = 5;
         QString text=QStringLiteral("Details:[%1 (").arg(cmd);
         painter.drawText(QPoint(x,y),text);
         x += fm.boundingRect(text).width();
-
         if(allSameFaceCount)
         {
             int i = 0;
@@ -97,7 +98,12 @@ QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArr
                 painter.save();
                 QPen pen = painter.pen();
                 QColor color;
-                color.setNamedColor(obj["color"].toString());
+               
+                auto colorStr = obj["color"].toString();
+                if(colorStr.isEmpty())
+                    color = QColor(Qt::black);
+                else 
+                    color.setNamedColor(colorStr);
                 pen.setColor(color);
 
                 painter.setPen(pen);
@@ -132,7 +138,12 @@ QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArr
                 painter.save();
                 QPen pen = painter.pen();
                 QColor color;
-                color.setNamedColor(obj["color"].toString());
+                auto colorStr = obj["color"].toString();
+                if(colorStr.isEmpty())
+                    color = QColor(Qt::black);
+                else 
+                    color.setNamedColor(colorStr);
+                
                 pen.setColor(color);
                 painter.setPen(pen);
 
@@ -148,6 +159,7 @@ QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArr
                 }
                 painter.drawText(QPoint(x,y),text);
                 x += fm.boundingRect(text).width();
+                painter.restore();
                 ++i;
             }
         }
