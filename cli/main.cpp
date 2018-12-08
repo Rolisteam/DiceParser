@@ -267,13 +267,10 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
             }
             if(!list.isEmpty())
             {
-                qDebug() << "list is not empty" << list.size();
                 for(auto map : list)
                 {
-                    qDebug() << "loop map"<< map.size();
                     for(auto key : map.keys())
                     {
-                        qDebug() << "key: "<<key;
                         auto dice = map[key];
                         QString stringVal;
                         for(auto val : dice)
@@ -299,14 +296,13 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                 }
             }
 
-            qDebug() << listOfDiceResult;
             if(parser.hasStringResult())
             {
                 bool ok;
                 QStringList allStringlist = parser.getAllStringResult(ok);
                 QString stringResult = allStringlist.join(" ; ");
                 stringResult.replace("%1",scalarText);
-                resultStr.replace("%2",diceList.trimmed());
+                stringResult.replace("%2",listOfDiceResult.join(",").trimmed());
                 stringResult.replace("%3",lastScalarText);
 
                 int i = strLst.size();
@@ -352,6 +348,7 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                 case SVG:
                     displaySVG(scalarText, resultStr, array, withColor, cmd, error, comment, allSameFaceCount, allSameColor);
                 break;
+                case BOT:
                 case MARKDOWN:
                     displayMarkdown(scalarText, resultStr, array, withColor, cmd, error, comment, allSameFaceCount, allSameColor);
                 break;
