@@ -321,17 +321,17 @@ QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList,bool& 
                 object["color"]=*it;
                 object["face"]=face;
                 QJsonArray values;
-                for(auto const dice : list)
+                for(auto const& dice : list)
                 {
                     QJsonObject diceObj;
                     auto listValues = dice.getResult();
                     if(!listValues.isEmpty())
                     {
-                        diceObj["total"]=(qint64)listValues.takeFirst();
+                        diceObj["total"]=static_cast<qint64>(listValues.takeFirst());
                         QJsonArray subValues;
                         for(auto result : listValues)
                         {
-                            subValues.push_back((qint64)result);
+                            subValues.push_back(static_cast<qint64>(result));
                         }
                         diceObj["subvalues"]=subValues;
                     }
