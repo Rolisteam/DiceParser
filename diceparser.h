@@ -220,6 +220,7 @@ public:
     bool readOptionFromNull(QString &str, ExecutionNode *&node);
     bool readInstructionList(QString &str);
     void getDiceResultFromAllInstruction(QList<ExportedDiceResult> &resultList);
+    QString humanReadableWarning();
 protected:
     bool readParameterNode(QString &str, ExecutionNode *&node);
 private:

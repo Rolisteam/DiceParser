@@ -169,16 +169,19 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
     m_command = str;
     bool hasInstruction = readInstructionList(str);
 
-    if((m_errorMap.isEmpty())&&(hasInstruction))
-    {
-        return true;
-    }
-    else
+    bool value = hasInstruction;
+    if(!hasInstruction)
     {
         m_errorMap.insert(ExecutionNode::NOTHING_UNDERSTOOD,QObject::tr("Nothing was understood. To roll dice: !1d6 - full documation: "
-                                                                        "<a href=\"https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md\">https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md</a>"));
+                                                               "<a href=\"https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md\">https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md</a>"));
     }
-    return false;
+    else if(hasInstruction && !str.isEmpty())
+    {
+        auto i = m_command.size()-str.size();
+        m_warningMap.insert(ExecutionNode::UNEXPECTED_CHARACTER,QObject::tr("Unexpected character at %1 - end of command was ignored \"%2\"").arg(i).arg(str));
+    }
+
+    return value;
 }
 
 bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
@@ -253,8 +256,6 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         {
             NumberNode* numberNode=new NumberNode();
             numberNode->setNumber(1);
-            ExecutionNode* previous = diceNode->getPreviousNode();
-            numberNode->setPreviousNode(previous);
             numberNode->setNextNode(diceNode);
             node = numberNode;
             return true;
@@ -860,12 +861,16 @@ bool DiceParser::readInstructionList(QString& str)
             {
                 latest = ParsingToolBox::getLatestNode(latest);
                 keepParsing =!str.isEmpty();
-                if(keepParsing)
+                while(keepParsing)
                 {
+                    auto before = str;
                     ExecutionNode* operatorNode = nullptr;
                     if(readOperator(str,operatorNode))
+                    {
                         latest->setNextNode(operatorNode);
-                    latest = ParsingToolBox::getLatestNode(latest);
+                        latest = ParsingToolBox::getLatestNode(latest);
+                    }
+                    keepParsing = (!str.isEmpty() & (before!=str));
                 }
             }
             if( !str.isEmpty() && readInstructionOperator(str[0]))
@@ -1348,6 +1353,18 @@ QString DiceParser::humanReadableError()
     return str;
 }
 
+QString DiceParser::humanReadableWarning()
+{
+    QMapIterator<ExecutionNode::DICE_ERROR_CODE,QString> i(m_warningMap);
+    QString str("");
+    while (i.hasNext())
+    {
+        i.next();
+        str.append(i.value());
+        str.append(QStringLiteral("\n"));
+    }
+    return str;
+}
 
 void DiceParser::writeDownDotTree(QString filepath)
 {

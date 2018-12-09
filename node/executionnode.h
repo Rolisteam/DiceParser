@@ -18,7 +18,7 @@ public:
                           NOTHING_UNDERSTOOD,
                           NO_DICE_TO_ROLL,
                           TOO_MANY_DICE,NO_VARIBALE,
-                          INVALID_INDEX};
+                          INVALID_INDEX,UNEXPECTED_CHARACTER};
     /**
      * @brief ExecutionNode
      */

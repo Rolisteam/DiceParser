@@ -53,6 +53,7 @@
  */
 
 QTextStream out(stdout, QIODevice::WriteOnly);
+QTextStream err(stderr, QIODevice::WriteOnly);
 bool markdown = false;
 #ifdef PAINTER_OP
 enum EXPORTFORMAT {TERMINAL, SVG, IMAGE, MARKDOWN, JSON, BOT};
@@ -104,7 +105,7 @@ void displayImage(QString scalarText, QString resultStr,QJsonArray array, bool w
     out << DisplayToolBox::makeImage( scalarText,  resultStr, array,  withColor,  cmd,  comment,  allSameFaceCount, allSameColor);
 }
 #endif
-void displayJSon(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString error, QString comment, bool allSameFaceCount,bool allSameColor)
+void displayJSon(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString error, QString warning, QString comment, bool allSameFaceCount,bool allSameColor)
 {
     Q_UNUSED(withColor);
     QJsonDocument doc;
@@ -116,11 +117,12 @@ void displayJSon(QString scalarText, QString resultStr,QJsonArray array, bool wi
     obj["string"]=resultStr;
     obj["allSameFace"]=allSameFaceCount;
     obj["allSameColor"]=allSameColor;
+    obj["warning"]=warning;
     obj["command"]=cmd;
     doc.setObject(obj);
     out << doc.toJson() << "\n";
 }
-void displayMarkdown(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString error, QString comment, bool allSameFaceCount,bool allSameColor)
+void displayMarkdown(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString error, QString warning, QString comment, bool allSameFaceCount,bool allSameColor)
 {
     Q_UNUSED(withColor);
     QString str("```Markdown\n");
@@ -130,6 +132,9 @@ void displayMarkdown(QString scalarText, QString resultStr,QJsonArray array, boo
     }
     else
     {
+        if(!warning.isEmpty())
+            str.append(QStringLiteral("Warning: %1\n").arg(warning));
+
         if(!comment.isEmpty())
         {
             str.prepend(QStringLiteral("%1\n").arg(comment));
@@ -148,7 +153,7 @@ void displayMarkdown(QString scalarText, QString resultStr,QJsonArray array, boo
     str.append(QStringLiteral("```"));
     out << str;
 }
-void displaySVG(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString error, QString comment, bool allSameFaceCount,bool allSameColor)
+void displaySVG(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString error, QString warning, QString comment, bool allSameFaceCount,bool allSameColor)
 {
     QString str("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg version=\"1.1\"  xmlns=\"http://www.w3.org/2000/svg\" "
                                   "xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
@@ -158,6 +163,9 @@ void displaySVG(QString scalarText, QString resultStr,QJsonArray array, bool wit
     }
     else
     {
+        if(!warning.isEmpty())
+            str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"20\"><tspan fill=\"orange\">%1</tspan></text>").arg(warning));
+
         int y = 20;
         if(!comment.isEmpty())
         {
@@ -182,13 +190,18 @@ void displaySVG(QString scalarText, QString resultStr,QJsonArray array, bool wit
     out << str << "\n";
 }
 
-void displayCommandResult(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString error, QString comment, bool allSameFaceCount,bool allSameColor)
+void displayCommandResult(QString scalarText, QString resultStr,QJsonArray array, bool withColor, QString cmd, QString error, QString warning, QString comment, bool allSameFaceCount,bool allSameColor)
 {
+    // TODO display warning
     if(!error.isEmpty())
     {
-        out << "Error" << error << "\n";
+        err << "Error" << error << "\n";
         return;
     }
+
+    if(!warning.isEmpty())
+        err << "Warning: "<< warning << "\n";
+
     QString str;
 
     auto diceList = DisplayToolBox::diceToText(array,withColor,allSameFaceCount,allSameColor);
@@ -243,6 +256,7 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
             QString lastScalarText;
             QString comment = parser.getComment();
             QString error = parser.humanReadableError();
+            QString warnings = parser.humanReadableWarning();
             QStringList strLst;
             QStringList listOfDiceResult;
 
@@ -343,17 +357,17 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
             switch(format)
             {
                 case TERMINAL:
-                    displayCommandResult(scalarText, resultStr, array, withColor, cmd, error, comment, allSameFaceCount, allSameColor);
+                    displayCommandResult(scalarText, resultStr, array, withColor, cmd, error,warnings, comment, allSameFaceCount, allSameColor);
                 break;
                 case SVG:
-                    displaySVG(scalarText, resultStr, array, withColor, cmd, error, comment, allSameFaceCount, allSameColor);
+                    displaySVG(scalarText, resultStr, array, withColor, cmd, error,warnings, comment, allSameFaceCount, allSameColor);
                 break;
                 case BOT:
                 case MARKDOWN:
-                    displayMarkdown(scalarText, resultStr, array, withColor, cmd, error, comment, allSameFaceCount, allSameColor);
+                    displayMarkdown(scalarText, resultStr, array, withColor, cmd, error,warnings, comment, allSameFaceCount, allSameColor);
                 break;
                 case JSON:
-                    displayJSon(scalarText, resultStr, array, withColor, cmd, error, comment, allSameFaceCount, allSameColor);
+                    displayJSon(scalarText, resultStr, array, withColor, cmd, error,warnings, comment, allSameFaceCount, allSameColor);
                 break;
                 #ifdef PAINTER_OP
                 case IMAGE:
