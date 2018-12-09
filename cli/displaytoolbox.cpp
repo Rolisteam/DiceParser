@@ -131,7 +131,7 @@ QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArr
                 {
                     result.append(diceResultToString(valRef.toObject()));
                 }
-                text =QStringLiteral("d%1:(").arg(obj["face"].toDouble());
+                text =QStringLiteral("d%1:(").arg(obj["face"].toInt());
                 painter.drawText(QPoint(x,y),text);
                 x += fm.boundingRect(text).width();
 
@@ -259,7 +259,7 @@ QString DisplayToolBox::diceToSvg(QJsonArray array,bool withColor,bool allSameCo
             {
                 subResult.append(diceResultToString(valRef.toObject()));
             }
-            result.append(QStringLiteral("d%1:(").arg(obj["face"].toString()));
+            result.append(QStringLiteral("d%1:(").arg(obj["face"].toInt()));
             if(withColor)
             {
                 result.append(QStringLiteral("<tspan fill=\"%1\">").arg(obj["color"].toString()));
@@ -366,7 +366,7 @@ QString DisplayToolBox::diceToText(QJsonArray array, bool withColor,bool allSame
 	QStringList result;
 	for(auto item : array)
 	{
-		QString subResult;
+        QString subResult("");
 		auto obj = item.toObject();
 		auto values= obj["values"].toArray();
 
@@ -379,7 +379,7 @@ QString DisplayToolBox::diceToText(QJsonArray array, bool withColor,bool allSame
 		{
 			if(!allSameFaceCount)
 			{
-				subResult += QStringLiteral("d%1:(").arg(obj["face"].toString());
+                subResult += QStringLiteral("d%1:(").arg(obj["face"].toInt());
 			}
 			if(withColor)
 			{
