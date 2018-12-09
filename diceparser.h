@@ -245,7 +245,7 @@ private:
      * @brief readOperator
      * @return
      */
-    bool readOperator(QString&,ExecutionNode* previous);
+    bool readOperator(QString&, ExecutionNode *&nodeResult);
     /**
      * @brief DiceParser::readCommand
      * @param str

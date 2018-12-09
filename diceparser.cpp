@@ -195,9 +195,14 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
             if(m_parsingToolbox->readCloseParentheses(str))
             {
                 ExecutionNode* diceNode=nullptr;
-                if(readDice(str,diceNode))
+                ExecutionNode* operatorNode=nullptr;
+                if(readDice(str, diceNode))
                 {
                     parentheseNode->setNextNode(diceNode);
+                }
+                else if(readExpression(str,operatorNode))
+                {
+                    parentheseNode->setNextNode(operatorNode);
                 }
                 return true;
             }
@@ -213,8 +218,10 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         node = operandNode;
 
         operandNode= ParsingToolBox::getLatestNode(operandNode);
-        while(readOperator(str,operandNode))
+        ExecutionNode* operatorNode=nullptr;
+        while(readOperator(str,operatorNode))
         {
+            operandNode->setNextNode(operatorNode);
             operandNode= ParsingToolBox::getLatestNode(operandNode);
         };
         return true;
@@ -230,6 +237,11 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
         return true;
     }
     else if(readOptionFromNull(str,operandNode))
+    {
+        node = operandNode;
+        return true;
+    }
+    else if(readOperator(str,operandNode))
     {
         node = operandNode;
         return true;
@@ -850,7 +862,9 @@ bool DiceParser::readInstructionList(QString& str)
                 keepParsing =!str.isEmpty();
                 if(keepParsing)
                 {
-                    readOperator(str,latest);
+                    ExecutionNode* operatorNode = nullptr;
+                    if(readOperator(str,operatorNode))
+                        latest->setNextNode(operatorNode);
                     latest = ParsingToolBox::getLatestNode(latest);
                 }
             }
@@ -878,9 +892,9 @@ bool DiceParser::readInstructionList(QString& str)
     return hasInstruction;
 }
 
-bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
+bool DiceParser::readOperator(QString& str,ExecutionNode*& nodeResult)
 {
-    if(str.isEmpty() || nullptr == previous)
+    if(str.isEmpty() /*|| nullptr == previous*/)
     {
         return false;
     }
@@ -923,8 +937,8 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
                 nodeExec->setNextNode(nullptr);
             }
 
-
-            previous->setNextNode(node);
+            nodeResult = node;
+            //previous->setNextNode(node);
 
             return true;
         }
@@ -933,13 +947,13 @@ bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
             delete node;
         }
     }
-    else
+  /*  else
     {
         while(readOption(str,previous))
         {
             previous = ParsingToolBox::getLatestNode(previous);
         }
-    }
+    }*/
     return false;
 }
 bool DiceParser::hasSeparator()const
