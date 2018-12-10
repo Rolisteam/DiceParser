@@ -209,6 +209,10 @@ bool DiceParser::readExpression(QString& str,ExecutionNode* & node)
                 }
                 return true;
             }
+            else
+            {
+                m_warningMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Expected closing parenthesis - can't validate the inside."));
+            }
         }
     }
     else if(m_parsingToolbox->readOperand(str,operandNode))
