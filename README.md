@@ -48,8 +48,6 @@ roll 1 die with 25 faces
 ### 8+8+8
 compute: 24
 
-
-
 ### 100/28*3
 compute: 100/28 = 3
 3*3 = 9
@@ -84,7 +82,7 @@ Keep =: k Number
 KeepAndExplode =: K number
 Reroll =: r
 RerollUntil =: R
-Explosing =: e
+Exploding =: e
 RerollOnceAndAdd =: a
 RerollAndAdd =: A
 Painter =: p
