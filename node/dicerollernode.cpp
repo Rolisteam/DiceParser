@@ -76,7 +76,7 @@ QString DiceRollerNode::toString(bool wl) const
 {
 	if(wl)
 	{
-            return QString("%1 [label=\"DiceRollerNode faces: %2\"]").arg(m_id).arg(getFaces());
+        return QString("%1 [label=\"DiceRollerNode faces: %2\"]").arg(m_id).arg(getFaces());
 	}
 	else
 	{

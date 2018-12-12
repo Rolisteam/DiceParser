@@ -110,16 +110,17 @@ void ParenthesesNode::generateDotTree(QString & s)
         s.append(toString(false));
         s.append(" -> ");
         s.append("nullptr;\n");
-        if(nullptr!=m_result)
-        {
+    
+    }
+    if(nullptr!=m_result)
+    {
 
             s.append(toString(false));
             s.append(" ->");
             s.append(m_result->toString(false));
-            s.append(" [label=\"Result\"];\n");
-
-
-            m_result->generateDotTree(s);
-        }
+            s.append(" [label=\"Result\", style=\"dashed\"];\n");
+            if(nullptr == m_nextNode)
+                m_result->generateDotTree(s);
+    
     }
 }

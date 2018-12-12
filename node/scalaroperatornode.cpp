@@ -212,6 +212,16 @@ void ScalarOperatorNode::generateDotTree(QString& s)
         s.append("nullptr");
         s.append(" [label=\"nextNode\"];\n");
     }
+
+    if(nullptr!=m_result)
+    {
+        s.append(toString(false));
+        s.append(" ->");
+        s.append(m_result->toString(false));
+        s.append(" [label=\"Result\", style=\"dashed\"];\n");
+        if(nullptr == m_nextNode)
+            m_result->generateDotTree(s);
+    }
     QString str;
     str.append("\n");
     if(nullptr!=m_internalNode)
