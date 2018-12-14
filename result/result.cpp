@@ -71,7 +71,7 @@ void Result::generateDotTree(QString& s)
 		s.append(toString(false));
         s.append(" -> ");
 		s.append("nullptr");
-        s.append(" [label=\"previousResult\"];\n");
+        s.append(" [label=\"previousResult\", shape=\"box\"];\n");
     }
 
 }

@@ -49,8 +49,8 @@ public:
 
     virtual Validator* getCopy() const;
 private:
-    qint64 m_start;
-    qint64 m_end;
+    qint64 m_start = 0;
+    qint64 m_end = 0;
     bool m_hasEnd;
     bool m_hasStart;
     bool m_emptyRange;

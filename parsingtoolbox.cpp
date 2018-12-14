@@ -544,12 +544,32 @@ bool ParsingToolBox::readCloseParentheses(QString& str)
     else
         return false;
 }
+
+int ParsingToolBox::findClosingCharacterIndexOf(QChar open, QChar closing,const QString &str, int offset)
+{
+    int counter = offset;
+    int i = 0;
+    for(auto const& letter : str)
+    {
+        if(letter == open)
+            ++counter;
+        else if(letter == closing)
+            --counter;
+
+        if(counter == 0)
+            return i;
+
+        ++i;
+    }
+    return -1;
+}
+
 bool ParsingToolBox::readList(QString& str,QStringList& list,QList<Range>& ranges)
 {
     if(str.startsWith("["))
     {
         str=str.remove(0,1);
-        int pos = str.indexOf("]");
+        int pos = findClosingCharacterIndexOf('[',']',str,1);//str.indexOf("]");
         if(-1!=pos)
         {
             QString liststr = str.left(pos);
@@ -685,8 +705,6 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
     int i=0;
     int j=0;
     bool hasPercentage=false;
-    //QList<Range> rangesTemp;
-    //range
     for(QString line:str)
     {
         int pos = line.indexOf('[');
@@ -731,7 +749,7 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
 
     if((hasPercentage)&&(undefDistance!=0))
     {
-        qreal ratio = (qreal)100.0 / (qreal)undefDistance;
+        qreal ratio = 100.0 / static_cast<qreal>(undefDistance);
         qint64 realStart=0;
         for(int i = 0; i< ranges.size(); ++i)
         {
@@ -765,7 +783,7 @@ void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
             {
                 qint64 sizeRange = range.getEnd()-range.getStart();
                 range.setStart(limitUp);
-                limitUp+=sizeRange+1;
+                limitUp+=sizeRange;
                 range.setEnd(limitUp);
             }
             ++limitUp;

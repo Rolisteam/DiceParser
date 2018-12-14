@@ -32,7 +32,7 @@ void ParenthesesNode::setInternelNode(ExecutionNode* node)
 }
 void ParenthesesNode::run(ExecutionNode* /*previous*/)
 {
-	m_previousNode = nullptr;
+    //m_previousNode = previous;
     if(nullptr!=m_internalNode)
     {
         m_internalNode->run(this);
@@ -43,7 +43,6 @@ void ParenthesesNode::run(ExecutionNode* /*previous*/)
        }
        m_result = temp->getResult();
     }
-
 
     if(nullptr!=m_nextNode)
     {
@@ -101,7 +100,7 @@ void ParenthesesNode::generateDotTree(QString & s)
         s.append(toString(false));
         s.append(" -> ");
         s.append(m_nextNode->toString(false));
-        s.append("[label=\"next\"];\n");
+        s.append(" [label=\"next\"];\n");
 //        s.append(" [label=\"nextNode\"];\n");
         m_nextNode->generateDotTree(s);
     }

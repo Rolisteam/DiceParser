@@ -194,6 +194,7 @@ public:
     static void setStartNodes(std::vector<ExecutionNode *> *startNodes);
 
     static bool readOperand(QString &str, ExecutionNode *&node);
+    static int findClosingCharacterIndexOf(QChar open, QChar closing, const QString &str, int offset);
 private:
 
     QMap<QString,BooleanCondition::LogicOperator>* m_logicOp;
