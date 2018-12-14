@@ -112,7 +112,8 @@ public:
      */
     bool readExpression(QString& str,ExecutionNode* & node);
     /**
-     * @brief displayDotTree
+     * @brief displayDotTree - Write the execution tree into file using dot format.
+     * @param filepath absolute or relative path to the tree file.
      */
     void writeDownDotTree(QString filepath);
     /**
