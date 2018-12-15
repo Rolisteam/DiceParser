@@ -225,10 +225,10 @@
             node = operandNode;
 
             operandNode= ParsingToolBox::getLatestNode(operandNode);
-            ExecutionNode* operatorNode=nullptr;
-            while(readOperator(str,operatorNode))
+            //ExecutionNode* operatorNode=nullptr;
+            while(readOperator(str,operandNode))
             {
-                operandNode->setNextNode(operatorNode);
+                //operandNode->setNextNode(operatorNode);
                 operandNode= ParsingToolBox::getLatestNode(operandNode);
             };
             return true;
@@ -248,7 +248,7 @@
             node = operandNode;
             return true;
         }
-        else if(readOperator(str,operandNode))
+        else if(readOperatorFromNull(str,operandNode))
         {
             node = operandNode;
             return true;
@@ -271,6 +271,7 @@
         }
         return false;
     }
+
     bool DiceParser::readOptionFromNull(QString& str,ExecutionNode* & node)
     {
         StartingNode nodePrevious;
@@ -283,6 +284,20 @@
         }
         return false;
     }
+
+    bool DiceParser::readOperatorFromNull(QString& str,ExecutionNode* & node)
+    {
+        StartingNode nodePrevious;
+        if(readOperator(str,&nodePrevious))
+        {
+            auto nodeNext = nodePrevious.getNextNode();
+            nodePrevious.setNextNode(nullptr);
+            node = nodeNext;
+            return true;
+        }
+        return false;
+    }
+
     bool DiceParser::readNode(QString& str,ExecutionNode* & node)
     {
         QString key= str.left(1);
@@ -870,10 +885,8 @@
                     while(keepParsing)
                     {
                         auto before = str;
-                        ExecutionNode* operatorNode = nullptr;
-                        if(readOperator(str,operatorNode))
+                        if(readOperator(str,latest))
                         {
-                            latest->setNextNode(operatorNode);
                             latest = ParsingToolBox::getLatestNode(latest);
                         }
                         keepParsing = (!str.isEmpty() & (before!=str));
@@ -903,9 +916,9 @@
         return hasInstruction;
     }
 
-    bool DiceParser::readOperator(QString& str,ExecutionNode*& nodeResult)
+    bool DiceParser::readOperator(QString& str,ExecutionNode* previous)
     {
-        if(str.isEmpty() /*|| nullptr == previous*/)
+        if(str.isEmpty() || nullptr == previous)
         {
             return false;
         }
@@ -948,8 +961,8 @@
                     nodeExec->setNextNode(nullptr);
                 }
 
-                nodeResult = node;
-                //previous->setNextNode(node);
+                //nodeResult = node;
+                previous->setNextNode(node);
 
                 return true;
             }
@@ -958,13 +971,13 @@
                 delete node;
             }
         }
-      /*  else
+        else
         {
             while(readOption(str,previous))
             {
                 previous = ParsingToolBox::getLatestNode(previous);
             }
-        }*/
+        }
         return false;
     }
     bool DiceParser::hasSeparator()const

@@ -219,6 +219,8 @@ public:
     void setComment(const QString &comment);
 
     bool readOptionFromNull(QString &str, ExecutionNode *&node);
+    bool readOperatorFromNull(QString &str, ExecutionNode *&node);
+
     bool readInstructionList(QString &str);
     void getDiceResultFromAllInstruction(QList<ExportedDiceResult> &resultList);
     QString humanReadableWarning();
@@ -247,7 +249,7 @@ private:
      * @brief readOperator
      * @return
      */
-    bool readOperator(QString&, ExecutionNode *&nodeResult);
+    bool readOperator(QString&, ExecutionNode* previous);
     /**
      * @brief DiceParser::readCommand
      * @param str
