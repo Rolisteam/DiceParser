@@ -1053,7 +1053,6 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                     DiceRollerNode* nodeTmp = dynamic_cast<DiceRollerNode*>(previous);
                     if(nullptr!=nodeTmp)
                     {
-
                         previous = addExplodeDiceNode(nodeTmp->getFaces(),previous);
                     }
 
