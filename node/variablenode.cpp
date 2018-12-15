@@ -14,10 +14,14 @@ void VariableNode::run(ExecutionNode *previous)
       value = ParsingToolBox::getLatestNode(value);
       if(nullptr != value)
       {
-        m_result = value->getResult()->getCopy();
-        if(nullptr!=m_nextNode)
+        auto result = value->getResult();
+        if(result)
         {
-            m_nextNode->run(this);
+            m_result = result->getCopy();
+            if(nullptr!=m_nextNode)
+            {
+                m_nextNode->run(this);
+            }
         }
       }
     }
