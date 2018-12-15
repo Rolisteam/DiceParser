@@ -38,6 +38,7 @@ Result* Result::getPrevious()
 
 void Result::setPrevious(Result* p)
 {
+    Q_ASSERT(p != this);
     m_previous = p;
 }
 
@@ -55,12 +56,15 @@ bool Result::hasResultOfType(RESULT_TYPE type) const
 }
 void Result::generateDotTree(QString& s)
 {
-	s.append(toString(true));
-	s.append(";\n");
+    auto str = toString(true);
+    if(s.contains(str))
+        return;
+    s.append(str);
+    s.append(";\n");
 
     if(nullptr!=m_previous)
     {
-		s.append(toString(false));
+        s.append(toString(false));
         s.append(" -> ");
         s.append(m_previous->toString(false));
         s.append("[label=\"previousResult\"]\n");
@@ -68,9 +72,9 @@ void Result::generateDotTree(QString& s)
     }
     else
     {
-		s.append(toString(false));
+        s.append(toString(false));
         s.append(" -> ");
-		s.append("nullptr");
+        s.append("nullptr");
         s.append(" [label=\"previousResult\", shape=\"box\"];\n");
     }
 

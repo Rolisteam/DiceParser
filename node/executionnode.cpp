@@ -54,27 +54,30 @@ QString ExecutionNode::getHelp()
 }
 ExecutionNode* ExecutionNode::getPreviousNode() const
 {
-	return m_previousNode;
+    return m_previousNode;
 }
 void ExecutionNode::generateDotTree(QString& s)
 {
-	s.append(toString(true));
-	s.append(";\n");
+    auto str = toString(true);
+    if(s.contains(str))
+        return;
+    s.append(toString(true));
+    s.append(";\n");
 
     if(nullptr!=m_nextNode)
     {
-		s.append(toString(false));
+        s.append(toString(false));
         s.append(" -> ");
-		s.append(m_nextNode->toString(false));
+        s.append(m_nextNode->toString(false));
         s.append("[label=\"next\"];\n");
-//        s.append(" [label=\"nextNode\"];\n");
+        //        s.append(" [label=\"nextNode\"];\n");
         m_nextNode->generateDotTree(s);
     }
     else
     {
-		s.append(toString(false));
+        s.append(toString(false));
         s.append(" -> ");
-		s.append("nullptr;\n");
+        s.append("nullptr;\n");
     }
     if(nullptr!=m_result)
     {

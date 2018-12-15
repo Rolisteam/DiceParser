@@ -194,7 +194,10 @@ qint64 ScalarOperatorNode::getPriority() const
 }
 void ScalarOperatorNode::generateDotTree(QString& s)
 {
-    s.append(toString(true));
+    auto id = toString(true);
+    if(s.contains(id))
+        return;
+    s.append(id);
     s.append(";\n");
 
     if(nullptr!=m_nextNode)

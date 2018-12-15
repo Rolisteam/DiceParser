@@ -594,7 +594,6 @@
                                 tmp.append(listpair);
                                 diceValues.insert(face,tmp);
                             }
-
                         }
                     }
                 }

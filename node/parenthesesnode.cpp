@@ -42,16 +42,6 @@ void ParenthesesNode::run(ExecutionNode* previous)
             temp=temp->getNextNode();
        }
        m_result = temp->getResult();
-       //m_result->setPrevious(internalResult);
-       if(nullptr!=previous)
-       {
-           auto previousResult = previous->getResult();
-           if(nullptr!=m_internalNode->getResult())
-           {
-               m_internalNode->getResult()->setPrevious(previousResult);
-           }
-       }
-       //m_result = temp->getResult();
     }
 
     if(nullptr!=m_nextNode)
@@ -61,14 +51,14 @@ void ParenthesesNode::run(ExecutionNode* previous)
 }
 QString ParenthesesNode::toString(bool b) const
 {
-	if(b)
-	{
-		return QString("%1 [label=\"ParenthesesNode\"]").arg(m_id);
-	}
-	else
-	{
-		return m_id;
-	}
+    if(b)
+    {
+        return QString("%1 [label=\"ParenthesesNode\"]").arg(m_id);
+    }
+    else
+    {
+        return m_id;
+    }
 }
 qint64 ParenthesesNode::getPriority() const
 {
@@ -92,7 +82,10 @@ ExecutionNode* ParenthesesNode::getCopy() const
 
 void ParenthesesNode::generateDotTree(QString & s)
 {
-    s.append(toString(true));
+    auto str = toString(true);
+    if(s.contains(str))
+        return;
+    s.append(str);
     s.append(";\n");
 
     if(nullptr != m_internalNode)
@@ -119,7 +112,7 @@ void ParenthesesNode::generateDotTree(QString & s)
         s.append(toString(false));
         s.append(" -> ");
         s.append("nullptr;\n");
-    
+
     }
     if(nullptr!=m_result)
     {
@@ -130,6 +123,6 @@ void ParenthesesNode::generateDotTree(QString & s)
             s.append(" [label=\"Result\", style=\"dashed\"];\n");
             if(nullptr == m_nextNode)
                 m_result->generateDotTree(s);
-    
+
     }
 }
