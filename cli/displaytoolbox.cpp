@@ -306,8 +306,8 @@ QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList,bool& 
                     it = alreadyDoneColor.end();
                     --it;
                 }
-                int i = std::distance(alreadyDoneColor.begin(), it);
-                sameColorDice[i].push_back(dice);
+                auto i = std::distance(alreadyDoneColor.begin(), it);
+                sameColorDice[static_cast<std::size_t>(i)].push_back(dice);
             }
             int i = 0;
             if(alreadyDoneColor.size()>1)
@@ -316,7 +316,7 @@ QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList,bool& 
             }
             for(auto it = alreadyDoneColor.begin() ; it != alreadyDoneColor.end(); ++it)
             {
-                auto list = sameColorDice[i];
+                auto list = sameColorDice[static_cast<std::size_t>(i)];
                 QJsonObject object;
                 object["color"]=*it;
                 object["face"]=face;

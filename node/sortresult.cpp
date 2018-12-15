@@ -42,15 +42,32 @@ void SortResultNode::run(ExecutionNode* node)
     m_diceResult->setPrevious(previousDiceResult);
     if(nullptr!=previousDiceResult)
     {   
-        QList<Die*> diceList=previousDiceResult->getResultList();
+        auto const& diceList=previousDiceResult->getResultList();
         QList<Die*> diceList2=m_diceResult->getResultList();
+
+       /* const auto& asce = [](const Die* a,const Die* b){
+            return a->getValue() < b->getValue();
+        };
+        const auto& desc = [](const Die* a,const Die* b){
+            return a->getValue() > b->getValue();
+        };
+
+        for(auto const dice : diceList)
+        {
+            Die* tmp1 = new Die(*dice);
+            diceList2.append(tmp1);
+        }
+        if(m_ascending)
+            std::sort(diceList2.begin(), diceList2.end(), asce);
+        else
+            std::sort(diceList2.begin(), diceList2.end(), desc);*/
 
         // half-interval search sorting
         for(int i = 0; i<diceList.size();++i)
         {
 
-            Die* tmp1 = new Die();
-            *tmp1=*diceList[i];
+            Die* tmp1 = new Die(*diceList[i]);
+            //*tmp1=*diceList[i];
             diceList[i]->displayed();
 
             int j =0;

@@ -30,18 +30,28 @@ void ParenthesesNode::setInternelNode(ExecutionNode* node)
 {
     m_internalNode = node;
 }
-void ParenthesesNode::run(ExecutionNode* /*previous*/)
+void ParenthesesNode::run(ExecutionNode* previous)
 {
-    //m_previousNode = previous;
+    m_previousNode = previous;
     if(nullptr!=m_internalNode)
     {
-        m_internalNode->run(this);
-        ExecutionNode* temp=m_internalNode;
+       m_internalNode->run(this);
+       ExecutionNode* temp=m_internalNode;
        while(nullptr!=temp->getNextNode())
        {
             temp=temp->getNextNode();
        }
        m_result = temp->getResult();
+       //m_result->setPrevious(internalResult);
+       if(nullptr!=previous)
+       {
+           auto previousResult = previous->getResult();
+           if(nullptr!=m_internalNode->getResult())
+           {
+               m_internalNode->getResult()->setPrevious(previousResult);
+           }
+       }
+       //m_result = temp->getResult();
     }
 
     if(nullptr!=m_nextNode)

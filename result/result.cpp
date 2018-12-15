@@ -62,8 +62,8 @@ void Result::generateDotTree(QString& s)
     {
 		s.append(toString(false));
         s.append(" -> ");
-		s.append(m_previous->toString(true));
-		s.append("\n");
+        s.append(m_previous->toString(false));
+        s.append("[label=\"previousResult\"]\n");
         m_previous->generateDotTree(s);
     }
     else
