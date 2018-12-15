@@ -181,6 +181,9 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
         m_warningMap.insert(ExecutionNode::UNEXPECTED_CHARACTER,QObject::tr("Unexpected character at %1 - end of command was ignored \"%2\"").arg(i).arg(str));
     }
 
+    if(!m_errorMap.isEmpty())
+        value = false;
+
     return value;
 }
 
@@ -812,6 +815,7 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
     {
         if(str== QLatin1String("help"))
         {
+            str=str.remove(0,QLatin1String("help").size());
             HelpNode* help = new HelpNode();
             if(!m_helpPath.isEmpty())
             {
@@ -822,6 +826,7 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
         }
         else if(str== QLatin1String("la"))
         {
+            str=str.remove(0,QLatin1String("la").size());
             node = new ListAliasNode(m_aliasList);
         }
         return true;
