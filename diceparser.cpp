@@ -516,7 +516,7 @@
         {
             ExecutionNode* next = getLeafNode(start);
             Result* result=next->getResult();
-            qDebug() << "result id" << result->toString(true);
+            //qDebug() << "result id" << result->toString(true);
             ExportedDiceResult nodeResult;
             while(nullptr!=result)
             {
@@ -529,7 +529,7 @@
                     for(Die* die : diceResult->getResultList())
                     {
                         faces = die->getFaces();
-                        qDebug() << "face" << faces;
+                       // qDebug() << "face" << faces;
                         HighLightDice hlDice(die->getListValue(),die->isHighlighted(),die->getColor(), die->hasBeenDisplayed(),die->getFaces());
                         list.append(hlDice);
                     }
@@ -539,7 +539,7 @@
             }
             resultList.append(nodeResult);
         }
-        qDebug() << resultList.size();
+        //qDebug() << resultList.size();
     }
 
     void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,bool& homogeneous)
@@ -1137,7 +1137,7 @@
                                 .arg(operatorName==Reroll? QStringLiteral("r")
                                     :operatorName==RerollUntil? QStringLiteral("R")
                                     :operatorName==RerollAndAdd? QStringLiteral("a")
-				    :""));
+                    :""));
                     }
 
                 }
