@@ -26,8 +26,6 @@
 
 QString makeReplament(const QString& pattern, const QString& replacement, QString cmd)
 {
-
-    // FIXME try to do the same with RegularExpression
     auto hasPattern = cmd.contains(pattern);
     if(hasPattern)
     {

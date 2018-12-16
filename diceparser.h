@@ -36,7 +36,7 @@
 #include "highlightdice.h"
 
 typedef QList<HighLightDice > ListDiceResult;
-typedef QMap<int,ListDiceResult > ExportedDiceResult;
+typedef QMap<quint64,ListDiceResult > ExportedDiceResult;
 
 class ExplodeDiceNode;
 /**
