@@ -678,9 +678,10 @@ There are two kinds of macro: normal ones and regular-expression-based.
 
 The first kind the conversion it is just a replacement.
 
-> !macro k d10e10k
+> !macro k d10e10k 0
 
 The user input (8k4) becomes 8d10e10k4 (l5r system). As you can see the k has been replaced by the macro value.
+The third parameter 0 describes this macro as a simple replacement. The third parameter is mandatory.
 
 In more complexe situations, control/change some parts inside the command can be achieved by using regular-expression based macro.
 
@@ -688,8 +689,6 @@ In more complexe situations, control/change some parts inside the command can be
 
 The 1 at the end means "this command has regular-expression".
 The user input (8w6) becomes 8d10e10c[>=6]-@c[=1] (old world of darkness system).
-
-**ATTENTION**: the system does not support space character into command. Use _ instead for the moment.
 
 ## Remove macro
 
