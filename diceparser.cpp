@@ -181,6 +181,9 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
         m_warningMap.insert(ExecutionNode::UNEXPECTED_CHARACTER,QObject::tr("Unexpected character at %1 - end of command was ignored \"%2\"").arg(i).arg(str));
     }
 
+    if(!m_errorMap.isEmpty())
+        value = false;
+
     return value;
 }
 
@@ -320,99 +323,6 @@ void DiceParser::start()
     }
 }
 
-QString DiceParser::displayResult()
-{
-    QStringList resultList;
-    for(auto start : m_startNodes)
-    {
-        ExecutionNode* next = start;
-        int nodeCount=0;
-        int resulCount=0;
-        while(nullptr != next->getNextNode() )
-        {
-            next = next->getNextNode();
-            ++nodeCount;
-        }
-        //////////////////////////////////
-        //
-        //  Display
-        //
-        //////////////////////////////////
-
-        QString str;
-        QTextStream stream(&str);
-        Result* result=next->getResult();
-
-        QString totalValue("you got %1 ;");
-        QString dieValue("D%1 : {%2} ");
-
-        bool scalarDone=false;
-        while(nullptr!=result)
-        {
-            ++resulCount;
-            if((result->hasResultOfType(Result::SCALAR))&&(!scalarDone))
-            {
-                stream << totalValue.arg(result->getResult(Result::SCALAR).toReal()) << endl; //.arg(m_command)
-                scalarDone=true;
-            }
-            else if(result->hasResultOfType(Result::DICE_LIST))
-            {
-
-                DiceResult* myDiceResult = dynamic_cast<DiceResult*>(result);
-                if(nullptr!=myDiceResult)
-                {
-
-                    QString resulStr;
-                    quint64 face=0;
-                    for(Die* die : myDiceResult->getResultList())
-                    {
-                        if(!die->hasBeenDisplayed())
-                        {
-                            resulStr+=QStringLiteral("%1").arg(die->getValue());
-                            die->displayed();
-                            face = die->getFaces();
-
-
-                            if(die->hasChildrenValue())
-                            {
-                                resulStr+=QStringLiteral(" [");
-                                for(qint64 i : die->getListValue())
-                                {
-                                    resulStr+=QStringLiteral("%1 ").arg(i);
-                                }
-                                resulStr.remove(resulStr.size()-1,1);
-                                resulStr+=QStringLiteral("]");
-                            }
-                            resulStr+=QStringLiteral(", ");
-                        }
-                    }
-                    resulStr.remove(resulStr.size()-2,2);
-
-                    if(!resulStr.isEmpty())
-                    {
-                        stream << dieValue.arg(face).arg(resulStr);
-                    }
-
-                }
-            }
-            else if(result->hasResultOfType(Result::STRING))
-            {
-                stream << result->getResult(Result::STRING).toString();
-            }
-
-            result = result->getPrevious();
-        }
-
-        QTextStream out(stdout);
-        out << str << "you rolled: " <<m_command << endl;
-        out <<  endl;
-
-
-        resultList << QStringLiteral("%1, you rolled:%3").arg(str.simplified()).arg(m_command) ;
-    }
-
-    return resultList.join('\n');
-}
 QList<qreal> DiceParser::getLastIntegerResults()
 {
     QList<qreal> resultValues;
@@ -548,7 +458,7 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
                     HighLightDice hlDice(die->getListValue(),die->isHighlighted(),die->getColor(), die->hasBeenDisplayed(),die->getFaces());
                     list.append(hlDice);
                 }
-                nodeResult.insert(static_cast<int>(faces),list);
+                nodeResult.insert(faces,list);
             }
             result = result->getPrevious();
         }
@@ -660,7 +570,7 @@ bool DiceParser::hasResultOfType(Result::RESULT_TYPE type, ExecutionNode* node, 
     Result* result=next->getResult();
     while((result!=nullptr)&&(!scalarDone))
     {
-        if(result->hasResultOfType(type) && ((!notthelast)||(notthelast && (nullptr!=result->getPrevious()))))
+        if(result->hasResultOfType(type) && ((!notthelast)||(nullptr!=result->getPrevious())))
         {
             scalarDone=true;
         }
@@ -699,7 +609,7 @@ QList<qreal> DiceParser::getSumOfDiceResult()
 }
 int DiceParser::getStartNodeCount() const
 {
-    return m_startNodes.size();
+    return static_cast<int>(m_startNodes.size());
 }
 ExecutionNode* DiceParser::getLeafNode(ExecutionNode* start)
 {
@@ -812,6 +722,7 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
     {
         if(str== QLatin1String("help"))
         {
+            str=str.remove(0,QLatin1String("help").size());
             HelpNode* help = new HelpNode();
             if(!m_helpPath.isEmpty())
             {
@@ -822,6 +733,7 @@ bool DiceParser::readCommand(QString& str,ExecutionNode* & node)
         }
         else if(str== QLatin1String("la"))
         {
+            str=str.remove(0,QLatin1String("la").size());
             node = new ListAliasNode(m_aliasList);
         }
         return true;
@@ -1053,7 +965,7 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
                     DiceRollerNode* nodeTmp = dynamic_cast<DiceRollerNode*>(previous);
                     if(nullptr!=nodeTmp)
                     {
-                        previous = addExplodeDiceNode(nodeTmp->getFaces(),previous);
+                        previous = addExplodeDiceNode(static_cast<qint64>(nodeTmp->getFaces()),previous);
                     }
 
                     node = m_parsingToolbox->addSort(previous,ascending);
