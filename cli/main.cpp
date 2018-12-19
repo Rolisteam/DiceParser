@@ -259,6 +259,7 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
             QString warnings = parser.humanReadableWarning();
             QStringList strLst;
             QStringList listOfDiceResult;
+            QString cmdRework = parser.getDiceCommand();
 
             if(parser.hasIntegerResultNotInFirst())
             {
@@ -357,21 +358,21 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
             switch(format)
             {
                 case TERMINAL:
-                    displayCommandResult(scalarText, resultStr, array, withColor, cmd, error,warnings, comment, allSameFaceCount, allSameColor);
+                    displayCommandResult(scalarText, resultStr, array, withColor, cmdRework, error,warnings, comment, allSameFaceCount, allSameColor);
                 break;
                 case SVG:
-                    displaySVG(scalarText, resultStr, array, withColor, cmd, error,warnings, comment, allSameFaceCount, allSameColor);
+                    displaySVG(scalarText, resultStr, array, withColor, cmdRework, error,warnings, comment, allSameFaceCount, allSameColor);
                 break;
                 case BOT:
                 case MARKDOWN:
-                    displayMarkdown(scalarText, resultStr, array, withColor, cmd, error,warnings, comment, allSameFaceCount, allSameColor);
+                    displayMarkdown(scalarText, resultStr, array, withColor, cmdRework, error,warnings, comment, allSameFaceCount, allSameColor);
                 break;
                 case JSON:
-                    displayJSon(scalarText, resultStr, array, withColor, cmd, error,warnings, comment, allSameFaceCount, allSameColor);
+                    displayJSon(scalarText, resultStr, array, withColor, cmdRework, error,warnings, comment, allSameFaceCount, allSameColor);
                 break;
                 #ifdef PAINTER_OP
                 case IMAGE:
-                    displayImage(scalarText, resultStr, array, withColor, cmd, comment, allSameFaceCount, allSameColor);
+                    displayImage(scalarText, resultStr, array, withColor, cmdRework, comment, allSameFaceCount, allSameColor);
                 break;
                 #endif
             }

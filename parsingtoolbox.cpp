@@ -802,6 +802,7 @@ bool ParsingToolBox::readComment(QString& str, QString & result, QString& commen
         comment = left;
         str = str.remove(0,1);
         result = str.trimmed();
+        str = "";
         return true;
     }
     return false;

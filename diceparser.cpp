@@ -889,7 +889,7 @@ bool DiceParser::readInstructionList(QString& str)
                     {
                         latest = ParsingToolBox::getLatestNode(latest);
                     }
-                    keepParsing = (!str.isEmpty() & (before!=str));
+                    keepParsing = (!str.isEmpty() && (before!=str));
                 }
             }
             if( !str.isEmpty() && readInstructionOperator(str[0]))
