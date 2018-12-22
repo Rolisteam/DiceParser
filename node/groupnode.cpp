@@ -165,27 +165,35 @@ bool GroupNode::composeWithPrevious(DieGroup previous, qint64 first, qint64 curr
         dieG.append(va);
         possibleUnion.append(dieG);
     }
+
     while(!hasReachMax)
     {
         auto tmpValues = previous;
         QList<DieGroup> possibleTmp;
         for(auto& diaG : possibleUnion)
         {
+            if(tmpValues.isEmpty())
+                break;
             tmpValues.removeValue(diaG);
+
             for(auto& value : tmpValues)
             {
                 DieGroup dia;
                 dia.append(diaG);
                 dia.append(value);
-                possibleTmp.append(dia);
                 if(dia.size() >= maxComboLength-1)
                     hasReachMax = true;
+                else
+                    possibleTmp.append(dia);
             }
         }
         if(possibleTmp.isEmpty())
             hasReachMax = true;
-        possibleUnion.append(possibleTmp);
-
+        else
+        {
+            possibleTmp.append(possibleUnion);
+            possibleUnion = possibleTmp;
+        }
     }
     std::sort(possibleUnion.begin(),possibleUnion.end(),[=](const DieGroup& a, const DieGroup& b){
         return a.getLost() > b.getLost();
@@ -250,23 +258,30 @@ QList<DieGroup> GroupNode::getGroup(DieGroup values)
             {
                 DieGroup group;
                 group.setExceptedValue(m_groupValue);
-                composeWithPrevious(previousValue,first, *it, group);
-                loseMap[group.getLost()]= group;
+                auto b = composeWithPrevious(previousValue,first, *it, group);
+                if(b)
+                    loseMap[group.getLost()]= group;
             }
             previousValue << *it;
             cumuledValue += *it;
             ++it;
         }
     }
-    DieGroup die = loseMap.first();
-    result.append(die);
-    DieGroup valueToRemove = die;
-    valueToRemove.removeFirst();
-    values.removeValue(valueToRemove);
-
-    if(values.getSum() >= m_groupValue)
+    if(!loseMap.isEmpty())
     {
-        result.append(getGroup(values));
+        DieGroup die = loseMap.first();
+        result.append(die);
+        DieGroup valueToRemove = die;
+        if(!valueToRemove.isEmpty())
+        {
+            valueToRemove.removeFirst();
+            values.removeValue(valueToRemove);
+
+            if(values.getSum() >= m_groupValue)
+            {
+                result.append(getGroup(values));
+            }
+        }
     }
     return result;
 

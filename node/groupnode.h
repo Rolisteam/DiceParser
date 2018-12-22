@@ -38,7 +38,7 @@ public:
     void setExceptedValue(qint64 exceptedValue);
 
 private:
-    qint64 m_exceptedValue;
+    qint64 m_exceptedValue = 0;
 
 };
 /**
