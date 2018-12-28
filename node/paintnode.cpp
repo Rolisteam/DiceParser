@@ -69,6 +69,7 @@ void PainterNode::run(ExecutionNode* previous)
     m_previousNode = previous;
     if(nullptr==previous)
     {
+        m_errors.insert(ExecutionNode::NO_PREVIOUS_ERROR, QObject::tr("No previous node before Paint operator"));
         return;
     }
     Result* previousResult = previous->getResult();
@@ -97,7 +98,7 @@ void PainterNode::run(ExecutionNode* previous)
 }
 Result* PainterNode::getResult()
 {
-    return m_previousNode->getResult();
+     return (nullptr != m_previousNode) ? m_previousNode->getResult() :  nullptr ;
 }
 
 QString PainterNode::toString(bool wl) const

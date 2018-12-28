@@ -28,6 +28,12 @@ MergeNode::MergeNode()
 }
 void MergeNode::run(ExecutionNode* previous)
 {
+    if(nullptr == previous)
+    {
+        m_errors.insert(ExecutionNode::NO_PREVIOUS_ERROR, QObject::tr("No previous node before Merge operator"));
+        return;
+    }
+
     m_previousNode = previous;
     m_result->setPrevious(previous->getResult());
     ExecutionNode* previousLast =nullptr;
