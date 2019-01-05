@@ -78,7 +78,7 @@ void GroupNode::run(ExecutionNode* previous)
             {
                 auto list = dice->getResultList();
                 DieGroup allResult;
-                for(Die* die : dice->getResultList())
+                for(auto& die : list)
                 {
                     allResult << die->getListValue();
                 }

@@ -57,10 +57,11 @@ void DiceRoller::setCommand(const QString &cmd)
 QString DiceRoller::diceToText(QList<ExportedDiceResult>& diceList)
 {
     QStringList global;
-    for(auto dice : diceList)
+    for(auto& dice : diceList)
     {
         QStringList resultGlobal;
-        for(int face:  dice.keys())
+        auto const& keys = dice.keys();
+        for(auto& face:  keys)
         {
             QStringList result;
             ListDiceResult diceResult =  dice.value(face);
@@ -68,11 +69,10 @@ QString DiceRoller::diceToText(QList<ExportedDiceResult>& diceList)
             {
                 QStringList diceListStr;
                 QStringList diceListChildren;
-                for(int i =0; i < tmp.getResult().size(); ++i)
+                int i = 0;
+                for(qint64& dievalue : tmp.getResult())
                 {
-                    qint64 dievalue = tmp.getResult()[i];
                     QString prefix("%1");
-
                     if(i==0)
                     {
                         diceListStr << prefix.arg(QString::number(dievalue));
@@ -81,6 +81,7 @@ QString DiceRoller::diceToText(QList<ExportedDiceResult>& diceList)
                     {
                         diceListChildren << prefix.arg(QString::number(dievalue));
                     }
+                    ++i;
                 }
                 if(!diceListChildren.isEmpty())
                 {
@@ -89,7 +90,7 @@ QString DiceRoller::diceToText(QList<ExportedDiceResult>& diceList)
                 result << diceListStr.join(' ');
             }
 
-            if(dice.keys().size()>1)
+            if(keys.size()>1)
             {
                 resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
             }
@@ -122,7 +123,7 @@ void DiceRoller::start()
             {
                 auto values = m_diceparser.getLastIntegerResults();
                 QStringList strLst;
-                for(auto val : values )
+                for(auto& val : values )
                 {
                     result += val;
                     strLst << QString::number(val);

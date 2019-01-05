@@ -39,11 +39,11 @@ void SplitNode::run(ExecutionNode* previous)
             DiceResult* dice = dynamic_cast<DiceResult*>(tmpResult);
             if(nullptr!=dice)
             {
-                for(Die* oldDie : dice->getResultList())
+                for(auto& oldDie : dice->getResultList())
                 {
                     oldDie->displayed();
                     m_diceResult->setOperator(oldDie->getOp());
-                    for(qint64 value : oldDie->getListValue())
+                    for(qint64& value : oldDie->getListValue())
                     {
                         Die* tmpdie = new Die();
                         tmpdie->insertRollValue(value);

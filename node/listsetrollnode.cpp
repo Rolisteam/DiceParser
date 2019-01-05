@@ -43,7 +43,7 @@ QString ListSetRollNode::toString(bool wl) const
 {
 	if(wl)
 	{
-		return QString("%1 [label=\"ListSetRoll list:%2\"]").arg(m_id).arg(m_values.join(","));
+        return QString("%1 [label=\"ListSetRoll list:%2\"]").arg(m_id,m_values.join(","));
 	}
 	else
 	{
@@ -113,7 +113,7 @@ void ListSetRollNode::computeFacesNumber(Die* die)
         Q_ASSERT(m_values.size() == m_rangeList.size());
         qint64 max;
         int i=0;
-        for(Range range: m_rangeList)
+        for(Range& range: m_rangeList)
         {
             if(((i==0)||(max<range.getEnd()))&&(range.isFullyDefined()))
             {

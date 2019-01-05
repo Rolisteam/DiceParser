@@ -80,7 +80,7 @@ QVariant DiceResult::getResult(RESULT_TYPE type)
 }
 bool DiceResult::contains(Die* die, const std::function<bool(const Die*,const Die*)> equal)
 {
-    for(auto value : m_diceValues)
+    for(auto& value : m_diceValues)
     {
         if(equal(value,die))
         {
@@ -99,7 +99,7 @@ qreal DiceResult::getScalarResult()
     {
         qint64 scalar=0;
         int i = 0;
-        for(auto tmp : m_diceValues)
+        for(auto& tmp : m_diceValues)
         {
             if(i>0)
             {
@@ -157,13 +157,13 @@ void DiceResult::setOperator(const Die::ArithmeticOperator& dieOperator)
 QString DiceResult::toString(bool wl)
 {
     QStringList scalarSum;
-    for(auto die : m_diceValues)
+    for(auto& die : m_diceValues)
     {
         scalarSum << QString::number(die->getValue());
     }
     if(wl)
     {
-		return QStringLiteral("%3 [label=\"DiceResult Value %1 dice %2\"]").arg(getScalarResult()).arg(scalarSum.join('_')).arg(m_id);
+        return QStringLiteral("%3 [label=\"DiceResult Value %1 dice %2\"]").arg(QString::number(getScalarResult()), scalarSum.join('_'), m_id);
 	}
 	else
 	{

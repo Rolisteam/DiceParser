@@ -174,7 +174,7 @@ QString ScalarOperatorNode::toString(bool wl) const
     }
     if(wl)
     {
-        return QString("%1 [label=\"ScalarOperatorNode %2\"]").arg(m_id).arg(op);
+        return QString("%1 [label=\"ScalarOperatorNode %2\"]").arg(m_id, op);
     }
     else
     {
@@ -241,14 +241,16 @@ QMap<ExecutionNode::DICE_ERROR_CODE,QString> ScalarOperatorNode::getExecutionErr
 {
     if(nullptr!=m_internalNode)
     {
-        for (ExecutionNode::DICE_ERROR_CODE key: m_internalNode->getExecutionErrorMap().keys())
+        auto keys = m_internalNode->getExecutionErrorMap().keys();
+        for (ExecutionNode::DICE_ERROR_CODE& key: keys)
         {
             m_errors.insert(key,m_internalNode->getExecutionErrorMap().value(key));
         }
     }
     if(nullptr!=m_nextNode)
     {
-        for (ExecutionNode::DICE_ERROR_CODE key: m_nextNode->getExecutionErrorMap().keys())
+        auto keys = m_nextNode->getExecutionErrorMap().keys();
+        for (ExecutionNode::DICE_ERROR_CODE& key: keys)
         {
             m_errors.insert(key,m_nextNode->getExecutionErrorMap().value(key));
         }

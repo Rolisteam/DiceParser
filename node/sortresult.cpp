@@ -129,7 +129,8 @@ QString SortResultNode::toString(bool wl) const
 {
 	if(wl)
 	{
-		return QString("%1 [label=\"SortResultNode %2\"]").arg(m_id).arg(m_ascending ? "Ascending":"Descending");
+        auto order = m_ascending ? QStringLiteral("Ascending") : QStringLiteral("Descending");
+        return QString("%1 [label=\"SortResultNode %2\"]").arg(m_id, order);
 	}
 	else
 	{

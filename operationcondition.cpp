@@ -57,7 +57,7 @@ qint64 OperationCondition::hasValid(Die* b,bool recursive,bool unhighlight) cons
     }
 
     qint64 sum= 0;
-    for(qint64 value: listValues)
+    for(qint64& value: listValues)
     {
         switch(m_operator)
         {
@@ -99,7 +99,7 @@ void OperationCondition::setValueNode(ExecutionNode *node)
 
 QString OperationCondition::toString()
 {
-    QString str(QStringLiteral(""));
+    QString str("");
     switch (m_operator)
     {
     case Modulo:

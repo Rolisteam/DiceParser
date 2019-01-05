@@ -41,7 +41,7 @@ qint64 Range::hasValid(Die* m,bool recursive, bool unhighlight) const
     qint64 result = 0;
     if(recursive)
     {
-        for(qint64 value : m->getListValue())
+        for(qint64& value : m->getListValue())
         {
             if((value>=m_start)&&(value<=m_end))
             {

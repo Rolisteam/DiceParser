@@ -40,7 +40,7 @@ qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) cons
     int i = 0;
     qint64 sum = 0;
     bool highLight = false;
-    for(const Validator* validator: *m_validatorList)
+    for(auto& validator: *m_validatorList)
     {
         qint64 val = validator->hasValid(b,recursive,unhighlight);
         if(i==0)
@@ -108,7 +108,7 @@ bool CompositeValidator::isValidRangeSize(std::pair<qint64,qint64> range) const
 {
     bool val = true;
     int i = -1;
-    for(Validator* tmp :*m_validatorList)
+    for(auto& tmp :*m_validatorList)
     {
         bool rel = tmp->isValidRangeSize(range);
         val |= rel;
@@ -132,7 +132,7 @@ Validator* CompositeValidator::getCopy() const
     *vector = *m_operators;
 
     QList<Validator*>* list= new QList<Validator*>();
-    for(auto val : *m_validatorList)
+    for(auto& val : *m_validatorList)
     {
         list->append(val->getCopy());
     }

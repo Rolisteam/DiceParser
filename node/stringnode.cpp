@@ -30,7 +30,7 @@ QString StringNode::toString(bool withLabel) const
     {
         QString dataCopy = m_data;
 
-        return QString("%1 [label=\"StringNode %2\"]").arg(m_id).arg(dataCopy.replace('%','\\'));
+        return QString("%1 [label=\"StringNode %2\"]").arg(m_id, dataCopy.replace('%','\\'));
     }
     else
     {

@@ -45,7 +45,7 @@ void BindNode::run(ExecutionNode* previous)
                 if(nullptr!=dice)
                 {
                     m_diceResult->setHomogeneous(false);
-                    for(Die* die : dice->getResultList())
+                    for(auto& die : dice->getResultList())
                     {
                         if(!die->hasBeenDisplayed())
                         {

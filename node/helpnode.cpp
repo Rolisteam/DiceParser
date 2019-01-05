@@ -107,7 +107,7 @@ QString HelpNode::toString(bool wl) const
 {
       if(wl)
       {
-              return QString("%1 [label=\"Rolisteam Dice Parser:\nFull documentation at: %2\"]").arg(m_id).arg(m_path);
+              return QString("%1 [label=\"Rolisteam Dice Parser:\nFull documentation at: %2\"]").arg(m_id, m_path);
       }
       else
       {

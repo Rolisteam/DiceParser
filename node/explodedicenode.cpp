@@ -14,7 +14,7 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
         m_result->setPrevious(previous_result);
         if(nullptr!=previous_result)
         {
-            for(Die* die: previous_result->getResultList())
+            for(auto& die: previous_result->getResultList())
             {
                 Die* tmpdie = new Die();
                 *tmpdie=*die;
@@ -24,7 +24,7 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
 
             QList<Die*> list = m_diceResult->getResultList();
 
-            for(Die* die: list)
+            for(auto& die: list)
             {
                 while(m_validator->hasValid(die,false))
                 {
@@ -55,7 +55,7 @@ QString ExplodeDiceNode::toString(bool withlabel) const
 {
 	if(withlabel)
 	{
-		return QString("%1 [label=\"ExplodeDiceNode %2\"]").arg(m_id).arg(m_validator->toString());
+        return QString("%1 [label=\"ExplodeDiceNode %2\"]").arg(m_id, m_validator->toString());
 	}
 	else
 	{

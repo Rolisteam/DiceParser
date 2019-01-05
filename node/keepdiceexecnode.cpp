@@ -69,7 +69,7 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
             m_errors.insert(TOO_MANY_DICE,QObject::tr(" You ask to keep %1 dice but the result only has %2").arg(m_numberOfDice).arg(diceList.size()));
         }
 
-        for(Die* tmp : diceList.mid(static_cast<int>(m_numberOfDice),-1))
+        for(auto& tmp : diceList.mid(static_cast<int>(m_numberOfDice),-1))
         {
             tmp->setHighlighted(false);
         }

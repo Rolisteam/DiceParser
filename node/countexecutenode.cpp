@@ -53,7 +53,7 @@ QString CountExecuteNode::toString(bool withlabel) const
 {
 	if(withlabel)
 	{
-		return QString("%1 [label=\"CountExecuteNode %2\"]").arg(m_id).arg(m_validator->toString());
+        return QString("%1 [label=\"CountExecuteNode %2\"]").arg(m_id,m_validator->toString());
 	}
 	else
 	{

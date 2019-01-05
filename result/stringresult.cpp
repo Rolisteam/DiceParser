@@ -51,7 +51,7 @@ QString StringResult::toString(bool wl)
 {
 	if(wl)
 	{
-		return QString("%2 [label=\"StringResult_value_%1\"]").arg(getText().replace("%","_")).arg(m_id);
+        return QString("%2 [label=\"StringResult_value_%1\"]").arg(getText().replace("%","_"), m_id);
 	}
 	else
 	{

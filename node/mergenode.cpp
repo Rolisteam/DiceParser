@@ -52,7 +52,7 @@ void MergeNode::run(ExecutionNode* previous)
                 {
                     ///@todo TODO improve here to set homogeneous while is really
                     m_diceResult->setHomogeneous(false);
-                    for(Die* die : dice->getResultList())
+                    for(auto& die : dice->getResultList())
                     {
                         if(!m_diceResult->getResultList().contains(die)&&(!die->hasBeenDisplayed()))
                         {

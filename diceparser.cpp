@@ -131,7 +131,7 @@ DiceParser::~DiceParser()
 
 QString DiceParser::convertAlias(QString str)
 {
-    for(DiceAlias* cmd : *m_aliasList)
+    for(auto& cmd : *m_aliasList)
     {
         if(cmd->isEnable())
         {
@@ -155,7 +155,7 @@ void DiceParser::insertAlias(DiceAlias* dice, int i)
 bool DiceParser::parseLine(QString str, bool allowAlias)
 {
     m_errorMap.clear();
-    m_comment = QStringLiteral("");
+    m_comment = QString("");
     if(!m_startNodes.empty())
     {
         qDeleteAll(m_startNodes);
@@ -303,7 +303,10 @@ bool DiceParser::readOperatorFromNull(QString& str,ExecutionNode* & node)
 
 bool DiceParser::readNode(QString& str,ExecutionNode* & node)
 {
-    QString key= str.left(1);
+    if(str.isEmpty())
+        return false;
+
+    QString key= str.at(0);
     if(m_nodeActionMap->contains(key))
     {
         JumpBackwardNode* jumpNode = new JumpBackwardNode();
@@ -406,7 +409,7 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
                 DiceResult* stringResult = dynamic_cast<DiceResult*>(result);
                 if(nullptr!=stringResult)
                 {
-                    for(auto die : stringResult->getResultList())
+                    for(auto& die : stringResult->getResultList())
                     {
                         if(!dieListResult.contains(die))
                         {
@@ -419,11 +422,11 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
             }
             result = result->getPrevious();
         }
-        for(Die* die : dieListResult)
+        for(auto& die : dieListResult)
         {
             if(die->isHighlighted())
             {
-                for(qint64 value : die->getListValue())
+                for(qint64& value : die->getListValue())
                 {
 
                     stringListResult << QString::number(value);
@@ -451,7 +454,7 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
                 QList<HighLightDice> list;
                 quint64 faces = 0;
 
-                for(Die* die : diceResult->getResultList())
+                for(auto& die : diceResult->getResultList())
                 {
                     faces = die->getFaces();
                     // qDebug() << "face" << faces;
@@ -488,7 +491,7 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
                     }
                     quint64 face=0;
                     ListDiceResult listpair;
-                    for(Die* die : diceResult->getResultList())
+                    for(auto& die : diceResult->getResultList())
                     {
                         if(!die->hasBeenDisplayed())
                         {
@@ -498,7 +501,7 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList,boo
                             face = die->getFaces();
                             if(die->hasChildrenValue())
                             {
-                                for(qint64 i : die->getListValue())
+                                for(qint64& i : die->getListValue())
                                 {
                                     valuesResult.append(i);
                                 }
@@ -594,7 +597,7 @@ QList<qreal> DiceParser::getSumOfDiceResult()
                 DiceResult* myDiceResult = dynamic_cast<DiceResult*>(result);
                 if(nullptr!=myDiceResult)
                 {
-                    for(Die* die : myDiceResult->getResultList())
+                    for(auto& die : myDiceResult->getResultList())
                     {
                         resultValue+=die->getValue();
                     }
@@ -924,10 +927,10 @@ bool DiceParser::readOption(QString& str,ExecutionNode* previous)//,
 
     ExecutionNode* node = nullptr;
     bool found=false;
-
-    for(int i = 0; ((i<m_OptionOp->keys().size())&&(!found));++i )
+    auto keys = m_OptionOp->keys();
+    for(int i = 0; ((i<keys.size())&&(!found));++i )
     {
-        QString key =m_OptionOp->keys().at(i);
+        QString key = keys.at(i);
 
         if(str.startsWith(key))
         {
@@ -1254,7 +1257,8 @@ QMap<ExecutionNode::DICE_ERROR_CODE,QString> DiceParser::getErrorMap()
     for(auto start : m_startNodes)
     {
         auto mapTmp = start->getExecutionErrorMap();
-        for(auto key : mapTmp.keys())
+        auto keys = mapTmp.keys();
+        for(auto& key : keys)
         {
             map.insertMulti(key,mapTmp[key]);
         }

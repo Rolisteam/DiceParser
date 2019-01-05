@@ -26,7 +26,7 @@ void RerollDiceNode::run(ExecutionNode* previous)
         m_result->setPrevious(previous_result);
         if(nullptr!=previous_result)
         {
-            for(Die* die: previous_result->getResultList())
+            for(auto& die: previous_result->getResultList())
             {
                 Die* tmpdie = new Die();
                 *tmpdie=*die;
@@ -96,7 +96,7 @@ QString RerollDiceNode::toString(bool wl) const
 {
 	if(wl)
 	{
-		return QString("%1 [label=\"RerollDiceNode validatior: %2\"]").arg(m_id).arg(m_validator->toString());
+        return QString("%1 [label=\"RerollDiceNode validatior: %2\"]").arg(m_id, m_validator->toString());
 	}
 	else
 	{
