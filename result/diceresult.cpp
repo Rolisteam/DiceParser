@@ -1,32 +1,31 @@
 /***************************************************************************
-* Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://www.rolisteam.org/contact                      *
-*                                                                          *
-*  This file is part of DiceParser                                         *
-*                                                                          *
-* DiceParser is free software; you can redistribute it and/or modify       *
-* it under the terms of the GNU General Public License as published by     *
-* the Free Software Foundation; either version 2 of the License, or        *
-* (at your option) any later version.                                      *
-*                                                                          *
-* This program is distributed in the hope that it will be useful,          *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
-* GNU General Public License for more details.                             *
-*                                                                          *
-* You should have received a copy of the GNU General Public License        *
-* along with this program; if not, write to the                            *
-* Free Software Foundation, Inc.,                                          *
-* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
-***************************************************************************/
+ * Copyright (C) 2014 by Renaud Guezennec                                   *
+ * http://www.rolisteam.org/contact                      *
+ *                                                                          *
+ *  This file is part of DiceParser                                         *
+ *                                                                          *
+ * DiceParser is free software; you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation; either version 2 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * This program is distributed in the hope that it will be useful,          *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with this program; if not, write to the                            *
+ * Free Software Foundation, Inc.,                                          *
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
+ ***************************************************************************/
 
 #include "diceresult.h"
 #include <QDebug>
 
-DiceResult::DiceResult()
-    : m_operator(Die::PLUS)
+DiceResult::DiceResult() : m_operator(Die::PLUS)
 {
-    m_resultTypes= (DICE_LIST | SCALAR);
+    m_resultTypes = (DICE_LIST | SCALAR);
     m_homogeneous = true;
 }
 void DiceResult::insertResult(Die* die)
@@ -48,7 +47,11 @@ void DiceResult::setHomogeneous(bool b)
 
 void DiceResult::setResultList(QList<Die*> list)
 {
-	qDeleteAll(m_diceValues.begin(), m_diceValues.end());
+    m_diceValues.erase(
+        std::remove_if(m_diceValues.begin(), m_diceValues.end(), [list](Die* die) { return list.contains(die); }),
+        m_diceValues.end());
+
+    qDeleteAll(m_diceValues.begin(), m_diceValues.end());
     m_diceValues.clear();
     m_diceValues << list;
 }
@@ -62,27 +65,26 @@ DiceResult::~DiceResult()
 }
 QVariant DiceResult::getResult(RESULT_TYPE type)
 {
-    switch (type)
+    switch(type)
     {
-        case SCALAR:
-        {
-             return getScalarResult();
-        }
-        case DICE_LIST:
-        {
-            return QVariant();
-        }
-        default:
-            break;
+    case SCALAR:
+    {
+        return getScalarResult();
+    }
+    case DICE_LIST:
+    {
+        return QVariant();
+    }
+    default:
+        break;
     }
     return QVariant();
-
 }
-bool DiceResult::contains(Die* die, const std::function<bool(const Die*,const Die*)> equal)
+bool DiceResult::contains(Die* die, const std::function<bool(const Die*, const Die*)> equal)
 {
     for(auto& value : m_diceValues)
     {
-        if(equal(value,die))
+        if(equal(value, die))
         {
             return true;
         }
@@ -91,37 +93,37 @@ bool DiceResult::contains(Die* die, const std::function<bool(const Die*,const Di
 }
 qreal DiceResult::getScalarResult()
 {
-    if(m_diceValues.size()==1)
+    if(m_diceValues.size() == 1)
     {
         return m_diceValues[0]->getValue();
     }
     else
     {
-        qint64 scalar=0;
+        qint64 scalar = 0;
         int i = 0;
         for(auto& tmp : m_diceValues)
         {
-            if(i>0)
+            if(i > 0)
             {
                 switch(m_operator)
                 {
                 case Die::PLUS:
-                    scalar+=tmp->getValue();
+                    scalar += tmp->getValue();
                     break;
                 case Die::MULTIPLICATION:
-                    scalar*=tmp->getValue();
+                    scalar *= tmp->getValue();
                     break;
                 case Die::MINUS:
-                    scalar-=tmp->getValue();
+                    scalar -= tmp->getValue();
                     break;
                 case Die::POW:
-                    scalar=static_cast<int>(pow(static_cast<double>(scalar),static_cast<double>(tmp->getValue())));
+                    scalar = static_cast<int>(pow(static_cast<double>(scalar), static_cast<double>(tmp->getValue())));
                     break;
                 case Die::DIVIDE:
                 case Die::INTEGER_DIVIDE:
-                    if(tmp->getValue()!=0)
+                    if(tmp->getValue() != 0)
                     {
-                        scalar/=tmp->getValue();
+                        scalar /= tmp->getValue();
                     }
                     else
                     {
@@ -132,7 +134,7 @@ qreal DiceResult::getScalarResult()
             }
             else
             {
-               scalar=tmp->getValue();
+                scalar = tmp->getValue();
             }
             ++i;
         }
@@ -163,12 +165,13 @@ QString DiceResult::toString(bool wl)
     }
     if(wl)
     {
-        return QStringLiteral("%3 [label=\"DiceResult Value %1 dice %2\"]").arg(QString::number(getScalarResult()), scalarSum.join('_'), m_id);
-	}
-	else
-	{
-		return m_id;
-	}
+        return QStringLiteral("%3 [label=\"DiceResult Value %1 dice %2\"]")
+            .arg(getScalarResult(), scalarSum.join('_'), m_id);
+    }
+    else
+    {
+        return m_id;
+    }
 }
 Result* DiceResult::getCopy() const
 {
