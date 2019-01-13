@@ -1,24 +1,24 @@
 /***************************************************************************
-* Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://www.rolisteam.org/contact                      *
-*                                                                          *
-*  This file is part of DiceParser                                         *
-*                                                                          *
-* DiceParser is free software; you can redistribute it and/or modify       *
-* it under the terms of the GNU General Public License as published by     *
-* the Free Software Foundation; either version 2 of the License, or        *
-* (at your option) any later version.                                      *
-*                                                                          *
-* This program is distributed in the hope that it will be useful,          *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
-* GNU General Public License for more details.                             *
-*                                                                          *
-* You should have received a copy of the GNU General Public License        *
-* along with this program; if not, write to the                            *
-* Free Software Foundation, Inc.,                                          *
-* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
-***************************************************************************/
+ * Copyright (C) 2014 by Renaud Guezennec                                   *
+ * http://www.rolisteam.org/contact                      *
+ *                                                                          *
+ *  This file is part of DiceParser                                         *
+ *                                                                          *
+ * DiceParser is free software; you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation; either version 2 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * This program is distributed in the hope that it will be useful,          *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with this program; if not, write to the                            *
+ * Free Software Foundation, Inc.,                                          *
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
+ ***************************************************************************/
 #ifndef DIE_H
 #define DIE_H
 
@@ -26,15 +26,24 @@
 #include <QString>
 #include <random>
 /**
- * @brief The Die class implements all methods required from a die. You must set the Faces first, then you can roll it and roll it again, to add or replace the previous result.
+ * @brief The Die class implements all methods required from a die. You must set the Faces first, then you can roll it
+ * and roll it again, to add or replace the previous result.
  */
 class Die
 {
-public:
+  public:
     /**
      * @brief The ArithmeticOperator enum
      */
-    enum ArithmeticOperator {PLUS,MINUS,DIVIDE,MULTIPLICATION,INTEGER_DIVIDE, POW};
+    enum ArithmeticOperator
+    {
+        PLUS,
+        MINUS,
+        DIVIDE,
+        MULTIPLICATION,
+        INTEGER_DIVIDE,
+        POW
+    };
     /**
      * @brief Die
      */
@@ -42,7 +51,7 @@ public:
     /**
      * @brief Die
      */
-    Die(const Die& );
+    Die(const Die&);
     /**
      * @brief setValue
      * @param r
@@ -126,15 +135,15 @@ public:
     qint64 getBase();
 
     QString getColor() const;
-    void setColor(const QString &color);
+    void setColor(const QString& color);
 
     qint64 getMaxValue() const;
-    void setMaxValue(const qint64 &maxValue);
+    void setMaxValue(const qint64& maxValue);
 
     Die::ArithmeticOperator getOp() const;
-    void setOp(const Die::ArithmeticOperator &op);
+    void setOp(const Die::ArithmeticOperator& op);
 
-private:
+  private:
     qint64 m_value = 0;
     QList<qint64> m_rollResult;
     bool m_selected = false;
@@ -148,8 +157,6 @@ private:
     Die::ArithmeticOperator m_op;
 
     std::mt19937 m_rng;
-
 };
-
 
 #endif // DIE_H
