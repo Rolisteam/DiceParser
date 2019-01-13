@@ -60,7 +60,7 @@ public:
     /**
      * @brief The DiceOperator enum gathering all dice operators
      */
-	enum DiceOperator {D,L};
+    enum DiceOperator {D,L};
     /**
      * @brief The DiceSymbol enum
      */
