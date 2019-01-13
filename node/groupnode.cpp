@@ -220,7 +220,7 @@ QList<DieGroup> GroupNode::getGroup(DieGroup values)
 
     QList<DieGroup> result;
     QMap<qint64,DieGroup> loseMap;
-    if(first == m_groupValue)
+    if(first >= m_groupValue)
     {
         DieGroup group;
         group << first ;
