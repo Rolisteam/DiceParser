@@ -98,11 +98,11 @@ QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArr
                 painter.save();
                 QPen pen = painter.pen();
                 QColor color;
-               
+
                 auto colorStr = obj["color"].toString();
                 if(colorStr.isEmpty())
                     color = QColor(Qt::black);
-                else 
+                else
                     color.setNamedColor(colorStr);
                 pen.setColor(color);
 
@@ -141,7 +141,7 @@ QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArr
                 auto colorStr = obj["color"].toString();
                 if(colorStr.isEmpty())
                     color = QColor(Qt::black);
-                else 
+                else
                     color.setNamedColor(colorStr);
                 
                 pen.setColor(color);
@@ -151,7 +151,7 @@ QString DisplayToolBox::makeImage(QString scalarText, QString resultStr,QJsonArr
                 painter.drawText(QPoint(x,y),text);
                 x += fm.boundingRect(text).width();
                 painter.restore();
-
+                painter.save();
                 text = QStringLiteral(")");
                 if(!last)
                 {
@@ -291,30 +291,30 @@ QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList,bool& 
         for(int face:  dice.keys())
         {
             ListDiceResult diceResults =  dice.value(face);
-            std::vector<std::vector<HighLightDice>> sameColorDice;
             std::vector<QString> alreadyDoneColor;
-            for(auto & dice : diceResults)
+            std::vector<std::vector<HighLightDice>> sameColorDice;
+            for(auto & diceResult : diceResults)
             {
-                auto it=std::find_if(alreadyDoneColor.begin(), alreadyDoneColor.end(),[dice](QString color){
-                        return color == dice.getColor();
-            });
+                if(!diceResult.getColor().isEmpty())
+                {
+                    allSameColor = false;
+                }
+                auto it=std::find_if(alreadyDoneColor.begin(), alreadyDoneColor.end(),[diceResult](QString color){
+                        return color == diceResult.getColor();
+                });
 
                 if( it == alreadyDoneColor.end())
                 {
                     sameColorDice.push_back(std::vector<HighLightDice>());
-                    alreadyDoneColor.push_back(dice.getColor());
+                    alreadyDoneColor.push_back(diceResult.getColor());
                     it = alreadyDoneColor.end();
                     --it;
                 }
                 auto i = std::distance(alreadyDoneColor.begin(), it);
-                sameColorDice[static_cast<std::size_t>(i)].push_back(dice);
+                sameColorDice[static_cast<std::size_t>(i)].push_back(diceResult);
             }
             int i = 0;
-            if(alreadyDoneColor.size()>1)
-            {
-                allSameColor = false;
-            }
-            for(auto it = alreadyDoneColor.begin() ; it != alreadyDoneColor.end(); ++it)
+            for(auto it = alreadyDoneColor.begin() ; it != alreadyDoneColor.end() && i < sameColorDice.size() ; ++it)
             {
                 auto list = sameColorDice[static_cast<std::size_t>(i)];
                 QJsonObject object;
@@ -352,7 +352,7 @@ QString DisplayToolBox::diceResultToString(QJsonObject val)
     QStringList subStr;
     for(auto subval : subvalues)
     {
-         subStr << QString::number(subval.toDouble());
+        subStr << QString::number(subval.toDouble());
     }
     if(!subStr.isEmpty())
     {
@@ -363,43 +363,43 @@ QString DisplayToolBox::diceResultToString(QJsonObject val)
 QString DisplayToolBox::diceToText(QJsonArray array, bool withColor,bool allSameFaceCount, bool allSameColor)
 {
     Q_UNUSED(allSameColor)
-	QStringList result;
-	for(auto item : array)
-	{
+    QStringList result;
+    for(auto item : array)
+    {
         QString subResult("");
-		auto obj = item.toObject();
-		auto values= obj["values"].toArray();
+        auto obj = item.toObject();
+        auto values= obj["values"].toArray();
 
-		QStringList diceResult;
-		for(auto valRef : values)
-		{
-			diceResult += diceResultToString(valRef.toObject());
-		}
-		if (!diceResult.isEmpty())
-		{
-			if(!allSameFaceCount)
-			{
+        QStringList diceResult;
+        for(auto valRef : values)
+        {
+            diceResult += diceResultToString(valRef.toObject());
+        }
+        if (!diceResult.isEmpty())
+        {
+            if(!allSameFaceCount)
+            {
                 subResult += QStringLiteral("d%1:(").arg(obj["face"].toInt());
-			}
-			if(withColor)
-			{
-				subResult += DisplayToolBox::colorToTermCode(obj["color"].toString());
-			}
-			subResult += diceResult.join(" ");
-			if(withColor)
-			{
-				subResult += DisplayToolBox::colorToTermCode(QStringLiteral("reset"));
-			}
-			if(!allSameFaceCount)
-			{
-				subResult += QStringLiteral(")");
-			}
-		}
+            }
+            if(withColor)
+            {
+                subResult += DisplayToolBox::colorToTermCode(obj["color"].toString());
+            }
+            subResult += diceResult.join(" ");
+            if(withColor)
+            {
+                subResult += DisplayToolBox::colorToTermCode(QStringLiteral("reset"));
+            }
+            if(!allSameFaceCount)
+            {
+                subResult += QStringLiteral(")");
+            }
+        }
 
-		if (!subResult.isEmpty())
-		{
-			result += subResult;
-		}
-	}
-	return result.join(" - ");
+        if (!subResult.isEmpty())
+        {
+            result += subResult;
+        }
+    }
+    return result.join(" - ");
 }
