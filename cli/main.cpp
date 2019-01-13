@@ -319,6 +319,7 @@ int startDiceParsing(QStringList& cmds,QString& treeFile,bool withColor, EXPORTF
                 stringResult.replace("%1",scalarText);
                 stringResult.replace("%2",listOfDiceResult.join(",").trimmed());
                 stringResult.replace("%3",lastScalarText);
+                stringResult.replace("\\n", "\n");
 
                 int i = strLst.size();
                 for(auto it = strLst.rbegin(); it != strLst.rend() ; ++it)
