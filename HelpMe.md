@@ -518,6 +518,7 @@ The Rolisteam Dice Parser allows you to use several logic operator:
 * Lesser or egual: `<=`
 * Lesser: `<`
 * Greater: `>`
+* Different: `!=`
 
 ## Select value from List
 
