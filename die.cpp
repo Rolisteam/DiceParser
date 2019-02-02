@@ -155,7 +155,7 @@ void Die::roll(bool adding)
 
 quint64 Die::getFaces() const
 {
-    return abs(m_maxValue - m_base) + 1;
+    return std::abs(m_maxValue - m_base) + 1;
 }
 qint64 Die::getLastRolledValue()
 {
