@@ -21,9 +21,9 @@
 #ifndef LISTALIASNODE_H
 #define LISTALIASNODE_H
 
+#include "dicealias.h"
 #include "executionnode.h"
 #include "result/stringresult.h"
-#include "dicealias.h"
 
 /**
  * @brief The ListAliasNode class is dedicated to display the list of the current aliases.
@@ -32,29 +32,29 @@ class ListAliasNode : public ExecutionNode
 {
 public:
     ListAliasNode(QList<DiceAlias*>* mapAlias);
-	/**
-	  * @brief run
-	  * @param previous
-	  */
-	virtual void run(ExecutionNode* previous = nullptr);
+    /**
+     * @brief run
+     * @param previous
+     */
+    virtual void run(ExecutionNode* previous= nullptr);
 
-	/**
-	 * @brief toString
-	 * @return
-	 */
-	virtual QString toString(bool) const;
+    /**
+     * @brief toString
+     * @return
+     */
+    virtual QString toString(bool) const;
     /**
      * @brief buildList
      * @return
      */
     virtual QString buildList() const;
-	/**
-	 * @brief getPriority
-	 * @return
-	 */
-	virtual qint64 getPriority() const;
+    /**
+     * @brief getPriority
+     * @return
+     */
+    virtual qint64 getPriority() const;
 
-    virtual ExecutionNode *getCopy() const;
+    virtual ExecutionNode* getCopy() const;
 
 private:
     QList<DiceAlias*>* m_aliasList;

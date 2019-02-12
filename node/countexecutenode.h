@@ -3,8 +3,8 @@
 
 #include "executionnode.h"
 
-#include "validator.h"
 #include "result/scalarresult.h"
+#include "validator.h"
 
 /**
  * @brief The CountExecuteNode class
@@ -16,7 +16,7 @@ public:
      * @brief CountExecuteNode
      */
     CountExecuteNode();
-	virtual ~CountExecuteNode();
+    virtual ~CountExecuteNode();
     /**
      * @brief run
      * @param previous
@@ -25,12 +25,12 @@ public:
     /**
      * @brief setValidator
      */
-    virtual void setValidator(Validator* );
+    virtual void setValidator(Validator*);
     /**
      * @brief toString
      * @return
      */
-    virtual QString toString(bool withLabel)const;
+    virtual QString toString(bool withLabel) const;
     /**
      * @brief getPriority
      * @return
@@ -41,6 +41,7 @@ public:
      * @return
      */
     virtual ExecutionNode* getCopy() const;
+
 private:
     ScalarResult* m_scalarResult;
     Validator* m_validator;

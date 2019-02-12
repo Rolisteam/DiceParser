@@ -1,7 +1,6 @@
 #ifndef REROLLDICENODE_H
 #define REROLLDICENODE_H
 
-
 #include "executionnode.h"
 #include "result/diceresult.h"
 #include "validator.h"
@@ -10,41 +9,45 @@
  */
 class RerollDiceNode : public ExecutionNode
 {
-
 public:
-	/**
-	 * @brief The ReRollMode enum
-	 */
-    enum ReRollMode {EQUAL,LESSER,GREATER};
-	/**
-	 * @brief RerollDiceNode
-	 * @param reroll If true reroll the dice only once, otherwise until the condition is false
-	 */
+    /**
+     * @brief The ReRollMode enum
+     */
+    enum ReRollMode
+    {
+        EQUAL,
+        LESSER,
+        GREATER
+    };
+    /**
+     * @brief RerollDiceNode
+     * @param reroll If true reroll the dice only once, otherwise until the condition is false
+     */
     RerollDiceNode(bool reroll, bool addingMode);
 
-	/**
-	 * @brief ~RerollDiceNode
-	 */
-	virtual ~RerollDiceNode();
-	/**
-	 * @brief run
-	 * @param previous
-	 */
+    /**
+     * @brief ~RerollDiceNode
+     */
+    virtual ~RerollDiceNode();
+    /**
+     * @brief run
+     * @param previous
+     */
     virtual void run(ExecutionNode* previous);
 
-	/**
-	 * @brief setValidator
-	 */
-    virtual void setValidator(Validator* );
-	/**
-	 * @brief toString
-	 * @return
-	 */
-    virtual QString toString(bool )const;
-	/**
-	 * @brief getPriority
-	 * @return
-	 */
+    /**
+     * @brief setValidator
+     */
+    virtual void setValidator(Validator*);
+    /**
+     * @brief toString
+     * @return
+     */
+    virtual QString toString(bool) const;
+    /**
+     * @brief getPriority
+     * @return
+     */
     virtual qint64 getPriority() const;
 
     /**
@@ -53,13 +56,13 @@ public:
      */
     virtual ExecutionNode* getCopy() const;
 
-    ExecutionNode *getInstruction() const;
-    void setInstruction(ExecutionNode *instruction);
+    ExecutionNode* getInstruction() const;
+    void setInstruction(ExecutionNode* instruction);
 
 private:
-    DiceResult* m_diceResult = nullptr;
-    Validator* m_validator  = nullptr;
-    ExecutionNode* m_instruction = nullptr;
+    DiceResult* m_diceResult= nullptr;
+    Validator* m_validator= nullptr;
+    ExecutionNode* m_instruction= nullptr;
 
     const bool m_reroll;
     const bool m_adding;

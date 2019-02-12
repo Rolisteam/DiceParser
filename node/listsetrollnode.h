@@ -21,13 +21,12 @@
 #ifndef LISTSETROLLNODE_H
 #define LISTSETROLLNODE_H
 
-
 #include <QStringList>
 
 #include "executionnode.h"
+#include "range.h"
 #include "result/diceresult.h"
 #include "result/stringresult.h"
-#include "range.h"
 /**
  * @brief The ListSetRollNode class is dedicated to pick up item from list.
  */
@@ -35,19 +34,19 @@ class ListSetRollNode : public ExecutionNode
 {
 public:
     ListSetRollNode();
-	virtual ~ListSetRollNode();
-    virtual void run(ExecutionNode* previous = nullptr);
-	virtual QString toString(bool)const;
+    virtual ~ListSetRollNode();
+    virtual void run(ExecutionNode* previous= nullptr);
+    virtual QString toString(bool) const;
     virtual qint64 getPriority() const;
     QStringList getList() const;
 
     void setListValue(QStringList);
-    void setUnique(bool );
+    void setUnique(bool);
     void setRangeList(QList<Range>&);
-    virtual ExecutionNode *getCopy() const;
+    virtual ExecutionNode* getCopy() const;
 
 private:
-    void getValueFromDie(Die* die,QStringList& rollResult);
+    void getValueFromDie(Die* die, QStringList& rollResult);
     void computeFacesNumber(Die* die);
 
 private:

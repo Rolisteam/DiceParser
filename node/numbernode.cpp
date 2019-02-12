@@ -1,30 +1,29 @@
 /***************************************************************************
-* Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://www.rolisteam.org/contact                      *
-*                                                                          *
-*  This file is part of DiceParser                                         *
-*                                                                          *
-* DiceParser is free software; you can redistribute it and/or modify       *
-* it under the terms of the GNU General Public License as published by     *
-* the Free Software Foundation; either version 2 of the License, or        *
-* (at your option) any later version.                                      *
-*                                                                          *
-* This program is distributed in the hope that it will be useful,          *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
-* GNU General Public License for more details.                             *
-*                                                                          *
-* You should have received a copy of the GNU General Public License        *
-* along with this program; if not, write to the                            *
-* Free Software Foundation, Inc.,                                          *
-* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
-***************************************************************************/
+ * Copyright (C) 2014 by Renaud Guezennec                                   *
+ * http://www.rolisteam.org/contact                      *
+ *                                                                          *
+ *  This file is part of DiceParser                                         *
+ *                                                                          *
+ * DiceParser is free software; you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation; either version 2 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * This program is distributed in the hope that it will be useful,          *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with this program; if not, write to the                            *
+ * Free Software Foundation, Inc.,                                          *
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
+ ***************************************************************************/
 #include "numbernode.h"
 
-NumberNode::NumberNode()
-    : m_scalarResult(new ScalarResult())
+NumberNode::NumberNode() : m_scalarResult(new ScalarResult())
 {
-    m_result = m_scalarResult;
+    m_result= m_scalarResult;
 }
 NumberNode::~NumberNode()
 {
@@ -38,12 +37,12 @@ NumberNode::~NumberNode()
 
 void NumberNode::run(ExecutionNode* previous)
 {
-    m_previousNode = previous;
-    if(nullptr!=previous)
+    m_previousNode= previous;
+    if(nullptr != previous)
     {
         m_result->setPrevious(previous->getResult());
     }
-    if(nullptr!=m_nextNode)
+    if(nullptr != m_nextNode)
     {
         m_nextNode->run(this);
     }
@@ -52,36 +51,35 @@ void NumberNode::run(ExecutionNode* previous)
 void NumberNode::setNumber(qint64 a)
 {
     m_scalarResult->setValue(a);
-    m_number = a;
+    m_number= a;
 }
 QString NumberNode::toString(bool withLabel) const
 {
     if(withLabel)
-	{
-		return QString("%1 [label=\"NumberNode %2\"]").arg(m_id).arg(m_number);
-	}
-	else
-	{
-		return m_id;
-	}
+    {
+        return QString("%1 [label=\"NumberNode %2\"]").arg(m_id).arg(m_number);
+    }
+    else
+    {
+        return m_id;
+    }
 }
 qint64 NumberNode::getPriority() const
 {
-    qint64 priority=0;
-    if(nullptr!=m_nextNode)
+    qint64 priority= 0;
+    if(nullptr != m_nextNode)
     {
-        priority = m_nextNode->getPriority();
+        priority= m_nextNode->getPriority();
     }
     return priority;
 }
 ExecutionNode* NumberNode::getCopy() const
 {
-    NumberNode* node = new NumberNode();
+    NumberNode* node= new NumberNode();
     node->setNumber(m_number);
-    if(nullptr!=m_nextNode)
+    if(nullptr != m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }
     return node;
-
 }

@@ -1,24 +1,24 @@
 /***************************************************************************
-* Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://www.rolisteam.org/contact                      *
-*                                                                          *
-*  This file is part of DiceParser                                         *
-*                                                                          *
-* DiceParser is free software; you can redistribute it and/or modify       *
-* it under the terms of the GNU General Public License as published by     *
-* the Free Software Foundation; either version 2 of the License, or        *
-* (at your option) any later version.                                      *
-*                                                                          *
-* This program is distributed in the hope that it will be useful,          *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
-* GNU General Public License for more details.                             *
-*                                                                          *
-* You should have received a copy of the GNU General Public License        *
-* along with this program; if not, write to the                            *
-* Free Software Foundation, Inc.,                                          *
-* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
-***************************************************************************/
+ * Copyright (C) 2014 by Renaud Guezennec                                   *
+ * http://www.rolisteam.org/contact                      *
+ *                                                                          *
+ *  This file is part of DiceParser                                         *
+ *                                                                          *
+ * DiceParser is free software; you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation; either version 2 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * This program is distributed in the hope that it will be useful,          *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with this program; if not, write to the                            *
+ * Free Software Foundation, Inc.,                                          *
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
+ ***************************************************************************/
 #include "dicealias.h"
 #include <QRegularExpression>
 
@@ -26,12 +26,12 @@
 
 QString makeReplament(const QString& pattern, const QString& replacement, QString cmd)
 {
-    auto hasPattern = cmd.contains(pattern);
+    auto hasPattern= cmd.contains(pattern);
     if(hasPattern)
     {
-        auto hasVariable = cmd.contains("${");
-        auto hasQuote = cmd.contains("\"");
-        auto commentPos = cmd.lastIndexOf("#");
+        auto hasVariable= cmd.contains("${");
+        auto hasQuote= cmd.contains("\"");
+        auto commentPos= cmd.lastIndexOf("#");
 
         if(!hasQuote && !hasVariable)
         {
@@ -40,104 +40,98 @@ QString makeReplament(const QString& pattern, const QString& replacement, QStrin
         else
         {
             std::vector<int> patternPosList;
-            std::vector<std::pair<int,int>> variablePos;
+            std::vector<std::pair<int, int>> variablePos;
 
             int pos= 0;
             QRegularExpressionMatch match;
-            while(pos!=-1)
+            while(pos != -1)
             {
-                auto start = cmd.indexOf(QRegularExpression("\\${\\N+}"),pos,&match);
-                if(start >=0)
+                auto start= cmd.indexOf(QRegularExpression("\\${\\N+}"), pos, &match);
+                if(start >= 0)
                 {
-                    auto end = start+match.captured().length();
-                    variablePos.push_back(std::make_pair(start,end));
-                    pos = end+1;
+                    auto end= start + match.captured().length();
+                    variablePos.push_back(std::make_pair(start, end));
+                    pos= end + 1;
                 }
                 else
                 {
-                    pos = start;
+                    pos= start;
                 }
             }
 
-            pos = 0;
-            while(pos!=-1)
+            pos= 0;
+            while(pos != -1)
             {
-                auto start = cmd.indexOf("\"",pos);
+                auto start= cmd.indexOf("\"", pos);
                 if(start >= 0)
                 {
-                    auto end = cmd.indexOf("\"",start+1);
-                    variablePos.push_back(std::make_pair(start,end));
-                    pos = end+1;
+                    auto end= cmd.indexOf("\"", start + 1);
+                    variablePos.push_back(std::make_pair(start, end));
+                    pos= end + 1;
                 }
                 else
                 {
-                    pos = start;
+                    pos= start;
                 }
             }
             pos= 0;
-            while((pos = cmd.indexOf(pattern,pos)) && pos!=-1)
+            while((pos= cmd.indexOf(pattern, pos)) && pos != -1)
             {
-                bool isInsidePair = false;
+                bool isInsidePair= false;
                 for(auto pair : variablePos)
                 {
                     if(!isInsidePair)
-                        isInsidePair = (pos > pair.first && pos < pair.second);
+                        isInsidePair= (pos > pair.first && pos < pair.second);
 
                     if(commentPos >= 0 && pos > commentPos)
-                        isInsidePair = true;
+                        isInsidePair= true;
                 }
                 if(!isInsidePair)
                     patternPosList.push_back(pos);
 
-                pos+=1;
+                pos+= 1;
             }
 
             // TODO to be replace by C++14 when it is ready
-            for (auto i = patternPosList.rbegin(); i != patternPosList.rend(); ++i)
+            for(auto i= patternPosList.rbegin(); i != patternPosList.rend(); ++i)
             {
-                cmd.replace(*i,1,replacement);
+                cmd.replace(*i, 1, replacement);
             }
         }
     }
     return cmd;
 }
 
-
-
-
-DiceAlias::DiceAlias(QString cmd, QString key, bool isReplace,bool isEnable)
-    : m_command(cmd),m_value(key),m_isEnable(isEnable)
+DiceAlias::DiceAlias(QString cmd, QString key, bool isReplace, bool isEnable)
+    : m_command(cmd), m_value(key), m_isEnable(isEnable)
 {
     if(isReplace)
     {
-        m_type = REPLACE;
+        m_type= REPLACE;
     }
     else
     {
-        m_type = REGEXP;
+        m_type= REGEXP;
     }
 }
 
-DiceAlias::~DiceAlias()
-{
+DiceAlias::~DiceAlias() {}
 
-}
-
-bool DiceAlias::resolved(QString & str)
+bool DiceAlias::resolved(QString& str)
 {
     if(!m_isEnable)
         return false;
 
-    if((m_type == REPLACE)&&(str.contains(m_command)))
+    if((m_type == REPLACE) && (str.contains(m_command)))
     {
-       str = makeReplament(m_command,m_value,str);
-       //str.replace(m_command,m_value);
-       return true;
+        str= makeReplament(m_command, m_value, str);
+        // str.replace(m_command,m_value);
+        return true;
     }
     else if(m_type == REGEXP)
     {
-        QRegularExpression  exp(m_command);
-        str.replace(exp,m_value);
+        QRegularExpression exp(m_command);
+        str.replace(exp, m_value);
         return true;
     }
     return false;
@@ -145,17 +139,17 @@ bool DiceAlias::resolved(QString & str)
 
 void DiceAlias::setCommand(QString key)
 {
-    m_command = key;
+    m_command= key;
 }
 
 void DiceAlias::setValue(QString value)
 {
-    m_value = value;
+    m_value= value;
 }
 
 void DiceAlias::setType(RESOLUTION_TYPE type)
 {
-    m_type = type;
+    m_type= type;
 }
 QString DiceAlias::getCommand() const
 {
@@ -172,7 +166,6 @@ bool DiceAlias::isReplace() const
     return (m_type == REPLACE) ? true : false;
 }
 
-
 void DiceAlias::setReplace(bool b)
 {
     if(b)
@@ -181,7 +174,7 @@ void DiceAlias::setReplace(bool b)
     }
     else
     {
-        m_type = REGEXP;
+        m_type= REGEXP;
     }
 }
 
@@ -192,7 +185,7 @@ bool DiceAlias::isEnable() const
 
 void DiceAlias::setEnable(bool b)
 {
-    m_isEnable = b;
+    m_isEnable= b;
 }
 
 QString DiceAlias::getComment() const
@@ -200,7 +193,7 @@ QString DiceAlias::getComment() const
     return m_comment;
 }
 
-void DiceAlias::setComment(const QString &comment)
+void DiceAlias::setComment(const QString& comment)
 {
-    m_comment = comment;
+    m_comment= comment;
 }

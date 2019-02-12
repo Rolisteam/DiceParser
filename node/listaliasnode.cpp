@@ -20,67 +20,65 @@
  *************************************************************************/
 #include "listaliasnode.h"
 
-ListAliasNode::ListAliasNode(QList<DiceAlias*>* apAlias)
-    : m_aliasList(apAlias)
+ListAliasNode::ListAliasNode(QList<DiceAlias*>* apAlias) : m_aliasList(apAlias)
 {
-	m_result = new StringResult();
+    m_result= new StringResult();
 }
-void ListAliasNode::run(ExecutionNode* previous )
+void ListAliasNode::run(ExecutionNode* previous)
 {
-	m_previousNode = previous;
-	StringResult* txtResult = dynamic_cast<StringResult*>(m_result);
+    m_previousNode= previous;
+    StringResult* txtResult= dynamic_cast<StringResult*>(m_result);
     txtResult->setHighLight(false);
 
     txtResult->setText(buildList());
     if(nullptr != previous)
     {
-        //txtResult->setText(previous->getHelp());
-		m_result->setPrevious(previous->getResult());
-	}
+        // txtResult->setText(previous->getHelp());
+        m_result->setPrevious(previous->getResult());
+    }
 
-	if(nullptr!=m_nextNode)
-	{
-		m_nextNode->run(this);
-	}
+    if(nullptr != m_nextNode)
+    {
+        m_nextNode->run(this);
+    }
 }
 QString ListAliasNode::buildList() const
 {
-	QString result(QObject::tr("List of Alias:\n"));
-    for(auto& key: *m_aliasList)
-	{
-        result+=QString("%1 : %2  # %3\n").arg(key->getCommand(),key->getValue(),key->getComment());
-	}
-	return result;
+    QString result(QObject::tr("List of Alias:\n"));
+    for(auto& key : *m_aliasList)
+    {
+        result+= QString("%1 : %2  # %3\n").arg(key->getCommand(), key->getValue(), key->getComment());
+    }
+    return result;
 }
 QString ListAliasNode::toString(bool wl) const
 {
-	QStringList resultList;
-    for(auto& key: *m_aliasList)
-	{
-		resultList <<  "{" <<key->getCommand() << key->getValue()<<  "}";
-	}
+    QStringList resultList;
+    for(auto& key : *m_aliasList)
+    {
+        resultList << "{" << key->getCommand() << key->getValue() << "}";
+    }
 
-	if(wl)
-	{
+    if(wl)
+    {
         return QString("%1 [label=\"ListAliasNode %2\"]").arg(m_id, resultList.join(","));
-	}
-	else
-	{
-		return m_id;
-	}
+    }
+    else
+    {
+        return m_id;
+    }
 }
 qint64 ListAliasNode::getPriority() const
 {
-	return 0;
+    return 0;
 }
 
 ExecutionNode* ListAliasNode::getCopy() const
 {
-    ListAliasNode* node = new ListAliasNode(m_aliasList);
-    if(nullptr!=m_nextNode)
+    ListAliasNode* node= new ListAliasNode(m_aliasList);
+    if(nullptr != m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }
     return node;
-
 }

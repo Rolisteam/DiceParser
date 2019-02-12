@@ -1,8 +1,8 @@
 #ifndef STRINGRESULT_H
 #define STRINGRESULT_H
 
-#include <QString>
 #include "result.h"
+#include <QString>
 /**
  * @brief The StringResult class stores command result for String.
  */
@@ -13,10 +13,10 @@ public:
      * @brief StringResult
      */
     StringResult();
-	/**
-	 * @brief StringResult
-	 */
-	virtual ~StringResult();
+    /**
+     * @brief StringResult
+     */
+    virtual ~StringResult();
     /**
      * @brief setText
      * @param text
@@ -38,10 +38,11 @@ public:
      */
     virtual QString toString(bool);
 
-    virtual void setHighLight(bool );
+    virtual void setHighLight(bool);
     virtual bool hasHighLight() const;
     virtual bool hasResultOfType(RESULT_TYPE resultType) const;
     virtual Result* getCopy() const;
+
 private:
     QString m_value;
     bool m_highlight;

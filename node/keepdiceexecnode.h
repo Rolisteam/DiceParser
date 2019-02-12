@@ -24,8 +24,8 @@
 #include "executionnode.h"
 #include "result/diceresult.h"
 /**
- * @brief The KeepDiceExecNode class splits the dice result to get the m_numberOfDice dice from the beginning of the dice result.
- * Usually the pervious node of an KeepDiceExecNode is an SortNode.
+ * @brief The KeepDiceExecNode class splits the dice result to get the m_numberOfDice dice from the beginning of the
+ * dice result. Usually the pervious node of an KeepDiceExecNode is an SortNode.
  */
 class KeepDiceExecNode : public ExecutionNode
 {
@@ -33,11 +33,12 @@ public:
     KeepDiceExecNode();
     virtual ~KeepDiceExecNode();
 
-    virtual void run(ExecutionNode *previous);
-    virtual void setDiceKeepNumber(qint64 );
-	virtual QString toString(bool)const;
+    virtual void run(ExecutionNode* previous);
+    virtual void setDiceKeepNumber(qint64);
+    virtual QString toString(bool) const;
     virtual qint64 getPriority() const;
-    virtual ExecutionNode *getCopy() const;
+    virtual ExecutionNode* getCopy() const;
+
 private:
     qint64 m_numberOfDice;
     DiceResult* m_diceResult;

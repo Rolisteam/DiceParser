@@ -20,62 +20,56 @@
  *************************************************************************/
 #include <QList>
 
-
 #include "keepdiceexecnode.h"
 
-
-KeepDiceExecNode::KeepDiceExecNode()
-    : m_diceResult(new DiceResult())
+KeepDiceExecNode::KeepDiceExecNode() : m_diceResult(new DiceResult())
 {
-    m_result = m_diceResult;
+    m_result= m_diceResult;
 }
-KeepDiceExecNode::~KeepDiceExecNode()
-{
-
-}
+KeepDiceExecNode::~KeepDiceExecNode() {}
 void KeepDiceExecNode::run(ExecutionNode* previous)
 {
-    m_previousNode = previous;
-    if(nullptr==previous)
+    m_previousNode= previous;
+    if(nullptr == previous)
     {
         return;
     }
-    DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previous->getResult());
+    DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(previous->getResult());
     m_result->setPrevious(previousDiceResult);
-    if(nullptr!=previousDiceResult)
+    if(nullptr != previousDiceResult)
     {
-        QList<Die*> diceList=previousDiceResult->getResultList();
+        QList<Die*> diceList= previousDiceResult->getResultList();
 
         if(m_numberOfDice < 0)
         {
-            m_numberOfDice = diceList.size() + m_numberOfDice;
+            m_numberOfDice= diceList.size() + m_numberOfDice;
         }
 
-        QList<Die*> diceList3= diceList.mid(0,static_cast<int>(m_numberOfDice));
+        QList<Die*> diceList3= diceList.mid(0, static_cast<int>(m_numberOfDice));
         QList<Die*> diceList2;
 
         for(Die* die : diceList3)
         {
-            Die* tmpdie = new Die();
-            *tmpdie=*die;
+            Die* tmpdie= new Die();
+            *tmpdie= *die;
             diceList2.append(tmpdie);
             die->displayed();
         }
 
-
-
         if(m_numberOfDice > static_cast<qint64>(diceList.size()))
         {
-            m_errors.insert(TOO_MANY_DICE,QObject::tr(" You ask to keep %1 dice but the result only has %2").arg(m_numberOfDice).arg(diceList.size()));
+            m_errors.insert(TOO_MANY_DICE, QObject::tr(" You ask to keep %1 dice but the result only has %2")
+                                               .arg(m_numberOfDice)
+                                               .arg(diceList.size()));
         }
 
-        for(auto& tmp : diceList.mid(static_cast<int>(m_numberOfDice),-1))
+        for(auto& tmp : diceList.mid(static_cast<int>(m_numberOfDice), -1))
         {
             tmp->setHighlighted(false);
         }
 
         m_diceResult->setResultList(diceList2);
-        if(nullptr!=m_nextNode)
+        if(nullptr != m_nextNode)
         {
             m_nextNode->run(this);
         }
@@ -83,39 +77,37 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
 }
 void KeepDiceExecNode::setDiceKeepNumber(qint64 n)
 {
-    m_numberOfDice = n;
+    m_numberOfDice= n;
 }
 QString KeepDiceExecNode::toString(bool wl) const
 {
-	if(wl)
-	{
-		return QString("%1 [label=\"KeepDiceExecNode %2\"]").arg(m_id).arg(m_numberOfDice);
-	}
-	else
-	{
-		return m_id;
-	}
+    if(wl)
+    {
+        return QString("%1 [label=\"KeepDiceExecNode %2\"]").arg(m_id).arg(m_numberOfDice);
+    }
+    else
+    {
+        return m_id;
+    }
 }
 qint64 KeepDiceExecNode::getPriority() const
 {
-    qint64 priority=0;
-    if(nullptr!=m_nextNode)
+    qint64 priority= 0;
+    if(nullptr != m_nextNode)
     {
-        priority = m_nextNode->getPriority();
+        priority= m_nextNode->getPriority();
     }
-
 
     return priority;
 }
 
 ExecutionNode* KeepDiceExecNode::getCopy() const
 {
-    KeepDiceExecNode* node = new KeepDiceExecNode();
+    KeepDiceExecNode* node= new KeepDiceExecNode();
     node->setDiceKeepNumber(m_numberOfDice);
-    if(nullptr!=m_nextNode)
+    if(nullptr != m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }
     return node;
-
 }

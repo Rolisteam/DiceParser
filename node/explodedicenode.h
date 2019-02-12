@@ -13,13 +13,14 @@ class ExplodeDiceNode : public ExecutionNode
 {
 public:
     ExplodeDiceNode();
-	virtual ~ExplodeDiceNode();
-    virtual void run(ExecutionNode* previous = nullptr);
-    virtual void setValidator(Validator* );
-	virtual QString toString(bool )const;
+    virtual ~ExplodeDiceNode();
+    virtual void run(ExecutionNode* previous= nullptr);
+    virtual void setValidator(Validator*);
+    virtual QString toString(bool) const;
     virtual qint64 getPriority() const;
 
-    virtual ExecutionNode *getCopy() const;
+    virtual ExecutionNode* getCopy() const;
+
 protected:
     DiceResult* m_diceResult;
     Validator* m_validator;

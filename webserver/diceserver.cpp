@@ -1,52 +1,49 @@
 #include "diceserver.h"
+#include "qhttp/src/qhttpfwd.hpp"
 #include "qhttp/src/qhttpserver.hpp"
 #include "qhttp/src/qhttpserverrequest.hpp"
 #include "qhttp/src/qhttpserverresponse.hpp"
-#include "qhttp/src/qhttpfwd.hpp"
 #include <QHostAddress>
 #include <QUrl>
 
-DiceServer::DiceServer(int port)
-    : QObject(),m_diceParser(new DiceParser())
+DiceServer::DiceServer(int port) : QObject(), m_diceParser(new DiceParser())
 {
-
-    m_diceParser->setPathToHelp("<span><a href=\"https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md\">Documentation</a>");
-   // using namespace ;
-    m_server = new qhttp::server::QHttpServer(this);
+    m_diceParser->setPathToHelp(
+        "<span><a href=\"https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md\">Documentation</a>");
+    // using namespace ;
+    m_server= new qhttp::server::QHttpServer(this);
     m_server->listen( // listening on 0.0.0.0:8080
-            QHostAddress::Any, port,
-            [=](qhttp::server::QHttpRequest* req, qhttp::server::QHttpResponse* res)
+        QHostAddress::Any, port, [=](qhttp::server::QHttpRequest* req, qhttp::server::QHttpResponse* res) {
+            req->collectData(1024);
+
+            // qhttp::THeaderHash hash = req->headers();
+            // qDebug() << hash << res->headers() << qhttp::Stringify::toString(req->method()) <<
+            // qPrintable(req->url().toString()) << req->collectedData().constData();
+            QString getArg= req->url().toString();
+            getArg= getArg.replace("/?", "");
+            QStringList args= getArg.split('&');
+            QHash<QString, QString> m_hashArgs;
+            for(auto argument : args)
             {
-                req->collectData(1024);
-
-               // qhttp::THeaderHash hash = req->headers();
-               // qDebug() << hash << res->headers() << qhttp::Stringify::toString(req->method()) << qPrintable(req->url().toString()) << req->collectedData().constData();
-                QString getArg = req->url().toString();
-                getArg=getArg.replace("/?","");
-                QStringList args = getArg.split('&');
-                QHash<QString,QString> m_hashArgs ;
-                for( auto argument : args)
+                QStringList keyValue= argument.split('=');
+                if(keyValue.size() == 2)
                 {
-                    QStringList keyValue = argument.split('=');
-                    if(keyValue.size()==2)
-                    {
-                        m_hashArgs.insert(keyValue[0],keyValue[1]);
-                    }
+                    m_hashArgs.insert(keyValue[0], keyValue[1]);
                 }
+            }
 
-                if(m_hashArgs.contains("cmd"))
-                {
-                    qDebug() << QUrl::fromPercentEncoding(m_hashArgs["cmd"].toLocal8Bit());
-                    QString result = startDiceParsing(QUrl::fromPercentEncoding(m_hashArgs["cmd"].toLocal8Bit()));
-                    qDebug() << result;
+            if(m_hashArgs.contains("cmd"))
+            {
+                qDebug() << QUrl::fromPercentEncoding(m_hashArgs["cmd"].toLocal8Bit());
+                QString result= startDiceParsing(QUrl::fromPercentEncoding(m_hashArgs["cmd"].toLocal8Bit()));
+                qDebug() << result;
 
-                    res->setStatusCode(qhttp::ESTATUS_OK);
-                    res->addHeader("Access-Control-Allow-Origin", "*");
-                    res->addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-                    res->addHeader("Access-Control-Allow-Headers", "x-requested-with");
+                res->setStatusCode(qhttp::ESTATUS_OK);
+                res->addHeader("Access-Control-Allow-Origin", "*");
+                res->addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+                res->addHeader("Access-Control-Allow-Headers", "x-requested-with");
 
-
-                    QString html("<!doctype html>\n"
+                QString html("<!doctype html>\n"
                              "<html>\n"
                              "<head>\n"
                              "  <meta charset=\"utf-8\">\n"
@@ -58,30 +55,29 @@ DiceServer::DiceServer(int port)
                              "</body>\n"
                              "</html>\n");
 
-                    res->end(html.arg(result).toLocal8Bit());
-                }
-                else
-                {
-                    res->setStatusCode(qhttp::ESTATUS_OK);
-                    res->end("No Command found!\n");
-                }
-
+                res->end(html.arg(result).toLocal8Bit());
+            }
+            else
+            {
+                res->setStatusCode(qhttp::ESTATUS_OK);
+                res->end("No Command found!\n");
+            }
         });
-    if ( !m_server->isListening() ) {
-            qDebug() << "failed to listen";
-
-        }
+    if(!m_server->isListening())
+    {
+        qDebug() << "failed to listen";
+    }
     else
     {
-        qDebug()<< "Server is On!!";
+        qDebug() << "Server is On!!";
     }
 }
 
 DiceServer::~DiceServer()
 {
-    qDebug()<< "destructor";
+    qDebug() << "destructor";
 }
-QString DiceServer::diceToText(ExportedDiceResult& dice,bool highlight,bool homogeneous)
+QString DiceServer::diceToText(ExportedDiceResult& dice, bool highlight, bool homogeneous)
 {
     QStringList resultGlobal;
     foreach(int face, dice.keys())
@@ -89,43 +85,42 @@ QString DiceServer::diceToText(ExportedDiceResult& dice,bool highlight,bool homo
         QStringList result;
         QStringList currentStreak;
         QList<QStringList> allStreakList;
-        ListDiceResult diceResult =  dice.value(face);
-        bool previousHighlight=false;
+        ListDiceResult diceResult= dice.value(face);
+        bool previousHighlight= false;
         QString previousColor;
         QString patternColor("<span class=\"dice\">");
-        foreach (HighLightDice tmp, diceResult)
+        foreach(HighLightDice tmp, diceResult)
         {
             if(previousColor != tmp.getColor())
             {
                 if(!currentStreak.isEmpty())
                 {
                     QStringList list;
-                    list << patternColor+currentStreak.join(',')+"</span>";
+                    list << patternColor + currentStreak.join(',') + "</span>";
                     allStreakList.append(list);
                     currentStreak.clear();
                 }
                 if(tmp.getColor().isEmpty())
                 {
-                    patternColor = QStringLiteral("<span class=\"dice\">");
+                    patternColor= QStringLiteral("<span class=\"dice\">");
                 }
                 else
                 {
-                    patternColor = QStringLiteral("<span style=\"color:%1;font-weight:bold\">").arg(tmp.getColor());
+                    patternColor= QStringLiteral("<span style=\"color:%1;font-weight:bold\">").arg(tmp.getColor());
                 }
             }
             QStringList diceListStr;
-            if((previousHighlight)&&(!tmp.isHighlighted()))
+            if((previousHighlight) && (!tmp.isHighlighted()))
             {
                 if(!currentStreak.isEmpty())
                 {
                     QStringList list;
-                    list << patternColor+currentStreak.join(',')+"</span>";
+                    list << patternColor + currentStreak.join(',') + "</span>";
                     allStreakList.append(list);
                     currentStreak.clear();
                 }
-
             }
-            else if((!previousHighlight)&&(tmp.isHighlighted()))
+            else if((!previousHighlight) && (tmp.isHighlighted()))
             {
                 if(!currentStreak.isEmpty())
                 {
@@ -135,17 +130,17 @@ QString DiceServer::diceToText(ExportedDiceResult& dice,bool highlight,bool homo
                     currentStreak.clear();
                 }
             }
-            previousHighlight = tmp.isHighlighted();
-            previousColor = tmp.getColor();
-            for(int i =0; i < tmp.getResult().size(); ++i)
+            previousHighlight= tmp.isHighlighted();
+            previousColor= tmp.getColor();
+            for(int i= 0; i < tmp.getResult().size(); ++i)
             {
-                qint64 dievalue = tmp.getResult()[i];
+                qint64 dievalue= tmp.getResult()[i];
                 diceListStr << QString::number(dievalue);
             }
-            if(diceListStr.size()>1)
+            if(diceListStr.size() > 1)
             {
-                QString first = diceListStr.takeFirst();
-                first = QString("%1 [%2]").arg(first).arg(diceListStr.join(','));
+                QString first= diceListStr.takeFirst();
+                first= QString("%1 [%2]").arg(first).arg(diceListStr.join(','));
                 diceListStr.clear();
                 diceListStr << first;
             }
@@ -155,7 +150,7 @@ QString DiceServer::diceToText(ExportedDiceResult& dice,bool highlight,bool homo
         if(previousHighlight)
         {
             QStringList list;
-            list <<  patternColor+currentStreak.join(',')+"</span>";
+            list << patternColor + currentStreak.join(',') + "</span>";
             allStreakList.append(list);
         }
         else
@@ -171,7 +166,7 @@ QString DiceServer::diceToText(ExportedDiceResult& dice,bool highlight,bool homo
         {
             result << a;
         }
-        if(dice.keys().size()>1)
+        if(dice.keys().size() > 1)
         {
             resultGlobal << QString(" d%2:(%1)").arg(result.join(",")).arg(face);
         }
@@ -186,53 +181,57 @@ QString DiceServer::diceToText(ExportedDiceResult& dice,bool highlight,bool homo
 QString DiceServer::startDiceParsing(QString cmd)
 {
     QString result("");
-    bool highlight = true;
+    bool highlight= true;
     if(m_diceParser->parseLine(cmd))
     {
-            m_diceParser->Start();
-            if(!m_diceParser->getErrorMap().isEmpty())
+        m_diceParser->Start();
+        if(!m_diceParser->getErrorMap().isEmpty())
+        {
+            result+= "<span style=\"color: #FF0000\">Error:</span>" + m_diceParser->humanReadableError() + "<br/>";
+        }
+        else
+        {
+            ExportedDiceResult list;
+            bool homogeneous= true;
+            m_diceParser->getLastDiceResult(list, homogeneous);
+            QString diceText= diceToText(list, highlight, homogeneous);
+            QString scalarText;
+            QString str;
+
+            if(m_diceParser->hasIntegerResultNotInFirst())
             {
-                result +=  "<span style=\"color: #FF0000\">Error:</span>" + m_diceParser->humanReadableError() + "<br/>";
+                scalarText= QString("%1").arg(m_diceParser->getLastIntegerResult());
+            }
+            else if(!list.isEmpty())
+            {
+                scalarText= QString("%1").arg(m_diceParser->getSumOfDiceResult());
+            }
+            if(highlight)
+            {
+                str= QString("Result: <span class=\"dice\">%1</span>, details:[%3 (%2)]")
+                         .arg(scalarText)
+                         .arg(diceText)
+                         .arg(m_diceParser->getDiceCommand());
             }
             else
             {
-
-                ExportedDiceResult list;
-                bool homogeneous = true;
-                m_diceParser->getLastDiceResult(list,homogeneous);
-                QString diceText = diceToText(list,highlight,homogeneous);
-                QString scalarText;
-                QString str;
-
-                if(m_diceParser->hasIntegerResultNotInFirst())
-                {
-                    scalarText = QString("%1").arg(m_diceParser->getLastIntegerResult());
-                }
-                else if(!list.isEmpty())
-                {
-                    scalarText = QString("%1").arg(m_diceParser->getSumOfDiceResult());
-                }
-                if(highlight)
-                {
-                    str = QString("Result: <span class=\"dice\">%1</span>, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(m_diceParser->getDiceCommand());
-                }
-                else
-                {
-                    str = QString("Result: %1, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(m_diceParser->getDiceCommand());
-                }
-
-                if(m_diceParser->hasStringResult())
-                {
-                    str = m_diceParser->getStringResult();
-                }
-                result += str + "<br/>";
+                str= QString("Result: %1, details:[%3 (%2)]")
+                         .arg(scalarText)
+                         .arg(diceText)
+                         .arg(m_diceParser->getDiceCommand());
             }
+
+            if(m_diceParser->hasStringResult())
+            {
+                str= m_diceParser->getStringResult();
+            }
+            result+= str + "<br/>";
+        }
     }
     else
     {
-        result += "<span style=\"color: #00FF00\">Error:</span>" + m_diceParser->humanReadableError() + "<br/>";
+        result+= "<span style=\"color: #00FF00\">Error:</span>" + m_diceParser->humanReadableError() + "<br/>";
     }
-
 
     return result;
 }

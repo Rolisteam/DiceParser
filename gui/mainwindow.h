@@ -4,23 +4,25 @@
 #include <QMainWindow>
 
 class DiceParser;
-namespace Ui {
-class MainWindow;
+namespace Ui
+{
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	explicit MainWindow(QWidget *parent = 0);
-	~MainWindow();
+    explicit MainWindow(QWidget* parent= 0);
+    ~MainWindow();
 
 protected slots:
-	void rollDiceCommand();
+    void rollDiceCommand();
+
 private:
-	Ui::MainWindow *ui;
-	DiceParser* m_dieParser;
+    Ui::MainWindow* ui;
+    DiceParser* m_dieParser;
 };
 
 #endif // MAINWINDOW_H

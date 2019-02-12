@@ -31,7 +31,7 @@
  */
 class Die
 {
-  public:
+public:
     /**
      * @brief The ArithmeticOperator enum
      */
@@ -92,7 +92,7 @@ class Die
      * @brief roll
      * @param adding
      */
-    void roll(bool adding = false);
+    void roll(bool adding= false);
     /**
      * @brief replaceLastValue
      * @param value
@@ -143,13 +143,13 @@ class Die
     Die::ArithmeticOperator getOp() const;
     void setOp(const Die::ArithmeticOperator& op);
 
-  private:
-    qint64 m_value = 0;
+private:
+    qint64 m_value= 0;
     QList<qint64> m_rollResult;
-    bool m_selected = false;
-    bool m_hasValue = false;
-    bool m_displayStatus = false;
-    bool m_highlighted = true;
+    bool m_selected= false;
+    bool m_hasValue= false;
+    bool m_displayStatus= false;
+    bool m_highlighted= true;
     qint64 m_maxValue;
     qint64 m_base;
     QString m_color;

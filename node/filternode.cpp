@@ -1,43 +1,41 @@
 #include "filternode.h"
 
-FilterNode::FilterNode()
-    : m_diceResult(new DiceResult()),m_eachValue(false)
+FilterNode::FilterNode() : m_diceResult(new DiceResult()), m_eachValue(false)
 {
-    m_result = m_diceResult;
+    m_result= m_diceResult;
 }
 
 FilterNode::~FilterNode()
 {
-    if(nullptr!=m_validator)
+    if(nullptr != m_validator)
     {
         delete m_validator;
     }
 }
 void FilterNode::setValidator(Validator* validator)
 {
-    m_validator = validator;
+    m_validator= validator;
 }
 void FilterNode::run(ExecutionNode* previous)
 {
-    m_previousNode = previous;
-    if(nullptr==previous)
+    m_previousNode= previous;
+    if(nullptr == previous)
     {
         return;
     }
-    DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previous->getResult());
+    DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(previous->getResult());
     m_result->setPrevious(previousDiceResult);
-    if(nullptr!=previousDiceResult)
+    if(nullptr != previousDiceResult)
     {
-        QList<Die*> diceList=previousDiceResult->getResultList();
+        QList<Die*> diceList= previousDiceResult->getResultList();
         QList<Die*> diceList2;
-
 
         for(Die* tmp : diceList)
         {
-            if(m_validator->hasValid(tmp,m_eachValue))
+            if(m_validator->hasValid(tmp, m_eachValue))
             {
-                Die* tmpdie = new Die();
-                *tmpdie=*tmp;
+                Die* tmpdie= new Die();
+                *tmpdie= *tmp;
                 diceList2.append(tmpdie);
                 tmp->displayed();
             }
@@ -48,7 +46,7 @@ void FilterNode::run(ExecutionNode* previous)
         }
 
         m_diceResult->setResultList(diceList2);
-        if(nullptr!=m_nextNode)
+        if(nullptr != m_nextNode)
         {
             m_nextNode->run(this);
         }
@@ -68,23 +66,22 @@ QString FilterNode::toString(bool wl) const
 }
 qint64 FilterNode::getPriority() const
 {
-    qint64 priority=0;
-    if(nullptr!=m_nextNode)
+    qint64 priority= 0;
+    if(nullptr != m_nextNode)
     {
-        priority = m_nextNode->getPriority();
+        priority= m_nextNode->getPriority();
     }
-
 
     return priority;
 }
 ExecutionNode* FilterNode::getCopy() const
 {
-    FilterNode* node = new FilterNode();
-    if(nullptr!=m_validator)
+    FilterNode* node= new FilterNode();
+    if(nullptr != m_validator)
     {
         node->setValidator(m_validator->getCopy());
     }
-    if(nullptr!=m_nextNode)
+    if(nullptr != m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }

@@ -2,55 +2,52 @@
 #include "parsingtoolbox.h"
 
 RerollDiceNode::RerollDiceNode(bool reroll, bool addingMode)
-    : m_diceResult(new DiceResult())
-    , m_validator(nullptr)
-    , m_reroll(reroll)
-    , m_adding(addingMode)
+    : m_diceResult(new DiceResult()), m_validator(nullptr), m_reroll(reroll), m_adding(addingMode)
 {
-    m_result=m_diceResult;
+    m_result= m_diceResult;
 }
 RerollDiceNode::~RerollDiceNode()
 {
-	if(nullptr!=m_validator)
-	{
-		delete m_validator;
-		m_validator = nullptr;
-	}
+    if(nullptr != m_validator)
+    {
+        delete m_validator;
+        m_validator= nullptr;
+    }
 }
 void RerollDiceNode::run(ExecutionNode* previous)
 {
-    m_previousNode = previous;
-    if((nullptr!=previous)&&(nullptr!=previous->getResult()))
+    m_previousNode= previous;
+    if((nullptr != previous) && (nullptr != previous->getResult()))
     {
-        DiceResult* previous_result = dynamic_cast<DiceResult*>(previous->getResult());
+        DiceResult* previous_result= dynamic_cast<DiceResult*>(previous->getResult());
         m_result->setPrevious(previous_result);
-        if(nullptr!=previous_result)
+        if(nullptr != previous_result)
         {
-            for(auto& die: previous_result->getResultList())
+            for(auto& die : previous_result->getResultList())
             {
-                Die* tmpdie = new Die();
-                *tmpdie=*die;
+                Die* tmpdie= new Die();
+                *tmpdie= *die;
                 m_diceResult->insertResult(tmpdie);
                 die->displayed();
             }
-            //m_diceResult->setResultList(list);
+            // m_diceResult->setResultList(list);
 
-            QList<Die*>& list = m_diceResult->getResultList();
+            QList<Die*>& list= m_diceResult->getResultList();
             QList<Die*> toRemove;
 
-            for(int i = 0; i < list.size() ; ++i)
+            for(int i= 0; i < list.size(); ++i)
             {
-                auto die = list.at(i);
-                bool finished = false;
-                while(m_validator->hasValid(die,false) && !finished)
+                auto die= list.at(i);
+                bool finished= false;
+                while(m_validator->hasValid(die, false) && !finished)
                 {
                     if(m_instruction != nullptr)
                     {
                         m_instruction->run(this);
-                        auto lastNode = ParsingToolBox::getLatestNode(m_instruction);
+                        auto lastNode= ParsingToolBox::getLatestNode(m_instruction);
                         if(lastNode != nullptr)
                         {
-                            auto lastResult = dynamic_cast<DiceResult*>(lastNode->getResult());
+                            auto lastResult= dynamic_cast<DiceResult*>(lastNode->getResult());
                             if(lastResult != nullptr)
                             {
                                 toRemove.append(die);
@@ -65,18 +62,17 @@ void RerollDiceNode::run(ExecutionNode* previous)
                     }
                     if(m_reroll)
                     {
-                        finished = true;
+                        finished= true;
                     }
                 }
             }
 
-            for(auto die: toRemove)
+            for(auto die : toRemove)
             {
-               list.removeOne(die);      
+                list.removeOne(die);
             }
-            
 
-            if(nullptr!=m_nextNode)
+            if(nullptr != m_nextNode)
             {
                 m_nextNode->run(this);
             }
@@ -84,54 +80,54 @@ void RerollDiceNode::run(ExecutionNode* previous)
         else
         {
             m_errors.insert(ExecutionNode::DIE_RESULT_EXPECTED,
-                            QObject::tr(" The a operator expects dice result. Please check the documentation and fix your command."));
+                QObject::tr(
+                    " The a operator expects dice result. Please check the documentation and fix your command."));
         }
     }
 }
 void RerollDiceNode::setValidator(Validator* val)
 {
-      m_validator = val;
+    m_validator= val;
 }
 QString RerollDiceNode::toString(bool wl) const
 {
-	if(wl)
-	{
+    if(wl)
+    {
         return QString("%1 [label=\"RerollDiceNode validatior: %2\"]").arg(m_id, m_validator->toString());
-	}
-	else
-	{
-		return m_id;
-	}
-	//return QString("RerollDiceNode [label=\"RerollDiceNode validatior:%1\"");
+    }
+    else
+    {
+        return m_id;
+    }
+    // return QString("RerollDiceNode [label=\"RerollDiceNode validatior:%1\"");
 }
 qint64 RerollDiceNode::getPriority() const
 {
-    qint64 priority=0;
-    if(nullptr!=m_nextNode)
+    qint64 priority= 0;
+    if(nullptr != m_nextNode)
     {
-        priority = m_nextNode->getPriority();
+        priority= m_nextNode->getPriority();
     }
-
 
     return priority;
 }
 ExecutionNode* RerollDiceNode::getCopy() const
 {
-    RerollDiceNode* node = new RerollDiceNode(m_reroll, m_adding);
+    RerollDiceNode* node= new RerollDiceNode(m_reroll, m_adding);
     node->setValidator(m_validator);
-    if(nullptr!=m_nextNode)
+    if(nullptr != m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }
     return node;
 }
 
-ExecutionNode *RerollDiceNode::getInstruction() const
+ExecutionNode* RerollDiceNode::getInstruction() const
 {
     return m_instruction;
 }
 
-void RerollDiceNode::setInstruction(ExecutionNode *instruction)
+void RerollDiceNode::setInstruction(ExecutionNode* instruction)
 {
-    m_instruction = instruction;
+    m_instruction= instruction;
 }

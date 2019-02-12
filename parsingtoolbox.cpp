@@ -1,82 +1,75 @@
 /***************************************************************************
-* Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://www.rolisteam.org/contact                      *
-*                                                                          *
-*  This file is part of DiceParser                                         *
-*                                                                          *
-* DiceParser is free software; you can redistribute it and/or modify       *
-* it under the terms of the GNU General Public License as published by     *
-* the Free Software Foundation; either version 2 of the License, or        *
-* (at your option) any later version.                                      *
-*                                                                          *
-* This program is distributed in the hope that it will be useful,          *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
-* GNU General Public License for more details.                             *
-*                                                                          *
-* You should have received a copy of the GNU General Public License        *
-* along with this program; if not, write to the                            *
-* Free Software Foundation, Inc.,                                          *
-* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
-***************************************************************************/
+ * Copyright (C) 2014 by Renaud Guezennec                                   *
+ * http://www.rolisteam.org/contact                      *
+ *                                                                          *
+ *  This file is part of DiceParser                                         *
+ *                                                                          *
+ * DiceParser is free software; you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation; either version 2 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * This program is distributed in the hope that it will be useful,          *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with this program; if not, write to the                            *
+ * Free Software Foundation, Inc.,                                          *
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
+ ***************************************************************************/
 #include <QString>
 
-#include "parsingtoolbox.h"
-#include "node/sortresult.h"
 #include "node/numbernode.h"
-#include "node/variablenode.h"
+#include "node/sortresult.h"
 #include "node/stringnode.h"
+#include "node/variablenode.h"
+#include "parsingtoolbox.h"
 
-
-QHash<QString,QString>  ParsingToolBox::m_variableHash;
-std::vector<ExecutionNode*>*  ParsingToolBox::m_startNodes = nullptr;
+QHash<QString, QString> ParsingToolBox::m_variableHash;
+std::vector<ExecutionNode*>* ParsingToolBox::m_startNodes= nullptr;
 
 ParsingToolBox::ParsingToolBox()
-    : m_logicOp(new QMap<QString,BooleanCondition::LogicOperator>()),
-      m_logicOperation(new QMap<QString,CompositeValidator::LogicOperation>()),
-      m_conditionOperation(new QMap<QString,OperationCondition::ConditionOperator>()),
-      m_arithmeticOperation(new QHash<QString,Die::ArithmeticOperator>())
+    : m_logicOp(new QMap<QString, BooleanCondition::LogicOperator>())
+    , m_logicOperation(new QMap<QString, CompositeValidator::LogicOperation>())
+    , m_conditionOperation(new QMap<QString, OperationCondition::ConditionOperator>())
+    , m_arithmeticOperation(new QHash<QString, Die::ArithmeticOperator>())
 {
-    //m_logicOp = ;
-    m_logicOp->insert(">=",BooleanCondition::GreaterOrEqual);
-    m_logicOp->insert("<=",BooleanCondition::LesserOrEqual);
-    m_logicOp->insert("<",BooleanCondition::LesserThan);
-    m_logicOp->insert("=",BooleanCondition::Equal);
-    m_logicOp->insert(">",BooleanCondition::GreaterThan);
-    m_logicOp->insert("!=",BooleanCondition::Different);
+    // m_logicOp = ;
+    m_logicOp->insert(">=", BooleanCondition::GreaterOrEqual);
+    m_logicOp->insert("<=", BooleanCondition::LesserOrEqual);
+    m_logicOp->insert("<", BooleanCondition::LesserThan);
+    m_logicOp->insert("=", BooleanCondition::Equal);
+    m_logicOp->insert(">", BooleanCondition::GreaterThan);
+    m_logicOp->insert("!=", BooleanCondition::Different);
 
+    // m_logicOperation = ;
+    m_logicOperation->insert("|", CompositeValidator::OR);
+    m_logicOperation->insert("^", CompositeValidator::EXCLUSIVE_OR);
+    m_logicOperation->insert("&", CompositeValidator::AND);
 
-    //m_logicOperation = ;
-    m_logicOperation->insert("|",CompositeValidator::OR);
-    m_logicOperation->insert("^",CompositeValidator::EXCLUSIVE_OR);
-    m_logicOperation->insert("&",CompositeValidator::AND);
+    // m_conditionOperation = ;
+    m_conditionOperation->insert("%", OperationCondition::Modulo);
 
-   // m_conditionOperation = ;
-    m_conditionOperation->insert("%",OperationCondition::Modulo);
-
-
-    //m_arithmeticOperation = new QHash<QString,ScalarOperatorNode::ArithmeticOperator>();
-    m_arithmeticOperation->insert(QStringLiteral("+"),Die::PLUS);
-    m_arithmeticOperation->insert(QStringLiteral("-"),Die::MINUS);
-    m_arithmeticOperation->insert(QStringLiteral("*"),Die::MULTIPLICATION);
-    m_arithmeticOperation->insert(QStringLiteral("x"),Die::MULTIPLICATION);
-    m_arithmeticOperation->insert(QStringLiteral("|"),Die::INTEGER_DIVIDE);
-    m_arithmeticOperation->insert(QStringLiteral("/"),Die::DIVIDE);
-    m_arithmeticOperation->insert(QStringLiteral("÷"),Die::DIVIDE);
-    m_arithmeticOperation->insert(QStringLiteral("^"),Die::POW);
-
+    // m_arithmeticOperation = new QHash<QString,ScalarOperatorNode::ArithmeticOperator>();
+    m_arithmeticOperation->insert(QStringLiteral("+"), Die::PLUS);
+    m_arithmeticOperation->insert(QStringLiteral("-"), Die::MINUS);
+    m_arithmeticOperation->insert(QStringLiteral("*"), Die::MULTIPLICATION);
+    m_arithmeticOperation->insert(QStringLiteral("x"), Die::MULTIPLICATION);
+    m_arithmeticOperation->insert(QStringLiteral("|"), Die::INTEGER_DIVIDE);
+    m_arithmeticOperation->insert(QStringLiteral("/"), Die::DIVIDE);
+    m_arithmeticOperation->insert(QStringLiteral("÷"), Die::DIVIDE);
+    m_arithmeticOperation->insert(QStringLiteral("^"), Die::POW);
 }
 
-ParsingToolBox::ParsingToolBox(const ParsingToolBox& )
-{
-
-}
+ParsingToolBox::ParsingToolBox(const ParsingToolBox&) {}
 ParsingToolBox::~ParsingToolBox()
 {
-    if(nullptr!=m_logicOp)
+    if(nullptr != m_logicOp)
     {
         delete m_logicOp;
-        m_logicOp = nullptr;
+        m_logicOp= nullptr;
     }
     if(nullptr != m_logicOperation)
     {
@@ -94,103 +87,103 @@ ParsingToolBox::~ParsingToolBox()
         m_arithmeticOperation= nullptr;
     }
 }
-ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e,bool b)
+ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e, bool b)
 {
-    SortResultNode* nodeSort = new SortResultNode();
+    SortResultNode* nodeSort= new SortResultNode();
     nodeSort->setSortAscending(b);
     e->setNextNode(nodeSort);
     return nodeSort;
 }
 
-bool ParsingToolBox::readDiceLogicOperator(QString& str,OperationCondition::ConditionOperator& op)
+bool ParsingToolBox::readDiceLogicOperator(QString& str, OperationCondition::ConditionOperator& op)
 {
     QString longKey;
-    auto const& keys = m_conditionOperation->keys();
-    for(const QString& tmp: keys)
+    auto const& keys= m_conditionOperation->keys();
+    for(const QString& tmp : keys)
     {
         if(str.startsWith(tmp))
         {
-            if(longKey.size()<tmp.size())
+            if(longKey.size() < tmp.size())
             {
-                longKey = tmp;
+                longKey= tmp;
             }
         }
     }
-    if(longKey.size()>0)
+    if(longKey.size() > 0)
     {
-        str=str.remove(0,longKey.size());
-        op = m_conditionOperation->value(longKey);
+        str= str.remove(0, longKey.size());
+        op= m_conditionOperation->value(longKey);
         return true;
     }
 
     return false;
 }
 
-bool ParsingToolBox::readArithmeticOperator(QString &str, Die::ArithmeticOperator &op)
+bool ParsingToolBox::readArithmeticOperator(QString& str, Die::ArithmeticOperator& op)
 {
-    bool found = false;
-    //QHash<QString,ScalarOperatorNode::ArithmeticOperator>::Iterator
+    bool found= false;
+    // QHash<QString,ScalarOperatorNode::ArithmeticOperator>::Iterator
 
-    for(auto i = m_arithmeticOperation->begin() ; i !=m_arithmeticOperation->end() && !found; ++i)
+    for(auto i= m_arithmeticOperation->begin(); i != m_arithmeticOperation->end() && !found; ++i)
     {
         if(str.startsWith(i.key()))
         {
-                op = i.value();
-                str=str.remove(0,i.key().size());
-                found=true;
+            op= i.value();
+            str= str.remove(0, i.key().size());
+            found= true;
         }
     }
     return found;
 }
 
-bool ParsingToolBox::readLogicOperator(QString& str,BooleanCondition::LogicOperator& op)
+bool ParsingToolBox::readLogicOperator(QString& str, BooleanCondition::LogicOperator& op)
 {
     QString longKey;
-    auto const& keys = m_logicOp->keys();
-    for(const QString& tmp: keys)
+    auto const& keys= m_logicOp->keys();
+    for(const QString& tmp : keys)
     {
         if(str.startsWith(tmp))
         {
-            if(longKey.size()<tmp.size())
+            if(longKey.size() < tmp.size())
             {
-                longKey = tmp;
+                longKey= tmp;
             }
         }
     }
-    if(longKey.size()>0)
+    if(longKey.size() > 0)
     {
-        str=str.remove(0,longKey.size());
-        op = m_logicOp->value(longKey);
+        str= str.remove(0, longKey.size());
+        op= m_logicOp->value(longKey);
         return true;
     }
 
     return false;
 }
 
-bool ParsingToolBox::readOperand(QString& str,ExecutionNode* & node)
+bool ParsingToolBox::readOperand(QString& str, ExecutionNode*& node)
 {
-    qint64 intValue=1;
+    qint64 intValue= 1;
     QString resultStr;
-    if(readDynamicVariable(str,intValue))
+    if(readDynamicVariable(str, intValue))
     {
-        VariableNode* variableNode = new VariableNode();
-        variableNode->setIndex(intValue-1);
+        VariableNode* variableNode= new VariableNode();
+        variableNode->setIndex(intValue - 1);
         variableNode->setData(m_startNodes);
-        node = variableNode;
+        node= variableNode;
         return true;
     }
-    else if(readNumber(str,intValue))
+    else if(readNumber(str, intValue))
     {
-        NumberNode* numberNode = new NumberNode();
+        NumberNode* numberNode= new NumberNode();
         numberNode->setNumber(intValue);
-        node = numberNode;
+        node= numberNode;
         return true;
     }
-    else if(readString(str,resultStr))
+    else if(readString(str, resultStr))
     {
-        StringNode* strNode = new StringNode();
+        StringNode* strNode= new StringNode();
         strNode->setString(resultStr);
-        node = strNode;
+        node= strNode;
         return true;
     }
     return false;
@@ -198,43 +191,43 @@ bool ParsingToolBox::readOperand(QString& str,ExecutionNode* & node)
 
 Validator* ParsingToolBox::readValidator(QString& str)
 {
-    Validator* returnVal=nullptr;
-    BooleanCondition::LogicOperator myLogicOp = BooleanCondition::Equal;
-    readLogicOperator(str,myLogicOp);
+    Validator* returnVal= nullptr;
+    BooleanCondition::LogicOperator myLogicOp= BooleanCondition::Equal;
+    readLogicOperator(str, myLogicOp);
 
-    OperationCondition::ConditionOperator condiOp = OperationCondition::Modulo;
-    bool hasDiceLogicOperator = readDiceLogicOperator(str,condiOp);
-    ExecutionNode* operandNode=nullptr;
+    OperationCondition::ConditionOperator condiOp= OperationCondition::Modulo;
+    bool hasDiceLogicOperator= readDiceLogicOperator(str, condiOp);
+    ExecutionNode* operandNode= nullptr;
     if(hasDiceLogicOperator)
     {
-        if(readOperand(str,operandNode))
+        if(readOperand(str, operandNode))
         {
-            OperationCondition* condition = new OperationCondition();
+            OperationCondition* condition= new OperationCondition();
             condition->setValueNode(operandNode);
-            Validator* valid = readValidator(str);
-            BooleanCondition* boolC = dynamic_cast<BooleanCondition*>(valid);
-            if(nullptr!=boolC)
+            Validator* valid= readValidator(str);
+            BooleanCondition* boolC= dynamic_cast<BooleanCondition*>(valid);
+            if(nullptr != boolC)
             {
                 condition->setBoolean(boolC);
             }
-            returnVal = condition;
+            returnVal= condition;
         }
     }
-    else if(readOperand(str,operandNode))
+    else if(readOperand(str, operandNode))
     {
-        bool isRange = false;
+        bool isRange= false;
         if(str.startsWith("-"))
         {
-            str=str.remove(0,1);
-            qint64 end=0;
-            if(readNumber(str,end))
+            str= str.remove(0, 1);
+            qint64 end= 0;
+            if(readNumber(str, end))
             {
-                str=str.remove(0,1);
-                qint64 start = operandNode->getScalarResult();
-                Range* range = new Range();
-                range->setValue(start,end);
-                returnVal = range;
-                isRange = true;
+                str= str.remove(0, 1);
+                qint64 start= operandNode->getScalarResult();
+                Range* range= new Range();
+                range->setValue(start, end);
+                returnVal= range;
+                isRange= true;
             }
             else
             {
@@ -244,65 +237,65 @@ Validator* ParsingToolBox::readValidator(QString& str)
 
         if(!isRange)
         {
-            BooleanCondition* condition = new BooleanCondition();
+            BooleanCondition* condition= new BooleanCondition();
             condition->setValueNode(operandNode);
             condition->setOperator(myLogicOp);
-            returnVal = condition;
+            returnVal= condition;
         }
     }
     return returnVal;
 }
 IfNode::ConditionType ParsingToolBox::readConditionType(QString& str)
 {
-    IfNode::ConditionType type = IfNode::OnEach;
+    IfNode::ConditionType type= IfNode::OnEach;
     if(str.startsWith('.'))
     {
-        str=str.remove(0,1);
-        type = IfNode::OneOfThem;
+        str= str.remove(0, 1);
+        type= IfNode::OneOfThem;
     }
     else if(str.startsWith('*'))
     {
-        str=str.remove(0,1);
-        type = IfNode::AllOfThem;
+        str= str.remove(0, 1);
+        type= IfNode::AllOfThem;
     }
     else if(str.startsWith(':'))
     {
-        str=str.remove(0,1);
-        type = IfNode::OnScalar;
+        str= str.remove(0, 1);
+        type= IfNode::OnScalar;
     }
     return type;
 }
 
 Validator* ParsingToolBox::readCompositeValidator(QString& str)
 {
-    bool expectSquareBrasket=false;
+    bool expectSquareBrasket= false;
     if((str.startsWith("[")))
     {
-        str=str.remove(0,1);
-        expectSquareBrasket = true;
+        str= str.remove(0, 1);
+        expectSquareBrasket= true;
     }
 
-    Validator* tmp = readValidator(str);
+    Validator* tmp= readValidator(str);
     CompositeValidator::LogicOperation opLogic;
 
-    QVector<CompositeValidator::LogicOperation>* operators = new QVector<CompositeValidator::LogicOperation>();
-    QList<Validator*>* validatorList = new QList<Validator*>();
+    QVector<CompositeValidator::LogicOperation>* operators= new QVector<CompositeValidator::LogicOperation>();
+    QList<Validator*>* validatorList= new QList<Validator*>();
 
-    while(nullptr!=tmp)
+    while(nullptr != tmp)
     {
-        bool hasOperator = readLogicOperation(str,opLogic);
-        if( hasOperator )
+        bool hasOperator= readLogicOperation(str, opLogic);
+        if(hasOperator)
         {
             operators->append(opLogic);
             validatorList->append(tmp);
-            tmp = readValidator(str);
+            tmp= readValidator(str);
         }
         else
         {
-            if((expectSquareBrasket)&&(str.startsWith("]")))
+            if((expectSquareBrasket) && (str.startsWith("]")))
             {
-                str=str.remove(0,1);
-                //isOk=true;
+                str= str.remove(0, 1);
+                // isOk=true;
             }
 
             if(!validatorList->isEmpty())
@@ -314,13 +307,12 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
                 delete operators;
                 return tmp;
             }
-            tmp = nullptr;
+            tmp= nullptr;
         }
-
     }
     if(!validatorList->isEmpty())
     {
-        CompositeValidator* validator = new CompositeValidator();
+        CompositeValidator* validator= new CompositeValidator();
         validator->setOperationList(operators);
         validator->setValidatorList(validatorList);
         return validator;
@@ -331,24 +323,24 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
         return nullptr;
     }
 }
-bool ParsingToolBox::readLogicOperation(QString& str,CompositeValidator::LogicOperation& op)
+bool ParsingToolBox::readLogicOperation(QString& str, CompositeValidator::LogicOperation& op)
 {
     QString longKey;
-    auto const& keys = m_logicOperation->keys();
+    auto const& keys= m_logicOperation->keys();
     for(auto& tmp : keys)
     {
         if(str.startsWith(tmp))
         {
-            if(longKey.size()<tmp.size())
+            if(longKey.size() < tmp.size())
             {
-                longKey = tmp;
+                longKey= tmp;
             }
         }
     }
-    if(longKey.size()>0)
+    if(longKey.size() > 0)
     {
-        str=str.remove(0,longKey.size());
-        op = m_logicOperation->value(longKey);
+        str= str.remove(0, longKey.size());
+        op= m_logicOperation->value(longKey);
         return true;
     }
 
@@ -361,48 +353,48 @@ bool ParsingToolBox::readNumber(QString& str, qint64& myNumber)
         return false;
 
     QString number;
-    int i=0;
-    while(i<str.length() && ((str[i].isNumber()) || ( (i==0) && (str[i]=='-'))))
+    int i= 0;
+    while(i < str.length() && ((str[i].isNumber()) || ((i == 0) && (str[i] == '-'))))
     {
-        number+=str[i];
+        number+= str[i];
         ++i;
     }
 
     if(number.isEmpty())
     {
         QString reason;
-        return readVariable(str,myNumber,reason);
+        return readVariable(str, myNumber, reason);
     }
 
     bool ok;
-    myNumber = number.toLongLong(&ok);
+    myNumber= number.toLongLong(&ok);
     if(ok)
     {
-        str=str.remove(0,number.size());
+        str= str.remove(0, number.size());
         return true;
     }
 
     return false;
 }
-bool ParsingToolBox::readDynamicVariable(QString&  str, qint64& index)
+bool ParsingToolBox::readDynamicVariable(QString& str, qint64& index)
 {
     if(str.isEmpty())
         return false;
     if(str.startsWith('$'))
     {
         QString number;
-        int i=1;
-        while(i<str.length() && (str[i].isNumber()))
+        int i= 1;
+        while(i < str.length() && (str[i].isNumber()))
         {
-            number+=str[i];
+            number+= str[i];
             ++i;
         }
 
         bool ok;
-        index = number.toLongLong(&ok);
+        index= number.toLongLong(&ok);
         if(ok)
         {
-            str=str.remove(0,number.size()+1);
+            str= str.remove(0, number.size() + 1);
             return true;
         }
     }
@@ -414,125 +406,123 @@ ExecutionNode* ParsingToolBox::getLatestNode(ExecutionNode* node)
     if(nullptr == node)
         return nullptr;
 
-    ExecutionNode* next = node;
-    while(nullptr != next->getNextNode() )
+    ExecutionNode* next= node;
+    while(nullptr != next->getNextNode())
     {
-        next = next->getNextNode();
+        next= next->getNextNode();
     }
     return next;
 }
 
-std::vector<ExecutionNode *> *ParsingToolBox::getStartNodes()
+std::vector<ExecutionNode*>* ParsingToolBox::getStartNodes()
 {
     return m_startNodes;
 }
 
-void ParsingToolBox::setStartNodes(std::vector<ExecutionNode *> *startNodes)
+void ParsingToolBox::setStartNodes(std::vector<ExecutionNode*>* startNodes)
 {
-    m_startNodes = startNodes;
+    m_startNodes= startNodes;
 }
 
-bool ParsingToolBox::readString(QString &str, QString& strResult)
+bool ParsingToolBox::readString(QString& str, QString& strResult)
 {
     if(str.isEmpty())
         return false;
 
-
     if(str.startsWith('"'))
     {
-        str=str.remove(0,1);
+        str= str.remove(0, 1);
 
-        int i=0;
-        int j=0;
-    bool previousEscape=false;
-    QString result;
-    /*&&
-            (((!previousEscape) && !(str[i]=='"')) || (previousEscape) && !(str[i]=='"'))
-                || (str[i]=='\\'))*/
-    while(i<str.length() && (!(!previousEscape && (str[i]=='"'))  || (previousEscape && str[i]!='"')))
-    {
-        if(str[i]=='\\')
+        int i= 0;
+        int j= 0;
+        bool previousEscape= false;
+        QString result;
+        /*&&
+                (((!previousEscape) && !(str[i]=='"')) || (previousEscape) && !(str[i]=='"'))
+                    || (str[i]=='\\'))*/
+        while(i < str.length() && (!(!previousEscape && (str[i] == '"')) || (previousEscape && str[i] != '"')))
         {
-            previousEscape = true;
-        }
-        else
-        {
-            if(previousEscape && str[i]!='\"')
+            if(str[i] == '\\')
             {
-                result += '\\';
-                ++j;
+                previousEscape= true;
             }
-            result+=str[i];
-            previousEscape = false;
+            else
+            {
+                if(previousEscape && str[i] != '\"')
+                {
+                    result+= '\\';
+                    ++j;
+                }
+                result+= str[i];
+                previousEscape= false;
+            }
+            ++i;
         }
-        ++i;
-    }
 
-    if(!result.isEmpty())
-    {
-        str=str.remove(0,i);
-        strResult = result;
-        if(str.startsWith('"'))
+        if(!result.isEmpty())
         {
-            str=str.remove(0,1);
-            return true;
+            str= str.remove(0, i);
+            strResult= result;
+            if(str.startsWith('"'))
+            {
+                str= str.remove(0, 1);
+                return true;
+            }
         }
-    }
     }
 
     return false;
 }
 
-bool ParsingToolBox::readVariable(QString &str, qint64 &myNumber, QString& reasonFail)
+bool ParsingToolBox::readVariable(QString& str, qint64& myNumber, QString& reasonFail)
 {
     if(str.isEmpty())
         return false;
 
     if(str.startsWith("${"))
     {
-        str=str.remove(0,2);
+        str= str.remove(0, 2);
     }
     QString key;
-    int post = str.indexOf('}');
-    key = str.left(post);
+    int post= str.indexOf('}');
+    key= str.left(post);
 
     if(!m_variableHash.isEmpty())
     {
         if(m_variableHash.contains(key))
         {
-            QString value = m_variableHash.value(key);
+            QString value= m_variableHash.value(key);
             bool ok;
-            int valueInt = value.toInt(&ok);
+            int valueInt= value.toInt(&ok);
             if(ok)
             {
-                myNumber = valueInt;
-                str=str.remove(0,post+1);
+                myNumber= valueInt;
+                str= str.remove(0, post + 1);
                 return true;
             }
             else
             {
-                reasonFail = QStringLiteral("Variable value is %1, not a number").arg(value);
+                reasonFail= QStringLiteral("Variable value is %1, not a number").arg(value);
             }
         }
         else
         {
-            reasonFail = QStringLiteral("Variable not found");
+            reasonFail= QStringLiteral("Variable not found");
         }
     }
     else
     {
-        reasonFail = QStringLiteral("No Variables are defined");
+        reasonFail= QStringLiteral("No Variables are defined");
     }
 
     return false;
-
 }
 bool ParsingToolBox::readOpenParentheses(QString& str)
 {
     if(str.startsWith("("))
     {
-        str=str.remove(0,1);
-           return true;
+        str= str.remove(0, 1);
+        return true;
     }
     else
         return false;
@@ -541,17 +531,17 @@ bool ParsingToolBox::readCloseParentheses(QString& str)
 {
     if(str.startsWith(")"))
     {
-        str=str.remove(0,1);
-           return true;
+        str= str.remove(0, 1);
+        return true;
     }
     else
         return false;
 }
 
-int ParsingToolBox::findClosingCharacterIndexOf(QChar open, QChar closing,const QString &str, int offset)
+int ParsingToolBox::findClosingCharacterIndexOf(QChar open, QChar closing, const QString& str, int offset)
 {
-    int counter = offset;
-    int i = 0;
+    int counter= offset;
+    int i= 0;
     for(auto const& letter : str)
     {
         if(letter == open)
@@ -567,18 +557,18 @@ int ParsingToolBox::findClosingCharacterIndexOf(QChar open, QChar closing,const 
     return -1;
 }
 
-bool ParsingToolBox::readList(QString& str,QStringList& list,QList<Range>& ranges)
+bool ParsingToolBox::readList(QString& str, QStringList& list, QList<Range>& ranges)
 {
     if(str.startsWith("["))
     {
-        str=str.remove(0,1);
-        int pos = findClosingCharacterIndexOf('[',']',str,1);//str.indexOf("]");
-        if(-1!=pos)
+        str= str.remove(0, 1);
+        int pos= findClosingCharacterIndexOf('[', ']', str, 1); // str.indexOf("]");
+        if(-1 != pos)
         {
-            QString liststr = str.left(pos);
-            list = liststr.split(",");
-			str=str.remove(0,pos+1);
-            readProbability(list,ranges);
+            QString liststr= str.left(pos);
+            list= liststr.split(",");
+            str= str.remove(0, pos + 1);
+            readProbability(list, ranges);
             return true;
         }
     }
@@ -590,61 +580,61 @@ bool ParsingToolBox::readAscending(QString& str)
     {
         return false;
     }
-    else if(str.at(0)=='l')
+    else if(str.at(0) == 'l')
     {
-        str=str.remove(0,1);
+        str= str.remove(0, 1);
         return true;
     }
     return false;
 }
 bool ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
 {
-    DiceRollerNode* node = getDiceRollerNode(previous);
-    bool valid = false;
-    if(nullptr!=node)
+    DiceRollerNode* node= getDiceRollerNode(previous);
+    bool valid= false;
+    if(nullptr != node)
     {
-        valid = val->isValidRangeSize(node->getRange());
+        valid= val->isValidRangeSize(node->getRange());
     }
     else
     {
-        valid = true;
+        valid= true;
     }
     return valid;
 }
 DiceRollerNode* ParsingToolBox::getDiceRollerNode(ExecutionNode* previous)
 {
-    while(nullptr!=previous)
+    while(nullptr != previous)
     {
-        DiceRollerNode* node = dynamic_cast<DiceRollerNode*>(previous);
-        if(nullptr!=node)
+        DiceRollerNode* node= dynamic_cast<DiceRollerNode*>(previous);
+        if(nullptr != node)
         {
             return node;
         }
-        previous = previous->getPreviousNode();
+        previous= previous->getPreviousNode();
     }
     return nullptr;
 }
-bool ParsingToolBox::readDiceRange(QString& str,qint64& start, qint64& end)
+bool ParsingToolBox::readDiceRange(QString& str, qint64& start, qint64& end)
 {
-    bool expectSquareBrasket=false;
+    bool expectSquareBrasket= false;
 
     if((str.startsWith("[")))
     {
-        str=str.remove(0,1);
-        expectSquareBrasket = true;
+        str= str.remove(0, 1);
+        expectSquareBrasket= true;
     }
-    if(readNumber(str,start))
+    if(readNumber(str, start))
     {
         if(str.startsWith("-"))
         {
-            str=str.remove(0,1);
-            if(readNumber(str,end))
+            str= str.remove(0, 1);
+            if(readNumber(str, end))
             {
                 if(expectSquareBrasket)
                 {
                     if(str.startsWith("]"))
                     {
-                        str=str.remove(0,1);
+                        str= str.remove(0, 1);
                         return true;
                     }
                 }
@@ -652,37 +642,35 @@ bool ParsingToolBox::readDiceRange(QString& str,qint64& start, qint64& end)
         }
     }
     return false;
-
 }
-ParsingToolBox::LIST_OPERATOR  ParsingToolBox::readListOperator(QString& str)
+ParsingToolBox::LIST_OPERATOR ParsingToolBox::readListOperator(QString& str)
 {
     if(str.startsWith('u'))
     {
-        str=str.remove(0,1);
+        str= str.remove(0, 1);
         return UNIQUE;
     }
     return NONE;
 }
 
-void ParsingToolBox::readPainterParameter(PainterNode* painter,QString& str)
+void ParsingToolBox::readPainterParameter(PainterNode* painter, QString& str)
 {
     if(str.startsWith('['))
     {
-        str=str.remove(0,1);
-        int pos = str.indexOf(']');
+        str= str.remove(0, 1);
+        int pos= str.indexOf(']');
 
-        if(pos>-1)
+        if(pos > -1)
         {
-
-            QString data = str.left(pos);
-            str=str.remove(0,pos+1);
-            QStringList duos = data.split(',');
-            for(QString& duoStr: duos)
+            QString data= str.left(pos);
+            str= str.remove(0, pos + 1);
+            QStringList duos= data.split(',');
+            for(QString& duoStr : duos)
             {
-                QStringList keyValu = duoStr.split(':');
-                if(keyValu.size()==2)
+                QStringList keyValu= duoStr.split(':');
+                if(keyValu.size() == 2)
                 {
-                    painter->insertColorItem(keyValu[1],keyValu[0].toInt());
+                    painter->insertColorItem(keyValu[1], keyValu[0].toInt());
                 }
             }
         }
@@ -696,116 +684,112 @@ QHash<QString, QString> ParsingToolBox::getVariableHash()
 
 void ParsingToolBox::setVariableHash(const QHash<QString, QString>& variableHash)
 {
-    m_variableHash = variableHash;
+    m_variableHash= variableHash;
 }
 
-void ParsingToolBox::readProbability(QStringList& str,QList<Range>& ranges)
+void ParsingToolBox::readProbability(QStringList& str, QList<Range>& ranges)
 {
-    quint64 totalDistance=0;
-    quint64 undefDistance = 0;
-    int undefCount=0;
-    int maxValue = 0;
-    int i=0;
-    int j=0;
-    bool hasPercentage=false;
-    for(QString line:str)
+    quint64 totalDistance= 0;
+    quint64 undefDistance= 0;
+    int undefCount= 0;
+    int maxValue= 0;
+    int i= 0;
+    int j= 0;
+    bool hasPercentage= false;
+    for(QString line : str)
     {
-        int pos = line.indexOf('[');
-        if(-1!=pos)
+        int pos= line.indexOf('[');
+        if(-1 != pos)
         {
-            QString rangeStr = line.right(line.length()-pos);
-            line = line.left(pos);
-            str[j]=line;
-            qint64 start = 0;
-            qint64 end = 0;
-            if(readDiceRange(rangeStr,start,end))
+            QString rangeStr= line.right(line.length() - pos);
+            line= line.left(pos);
+            str[j]= line;
+            qint64 start= 0;
+            qint64 end= 0;
+            if(readDiceRange(rangeStr, start, end))
             {
                 Range range;
-                range.setValue(start,end);
+                range.setValue(start, end);
                 ranges.append(range);
-                totalDistance += end-start+1;
+                totalDistance+= end - start + 1;
                 ++i;
             }
-            else//percentage
+            else // percentage
             {
-                hasPercentage = true;
+                hasPercentage= true;
                 Range range;
                 range.setStart(start);
                 ranges.append(range);
                 ++undefCount;
-                undefDistance +=start;
+                undefDistance+= start;
             }
-            if((end>maxValue)||(i==1))
+            if((end > maxValue) || (i == 1))
             {
-                maxValue = end;
+                maxValue= end;
             }
         }
         else
         {
-                Range range;
-                range.setEmptyRange(true);
-                ranges.append(range);
+            Range range;
+            range.setEmptyRange(true);
+            ranges.append(range);
         }
         ++j;
-
     }
 
-    if((hasPercentage)&&(undefDistance!=0))
+    if((hasPercentage) && (undefDistance != 0))
     {
-        qreal ratio = 100.0 / static_cast<qreal>(undefDistance);
-        qint64 realStart=0;
-        for(int i = 0; i< ranges.size(); ++i)
+        qreal ratio= 100.0 / static_cast<qreal>(undefDistance);
+        qint64 realStart= 0;
+        for(int i= 0; i < ranges.size(); ++i)
         {
-            Range tmp = ranges.at(i);
+            Range tmp= ranges.at(i);
             if(!tmp.isFullyDefined())
             {
-                int dist  = tmp.getStart();
-                tmp.setStart(realStart+1);
-                double truc = dist*ratio;
+                int dist= tmp.getStart();
+                tmp.setStart(realStart + 1);
+                double truc= dist * ratio;
 
-                tmp.setEnd(realStart+truc);
-                realStart = tmp.getEnd();
-                ranges[i]=tmp;
+                tmp.setEnd(realStart + truc);
+                realStart= tmp.getEnd();
+                ranges[i]= tmp;
             }
         }
     }
     else
     {
-        int limitUp = 1;
-        for(int i = 0; i< ranges.size(); ++i)
+        int limitUp= 1;
+        for(int i= 0; i < ranges.size(); ++i)
         {
-            Range range = ranges.at(i);
+            Range range= ranges.at(i);
             if(range.isEmptyRange())
             {
                 range.setStart(limitUp);
                 range.setEnd(limitUp);
                 range.setEmptyRange(false);
-
             }
             else
             {
-                qint64 sizeRange = range.getEnd()-range.getStart();
+                qint64 sizeRange= range.getEnd() - range.getStart();
                 range.setStart(limitUp);
-                limitUp+=sizeRange;
+                limitUp+= sizeRange;
                 range.setEnd(limitUp);
             }
             ++limitUp;
-            ranges[i]=range;
+            ranges[i]= range;
         }
-
     }
-
 }
-bool ParsingToolBox::readComment(QString& str, QString & result, QString& comment)
+bool ParsingToolBox::readComment(QString& str, QString& result, QString& comment)
 {
-    QString left = str;
-    str = str.trimmed();
+    QString left= str;
+    str= str.trimmed();
     if(str.startsWith("#"))
     {
-        comment = left;
-        str = str.remove(0,1);
-        result = str.trimmed();
-        str = "";
+        comment= left;
+        str= str.remove(0, 1);
+        result= str.trimmed();
+        str= "";
         return true;
     }
     return false;

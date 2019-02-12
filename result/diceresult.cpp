@@ -25,8 +25,8 @@
 
 DiceResult::DiceResult() : m_operator(Die::PLUS)
 {
-    m_resultTypes = (DICE_LIST | SCALAR);
-    m_homogeneous = true;
+    m_resultTypes= (DICE_LIST | SCALAR);
+    m_homogeneous= true;
 }
 void DiceResult::insertResult(Die* die)
 {
@@ -42,7 +42,7 @@ bool DiceResult::isHomogeneous() const
 }
 void DiceResult::setHomogeneous(bool b)
 {
-    m_homogeneous = b;
+    m_homogeneous= b;
 }
 
 void DiceResult::setResultList(QList<Die*> list)
@@ -99,8 +99,8 @@ qreal DiceResult::getScalarResult()
     }
     else
     {
-        qint64 scalar = 0;
-        int i = 0;
+        qint64 scalar= 0;
+        int i= 0;
         for(auto& tmp : m_diceValues)
         {
             if(i > 0)
@@ -108,22 +108,22 @@ qreal DiceResult::getScalarResult()
                 switch(m_operator)
                 {
                 case Die::PLUS:
-                    scalar += tmp->getValue();
+                    scalar+= tmp->getValue();
                     break;
                 case Die::MULTIPLICATION:
-                    scalar *= tmp->getValue();
+                    scalar*= tmp->getValue();
                     break;
                 case Die::MINUS:
-                    scalar -= tmp->getValue();
+                    scalar-= tmp->getValue();
                     break;
                 case Die::POW:
-                    scalar = static_cast<int>(pow(static_cast<double>(scalar), static_cast<double>(tmp->getValue())));
+                    scalar= static_cast<int>(pow(static_cast<double>(scalar), static_cast<double>(tmp->getValue())));
                     break;
                 case Die::DIVIDE:
                 case Die::INTEGER_DIVIDE:
                     if(tmp->getValue() != 0)
                     {
-                        scalar /= tmp->getValue();
+                        scalar/= tmp->getValue();
                     }
                     else
                     {
@@ -134,7 +134,7 @@ qreal DiceResult::getScalarResult()
             }
             else
             {
-                scalar = tmp->getValue();
+                scalar= tmp->getValue();
             }
             ++i;
         }
@@ -154,7 +154,7 @@ void DiceResult::clear()
 
 void DiceResult::setOperator(const Die::ArithmeticOperator& dieOperator)
 {
-    m_operator = dieOperator;
+    m_operator= dieOperator;
 }
 QString DiceResult::toString(bool wl)
 {
@@ -175,13 +175,13 @@ QString DiceResult::toString(bool wl)
 }
 Result* DiceResult::getCopy() const
 {
-    auto copy = new DiceResult();
+    auto copy= new DiceResult();
     copy->setHomogeneous(m_homogeneous);
     copy->setOperator(m_operator);
     QList<Die*> list;
     for(auto die : m_diceValues)
     {
-        auto newdie = new Die(*die);
+        auto newdie= new Die(*die);
         die->displayed();
         list.append(newdie);
     }

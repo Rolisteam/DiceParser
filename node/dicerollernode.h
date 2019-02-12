@@ -12,41 +12,41 @@
 class DiceRollerNode : public ExecutionNode
 {
 public:
-	/**
-	 * @brief DiceRollerNode builds an instance
-	 * @param faces, number of faces of dices
-	 * @param offset, first value of dice.
-	 */
-    DiceRollerNode(qint64 max, qint64 min = 1);
+    /**
+     * @brief DiceRollerNode builds an instance
+     * @param faces, number of faces of dices
+     * @param offset, first value of dice.
+     */
+    DiceRollerNode(qint64 max, qint64 min= 1);
 
-	/**
-	 * @brief run - starts to roll dice.
-	 */
+    /**
+     * @brief run - starts to roll dice.
+     */
     virtual void run(ExecutionNode*);
-	/**
-	 * @brief getFaces accessor
-	 * @return the face count
-	 */
+    /**
+     * @brief getFaces accessor
+     * @return the face count
+     */
     quint64 getFaces() const;
-    std::pair<qint64,qint64> getRange() const;
+    std::pair<qint64, qint64> getRange() const;
 
-	/**
-	  * @brief toString
-	  * @param wl
-	  * @return use to generate dot tree;
-	  */
-	 virtual QString toString(bool wl)const;
-	/**
-	  * @brief getPriority
-	  * @return priority for dice roll: 4 (higher)
-	  */
-     virtual qint64 getPriority() const;
+    /**
+     * @brief toString
+     * @param wl
+     * @return use to generate dot tree;
+     */
+    virtual QString toString(bool wl) const;
+    /**
+     * @brief getPriority
+     * @return priority for dice roll: 4 (higher)
+     */
+    virtual qint64 getPriority() const;
 
     virtual ExecutionNode* getCopy() const;
 
-//private members
+    // private members
     Die::ArithmeticOperator getOperator() const;
-    void setOperator(const Die::ArithmeticOperator & dieOperator);
+    void setOperator(const Die::ArithmeticOperator& dieOperator);
 
     bool getUnique() const;
     void setUnique(bool unique);

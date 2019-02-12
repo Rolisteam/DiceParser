@@ -1,162 +1,154 @@
 /***************************************************************************
-* Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://www.rolisteam.org/contact                      *
-*                                                                          *
-*  This file is part of DiceParser                                         *
-*                                                                          *
-* DiceParser is free software; you can redistribute it and/or modify       *
-* it under the terms of the GNU General Public License as published by     *
-* the Free Software Foundation; either version 2 of the License, or        *
-* (at your option) any later version.                                      *
-*                                                                          *
-* This program is distributed in the hope that it will be useful,          *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
-* GNU General Public License for more details.                             *
-*                                                                          *
-* You should have received a copy of the GNU General Public License        *
-* along with this program; if not, write to the                            *
-* Free Software Foundation, Inc.,                                          *
-* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
-***************************************************************************/
+ * Copyright (C) 2014 by Renaud Guezennec                                   *
+ * http://www.rolisteam.org/contact                      *
+ *                                                                          *
+ *  This file is part of DiceParser                                         *
+ *                                                                          *
+ * DiceParser is free software; you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation; either version 2 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * This program is distributed in the hope that it will be useful,          *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with this program; if not, write to the                            *
+ * Free Software Foundation, Inc.,                                          *
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
+ ***************************************************************************/
 #include "sortresult.h"
 
-#include <QDebug>
 #include "die.h"
+#include <QDebug>
 
-SortResultNode::SortResultNode()
-    : m_diceResult(new DiceResult)
+SortResultNode::SortResultNode() : m_diceResult(new DiceResult)
 {
-    m_ascending = true;
-    m_result = m_diceResult;
-
+    m_ascending= true;
+    m_result= m_diceResult;
 }
 void SortResultNode::run(ExecutionNode* node)
 {
-	m_previousNode = node;
-    if(nullptr==node)
+    m_previousNode= node;
+    if(nullptr == node)
     {
         return;
     }
-    DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(node->getResult());
+    DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(node->getResult());
     m_diceResult->setPrevious(previousDiceResult);
-    if(nullptr!=previousDiceResult)
-    {   
-        auto const& diceList=previousDiceResult->getResultList();
-        QList<Die*> diceList2=m_diceResult->getResultList();
+    if(nullptr != previousDiceResult)
+    {
+        auto const& diceList= previousDiceResult->getResultList();
+        QList<Die*> diceList2= m_diceResult->getResultList();
 
-       /* const auto& asce = [](const Die* a,const Die* b){
-            return a->getValue() < b->getValue();
-        };
-        const auto& desc = [](const Die* a,const Die* b){
-            return a->getValue() > b->getValue();
-        };
+        /* const auto& asce = [](const Die* a,const Die* b){
+             return a->getValue() < b->getValue();
+         };
+         const auto& desc = [](const Die* a,const Die* b){
+             return a->getValue() > b->getValue();
+         };
 
-        for(auto const dice : diceList)
-        {
-            Die* tmp1 = new Die(*dice);
-            diceList2.append(tmp1);
-        }
-        if(m_ascending)
-            std::sort(diceList2.begin(), diceList2.end(), asce);
-        else
-            std::sort(diceList2.begin(), diceList2.end(), desc);*/
+         for(auto const dice : diceList)
+         {
+             Die* tmp1 = new Die(*dice);
+             diceList2.append(tmp1);
+         }
+         if(m_ascending)
+             std::sort(diceList2.begin(), diceList2.end(), asce);
+         else
+             std::sort(diceList2.begin(), diceList2.end(), desc);*/
 
         // half-interval search sorting
-        for(int i = 0; i<diceList.size();++i)
+        for(int i= 0; i < diceList.size(); ++i)
         {
-
-            Die* tmp1 = new Die(*diceList[i]);
+            Die* tmp1= new Die(*diceList[i]);
             //*tmp1=*diceList[i];
             diceList[i]->displayed();
 
-            int j =0;
-            bool found = false;
-            int start = 0;
-            int end = diceList2.size();
-            Die* tmp2 = nullptr;
+            int j= 0;
+            bool found= false;
+            int start= 0;
+            int end= diceList2.size();
+            Die* tmp2= nullptr;
             while(!found)
             {
-                int distance = end-start;
-                j = (start+end)/2;
+                int distance= end - start;
+                j= (start + end) / 2;
                 if(distance == 0)
                 {
-                    j=end;
-                    found=true;
+                    j= end;
+                    found= true;
                 }
                 else
                 {
-                    tmp2 = diceList2[j];
+                    tmp2= diceList2[j];
                     if(tmp1->getValue() < tmp2->getValue())
                     {
-                            end=j;
+                        end= j;
                     }
                     else
                     {
-                            start=j+1;
+                        start= j + 1;
                     }
                 }
             }
-            diceList2.insert(j,tmp1);
+            diceList2.insert(j, tmp1);
         }
 
         if(!m_ascending)
         {
-            for(int i = 0; i< diceList2.size()/2; ++i)
+            for(int i= 0; i < diceList2.size() / 2; ++i)
             {
-                diceList2.swap(i,diceList2.size()-(1+i));
+                diceList2.swap(i, diceList2.size() - (1 + i));
             }
-
         }
         m_diceResult->setResultList(diceList2);
-        if(nullptr!=m_nextNode)
+        if(nullptr != m_nextNode)
         {
             m_nextNode->run(this);
         }
     }
     else
     {
-        //m_result = node->getResult();
-        //m_errors.append(DIE_RESULT_EXPECTED);
+        // m_result = node->getResult();
+        // m_errors.append(DIE_RESULT_EXPECTED);
     }
-
 }
 void SortResultNode::setSortAscending(bool asc)
 {
-    m_ascending = asc;
+    m_ascending= asc;
 }
 QString SortResultNode::toString(bool wl) const
 {
-	if(wl)
-	{
-        auto order = m_ascending ? QStringLiteral("Ascending") : QStringLiteral("Descending");
+    if(wl)
+    {
+        auto order= m_ascending ? QStringLiteral("Ascending") : QStringLiteral("Descending");
         return QString("%1 [label=\"SortResultNode %2\"]").arg(m_id, order);
-	}
-	else
-	{
-		return m_id;
-	}
-
+    }
+    else
+    {
+        return m_id;
+    }
 }
 qint64 SortResultNode::getPriority() const
 {
-    qint64 priority=0;
-    if(nullptr!=m_nextNode)
+    qint64 priority= 0;
+    if(nullptr != m_nextNode)
     {
-        priority = m_nextNode->getPriority();
+        priority= m_nextNode->getPriority();
     }
-
 
     return priority;
 }
 ExecutionNode* SortResultNode::getCopy() const
 {
-    SortResultNode* node = new SortResultNode();
+    SortResultNode* node= new SortResultNode();
     node->setSortAscending(m_ascending);
-    if(nullptr!=m_nextNode)
+    if(nullptr != m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }
     return node;
-
 }

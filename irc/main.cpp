@@ -1,27 +1,27 @@
 /***************************************************************************
-* Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://www.rolisteam.org/contact/                                        *
-*                                                                          *
-*  This file is part of DiceParser                                         *
-*                                                                          *
-* DiceParser is free software; you can redistribute it and/or modify       *
-* it under the terms of the GNU General Public License as published by     *
-* the Free Software Foundation; either version 2 of the License, or        *
-* (at your option) any later version.                                      *
-*                                                                          *
-* This program is distributed in the hope that it will be useful,          *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
-* GNU General Public License for more details.                             *
-*                                                                          *
-* You should have received a copy of the GNU General Public License        *
-* along with this program; if not, write to the                            *
-* Free Software Foundation, Inc.,                                          *
-* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
-***************************************************************************/
+ * Copyright (C) 2014 by Renaud Guezennec                                   *
+ * http://www.rolisteam.org/contact/                                        *
+ *                                                                          *
+ *  This file is part of DiceParser                                         *
+ *                                                                          *
+ * DiceParser is free software; you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation; either version 2 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * This program is distributed in the hope that it will be useful,          *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with this program; if not, write to the                            *
+ * Free Software Foundation, Inc.,                                          *
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
+ ***************************************************************************/
 
-#include <QCoreApplication>
 #include "botircdiceparser.h"
+#include <QCoreApplication>
 /**
  * @page Dice
  * The cli for DiceParser the new dice system from rolisteam.
@@ -34,14 +34,13 @@
  * - make install
  * @return
  */
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    QCoreApplication app(argc,argv);
+    QCoreApplication app(argc, argv);
     BotIrcDiceParser bot;
     bot.connectToServer();
-    return    app.exec();
+    return app.exec();
 }
-
 
 /*QTextStream out(stdout, QIODevice::WriteOnly);
 
@@ -82,9 +81,10 @@ int main(int argc, char *argv[])
     QCommandLineOption color(QStringList() << "c"<< "color-off", "Disable color to highlight result");
     QCommandLineOption version(QStringList() << "v"<< "version", "Show the version and quit.");
     QCommandLineOption reset(QStringList() << "reset-settings", "Erase the settings and use the default parameters");
-    QCommandLineOption dotFile(QStringList() << "d"<<"dot-file", "Instead of rolling dice, generate the execution tree and write it in <dotfile>","dotfile");
-    QCommandLineOption translation(QStringList() << "t"<<"translation", "path to the translation file: <translationfile>","translationfile");
-    QCommandLineOption help(QStringList() << "h"<<"help", "Display this help");
+    QCommandLineOption dotFile(QStringList() << "d"<<"dot-file", "Instead of rolling dice, generate the execution tree
+and write it in <dotfile>","dotfile"); QCommandLineOption translation(QStringList() << "t"<<"translation", "path to the
+translation file: <translationfile>","translationfile"); QCommandLineOption help(QStringList() << "h"<<"help", "Display
+this help");
 
      if(!optionParser.addOption(color))
      {

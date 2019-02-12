@@ -23,13 +23,11 @@
 
 JumpBackwardNode::JumpBackwardNode()
 {
-    m_previousNode=nullptr;
-    m_backwardNode = nullptr;
-    m_diceResult =new DiceResult();
-    m_result = m_diceResult;
+    m_previousNode= nullptr;
+    m_backwardNode= nullptr;
+    m_diceResult= new DiceResult();
+    m_result= m_diceResult;
 }
-
-
 
 qint64 JumpBackwardNode::getPriority() const
 {
@@ -37,30 +35,30 @@ qint64 JumpBackwardNode::getPriority() const
 }
 QString JumpBackwardNode::toString(bool wl) const
 {
-	if(wl)
-	{
-		return QString("%1 [label=\"JumpBackwardNode\"]").arg(m_id);
-	}
-	else
-	{
-		return m_id;
-	}
+    if(wl)
+    {
+        return QString("%1 [label=\"JumpBackwardNode\"]").arg(m_id);
+    }
+    else
+    {
+        return m_id;
+    }
 }
 void JumpBackwardNode::generateDotTree(QString& s)
 {
     s.append(toString(true));
     s.append(";\n");
 
-    if(nullptr!=m_backwardNode)
+    if(nullptr != m_backwardNode)
     {
         s.append(toString(false));
         s.append(" -> ");
         s.append(m_backwardNode->toString(false));
         s.append("[label=\"backward\"];\n");
-        //m_backwardNode->generateDotTree(s);
+        // m_backwardNode->generateDotTree(s);
     }
 
-    if(nullptr!=m_nextNode)
+    if(nullptr != m_nextNode)
     {
         s.append(toString(false));
         s.append(" -> ");
@@ -74,7 +72,7 @@ void JumpBackwardNode::generateDotTree(QString& s)
         s.append(" -> ");
         s.append("nullptr;\n");
 
-        if(nullptr!=m_result)
+        if(nullptr != m_result)
         {
             s.append(toString(false));
             s.append(" ->");
@@ -83,90 +81,87 @@ void JumpBackwardNode::generateDotTree(QString& s)
             m_result->generateDotTree(s);
         }
     }
-
 }
 
 void JumpBackwardNode::run(ExecutionNode* previous)
 {
-        m_previousNode = previous;
-		ExecutionNode* parent = previous;
-		bool found=false;
-        //int i = 3;
-		Result* result=nullptr;
-        while((nullptr!=parent)&&(!found))
-		{
-
-			result = parent->getResult();
-            if(nullptr!=result)
-			{
-                //--i;
-                if(/*(i==0)&&*/(result->hasResultOfType(Result::DICE_LIST)))
-				{
-					found =true;
-                    m_backwardNode = parent;
-				}
-                else
-                {
-                    JumpBackwardNode* jpNode = dynamic_cast<JumpBackwardNode*>(parent);
-                    if(nullptr!=jpNode)
-                    {
-                        found = true;
-                        m_backwardNode = parent;
-                    }
-                }
-			}
-            if(!found)
-            {
-                parent = parent->getPreviousNode();
-            }
-
-		}
-        if(nullptr==result)
+    m_previousNode= previous;
+    ExecutionNode* parent= previous;
+    bool found= false;
+    // int i = 3;
+    Result* result= nullptr;
+    while((nullptr != parent) && (!found))
+    {
+        result= parent->getResult();
+        if(nullptr != result)
         {
-            m_errors.insert(DIE_RESULT_EXPECTED,QObject::tr(" The @ operator expects dice result. Please check the documentation to fix your command."));
-        }
-        else
-        {
-            DiceResult* diceResult = dynamic_cast<DiceResult*>(result);
-            if(nullptr!=diceResult)
+            //--i;
+            if(/*(i==0)&&*/ (result->hasResultOfType(Result::DICE_LIST)))
             {
-                for(auto& die : diceResult->getResultList())
-                {
-                    Die* tmpdie = new Die();
-                    *tmpdie=*die;
-                    m_diceResult->insertResult(tmpdie);
-                    die->displayed();
-                }
+                found= true;
+                m_backwardNode= parent;
             }
-
-            m_result->setPrevious(previous->getResult());
-
-            if(nullptr!=m_nextNode)
+            else
             {
-                m_nextNode->run(this);
-            }
-            if(nullptr!=diceResult)
-            {
-                for(int i =0;i<diceResult->getResultList().size();++i)
+                JumpBackwardNode* jpNode= dynamic_cast<JumpBackwardNode*>(parent);
+                if(nullptr != jpNode)
                 {
-                    Die* tmp =diceResult->getResultList().at(i);
-                    Die* tmp2 =m_diceResult->getResultList().at(i);
-                    if(tmp->isHighlighted())
-                    {
-                        tmp2->setHighlighted(true);
-                    }
+                    found= true;
+                    m_backwardNode= parent;
                 }
             }
         }
+        if(!found)
+        {
+            parent= parent->getPreviousNode();
+        }
+    }
+    if(nullptr == result)
+    {
+        m_errors.insert(DIE_RESULT_EXPECTED,
+            QObject::tr(" The @ operator expects dice result. Please check the documentation to fix your command."));
+    }
+    else
+    {
+        DiceResult* diceResult= dynamic_cast<DiceResult*>(result);
+        if(nullptr != diceResult)
+        {
+            for(auto& die : diceResult->getResultList())
+            {
+                Die* tmpdie= new Die();
+                *tmpdie= *die;
+                m_diceResult->insertResult(tmpdie);
+                die->displayed();
+            }
+        }
+
+        m_result->setPrevious(previous->getResult());
+
+        if(nullptr != m_nextNode)
+        {
+            m_nextNode->run(this);
+        }
+        if(nullptr != diceResult)
+        {
+            for(int i= 0; i < diceResult->getResultList().size(); ++i)
+            {
+                Die* tmp= diceResult->getResultList().at(i);
+                Die* tmp2= m_diceResult->getResultList().at(i);
+                if(tmp->isHighlighted())
+                {
+                    tmp2->setHighlighted(true);
+                }
+            }
+        }
+    }
 }
 
 ExecutionNode* JumpBackwardNode::getCopy() const
 {
-    JumpBackwardNode* node = new JumpBackwardNode();
-    if(nullptr!=m_nextNode)
+    JumpBackwardNode* node= new JumpBackwardNode();
+    if(nullptr != m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
     }
     return node;
-
 }

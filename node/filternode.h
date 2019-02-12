@@ -3,8 +3,8 @@
 
 #include "executionnode.h"
 
-#include "validator.h"
 #include "result/diceresult.h"
+#include "validator.h"
 
 class FilterNode : public ExecutionNode
 {
@@ -16,12 +16,12 @@ public:
     /**
      * @brief setValidator
      */
-    virtual void setValidator(Validator* );
+    virtual void setValidator(Validator*);
     /**
      * @brief toString
      * @return
      */
-    virtual QString toString(bool withLabel)const;
+    virtual QString toString(bool withLabel) const;
     /**
      * @brief getPriority
      * @return
@@ -29,6 +29,7 @@ public:
     virtual qint64 getPriority() const;
 
     virtual ExecutionNode* getCopy() const;
+
 private:
     DiceResult* m_diceResult;
     Validator* m_validator;

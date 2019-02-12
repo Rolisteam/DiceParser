@@ -2,27 +2,23 @@
 
 StringResult::StringResult()
 {
-    m_highlight = true;
-    m_resultTypes = Result::STRING;
+    m_highlight= true;
+    m_resultTypes= Result::STRING;
 }
 void StringResult::setText(QString text)
 {
-    m_value=text;
+    m_value= text;
 }
-StringResult::~StringResult()
-{
-
-}
+StringResult::~StringResult() {}
 bool StringResult::hasResultOfType(RESULT_TYPE resultType) const
 {
-
     if(resultType & Result::STRING)
     {
         return true;
     }
     else if(resultType & Result::SCALAR)
     {
-        bool ok=false;
+        bool ok= false;
         getText().toInt(&ok);
         return ok;
     }
@@ -34,7 +30,6 @@ QString StringResult::getText() const
 }
 QVariant StringResult::getResult(RESULT_TYPE type)
 {
-
     switch(type)
     {
     case STRING:
@@ -49,18 +44,18 @@ QVariant StringResult::getResult(RESULT_TYPE type)
 }
 QString StringResult::toString(bool wl)
 {
-	if(wl)
-	{
-        return QString("%2 [label=\"StringResult_value_%1\"]").arg(getText().replace("%","_"), m_id);
-	}
-	else
-	{
-		return m_id;
-	}
+    if(wl)
+    {
+        return QString("%2 [label=\"StringResult_value_%1\"]").arg(getText().replace("%", "_"), m_id);
+    }
+    else
+    {
+        return m_id;
+    }
 }
 void StringResult::setHighLight(bool b)
 {
-    m_highlight = b;
+    m_highlight= b;
 }
 
 bool StringResult::hasHighLight() const
@@ -69,7 +64,7 @@ bool StringResult::hasHighLight() const
 }
 Result* StringResult::getCopy() const
 {
-    auto copy = new StringResult();
+    auto copy= new StringResult();
     copy->setHighLight(m_highlight);
     copy->setText(m_value);
     return copy;

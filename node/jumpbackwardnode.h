@@ -32,37 +32,37 @@ public:
     /**
      * @brief JumpBackwardNode allows to get result from remote node in the execution tree.
      */
-	JumpBackwardNode();
+    JumpBackwardNode();
     /**
      * @brief run - performs the actions
      * @param previous
      */
-	virtual void run(ExecutionNode* previous = nullptr);
+    virtual void run(ExecutionNode* previous= nullptr);
 
-	/**
-	 * @brief toString
-	 * @return
-	 */
-	virtual QString toString(bool) const;
-	/**
-	 * @brief getPriority
-	 * @return
-	 */
+    /**
+     * @brief toString
+     * @return
+     */
+    virtual QString toString(bool) const;
+    /**
+     * @brief getPriority
+     * @return
+     */
     virtual qint64 getPriority() const;
     /**
      * @brief generateDotTree
      * @param s
      */
-    virtual void generateDotTree(QString &s);
+    virtual void generateDotTree(QString& s);
     /**
      * @brief getCopy
      * @return
      */
-    virtual ExecutionNode *getCopy() const;
+    virtual ExecutionNode* getCopy() const;
+
 private:
     DiceResult* m_diceResult;
     ExecutionNode* m_backwardNode;
-
 };
 
 #endif // JUMPBACKWARDNODE_H

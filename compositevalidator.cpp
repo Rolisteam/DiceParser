@@ -1,62 +1,58 @@
 /***************************************************************************
-* Copyright (C) 2014 by Renaud Guezennec                                   *
-* http://www.rolisteam.org/contact                      *
-*                                                                          *
-*  This file is part of DiceParser                                         *
-*                                                                          *
-* DiceParser is free software; you can redistribute it and/or modify       *
-* it under the terms of the GNU General Public License as published by     *
-* the Free Software Foundation; either version 2 of the License, or        *
-* (at your option) any later version.                                      *
-*                                                                          *
-* This program is distributed in the hope that it will be useful,          *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
-* GNU General Public License for more details.                             *
-*                                                                          *
-* You should have received a copy of the GNU General Public License        *
-* along with this program; if not, write to the                            *
-* Free Software Foundation, Inc.,                                          *
-* 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
-***************************************************************************/
+ * Copyright (C) 2014 by Renaud Guezennec                                   *
+ * http://www.rolisteam.org/contact                      *
+ *                                                                          *
+ *  This file is part of DiceParser                                         *
+ *                                                                          *
+ * DiceParser is free software; you can redistribute it and/or modify       *
+ * it under the terms of the GNU General Public License as published by     *
+ * the Free Software Foundation; either version 2 of the License, or        *
+ * (at your option) any later version.                                      *
+ *                                                                          *
+ * This program is distributed in the hope that it will be useful,          *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
+ * GNU General Public License for more details.                             *
+ *                                                                          *
+ * You should have received a copy of the GNU General Public License        *
+ * along with this program; if not, write to the                            *
+ * Free Software Foundation, Inc.,                                          *
+ * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
+ ***************************************************************************/
 #include "compositevalidator.h"
 
-CompositeValidator::CompositeValidator()
-    : m_operators(nullptr),m_validatorList(nullptr)
-{
-}
+CompositeValidator::CompositeValidator() : m_operators(nullptr), m_validatorList(nullptr) {}
 
 CompositeValidator::~CompositeValidator()
 {
     qDeleteAll(*m_validatorList);
-    if(nullptr!=m_operators)
+    if(nullptr != m_operators)
     {
         delete m_operators;
     }
 }
-qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) const
+qint64 CompositeValidator::hasValid(Die* b, bool recursive, bool unhighlight) const
 {
-
-    int i = 0;
-    qint64 sum = 0;
-    bool highLight = false;
-    for(auto& validator: *m_validatorList)
+    int i= 0;
+    qint64 sum= 0;
+    bool highLight= false;
+    for(auto& validator : *m_validatorList)
     {
-        qint64 val = validator->hasValid(b,recursive,unhighlight);
-        if(i==0)
+        qint64 val= validator->hasValid(b, recursive, unhighlight);
+        if(i == 0)
         {
-            sum = val;
+            sum= val;
             if(b->isHighlighted())
             {
-                highLight = b->isHighlighted();
+                highLight= b->isHighlighted();
             }
         }
         else
         {
-            switch(m_operators->at(i-1))
+            switch(m_operators->at(i - 1))
             {
             case OR:
-                sum |= val;
+                sum|= val;
 
                 if(highLight)
                 {
@@ -64,17 +60,16 @@ qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) cons
                 }
                 break;
             case EXCLUSIVE_OR:
-                sum ^= val;/// @todo may required to be done by hand
+                sum^= val; /// @todo may required to be done by hand
                 break;
             case AND:
-                sum &= val;
+                sum&= val;
                 break;
             default:
                 break;
             }
         }
         ++i;
-
     }
 
     return sum;
@@ -82,7 +77,7 @@ qint64 CompositeValidator::hasValid(Die* b,bool recursive,bool unhighlight) cons
 
 QString CompositeValidator::toString()
 {
-    QString str="";
+    QString str= "";
     /*switch (m_operator)
     {
     case Equal:
@@ -104,14 +99,14 @@ QString CompositeValidator::toString()
     return QString("[%1%2]").arg(str).arg(m_value);*/
     return str;
 }
-bool CompositeValidator::isValidRangeSize(std::pair<qint64,qint64> range) const
+bool CompositeValidator::isValidRangeSize(std::pair<qint64, qint64> range) const
 {
-    bool val = true;
-    int i = -1;
-    for(auto& tmp :*m_validatorList)
+    bool val= true;
+    int i= -1;
+    for(auto& tmp : *m_validatorList)
     {
-        bool rel = tmp->isValidRangeSize(range);
-        val |= rel;
+        bool rel= tmp->isValidRangeSize(range);
+        val|= rel;
         ++i;
     }
 
@@ -119,17 +114,17 @@ bool CompositeValidator::isValidRangeSize(std::pair<qint64,qint64> range) const
 }
 void CompositeValidator::setOperationList(QVector<LogicOperation>* m)
 {
-    m_operators = m;
+    m_operators= m;
 }
 
 void CompositeValidator::setValidatorList(QList<Validator*>* m)
 {
-    m_validatorList = m;
+    m_validatorList= m;
 }
 Validator* CompositeValidator::getCopy() const
 {
-    QVector<LogicOperation>* vector = new QVector<LogicOperation>();
-    *vector = *m_operators;
+    QVector<LogicOperation>* vector= new QVector<LogicOperation>();
+    *vector= *m_operators;
 
     QList<Validator*>* list= new QList<Validator*>();
     for(auto& val : *m_validatorList)
@@ -137,7 +132,7 @@ Validator* CompositeValidator::getCopy() const
         list->append(val->getCopy());
     }
 
-    CompositeValidator* val = new CompositeValidator();
+    CompositeValidator* val= new CompositeValidator();
     val->setOperationList(vector);
     val->setValidatorList(list);
     return val;

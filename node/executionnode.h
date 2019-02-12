@@ -10,15 +10,21 @@
 class ExecutionNode
 {
 public:
-    enum DICE_ERROR_CODE {NO_DICE_ERROR,
-                          DIE_RESULT_EXPECTED,
-                          BAD_SYNTAXE,
-                          ENDLESS_LOOP_ERROR,
-                          DIVIDE_BY_ZERO,
-                          NOTHING_UNDERSTOOD,
-                          NO_DICE_TO_ROLL,
-                          TOO_MANY_DICE,NO_VARIBALE,
-                          INVALID_INDEX,UNEXPECTED_CHARACTER, NO_PREVIOUS_ERROR};
+    enum DICE_ERROR_CODE
+    {
+        NO_DICE_ERROR,
+        DIE_RESULT_EXPECTED,
+        BAD_SYNTAXE,
+        ENDLESS_LOOP_ERROR,
+        DIVIDE_BY_ZERO,
+        NOTHING_UNDERSTOOD,
+        NO_DICE_TO_ROLL,
+        TOO_MANY_DICE,
+        NO_VARIBALE,
+        INVALID_INDEX,
+        UNEXPECTED_CHARACTER,
+        NO_PREVIOUS_ERROR
+    };
     /**
      * @brief ExecutionNode
      */
@@ -31,7 +37,7 @@ public:
      * @brief run
      * @param previous
      */
-    virtual void run(ExecutionNode* previous = nullptr)=0;
+    virtual void run(ExecutionNode* previous= nullptr)= 0;
     /**
      * @brief getResult
      * @return
@@ -56,17 +62,17 @@ public:
      * @brief toString
      * @return
      */
-    virtual QString toString(bool withLabel)const=0;
+    virtual QString toString(bool withLabel) const= 0;
     /**
      * @brief getPriority
      * @return
      */
-    virtual qint64 getPriority() const=0;
+    virtual qint64 getPriority() const= 0;
     /**
      * @brief getErrorList
      * @return
      */
-    virtual QMap<ExecutionNode::DICE_ERROR_CODE,QString> getExecutionErrorMap();
+    virtual QMap<ExecutionNode::DICE_ERROR_CODE, QString> getExecutionErrorMap();
 
     /**
      * @brief generateDotTree
@@ -83,7 +89,7 @@ public:
      * @brief getCopy
      * @return should return a copy of that node.
      */
-    virtual ExecutionNode* getCopy() const  = 0;
+    virtual ExecutionNode* getCopy() const= 0;
 
     virtual qint64 getScalarResult();
 
@@ -99,11 +105,11 @@ protected:
     /**
      * @brief m_nextNode
      */
-    ExecutionNode* m_nextNode = nullptr;
+    ExecutionNode* m_nextNode= nullptr;
     /**
      * @brief m_errors
      */
-    QMap<ExecutionNode::DICE_ERROR_CODE,QString> m_errors;
+    QMap<ExecutionNode::DICE_ERROR_CODE, QString> m_errors;
 
     QString m_id;
 };
