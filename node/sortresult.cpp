@@ -135,11 +135,10 @@ QString SortResultNode::toString(bool wl) const
 qint64 SortResultNode::getPriority() const
 {
     qint64 priority= 0;
-    if(nullptr != m_nextNode)
+    if(nullptr != m_previousNode)
     {
-        priority= m_nextNode->getPriority();
+        priority= m_previousNode->getPriority();
     }
-
     return priority;
 }
 ExecutionNode* SortResultNode::getCopy() const
