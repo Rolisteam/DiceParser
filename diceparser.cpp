@@ -39,6 +39,7 @@
 #include "node/listsetrollnode.h"
 #include "node/mergenode.h"
 #include "node/numbernode.h"
+#include "node/occurencecountnode.h"
 #include "node/paintnode.h"
 #include "node/parenthesesnode.h"
 #include "node/rerolldicenode.h"
@@ -78,6 +79,7 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QStringLiteral("u"), Split);
     m_OptionOp->insert(QStringLiteral("g"), Group);
     m_OptionOp->insert(QStringLiteral("b"), Bind);
+    m_OptionOp->insert(QStringLiteral("o"), Occurences);
 
     m_aliasList= new QList<DiceAlias*>();
 
@@ -1111,6 +1113,31 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 previous->setNextNode(bindNode);
                 node= bindNode;
                 found= true;
+            }
+            break;
+            case Occurences:
+            {
+                qint64 number= 0;
+                auto occNode= new OccurenceCountNode();
+                if(m_parsingToolbox->readNumber(str, number))
+                {
+                    occNode->setWidth(number);
+                    /*Validator* validator= m_parsingToolbox->readCompositeValidator(str);
+                    if(validator)
+                    {
+                        occNode->setValidator(validator);
+                    }*/
+                    if(m_parsingToolbox->readComma(str))
+                    {
+                        if(m_parsingToolbox->readNumber(str, number))
+                        {
+                            occNode->setHeight(number);
+                            previous->setNextNode(occNode);
+                            node= occNode;
+                            found= true;
+                        }
+                    }
+                }
             }
             break;
             case Painter:

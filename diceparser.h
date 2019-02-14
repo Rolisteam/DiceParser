@@ -90,7 +90,8 @@ public:
         Filter,
         Split,
         Group,
-        Bind
+        Bind,
+        Occurences
     };
     /**
      * @brief The CommandOperator enum

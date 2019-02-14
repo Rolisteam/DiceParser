@@ -517,6 +517,16 @@ bool ParsingToolBox::readVariable(QString& str, qint64& myNumber, QString& reaso
 
     return false;
 }
+bool ParsingToolBox::readComma(QString& str)
+{
+    if(str.startsWith(","))
+    {
+        str= str.remove(0, 1);
+        return true;
+    }
+    else
+        return false;
+}
 bool ParsingToolBox::readOpenParentheses(QString& str)
 {
     if(str.startsWith("("))
@@ -527,6 +537,7 @@ bool ParsingToolBox::readOpenParentheses(QString& str)
     else
         return false;
 }
+
 bool ParsingToolBox::readCloseParentheses(QString& str)
 {
     if(str.startsWith(")"))

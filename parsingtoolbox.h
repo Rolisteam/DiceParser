@@ -232,6 +232,8 @@ public:
 
     static void readSubtitutionParameters(SubtituteInfo& info, QString& rest);
 
+    static bool readComma(QString& str);
+
 private:
     QMap<QString, BooleanCondition::LogicOperator>* m_logicOp;
     QMap<QString, CompositeValidator::LogicOperation>* m_logicOperation;
