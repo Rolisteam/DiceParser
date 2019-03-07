@@ -609,7 +609,7 @@ The merge operator is useful when you want to use dice operator on all rolled di
 
 The k operator to keeps as many dice as you roll is pretty useless because it is the default behaviour.
 
-## Plateform specific documentation
+## Platform specific documentation
 
 ### Roll dice on each platform
 
