@@ -644,8 +644,6 @@ The k operator to keeps as many dice as you roll is pretty useless because it is
 | webserver| No aliases |
 | dice     |  |
 
-We can't set some aliases for any platform but It has to be labelled with game's name.
-
 # Discord Bot
 
 ## Prefix management
