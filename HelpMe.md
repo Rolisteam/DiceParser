@@ -38,6 +38,13 @@
 DiceParser is a software component dedicated to roll dice through simple commands. This software component is available on different platform.  
 Such as: Irc bot, discord bot, included in Rolisteam, web server, on twitter etc.
 
+## About examples in this documentation
+
+To make it clear, all examples in this documentation do not show the start up prefix. 
+Please, remember to add the proper prefix given where you run dice command: Rolisteam, discord, IRC… 
+If you don't know, try `!`. 
+The prefix allows the system to identify your command.
+
 ## How to roll a die 
 
 It is real simple. you have to call:
@@ -82,8 +89,11 @@ Rolling 3 dice, values are between -20 and -9.
 
 ### Instruction: Roll two (or more) kinds of dice at once 
 
-To make it, you have to separate all dice commands by `;`
+Adding (or any arithmetic operations) results from two (or more) kinds of dice is easy:
 
+>  1d10+1d8
+
+To display all results without making any operations with those results. Use `;` to mark several instructions.
 
 > 1d10;1d6 # 2 instructions
 
@@ -613,9 +623,6 @@ The k operator to keeps as many dice as you roll is pretty useless because it is
 
 ### Roll dice on each platform
 
-
-Please, remember it is important to prefix all you command by `!`. This will allow the system to identify your command. To clarify the documentation, the `!` is not repeated before all commands.
-
 | platform | start character(s)  | more information |
 |---|---|--- |
 | Rolisteam |```!```| [Documentation](http://wiki.rolisteam.org/index.php/En:Dice) |
@@ -632,10 +639,10 @@ Please, remember it is important to prefix all you command by `!`. This will all
 |---|---|
 | Rolisteam | no support for comments yet. Rolisteam is a big software. You may not have all the most recent feature from diceparser. |
 | Discord  | If the command takes too much time. It is canceled |
-| Twitter  | Result such be short. No aliases |
+| Twitter  | Result should be short. No aliases |
 | IrcBot   | No aliases |
 | webserver| No aliases |
-| dice     | json file to give as parameter |
+| dice     |  |
 
 We can't set some aliases for any platform but It has to be labelled with game's name.
 
