@@ -794,3 +794,43 @@ bool ParsingToolBox::readComment(QString& str, QString& result, QString& comment
     }
     return false;
 }
+
+QString ParsingToolBox::replaceVariableToValue(const QString& source, QVector<int> values)
+{
+    QString result = source;
+    
+    int start = source.size();
+    do {
+     auto ref = readVariableFromString(source, start);
+     if(ref.isValid())
+     {
+        result.remove(ref.index(), ref.length());
+        result.insert(ref.index(), values[ref.valueIndex()]);
+     }
+    }while(start >= 0) 
+   
+    return result;
+}
+
+SubtituteInfo ParsingToolBox::readVariableFromString(const QString& source, int start)
+{
+    bool found = false;
+    for(int i = start; i >= 0 && !found; --i)
+    {
+        if(source.at(i) == "%")
+        {
+            auto rest = source.mid(i, start-i);
+            int number;
+            if(readNumber(rest, number))
+            {
+                SubtituteInfo info;
+                readSubtitutionParameters(info, rest);
+                info.setIndex(number);
+                info.setPosition(i);
+
+            }
+
+        }
+
+    }
+}
