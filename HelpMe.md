@@ -14,6 +14,7 @@
     * [Reroll until](#reroll-until)
     * [Explode](#explode)
     * [Add](#add)
+    * [Occurence](#occurence)
     * [Backward Jump](#backward-jump)
     * [Paint](#paint)
     * [Merge](#merge)
@@ -229,6 +230,23 @@ Result: 35 details: 3, 27 [9,10,8], 5
 
 Reroll the die if its value fits the Validator and add the new value to the previous one. It does that only once.
 
+### Occurence
+
+> 10d10o
+
+Count and sort occurences of each value.
+Result: `3x1,1x2,3x4,2x9,1x10 - [1,1,1,2,4,4,4,9,9,10]`
+
+> 10d10o2,7
+
+Count and sort occurence when they occur at least 2 times, the value is 7 or more.
+Result: `2x8 - [1,2,3,5,6,7,8,8,9,10]`
+
+> 10d10o2[<6]
+
+Count and sort occurence when they occur at least 2 times, the value should respect the validator (here less than 6).
+Result: `2x3,2x5 - [3,3,5,5,6,6,6,7,7,8]`
+
 ### Backward Jump
 
 This operator is dedicated to apply its next operator to the second to last result.
@@ -271,7 +289,7 @@ It makes exploded dice as new dice.
 > 4d6e6u6k3
 
 Result: 6 4 3 3 2
-Final result: 6+4+3 = 13
+Final result: 6+4+3 = 13
 
 
 ### Bind
