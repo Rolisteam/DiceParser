@@ -112,14 +112,7 @@ QString diceToMarkdown(QJsonArray array, bool withColor, bool allSameColor, bool
         return result.join(' ');
     }
 }
-#ifdef PAINTER_OP
-void displayImage(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString comment,
-    bool allSameFaceCount, bool allSameColor)
-{
-    out << DisplayToolBox::makeImage(
-        scalarText, resultStr, array, withColor, cmd, comment, allSameFaceCount, allSameColor);
-}
-#endif
+
 void displayJSon(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString error,
     QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
 {
@@ -170,7 +163,7 @@ void displayMarkdown(QString scalarText, QString resultStr, QJsonArray array, bo
     str.append(QStringLiteral("```"));
     out << str;
 }
-void displaySVG(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString error,
+QString displaySVG(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString error,
     QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
 {
     QString str(
@@ -200,19 +193,21 @@ void displaySVG(QString scalarText, QString resultStr, QJsonArray array, bool wi
         if(resultStr.isEmpty())
         {
             if(withColor)
-                str.append(QStringLiteral(
-                    "<text font-size=\"16\" x=\"0\" y=\"%4\"><tspan fill=\"red\">%1</tspan> details:[%3 (%2)]</text>")
+                str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%4\"><tspan fill=\"red\">%1</tspan>\n"
+                                          "<tspan x=\"0\" y=\"%5\">details:</tspan>[%3 (%2)]</text>")
                                .arg(scalarText)
                                .arg(diceList)
                                .arg(cmd)
-                               .arg(y));
+                               .arg(y)
+                               .arg(y * 2));
             else
-                str.append(
-                    QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%4\"><tspan>%1</tspan> details:[%3 (%2)]</text>")
-                        .arg(scalarText)
-                        .arg(diceList)
-                        .arg(cmd)
-                        .arg(y));
+                str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%4\"><tspan>%1</tspan>\n"
+                                          "<tspan x=\"0\" y=\"%5\">details:</tspan>[%3 (%2)]</text>")
+                               .arg(scalarText)
+                               .arg(diceList)
+                               .arg(cmd)
+                               .arg(y)
+                               .arg(y * 2));
         }
         else if(!resultStr.isEmpty())
         {
@@ -221,8 +216,18 @@ void displaySVG(QString scalarText, QString resultStr, QJsonArray array, bool wi
         }
     }
     str.append(QStringLiteral("</svg>\n"));
-    out << str << "\n";
+    return str;
 }
+
+#ifdef PAINTER_OP
+void displayImage(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString error,
+    QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
+{
+    auto svg= displaySVG(
+        scalarText, resultStr, array, withColor, cmd, error, warning, comment, allSameFaceCount, allSameColor);
+    out << DisplayToolBox::makeImage(svg.toUtf8());
+}
+#endif
 
 void displayCommandResult(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd,
     QString error, QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
@@ -401,8 +406,9 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
                     allSameFaceCount, allSameColor);
                 break;
             case SVG:
-                displaySVG(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
-                    allSameFaceCount, allSameColor);
+                out << displaySVG(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
+                           allSameFaceCount, allSameColor)
+                    << "\n";
                 break;
             case BOT:
             case MARKDOWN:
@@ -415,8 +421,8 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
                 break;
 #ifdef PAINTER_OP
             case IMAGE:
-                displayImage(
-                    scalarText, resultStr, array, withColor, cmdRework, comment, allSameFaceCount, allSameColor);
+                displayImage(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
+                    allSameFaceCount, allSameColor);
                 break;
 #endif
             }

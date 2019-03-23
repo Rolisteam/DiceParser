@@ -37,6 +37,7 @@ ADD_DEFINITIONS(
 
 set(dice_RESOURCES diceparser.qrc)
 FIND_PACKAGE(Qt5LinguistTools)
+find_package(Qt5Svg)
    
 
 IF(UPDATE_TRANSLATIONS)
@@ -111,7 +112,7 @@ SET( dice_sources
 
 add_executable( dice ${dice_sources} ${dice_QM}   )
 
-target_link_libraries(dice ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES})
+target_link_libraries(dice ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Svg_LIBRARIES})
 INSTALL_TARGETS(/bin dice)
 
 #qt5_use_modules()

@@ -7,7 +7,7 @@
 #include <QFont>
 #include <QFontMetrics>
 #include <QPainter>
-//#include <QFontDatabase>
+#include <QSvgRenderer>
 #endif
 
 #include <QDebug>
@@ -16,165 +16,20 @@
 
 DisplayToolBox::DisplayToolBox() {}
 #ifdef PAINTER_OP
-QString DisplayToolBox::makeImage(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd,
-    QString comment, bool allSameFaceCount, bool allSameColor)
+QString DisplayToolBox::makeImage(QByteArray svgCode)
 {
-    // qDebug() <<"scarlarText:" <<scalarText << "resultStr:"<< resultStr<<"array" << array<< "with color:" << withColor
-    // << "cmd" << cmd << "comment" << comment << "allsamecolor"<< allSameColor;
-    QString textTotal("%1 Details:[%3 %2]");
+    QSvgRenderer svg(svgCode);
 
-    int lineCount= 2;
-    if(!comment.isEmpty())
-    {
-        lineCount= 3;
-    }
+    QImage image(500, 60, QImage::Format_ARGB32);
+    image.fill(QColor(255, 255, 255, 100)); // partly transparent red-ish background
 
-    if(resultStr.isEmpty())
-    {
-        auto list= diceToText(array, false, allSameFaceCount, allSameColor);
-        textTotal= textTotal.arg(scalarText).arg(list).arg(cmd);
-    }
-    else
-    {
-        --lineCount;
-        textTotal= resultStr;
-    }
-    if(comment.size() > textTotal.size())
-    {
-        textTotal.prepend(QStringLiteral("%1\n").arg(comment));
-    }
-    QFont font("Helvetica", 15); // QFontDatabase::systemFont(QFontDatabase::GeneralFont);
-    QFontMetrics fm(font);
-    QRect rect= fm.boundingRect(textTotal);
-
-    QImage img(rect.width(), (rect.height() + LINE_SPACING) * lineCount, QImage::Format_ARGB32);
-    img.fill(QColor(255, 255, 255, 100));
-    QPainter painter(&img);
-    painter.setFont(font);
-    int y= rect.height();
-    if(!comment.isEmpty())
-    {
-        QPen pen= painter.pen();
-        pen.setColor(Qt::black);
-        painter.setPen(pen);
-        painter.drawText(QPoint(0, y), comment);
-        y+= rect.height() + LINE_SPACING;
-    }
-    if(!resultStr.isEmpty())
-    {
-        QPen pen= painter.pen();
-        pen.setColor(Qt::black);
-        painter.setPen(pen);
-        painter.drawText(QPoint(0, y), resultStr);
-    }
-    else
-    {
-        painter.save();
-        QPen pen= painter.pen();
-        pen.setColor(Qt::red);
-        painter.setPen(pen);
-        painter.drawText(QPoint(5, y), scalarText);
-        y+= rect.height() + LINE_SPACING;
-        painter.restore();
-        int x= 5;
-        QString text= QStringLiteral("Details:[%1 (").arg(cmd);
-        painter.drawText(QPoint(x, y), text);
-        x+= fm.boundingRect(text).width();
-        if(allSameFaceCount)
-        {
-            int i= 0;
-            for(auto item : array)
-            {
-                QStringList result;
-                bool last= (array.size() - 1 == i);
-                auto obj= item.toObject();
-                auto values= obj["values"].toArray();
-                for(auto valRef : values)
-                {
-                    result.append(diceResultToString(valRef.toObject()));
-                }
-                painter.save();
-                QPen pen= painter.pen();
-                QColor color;
-
-                auto colorStr= obj["color"].toString();
-                if(colorStr.isEmpty())
-                    color= QColor(Qt::black);
-                else
-                    color.setNamedColor(colorStr);
-                pen.setColor(color);
-
-                painter.setPen(pen);
-                text= QStringLiteral("%1").arg(result.join(','));
-                if(!last)
-                {
-                    text.append(",");
-                }
-                painter.drawText(QPoint(x, y), text);
-                x+= fm.boundingRect(text).width();
-                painter.restore();
-                ++i;
-            }
-        }
-        else
-        {
-            int i= 0;
-            for(auto item : array)
-            {
-                QStringList result;
-                auto obj= item.toObject();
-                bool last= (array.size() - 1 == i);
-                auto values= obj["values"].toArray();
-                for(auto valRef : values)
-                {
-                    result.append(diceResultToString(valRef.toObject()));
-                }
-                text= QStringLiteral("d%1:(").arg(obj["face"].toInt());
-                painter.drawText(QPoint(x, y), text);
-                x+= fm.boundingRect(text).width();
-
-                painter.save();
-                QPen pen= painter.pen();
-                QColor color;
-                auto colorStr= obj["color"].toString();
-                if(colorStr.isEmpty())
-                    color= QColor(Qt::black);
-                else
-                    color.setNamedColor(colorStr);
-
-                pen.setColor(color);
-                painter.setPen(pen);
-
-                text= QStringLiteral("%1").arg(result.join(','));
-                painter.drawText(QPoint(x, y), text);
-                x+= fm.boundingRect(text).width();
-                painter.restore();
-                painter.save();
-                text= QStringLiteral(")");
-                if(!last)
-                {
-                    text.append(",");
-                }
-                painter.drawText(QPoint(x, y), text);
-                x+= fm.boundingRect(text).width();
-                painter.restore();
-                ++i;
-            }
-        }
-        text= QStringLiteral(")");
-        x+= fm.boundingRect(text).width();
-        painter.drawText(QPoint(x, y), text);
-    }
-
-    painter.end();
-
-    img.save("/home/renaud/image.png", "PNG");
+    // Get QPainter that paints to the image
+    QPainter painter(&image);
+    svg.render(&painter);
     QByteArray ba;
     QBuffer buffer(&ba);
     buffer.open(QIODevice::WriteOnly);
-    img.save(&buffer, "PNG");
-
-    // return {};
+    image.save(&buffer, "PNG");
     return ba.toBase64();
 }
 #endif
@@ -229,18 +84,9 @@ QString DisplayToolBox::diceToSvg(QJsonArray array, bool withColor, bool allSame
             auto values= obj["values"].toArray();
             for(auto valRef : values)
             {
-                subResult.append(diceResultToString(valRef.toObject()));
+                subResult.append(diceResultToString(valRef.toObject(), Output::Svg, withColor));
             }
-            if(withColor)
-            {
-                result.append(QStringLiteral("<tspan fill=\"%1\">").arg(obj["color"].toString()));
-                result.append(subResult.join(','));
-                result.append(QStringLiteral("</tspan>"));
-            }
-            else
-            {
-                result.append(subResult.join(','));
-            }
+            result.append(subResult.join(','));
         }
         return result.join("");
     }
@@ -255,7 +101,7 @@ QString DisplayToolBox::diceToSvg(QJsonArray array, bool withColor, bool allSame
 
             for(auto valRef : values)
             {
-                subResult.append(diceResultToString(valRef.toObject()));
+                subResult.append(diceResultToString(valRef.toObject(), Output::Svg, withColor));
             }
             result.append(QStringLiteral("d%1:(").arg(obj["face"].toInt()));
             if(withColor)
@@ -278,8 +124,9 @@ QString DisplayToolBox::diceToSvg(QJsonArray array, bool withColor, bool allSame
 QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList, bool& allSameFaceCount, bool& allSameColor)
 {
     allSameFaceCount= true;
-    allSameColor= true;
+
     QJsonArray array;
+    QStringList colorList;
     for(auto dice : diceList)
     {
         if(dice.size() > 1)
@@ -289,64 +136,45 @@ QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList, bool&
         for(int face : dice.keys())
         {
             ListDiceResult diceResults= dice.value(face);
-            std::vector<QString> alreadyDoneColor;
-            std::vector<std::vector<HighLightDice>> sameColorDice;
-            for(auto& diceResult : diceResults)
+            QJsonObject object;
+            QJsonArray values;
+            object["face"]= face;
+            for(auto const& dice : diceResults)
             {
-                if(!diceResult.getColor().isEmpty())
+                QJsonObject diceObj;
+                auto listValues= dice.getResult();
+                if(!listValues.isEmpty())
                 {
-                    allSameColor= false;
-                }
-                auto it= std::find_if(alreadyDoneColor.begin(), alreadyDoneColor.end(),
-                    [diceResult](QString color) { return color == diceResult.getColor(); });
-
-                if(it == alreadyDoneColor.end())
-                {
-                    sameColorDice.push_back(std::vector<HighLightDice>());
-                    alreadyDoneColor.push_back(diceResult.getColor());
-                    it= alreadyDoneColor.end();
-                    --it;
-                }
-                auto i= std::distance(alreadyDoneColor.begin(), it);
-                sameColorDice[static_cast<std::size_t>(i)].push_back(diceResult);
-            }
-            int i= 0;
-            for(auto it= alreadyDoneColor.begin(); it != alreadyDoneColor.end() && i < sameColorDice.size(); ++it)
-            {
-                auto list= sameColorDice[static_cast<std::size_t>(i)];
-                QJsonObject object;
-                object["color"]= *it;
-                object["face"]= face;
-                QJsonArray values;
-                for(auto const& dice : list)
-                {
-                    QJsonObject diceObj;
-                    auto listValues= dice.getResult();
-                    if(!listValues.isEmpty())
+                    diceObj["total"]= static_cast<qint64>(listValues.takeFirst());
+                    diceObj["face"]= face;
+                    auto color= dice.getColor();
+                    diceObj["color"]= color;
+                    if(!colorList.contains(color))
+                        colorList.append(color);
+                    QJsonArray subValues;
+                    for(auto result : listValues)
                     {
-                        diceObj["total"]= static_cast<qint64>(listValues.takeFirst());
-                        QJsonArray subValues;
-                        for(auto result : listValues)
-                        {
-                            subValues.push_back(static_cast<qint64>(result));
-                        }
-                        diceObj["subvalues"]= subValues;
+                        subValues.push_back(static_cast<qint64>(result));
                     }
-                    values.push_back(diceObj);
+                    diceObj["subvalues"]= subValues;
                 }
-                object["values"]= values;
-                ++i;
-                array.push_back(object);
+                values.push_back(diceObj);
             }
+            object["values"]= values;
+            array.push_back(object);
         }
     }
+    if(colorList.size() > 1)
+        allSameColor= false;
     return array;
 }
-QString DisplayToolBox::diceResultToString(QJsonObject val)
+QString DisplayToolBox::diceResultToString(QJsonObject val, Output type, bool hasColor)
 {
     auto total= QString::number(val["total"].toDouble());
+    auto color= val["color"].toString();
     auto subvalues= val["subvalues"].toArray();
     QStringList subStr;
+
     for(auto subval : subvalues)
     {
         subStr << QString::number(subval.toDouble());
@@ -354,6 +182,23 @@ QString DisplayToolBox::diceResultToString(QJsonObject val)
     if(!subStr.isEmpty())
     {
         total.append(QStringLiteral(" [%1]").arg(subStr.join(',')));
+    }
+    if(hasColor && !color.isEmpty())
+    {
+        if(type == Output::Terminal)
+        {
+            total= QStringLiteral("%1%2%3")
+                       .arg(DisplayToolBox::colorToTermCode(color))
+                       .arg(total)
+                       .arg(DisplayToolBox::colorToTermCode(QStringLiteral("reset")));
+        }
+        else if(type == Output::Svg)
+        {
+            total= QStringLiteral("%1%2%3")
+                       .arg(QStringLiteral("<tspan fill=\"%1\">").arg(color))
+                       .arg(total)
+                       .arg(QStringLiteral("</tspan>"));
+        }
     }
     return total;
 }
@@ -370,7 +215,7 @@ QString DisplayToolBox::diceToText(QJsonArray array, bool withColor, bool allSam
         QStringList diceResult;
         for(auto valRef : values)
         {
-            diceResult+= diceResultToString(valRef.toObject());
+            diceResult+= diceResultToString(valRef.toObject(), Output::Terminal, withColor);
         }
         if(!diceResult.isEmpty())
         {
