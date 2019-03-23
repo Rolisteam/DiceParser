@@ -1122,22 +1122,22 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 if(m_parsingToolbox->readNumber(str, number))
                 {
                     occNode->setWidth(number);
-                    /*Validator* validator= m_parsingToolbox->readCompositeValidator(str);
+                    Validator* validator= m_parsingToolbox->readCompositeValidator(str);
                     if(validator)
                     {
                         occNode->setValidator(validator);
-                    }*/
-                    if(m_parsingToolbox->readComma(str))
+                    }
+                    else if(m_parsingToolbox->readComma(str))
                     {
                         if(m_parsingToolbox->readNumber(str, number))
                         {
                             occNode->setHeight(number);
-                            previous->setNextNode(occNode);
-                            node= occNode;
-                            found= true;
                         }
                     }
                 }
+                previous->setNextNode(occNode);
+                node= occNode;
+                found= true;
             }
             break;
             case Painter:
