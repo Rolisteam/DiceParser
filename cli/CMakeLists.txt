@@ -52,12 +52,12 @@ ENDIF(UPDATE_TRANSLATIONS)
 
 if(Qt5Core_FOUND)
 
-    IF(UPDATE_TRANSLATIONS)
+    #IF(UPDATE_TRANSLATIONS)
 		MESSAGE(status  "find" ${dice_TS} ${translate_SRCS} )
-        QT5_CREATE_TRANSLATION(dice_QM ${translate_SRCS} ${dice_TS})
-    ELSE()
-        QT5_ADD_TRANSLATION(dice_QM ${dice_TS})
-    ENDIF()
+        #QT5_CREATE_TRANSLATION(dice_QM ${translate_SRCS} ${dice_TS})
+        #ELSE()
+        #QT5_ADD_TRANSLATION(dice_QM ${dice_TS})
+        #ENDIF()
 
     QT5_ADD_RESOURCES(dice_RESOURCES_RCC ${dice_RESOURCES})
 
@@ -93,6 +93,7 @@ SET( dice_sources
     ../node/listsetrollnode.cpp
     ../node/numbernode.cpp
     ../node/parenthesesnode.cpp
+    ../node/forloopnode.cpp
     ../node/paintnode.cpp
     ../node/rerolldicenode.cpp
     ../node/scalaroperatornode.cpp
@@ -104,13 +105,16 @@ SET( dice_sources
     ../node/splitnode.cpp
     ../node/groupnode.cpp
     ../node/bind.cpp
+    ../node/occurencecountnode.cpp
     main.cpp
     displaytoolbox.cpp
     ../highlightdice.cpp
     ../node/variablenode.cpp
 )
 
-add_executable( dice ${dice_sources} ${dice_QM}   )
+set(documentation_files ../HelpMe.md ../README.md)
+
+add_executable( dice ${dice_sources} ${dice_QM}   ${documentation_files})
 
 target_link_libraries(dice ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Svg_LIBRARIES})
 INSTALL_TARGETS(/bin dice)
