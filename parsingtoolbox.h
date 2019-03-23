@@ -34,6 +34,32 @@
 #include "operationcondition.h"
 #include "range.h"
 
+class SubtituteInfo
+{
+public:
+    SubtituteInfo();
+
+    bool isValid() const;
+
+    int length() const;
+    void setLength(int length);
+
+    int resultIndex() const;
+    void setResultIndex(int valueIndex);
+
+    int position() const;
+    void setPosition(int position);
+
+    int digitNumber() const;
+    void setDigitNumber(int digitNumber);
+
+private:
+    int m_length= 2;
+    int m_digitNumber= 0;
+    int m_resultIndex= -1;
+    int m_position= -1;
+};
+
 /**
  * @brief The ParsingToolBox is gathering many useful methods for dice parsing.
  * Its goal is to make the diceparser a bit lighter.
@@ -199,6 +225,12 @@ public:
 
     static bool readOperand(QString& str, ExecutionNode*& node);
     static int findClosingCharacterIndexOf(QChar open, QChar closing, const QString& str, int offset);
+
+    static QString replaceVariableToValue(const QString& source, QStringList values);
+
+    static SubtituteInfo readVariableFromString(const QString& source, int& start);
+
+    static void readSubtitutionParameters(SubtituteInfo& info, QString& rest);
 
 private:
     QMap<QString, BooleanCondition::LogicOperator>* m_logicOp;

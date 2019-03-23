@@ -352,18 +352,20 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
                 bool ok;
                 QStringList allStringlist= parser.getAllStringResult(ok);
                 QString stringResult= allStringlist.join(" ; ");
+
                 stringResult.replace("%1", scalarText);
                 stringResult.replace("%2", listOfDiceResult.join(",").trimmed());
                 stringResult.replace("%3", lastScalarText);
                 stringResult.replace("\\n", "\n");
 
-                int i= strLst.size();
-                for(auto it= strLst.rbegin(); it != strLst.rend(); ++it)
+                stringResult= ParsingToolBox::replaceVariableToValue(stringResult, strLst);
+                /*for(auto it= strLst.rbegin(); it != strLst.rend(); ++it)
                 {
                     stringResult.replace(QStringLiteral("$%1").arg(i), (*it));
                     --i;
-                }
-                i= listFull.size();
+                }*/
+
+                int i= strLst.size();
                 for(auto it= strLst.rbegin(); it != strLst.rend(); ++it)
                 {
                     stringResult.replace(QStringLiteral("µ%1").arg(i), (*it));
