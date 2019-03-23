@@ -795,42 +795,124 @@ bool ParsingToolBox::readComment(QString& str, QString& result, QString& comment
     return false;
 }
 
-QString ParsingToolBox::replaceVariableToValue(const QString& source, QVector<int> values)
+QString ParsingToolBox::replaceVariableToValue(const QString& source, QStringList values)
 {
-    QString result = source;
-    
-    int start = source.size();
-    do {
-     auto ref = readVariableFromString(source, start);
-     if(ref.isValid())
-     {
-        result.remove(ref.index(), ref.length());
-        result.insert(ref.index(), values[ref.valueIndex()]);
-     }
-    }while(start >= 0) 
-   
+    QString result= source;
+
+    int start= source.size() - 1;
+    bool valid= true;
+    do
+    {
+        auto ref= readVariableFromString(source, start);
+        if(ref.isValid())
+        {
+            result.remove(ref.position(), ref.length());
+            auto val= values[ref.resultIndex() - 1];
+            if(ref.digitNumber() != 0)
+            {
+                auto realVal= QString("%1").arg(val, ref.digitNumber(), QChar('0'));
+                result.insert(ref.position(), realVal);
+            }
+            else
+            {
+                result.insert(ref.position(), val);
+            }
+        }
+        else
+        {
+            valid= false;
+        }
+    } while(valid);
+
     return result;
 }
 
-SubtituteInfo ParsingToolBox::readVariableFromString(const QString& source, int start)
+void ParsingToolBox::readSubtitutionParameters(SubtituteInfo& info, QString& rest)
 {
-    bool found = false;
-    for(int i = start; i >= 0 && !found; --i)
+    auto sizeS= rest.size();
+    if(rest.startsWith("{"))
     {
-        if(source.at(i) == "%")
+        rest= rest.remove(0, 1);
+        qint64 number;
+        if(readNumber(rest, number))
         {
-            auto rest = source.mid(i, start-i);
-            int number;
+            if(rest.startsWith("}"))
+            {
+                rest= rest.remove(0, 1);
+                info.setDigitNumber(static_cast<int>(number));
+            }
+        }
+    }
+    info.setLength(info.length() + sizeS - rest.size());
+}
+
+SubtituteInfo ParsingToolBox::readVariableFromString(const QString& source, int& start)
+{
+    bool found= false;
+    SubtituteInfo info;
+    int i= start;
+    for(; i >= 0 && !found; --i)
+    {
+        if(source.at(i) == "$")
+        {
+            auto rest= source.mid(i + 1, 1 + start - i);
+            qint64 number;
             if(readNumber(rest, number))
             {
-                SubtituteInfo info;
                 readSubtitutionParameters(info, rest);
-                info.setIndex(number);
+                info.setResultIndex(static_cast<int>(number));
                 info.setPosition(i);
-
+                found= true;
             }
-
         }
-
     }
+    start= i;
+    return info;
+}
+
+SubtituteInfo::SubtituteInfo() {}
+
+bool SubtituteInfo::isValid() const
+{
+    return !(m_position + m_resultIndex < 2);
+}
+
+int SubtituteInfo::length() const
+{
+    return m_length;
+}
+
+void SubtituteInfo::setLength(int length)
+{
+    m_length= length;
+}
+
+int SubtituteInfo::resultIndex() const
+{
+    return m_resultIndex;
+}
+
+void SubtituteInfo::setResultIndex(int valueIndex)
+{
+    m_resultIndex= valueIndex;
+}
+
+int SubtituteInfo::position() const
+{
+    return m_position;
+}
+
+void SubtituteInfo::setPosition(int position)
+{
+    m_position= position;
+}
+
+int SubtituteInfo::digitNumber() const
+{
+    return m_digitNumber;
+}
+
+void SubtituteInfo::setDigitNumber(int digitNumber)
+{
+    m_digitNumber= digitNumber;
 }
