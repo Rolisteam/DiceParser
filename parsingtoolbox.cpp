@@ -885,7 +885,7 @@ SubtituteInfo::SubtituteInfo() {}
 
 bool SubtituteInfo::isValid() const
 {
-    return !(m_position + m_resultIndex < 2);
+    return !(m_position + m_resultIndex < 0);
 }
 
 int SubtituteInfo::length() const
