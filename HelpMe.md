@@ -392,7 +392,7 @@ The number of instruction is not limited.
 
 The default output displays: `45,4,0,4 details[4,3,10,7,2,2,7,10]`
 
-> 8d10;$1c[>6];$1c1;$2-$3i:[>0]{"%3 Success[%2]"}{i:[<0]{"Critical fail %3 [%2]"}{"Fail %3 [%2]"}}"
+> 8d10;$1c[>6];$1c1;$2-$3i:[>0]{"%3 Success[%2]"}{i:[<0]{"Critical fail %3 [%2]"}{"Fail %3 [%2]"}}
 
 The output is now: `4 Success[4,3,10,7,2,2,7,10]`
 or
