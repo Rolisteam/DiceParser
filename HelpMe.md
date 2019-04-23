@@ -286,7 +286,7 @@ Be careful, this operator merges the instruction list. Instruction reference (su
 
 It makes exploded dice as new dice.
 
-> 4d6e6u6k3
+> 4d6e6uk3
 
 Result: 6 4 3 3 2
 Final result: 6+4+3 = 13
