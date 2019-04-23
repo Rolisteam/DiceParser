@@ -33,6 +33,7 @@
 #include "node/groupnode.h"
 #include "node/helpnode.h"
 #include "node/ifnode.h"
+#include "node/uniquenode.h"
 #include "node/jumpbackwardnode.h"
 #include "node/keepdiceexecnode.h"
 #include "node/listaliasnode.h"
@@ -77,6 +78,7 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QStringLiteral("p"), Painter);
     m_OptionOp->insert(QStringLiteral("f"), Filter);
     m_OptionOp->insert(QStringLiteral("y"), Split);
+    m_OptionOp->insert(QStringLiteral("u"), Unique);
     m_OptionOp->insert(QStringLiteral("g"), Group);
     m_OptionOp->insert(QStringLiteral("b"), Bind);
     m_OptionOp->insert(QStringLiteral("o"), Occurences);
@@ -1137,6 +1139,13 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 }
                 previous->setNextNode(occNode);
                 node= occNode;
+                found= true;
+            }
+            break;
+            case Unique:
+            {
+                node= new UniqueNode();
+                previous->setNextNode(node);
                 found= true;
             }
             break;

@@ -298,10 +298,11 @@ Final result: `6+4+3 = 13`
 
 It makes exploded dice as new dice.
 
-> 4d6e6uk3
+> 4d6e6u
+
 
 Result: 6 4 3 3 2
-Final result: 6+4+3 = 13
+Final result: 6+4+3 = 13
 
 
 ### Bind

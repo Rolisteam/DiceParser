@@ -106,6 +106,7 @@ SET( dice_sources
     ../node/groupnode.cpp
     ../node/bind.cpp
     ../node/occurencecountnode.cpp
+    ../node/uniquenode.cpp
     main.cpp
     displaytoolbox.cpp
     ../highlightdice.cpp
