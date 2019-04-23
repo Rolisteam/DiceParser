@@ -20,6 +20,7 @@
     * [Merge](#merge)
     * [if](#if)
     * [Group](#group)
+    * [Spread](#spread)
     * [Unique](#unique)
     * [Comment (\#)](#comment-)
 * [Arithmetic](#arithmetic) 
@@ -281,6 +282,17 @@ Merge operator is used for gathering several dice rolls from different die type 
 
 This command merges together the result from the d6 and the d8. Then, it applied the k operator on both result to keep the best.
 Be careful, this operator merges the instruction list. Instruction reference (such as $1 etc..) won't work after merge operator.
+
+### Spead
+
+It makes exploded dice as new dice.
+The operator is trigged by *y*.
+
+> 4d6e6y6k3
+
+First Result: `10 [6, 4], 3, 3, 2`  
+Result after spead: `6, 4, 3, 2`  
+Final result: `6+4+3 = 13`  
 
 ### Unique
 

@@ -76,7 +76,7 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QStringLiteral("i"), ifOperator);
     m_OptionOp->insert(QStringLiteral("p"), Painter);
     m_OptionOp->insert(QStringLiteral("f"), Filter);
-    m_OptionOp->insert(QStringLiteral("u"), Split);
+    m_OptionOp->insert(QStringLiteral("y"), Split);
     m_OptionOp->insert(QStringLiteral("g"), Group);
     m_OptionOp->insert(QStringLiteral("b"), Bind);
     m_OptionOp->insert(QStringLiteral("o"), Occurences);
