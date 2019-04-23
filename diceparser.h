@@ -90,7 +90,7 @@ public:
         Filter,
         Split,
         Group,
-        Occurences
+        Occurences,
         Unique,
         Bind
     };
