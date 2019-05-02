@@ -870,7 +870,9 @@ SubtituteInfo ParsingToolBox::readVariableFromString(const QString& source, int&
             qint64 number;
             if(readNumber(rest, number))
             {
+                auto len= QString::number(number).size() - 1;
                 readSubtitutionParameters(info, rest);
+                info.setLength(info.length() + len);
                 info.setResultIndex(static_cast<int>(number));
                 info.setPosition(i);
                 found= true;
