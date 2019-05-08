@@ -32,6 +32,7 @@ SOURCES += $$PWD/diceparser.cpp \
     $$PWD/node/explodedicenode.cpp \
     $$PWD/node/parenthesesnode.cpp \
     $$PWD/node/helpnode.cpp \
+    $$PWD/node/testnode.cpp \
     $$PWD/node/jumpbackwardnode.cpp \
     $$PWD/node/mergenode.cpp \
     $$PWD/node/listaliasnode.cpp \
@@ -73,6 +74,7 @@ HEADERS += \
     $$PWD/node/scalaroperatornode.h \
     $$PWD/node/numbernode.h \
     $$PWD/node/sortresult.h \
+    $$PWD/node/testnode.h \
     $$PWD/node/keepdiceexecnode.h \
     $$PWD/node/countexecutenode.h \
     $$PWD/node/explodedicenode.h \
