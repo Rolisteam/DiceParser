@@ -62,7 +62,7 @@ private:
 
 private:
     LogicOperator m_operator;
-    ExecutionNode* m_value;
+    ExecutionNode* m_value= nullptr;
 };
 
 #endif // BOOLEANCONDITION_H
