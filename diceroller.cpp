@@ -179,9 +179,10 @@ QString DiceRoller::getError() const
 
 void DiceRoller::setError(const QString& error)
 {
-    if(m_error != error)
-    {
-        m_error= error;
-        emit errorOccurs();
-    }
+    if(m_error == error)
+        return;
+
+    m_error= error;
+    emit errorOccurs();
 }
+
