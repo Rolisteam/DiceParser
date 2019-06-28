@@ -93,7 +93,7 @@ SET( dice_sources
     ../node/listsetrollnode.cpp
     ../node/numbernode.cpp
     ../node/parenthesesnode.cpp
-    ../node/forloopnode.cpp
+#    ../node/forloopnode.cpp
     ../node/paintnode.cpp
     ../node/rerolldicenode.cpp
     ../node/scalaroperatornode.cpp
