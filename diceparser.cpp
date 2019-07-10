@@ -33,7 +33,6 @@
 #include "node/groupnode.h"
 #include "node/helpnode.h"
 #include "node/ifnode.h"
-#include "node/uniquenode.h"
 #include "node/jumpbackwardnode.h"
 #include "node/keepdiceexecnode.h"
 #include "node/listaliasnode.h"
@@ -49,6 +48,8 @@
 #include "node/splitnode.h"
 #include "node/startingnode.h"
 #include "node/stringnode.h"
+#include "node/uniquenode.h"
+#include "node/valueslistnode.h"
 #include "node/variablenode.h"
 
 #define DEFAULT_FACES_NUMBER 10
@@ -263,6 +264,11 @@ bool DiceParser::readExpression(QString& str, ExecutionNode*& node)
         node= operandNode;
         return true;
     }
+    else if(readValuesList(str, operandNode))
+    {
+        node= operandNode;
+        return true;
+    }
     else
     {
         ExecutionNode* diceNode= nullptr;
@@ -304,6 +310,37 @@ bool DiceParser::readOperatorFromNull(QString& str, ExecutionNode*& node)
         nodePrevious.setNextNode(nullptr);
         node= nodeNext;
         return true;
+    }
+    return false;
+}
+
+bool DiceParser::readValuesList(QString& str, ExecutionNode*& node)
+{
+    if(str.startsWith("["))
+    {
+        str= str.remove(0, 1);
+        int pos= ParsingToolBox::findClosingCharacterIndexOf('[', ']', str, 1); // str.indexOf("]");
+        if(-1 != pos)
+        {
+            QString liststr= str.left(pos);
+            auto list= liststr.split(",");
+            str= str.remove(0, pos + 1);
+            auto values= new ValuesListNode();
+            for(auto var : list)
+            {
+                qint64 number= 1;
+                QString error;
+                if(ParsingToolBox::readDynamicVariable(var, number))
+                {
+                    VariableNode* variableNode= new VariableNode();
+                    variableNode->setIndex(number - 1);
+                    variableNode->setData(&m_startNodes);
+                    values->insertValue(variableNode);
+                }
+            }
+            node= values;
+            return true;
+        }
     }
     return false;
 }

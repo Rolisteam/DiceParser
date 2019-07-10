@@ -254,6 +254,8 @@ public:
     void getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resultList);
     QString humanReadableWarning();
 
+    bool readValuesList(QString& str, ExecutionNode*& node);
+
 protected:
     bool readParameterNode(QString& str, ExecutionNode*& node);
 
