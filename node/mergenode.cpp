@@ -61,8 +61,8 @@ void MergeNode::run(ExecutionNode* previous)
                     {
                         if(!m_diceResult->getResultList().contains(die) && (!die->hasBeenDisplayed()))
                         {
-                            Die* tmpdie= new Die();
-                            *tmpdie= *die;
+                            Die* tmpdie= new Die(*die);
+                            //*tmpdie= *die;
                             die->displayed();
                             m_diceResult->getResultList().append(tmpdie);
                         }
