@@ -189,7 +189,7 @@ bool ParsingToolBox::readOperand(QString& str, ExecutionNode*& node)
     return false;
 }
 
-Validator* ParsingToolBox::readValidator(QString& str)
+Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
 {
     Validator* returnVal= nullptr;
     BooleanCondition::LogicOperator myLogicOp= BooleanCondition::Equal;
@@ -204,7 +204,7 @@ Validator* ParsingToolBox::readValidator(QString& str)
         {
             OperationCondition* condition= new OperationCondition();
             condition->setValueNode(operandNode);
-            Validator* valid= readValidator(str);
+            Validator* valid= readValidator(str,hasSquare);
             BooleanCondition* boolC= dynamic_cast<BooleanCondition*>(valid);
             if(nullptr != boolC)
             {
@@ -216,7 +216,7 @@ Validator* ParsingToolBox::readValidator(QString& str)
     else if(readOperand(str, operandNode))
     {
         bool isRange= false;
-        if(str.startsWith("-"))
+        if(str.startsWith("-") && hasSquare)
         {
             str= str.remove(0, 1);
             qint64 end= 0;
@@ -274,8 +274,7 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
         str= str.remove(0, 1);
         expectSquareBrasket= true;
     }
-
-    Validator* tmp= readValidator(str);
+    Validator* tmp= readValidator(str, expectSquareBrasket);
     CompositeValidator::LogicOperation opLogic;
 
     QVector<CompositeValidator::LogicOperation>* operators= new QVector<CompositeValidator::LogicOperation>();
@@ -288,7 +287,7 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
         {
             operators->append(opLogic);
             validatorList->append(tmp);
-            tmp= readValidator(str);
+            tmp= readValidator(str, expectSquareBrasket);
         }
         else
         {
