@@ -50,8 +50,8 @@ void UniqueNode::run(ExecutionNode* previous)
 
                    if(it == formerValues.end())
                    {
-                       auto die = new Die();
-                       *die = *oldDie;
+                       auto die = new Die(*oldDie);
+                       //*die = *oldDie;
                        m_diceResult->insertResult(die);
                        formerValues.push_back(value);
                    }

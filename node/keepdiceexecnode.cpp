@@ -50,8 +50,8 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
 
         for(Die* die : diceList3)
         {
-            Die* tmpdie= new Die();
-            *tmpdie= *die;
+            Die* tmpdie= new Die(*die);
+            //*tmpdie= *die;
             diceList2.append(tmpdie);
             die->displayed();
         }

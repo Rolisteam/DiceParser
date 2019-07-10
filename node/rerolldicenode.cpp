@@ -25,8 +25,8 @@ void RerollDiceNode::run(ExecutionNode* previous)
         {
             for(auto& die : previous_result->getResultList())
             {
-                Die* tmpdie= new Die();
-                *tmpdie= *die;
+                Die* tmpdie= new Die(*die);
+                //*tmpdie= *die;
                 m_diceResult->insertResult(tmpdie);
                 die->displayed();
             }
