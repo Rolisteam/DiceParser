@@ -171,11 +171,11 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
     }
     m_command= str;
     bool hasInstruction= readInstructionList(str);
-
     bool value= hasInstruction;
     if(!hasInstruction)
     {
-        m_errorMap.insert(ExecutionNode::NOTHING_UNDERSTOOD,
+        m_errorMap.insert(
+            ExecutionNode::NOTHING_UNDERSTOOD,
             QObject::tr("Nothing was understood. To roll dice: !1d6 - full documation: "
                         "<a "
                         "href=\"https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md\">https://github.com/"
@@ -184,10 +184,10 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
     else if(hasInstruction && !str.isEmpty())
     {
         auto i= m_command.size() - str.size();
-        m_warningMap.insert(ExecutionNode::UNEXPECTED_CHARACTER,
+        m_warningMap.insert(
+            ExecutionNode::UNEXPECTED_CHARACTER,
             QObject::tr("Unexpected character at %1 - end of command was ignored \"%2\"").arg(i).arg(str));
     }
-
     if(!m_errorMap.isEmpty())
         value= false;
 
@@ -222,7 +222,7 @@ bool DiceParser::readExpression(QString& str, ExecutionNode*& node)
             else
             {
                 m_warningMap.insert(ExecutionNode::BAD_SYNTAXE,
-                    QObject::tr("Expected closing parenthesis - can't validate the inside."));
+                                    QObject::tr("Expected closing parenthesis - can't validate the inside."));
             }
         }
     }
@@ -502,7 +502,7 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
                     faces= die->getFaces();
                     // qDebug() << "face" << faces;
                     HighLightDice hlDice(die->getListValue(), die->isHighlighted(), die->getColor(),
-                        die->hasBeenDisplayed(), die->getFaces());
+                                         die->hasBeenDisplayed(), die->getFaces());
                     list.append(hlDice);
                 }
                 nodeResult.insert(faces, list);
@@ -549,8 +549,8 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList, bo
                                     valuesResult.append(i);
                                 }
                             }
-                            HighLightDice hlDice(
-                                valuesResult, die->isHighlighted(), die->getColor(), die->hasBeenDisplayed(), 0);
+                            HighLightDice hlDice(valuesResult, die->isHighlighted(), die->getColor(),
+                                                 die->hasBeenDisplayed(), 0);
                             listpair.append(hlDice);
                         }
                     }
@@ -686,7 +686,8 @@ bool DiceParser::readDice(QString& str, ExecutionNode*& node)
             {
                 if(max < 1)
                 {
-                    m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,
+                    m_errorMap.insert(
+                        ExecutionNode::BAD_SYNTAXE,
                         QObject::tr("Dice with %1 face(s) does not exist. Please, put a value higher than 0").arg(max));
                     return false;
                 }
@@ -740,7 +741,8 @@ bool DiceParser::readDice(QString& str, ExecutionNode*& node)
             }
             else
             {
-                m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,
+                m_errorMap.insert(
+                    ExecutionNode::BAD_SYNTAXE,
                     QObject::tr(
                         "List is missing after the L operator. Please, add it (e.g : 1L[sword,spear,gun,arrow])"));
             }
@@ -1069,7 +1071,7 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 else
                 {
                     m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,
-                        QObject::tr("Validator is missing after the c operator. Please, change it"));
+                                      QObject::tr("Validator is missing after the c operator. Please, change it"));
                 }
             }
             break;
@@ -1083,7 +1085,8 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                     {
                         if(!m_parsingToolbox->isValidValidator(previous, validator))
                         {
-                            m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,
+                            m_errorMap.insert(
+                                ExecutionNode::BAD_SYNTAXE,
                                 QObject::tr("Validator is missing after the %1 operator. Please, change it")
                                     .arg(operatorName == Reroll ? "r" : "a"));
                         }
@@ -1104,11 +1107,12 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                     else
                     {
                         m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,
-                            QObject::tr("Validator is missing after the %1 operator. Please, change it")
-                                .arg(operatorName == Reroll ? QStringLiteral("r") :
-                                                              operatorName == RerollUntil ?
-                                                              QStringLiteral("R") :
-                                                              operatorName == RerollAndAdd ? QStringLiteral("a") : ""));
+                                          QObject::tr("Validator is missing after the %1 operator. Please, change it")
+                                              .arg(operatorName == Reroll ?
+                                                       QStringLiteral("r") :
+                                                       operatorName == RerollUntil ?
+                                                       QStringLiteral("R") :
+                                                       operatorName == RerollAndAdd ? QStringLiteral("a") : ""));
                     }
                 }
                 break;
@@ -1120,8 +1124,8 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                     if(!m_parsingToolbox->isValidValidator(previous, validator))
                     {
                         m_errorMap.insert(ExecutionNode::ENDLESS_LOOP_ERROR,
-                            QObject::tr("This condition %1 introduces an endless loop. Please, change it")
-                                .arg(validator->toString()));
+                                          QObject::tr("This condition %1 introduces an endless loop. Please, change it")
+                                              .arg(validator->toString()));
                     }
                     ExplodeDiceNode* explodedNode= new ExplodeDiceNode();
                     explodedNode->setValidator(validator);
@@ -1132,7 +1136,7 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 else
                 {
                     m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,
-                        QObject::tr("Validator is missing after the e operator. Please, change it"));
+                                      QObject::tr("Validator is missing after the e operator. Please, change it"));
                 }
             }
             break;
