@@ -176,7 +176,6 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
     }
     m_command= str;
     bool hasInstruction= readInstructionList(str);
-
     bool value= hasInstruction;
     if(!hasInstruction)
     {
@@ -194,7 +193,6 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
             ExecutionNode::UNEXPECTED_CHARACTER,
             QObject::tr("Unexpected character at %1 - end of command was ignored \"%2\"").arg(i).arg(str));
     }
-
     if(!m_errorMap.isEmpty())
         value= false;
 
