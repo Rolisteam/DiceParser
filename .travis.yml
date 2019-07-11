@@ -25,5 +25,5 @@ matrix:
 script:
     - mkdir -p build
     - pushd build
-    - cmake ../ && make -j4 && make test
+    - cmake ../ && make -j4 && env CTEST_OUTPUT_ON_FAILURE=1 make test
     - popd
