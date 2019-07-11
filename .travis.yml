@@ -14,6 +14,8 @@ matrix:
       osx_image: xcode10
       before_install:
           - brew update
+      before_script:
+            - sudo Xvfb :99 -ac -screen 0 1024x768x8 &
       install:
           - brew install cppcheck
           - brew install qt5
@@ -25,5 +27,6 @@ matrix:
 script:
     - mkdir -p build
     - pushd build
-    - cmake ../ && make -j4 && env CTEST_OUTPUT_ON_FAILURE=1 make test
+    - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then (cmake ../ && make -j4 && xvfb-run env CTEST_OUTPUT_ON_FAILURE=1 make test) fi
+    - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then (cmake ../ && make -j4 && env CTEST_OUTPUT_ON_FAILURE=1 make test) fi
     - popd
