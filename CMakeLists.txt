@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(diceparser)
 
-set(QT_REQUIRED_VERSION "5.9.0")
+set(QT_REQUIRED_VERSION "5.12.0")
 find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Test Gui Svg)
 
 enable_testing(true)

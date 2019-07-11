@@ -1,0 +1,27 @@
+language: cpp
+
+matrix:
+  include:
+    - dist: xenial 
+      compiler: clang
+      before_install:
+          - sudo add-apt-repository -y ppa:beineri/opt-qt-5.12.3-xenial 
+          - sudo apt-get -qy update
+      install:
+          - sudo apt-get -qy install  qt${QT}svg qt${QT}base qt${QT}translations  qt${QT}tools
+
+    - os: osx
+      osx_image: xcode10
+      before_install:
+          - brew update
+      install:
+          - brew install cppcheck
+          - brew install qt5
+          - brew link --force qt
+
+script: 
+    - mkdir -p build
+    - pushd build
+    - cmake ../ && make -j4 && make test
+    - popd
+
