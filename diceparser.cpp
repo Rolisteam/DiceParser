@@ -226,6 +226,11 @@ bool DiceParser::readExpression(QString& str, ExecutionNode*& node)
             }
         }
     }
+    else if(readOperatorFromNull(str, operandNode))
+    {
+        node= operandNode;
+        return true;
+    }
     else if(m_parsingToolbox->readOperand(str, operandNode))
     {
         ExecutionNode* diceNode= nullptr;
@@ -255,11 +260,6 @@ bool DiceParser::readExpression(QString& str, ExecutionNode*& node)
         return true;
     }
     else if(readOptionFromNull(str, operandNode))
-    {
-        node= operandNode;
-        return true;
-    }
-    else if(readOperatorFromNull(str, operandNode))
     {
         node= operandNode;
         return true;
