@@ -14,7 +14,6 @@ set(CMAKE_AUTOMOC ON)
 
 set(EXECUTABLE_OUTPUT_PATH bin/)
 
-
 # Find the QtWidgets library
 find_package(Qt5Core)
 include_directories(${Qt5Core_INCLUDES} ../)
@@ -78,5 +77,3 @@ add_executable( dice ${cli_sources} ${dice_QM}   ${documentation_files})
 
 target_link_libraries(dice diceparser ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Svg_LIBRARIES})
 INSTALL_TARGETS(/bin dice)
-
-#qt5_use_modules()

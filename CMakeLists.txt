@@ -4,15 +4,7 @@ project(diceparser)
 
 set(QT_REQUIRED_VERSION "5.9.0")
 find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Test Gui Svg)
-#add_subdirectory(irc)
-#add_subdirectory(mobile)
-#add_subdirectory(webserver)
 
-
-# Add cmake extension
-#find_package(ECM 5.33.0 CONFIG REQUIRED)
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
-#include(ECMAddTests)
 enable_testing(true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} result node)
 
@@ -65,3 +57,6 @@ target_link_libraries(diceparser PUBLIC Qt5::Core Qt5::Gui Qt5::Svg)
 
 add_subdirectory(cli)
 add_subdirectory( tests )
+#add_subdirectory(irc)
+#add_subdirectory(mobile)
+#add_subdirectory(webserver)

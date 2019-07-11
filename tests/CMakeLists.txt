@@ -1,10 +1,4 @@
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-permissive -pedantic -Wall -Wextra")
-
-
-#ecm_add_test(tst_dice.cpp
-#    TEST_NAME "tst_diceparser"
-#LINK_LIBRARIES Qt5::Test Qt5::Widgets Qt5::Qml
-#)
 set(CMAKE_AUTOMOC ON)
 find_package(Qt5Test REQUIRED)
 
