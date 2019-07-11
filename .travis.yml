@@ -8,7 +8,7 @@ matrix:
           - sudo add-apt-repository -y ppa:beineri/opt-qt-5.12.3-xenial
           - sudo apt-get -qy update
       install:
-          - sudo apt-get -qy install  qt512svg qt512base qt512translations  qt512tools
+          - sudo apt-get -qy install  qt512svg qt512base qt512translations  qt512tools mesa-common-dev libglu1-mesa-dev freeglut3-dev
 
     - os: osx
       osx_image: xcode10
