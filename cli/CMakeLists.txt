@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
 option(UPDATE_TRANSLATIONS "update Translation" OFF)
 MESSAGE(STATUS "UPDATE TRANSLATIONS: ${UPDATE_TRANSLATIONS}")
@@ -36,9 +36,9 @@ ADD_DEFINITIONS(
 )
 
 set(dice_RESOURCES diceparser.qrc)
-FIND_PACKAGE(Qt5LinguistTools)
+find_package(Qt5LinguistTools)
 find_package(Qt5Svg)
-   
+
 
 IF(UPDATE_TRANSLATIONS)
 	MESSAGE( update Translation )
@@ -67,57 +67,16 @@ if(Qt5Core_FOUND)
     get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
 endif()
 
-SET( dice_sources 
-    ../diceparser.cpp
-    ../range.cpp
-    ../booleancondition.cpp
-    ../validator.cpp
-    ../compositevalidator.cpp
-    ../operationcondition.cpp
-    ../die.cpp
-    ../parsingtoolbox.cpp
-    ../dicealias.cpp
-    ../result/result.cpp
-    ../result/scalarresult.cpp
-    ../result/stringresult.cpp
-    ../result/diceresult.cpp
-    ../node/countexecutenode.cpp
-    ../node/dicerollernode.cpp
-    ../node/executionnode.cpp
-    ../node/explodedicenode.cpp
-    ../node/helpnode.cpp
-    ../node/mergenode.cpp
-    ../node/jumpbackwardnode.cpp
-    ../node/keepdiceexecnode.cpp
-    ../node/listaliasnode.cpp
-    ../node/listsetrollnode.cpp
-    ../node/numbernode.cpp
-    ../node/parenthesesnode.cpp
-#    ../node/forloopnode.cpp
-    ../node/paintnode.cpp
-    ../node/rerolldicenode.cpp
-    ../node/scalaroperatornode.cpp
-    ../node/sortresult.cpp
-    ../node/startingnode.cpp
-    ../node/filternode.cpp
-    ../node/stringnode.cpp
-    ../node/ifnode.cpp
-    ../node/splitnode.cpp
-    ../node/groupnode.cpp
-    ../node/bind.cpp
-    ../node/occurencecountnode.cpp
-    ../node/uniquenode.cpp
+SET( cli_sources
     main.cpp
     displaytoolbox.cpp
-    ../highlightdice.cpp
-    ../node/variablenode.cpp
 )
 
 set(documentation_files ../HelpMe.md ../README.md)
 
-add_executable( dice ${dice_sources} ${dice_QM}   ${documentation_files})
+add_executable( dice ${cli_sources} ${dice_QM}   ${documentation_files})
 
-target_link_libraries(dice ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Svg_LIBRARIES})
+target_link_libraries(dice diceparser ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Svg_LIBRARIES})
 INSTALL_TARGETS(/bin dice)
 
 #qt5_use_modules()

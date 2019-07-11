@@ -38,6 +38,7 @@
 #include "diceparser.h"
 #include "displaytoolbox.h"
 #include "highlightdice.h"
+#include "parsingtoolbox.h"
 
 /**
  * @page Dice

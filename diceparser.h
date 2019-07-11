@@ -25,20 +25,16 @@
 #include <QMap>
 #include <QString>
 
-#include "node/dicerollernode.h"
-#include "node/executionnode.h"
-
-#include "booleancondition.h"
 #include "dicealias.h"
 #include "highlightdice.h"
-#include "parsingtoolbox.h"
-#include "range.h"
-#include "validator.h"
+#include "node/executionnode.h"
 
 typedef QList<HighLightDice> ListDiceResult;
 typedef QMap<quint64, ListDiceResult> ExportedDiceResult;
 
 class ExplodeDiceNode;
+class ParsingToolBox;
+class DiceRollerNode;
 /**
  * @page DiceParser Dice Parser
  *
