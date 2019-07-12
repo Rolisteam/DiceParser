@@ -27,6 +27,7 @@
 #include "die.h"
 
 // node
+#include "booleancondition.h"
 #include "node/bind.h"
 #include "node/countexecutenode.h"
 #include "node/explodedicenode.h"
@@ -40,9 +41,8 @@
 #include "node/rerolldicenode.h"
 #include "node/sortresult.h"
 #include "node/stringnode.h"
-#include "testnode.h"
 #include "result/stringresult.h"
-#include "booleancondition.h"
+#include "testnode.h"
 
 class TestDice : public QObject
 {
@@ -189,7 +189,6 @@ void TestDice::commandsTest()
 
     m_diceParser->start();
     QVERIFY2(m_diceParser->humanReadableError().isEmpty(), "no error");
-
     QVERIFY2(m_diceParser->humanReadableWarning().isEmpty(), "no warning");
 }
 
@@ -261,6 +260,19 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd72") << "3d100g5";
     QTest::addRow("cmd73") << "3d100g40";
     QTest::addRow("cmd74") << "2d10k1+2d10k1+2d10k1";
+    QTest::addRow("cmd75") << "2d10k1-2d10k1-2d10k1";
+    QTest::addRow("cmd76") << "(2d10k1)-2d10k1-2d10k1";
+    QTest::addRow("cmd77") << "2d10k1-(2d10k1)-2d10k1";
+    QTest::addRow("cmd78") << "2d10k1-2d10k1-(2d10k1)";
+    QTest::addRow("cmd79") << "1d6-2d6e6";
+    QTest::addRow("cmd80") << "(1)-1d6e6";
+    QTest::addRow("cmd81") << "(1)-(1d6e6)";
+    QTest::addRow("cmd82") << "8d10o";
+    QTest::addRow("cmd83") << "8d10o2,4";
+    QTest::addRow("cmd84") << "8d10o2[>2]";
+    QTest::addRow("cmd85") << "8d10ok2";
+    QTest::addRow("cmd86") << "[100,200,300]k2";
+    QTest::addRow("cmd87") << "100;200;300;[$1,$2,$3]k2";
 }
 
 void TestDice::wrongCommandsTest()
