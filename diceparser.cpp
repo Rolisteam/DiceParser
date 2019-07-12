@@ -28,6 +28,7 @@
 
 #include "node/bind.h"
 #include "node/countexecutenode.h"
+#include "node/dicerollernode.h"
 #include "node/explodedicenode.h"
 #include "node/filternode.h"
 #include "node/groupnode.h"
@@ -49,10 +50,10 @@
 #include "node/startingnode.h"
 #include "node/stringnode.h"
 #include "node/uniquenode.h"
+#include "node/valueslistnode.h"
 #include "node/variablenode.h"
 
 #include "booleancondition.h"
-#include "node/dicerollernode.h"
 #include "parsingtoolbox.h"
 #include "range.h"
 #include "validator.h"
@@ -341,6 +342,12 @@ bool DiceParser::readValuesList(QString& str, ExecutionNode*& node)
                     variableNode->setIndex(number - 1);
                     variableNode->setData(&m_startNodes);
                     values->insertValue(variableNode);
+                }
+                else if(ParsingToolBox::readNumber(var, number))
+                {
+                    NumberNode* numberNode= new NumberNode();
+                    numberNode->setNumber(number);
+                    values->insertValue(numberNode);
                 }
             }
             node= values;

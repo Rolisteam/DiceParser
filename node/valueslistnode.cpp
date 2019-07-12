@@ -1,5 +1,7 @@
 #include "valueslistnode.h"
 
+#include "variablenode.h"
+
 ValuesListNode::ValuesListNode() : m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
@@ -16,7 +18,9 @@ void ValuesListNode::run(ExecutionNode* previous)
             continue;
         auto val= result->getResult(Result::SCALAR).toInt();
         Die* die= new Die();
-        die->displayed();
+        auto dyna= dynamic_cast<VariableNode*>(node);
+        if(nullptr != dyna)
+            die->displayed();
         die->insertRollValue(val);
         m_diceResult->insertResult(die);
     }
