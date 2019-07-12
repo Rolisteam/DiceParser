@@ -24,6 +24,7 @@
 #include "validator.h"
 
 class StringResult;
+class DiceResult;
 class OccurenceCountNode : public ExecutionNode
 {
 public:
@@ -45,10 +46,15 @@ public:
     void setValidator(Validator* validator);
 
 private:
+    void runForStringResult(const std::map<qint64, qint64>& mapOccurence, QVector<qint64>& vec);
+    void runForDiceResult(const std::map<qint64, qint64>& mapOccurence);
+
+private:
     qint64 m_width= 1;
     qint64 m_height= 0;
     Validator* m_validator= nullptr;
     StringResult* m_stringResult= nullptr;
+    DiceResult* m_diceResult= nullptr;
 };
 
 #endif // OCCURENCECOUNTNODE_H

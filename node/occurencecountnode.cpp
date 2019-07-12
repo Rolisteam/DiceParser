@@ -21,11 +21,7 @@
 #include "result/diceresult.h"
 #include "result/stringresult.h"
 
-OccurenceCountNode::OccurenceCountNode() : ExecutionNode()
-{
-    m_stringResult= new StringResult();
-    m_result= m_stringResult;
-}
+OccurenceCountNode::OccurenceCountNode() : ExecutionNode() {}
 
 void OccurenceCountNode::run(ExecutionNode* previous)
 {
@@ -35,7 +31,6 @@ void OccurenceCountNode::run(ExecutionNode* previous)
         return;
 
     DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(m_previousNode->getResult());
-    // m_diceResult->setPrevious(previousDiceResult);
     if(nullptr == previousDiceResult)
         return;
 
@@ -55,40 +50,13 @@ void OccurenceCountNode::run(ExecutionNode* previous)
     }
 
     std::sort(vec.begin(), vec.end());
-
-    QStringList list;
-    for(auto key : mapOccurence)
+    if(nullptr == m_nextNode)
     {
-        if(nullptr != m_validator)
-        {
-            Die die;
-            die.insertRollValue(key.first);
-            if(!m_validator->hasValid(&die, true))
-                continue;
-        }
-
-        if(key.second < m_width)
-            continue;
-
-        if(key.first >= m_height)
-            list << QStringLiteral("%1x%2").arg(key.second).arg(key.first);
+        runForStringResult(mapOccurence, vec);
     }
-
-    QStringList resultList;
-    std::for_each(vec.begin(), vec.end(), [&resultList](qint64 val) { resultList << QString::number(val); });
-
-    QString result;
-
-    if(!list.isEmpty())
-        result= list.join(',');
     else
-        result= QObject::tr("No matching result");
-
-    m_stringResult->setText(QStringLiteral("%1 - [%2]").arg(result).arg(resultList.join(',')));
-
-    if(nullptr != m_nextNode)
     {
-        m_nextNode->run(this);
+        runForDiceResult(mapOccurence);
     }
 }
 QString OccurenceCountNode::toString(bool label) const
@@ -109,6 +77,7 @@ ExecutionNode* OccurenceCountNode::getCopy() const
 qint64 OccurenceCountNode::getPriority() const
 {
     qint64 priority= 0;
+
     if(nullptr != m_previousNode)
     {
         priority= m_previousNode->getPriority();
@@ -144,4 +113,70 @@ Validator* OccurenceCountNode::getValidator() const
 void OccurenceCountNode::setValidator(Validator* validator)
 {
     m_validator= validator;
+}
+void OccurenceCountNode::runForStringResult(const std::map<qint64, qint64>& mapOccurence, QVector<qint64>& vec)
+{
+    m_stringResult= new StringResult();
+    m_result= m_stringResult;
+    QStringList list;
+    for(auto key : mapOccurence)
+    {
+        if(nullptr != m_validator)
+        {
+            Die die;
+            die.insertRollValue(key.first);
+            if(!m_validator->hasValid(&die, true))
+                continue;
+        }
+
+        if(key.second < m_width)
+            continue;
+
+        if(key.first >= m_height)
+            list << QStringLiteral("%1x%2").arg(key.second).arg(key.first);
+    }
+
+    QStringList resultList;
+    std::for_each(vec.begin(), vec.end(), [&resultList](qint64 val) { resultList << QString::number(val); });
+
+    QString result;
+
+    if(!list.isEmpty())
+        result= list.join(',');
+    else
+        result= QObject::tr("No matching result");
+
+    m_stringResult->setText(QStringLiteral("%1 - [%2]").arg(result).arg(resultList.join(',')));
+}
+void OccurenceCountNode::runForDiceResult(const std::map<qint64, qint64>& mapOccurence)
+{
+    m_diceResult= new DiceResult();
+    m_result= m_diceResult;
+    QStringList list;
+    for(auto key : mapOccurence)
+    {
+        if(nullptr != m_validator)
+        {
+            Die die;
+            die.insertRollValue(key.first);
+            if(!m_validator->hasValid(&die, true))
+                continue;
+        }
+
+        if(key.second < m_width)
+            continue;
+
+        if(key.first >= m_height)
+        {
+            // list << QStringLiteral("%1x%2").arg(key.second).arg(key.first);
+            Die* die= new Die();
+            die->insertRollValue(key.second * key.first);
+            m_diceResult->insertResult(die);
+        }
+    }
+
+    if(nullptr != m_nextNode)
+    {
+        m_nextNode->run(this);
+    }
 }

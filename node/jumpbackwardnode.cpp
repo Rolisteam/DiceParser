@@ -128,8 +128,8 @@ void JumpBackwardNode::run(ExecutionNode* previous)
         {
             for(auto& die : diceResult->getResultList())
             {
-                Die* tmpdie= new Die();
-                *tmpdie= *die;
+                Die* tmpdie= new Die(*die);
+                //*tmpdie= *die;
                 m_diceResult->insertResult(tmpdie);
                 die->displayed();
             }

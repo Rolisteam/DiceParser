@@ -50,6 +50,7 @@ SET( dice_sources
     node/uniquenode.cpp
     highlightdice.cpp
     node/variablenode.cpp
+    node/valueslistnode.cpp
 )
 
 add_library(diceparser SHARED ${dice_sources} )

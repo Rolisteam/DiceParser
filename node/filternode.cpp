@@ -34,8 +34,8 @@ void FilterNode::run(ExecutionNode* previous)
         {
             if(m_validator->hasValid(tmp, m_eachValue))
             {
-                Die* tmpdie= new Die();
-                *tmpdie= *tmp;
+                Die* tmpdie= new Die(*tmp);
+                //*tmpdie= *tmp;
                 diceList2.append(tmpdie);
                 tmp->displayed();
             }

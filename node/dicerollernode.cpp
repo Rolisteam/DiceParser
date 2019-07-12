@@ -19,18 +19,19 @@ void DiceRollerNode::run(ExecutionNode* previous)
         Result* result= previous->getResult();
         if(nullptr != result)
         {
-            m_diceCount= static_cast<quint64>(result->getResult(Result::SCALAR).toReal());
-            m_result->setPrevious(result);
-
-            if(m_diceCount == 0)
+            auto num= result->getResult(Result::SCALAR).toReal();
+            if(num <= 0)
             {
                 m_errors.insert(NO_DICE_TO_ROLL, QObject::tr("No dice to roll"));
             }
+            m_diceCount= num > 0 ? static_cast<quint64>(num) : 0;
+            m_result->setPrevious(result);
+
             auto possibleValue= static_cast<quint64>(std::abs((m_max - m_min) + 1));
             if(possibleValue < m_diceCount && m_unique)
             {
-                m_errors.insert(
-                    TOO_MANY_DICE, QObject::tr("More unique values asked than possible values (D operator)"));
+                m_errors.insert(TOO_MANY_DICE,
+                                QObject::tr("More unique values asked than possible values (D operator)"));
                 return;
             }
 

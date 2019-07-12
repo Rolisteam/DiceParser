@@ -10,6 +10,7 @@ TestNode::~TestNode()
 }
 void TestNode::run(ExecutionNode* previous)
 {
+    Q_UNUSED(previous)
     if(nullptr != m_nextNode)
     {
         m_nextNode->run(this);

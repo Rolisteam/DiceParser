@@ -28,6 +28,7 @@
 
 #include "node/bind.h"
 #include "node/countexecutenode.h"
+#include "node/dicerollernode.h"
 #include "node/explodedicenode.h"
 #include "node/filternode.h"
 #include "node/groupnode.h"
@@ -49,10 +50,10 @@
 #include "node/startingnode.h"
 #include "node/stringnode.h"
 #include "node/uniquenode.h"
+#include "node/valueslistnode.h"
 #include "node/variablenode.h"
 
 #include "booleancondition.h"
-#include "node/dicerollernode.h"
 #include "parsingtoolbox.h"
 #include "range.h"
 #include "validator.h"
@@ -176,7 +177,6 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
     }
     m_command= str;
     bool hasInstruction= readInstructionList(str);
-
     bool value= hasInstruction;
     if(!hasInstruction)
     {
@@ -194,7 +194,6 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
             ExecutionNode::UNEXPECTED_CHARACTER,
             QObject::tr("Unexpected character at %1 - end of command was ignored \"%2\"").arg(i).arg(str));
     }
-
     if(!m_errorMap.isEmpty())
         value= false;
 
@@ -233,6 +232,11 @@ bool DiceParser::readExpression(QString& str, ExecutionNode*& node)
             }
         }
     }
+    else if(readOperatorFromNull(str, operandNode))
+    {
+        node= operandNode;
+        return true;
+    }
     else if(m_parsingToolbox->readOperand(str, operandNode))
     {
         ExecutionNode* diceNode= nullptr;
@@ -266,7 +270,7 @@ bool DiceParser::readExpression(QString& str, ExecutionNode*& node)
         node= operandNode;
         return true;
     }
-    else if(readOperatorFromNull(str, operandNode))
+    else if(readValuesList(str, operandNode))
     {
         node= operandNode;
         return true;
@@ -312,6 +316,43 @@ bool DiceParser::readOperatorFromNull(QString& str, ExecutionNode*& node)
         nodePrevious.setNextNode(nullptr);
         node= nodeNext;
         return true;
+    }
+    return false;
+}
+
+bool DiceParser::readValuesList(QString& str, ExecutionNode*& node)
+{
+    if(str.startsWith("["))
+    {
+        str= str.remove(0, 1);
+        int pos= ParsingToolBox::findClosingCharacterIndexOf('[', ']', str, 1); // str.indexOf("]");
+        if(-1 != pos)
+        {
+            QString liststr= str.left(pos);
+            auto list= liststr.split(",");
+            str= str.remove(0, pos + 1);
+            auto values= new ValuesListNode();
+            for(auto var : list)
+            {
+                qint64 number= 1;
+                QString error;
+                if(ParsingToolBox::readDynamicVariable(var, number))
+                {
+                    VariableNode* variableNode= new VariableNode();
+                    variableNode->setIndex(number - 1);
+                    variableNode->setData(&m_startNodes);
+                    values->insertValue(variableNode);
+                }
+                else if(ParsingToolBox::readNumber(var, number))
+                {
+                    NumberNode* numberNode= new NumberNode();
+                    numberNode->setNumber(number);
+                    values->insertValue(numberNode);
+                }
+            }
+            node= values;
+            return true;
+        }
     }
     return false;
 }

@@ -111,7 +111,7 @@ public:
      * @param str
      * @return
      */
-    Validator* readValidator(QString& str);
+    Validator* readValidator(QString& str, bool hasSquare=false);
     /**
      * @brief readCompositeValidator
      * @param str
