@@ -27,6 +27,7 @@
 #include "die.h"
 
 // node
+#include "booleancondition.h"
 #include "node/bind.h"
 #include "node/countexecutenode.h"
 #include "node/explodedicenode.h"
@@ -40,9 +41,8 @@
 #include "node/rerolldicenode.h"
 #include "node/sortresult.h"
 #include "node/stringnode.h"
-#include "testnode.h"
 #include "result/stringresult.h"
-#include "booleancondition.h"
+#include "testnode.h"
 
 class TestDice : public QObject
 {
