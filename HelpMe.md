@@ -2,9 +2,9 @@
 
 # Table of Contents
 
-* [DiceParser](#diceparser--what-is-it-) 
-* [Roll a die](#how-to-roll-a-die) 
-* [List of operator](#list-of-operator) 
+* [DiceParser](#diceparser--what-is-it-)
+* [Roll a die](#how-to-roll-a-die)
+* [List of operator](#list-of-operator)
     * [Keep](#keep)
     * [Explode and Keep](#explode-and-keep)
     * [Keep Lower dice](#keep-lower-dice)
@@ -22,12 +22,13 @@
     * [Group](#group)
     * [Spread](#spread)
     * [Unique](#unique)
+    * [Value list](#Value-list)
     * [Comment (\#)](#comment-)
-* [Arithmetic](#arithmetic) 
-* [Arithmetic and Dice](#arithmetic-and-dice) 
-* [Validator](#validator) 
-* [Value from set](#select-value-from-list) 
-* [Miscellaneous examples](#examples) 
+* [Arithmetic](#arithmetic)
+* [Arithmetic and Dice](#arithmetic-and-dice)
+* [Validator](#validator)
+* [Value from set](#select-value-from-list)
+* [Miscellaneous examples](#examples)
 * [Best Practices](#best-practices)
 * [Platforms](#roll-dice-on-each-platform)
 * [Discord bot](#discord-bot)
@@ -42,12 +43,12 @@ Such as: Irc bot, discord bot, included in Rolisteam, web server, on twitter etc
 
 ## About examples in this documentation
 
-To make it clear, all examples in this documentation do not show the start up prefix. 
-Please, remember to add the proper prefix given where you run dice command: Rolisteam, discord, IRC… 
-If you don't know, try `!`. 
+To make it clear, all examples in this documentation do not show the start up prefix.
+Please, remember to add the proper prefix given where you run dice command: Rolisteam, discord, IRC…
+If you don't know, try `!`.
 The prefix allows the system to identify your command.
 
-## How to roll a die 
+## How to roll a die
 
 It is real simple. you have to call:
 > 1d6
@@ -89,7 +90,7 @@ Rolling 3 dice with 10 faces starting at 0.
 Rolling 3 dice, values are between -20 and -9.
 
 
-### Instruction: Roll two (or more) kinds of dice at once 
+### Instruction: Roll two (or more) kinds of dice at once
 
 Adding (or any arithmetic operations) results from two (or more) kinds of dice is easy:
 
@@ -106,8 +107,8 @@ or
 
 ### Merge
 
-It is possible to merge every instruction inside a huge one. 
-The operator merge is dedicated to that. 
+It is possible to merge every instruction inside a huge one.
+The operator merge is dedicated to that.
 It is useful when you need to manage all diceresult as the same result.
 
 For example, if you need to keep the higher dice between a d6 and d8.
@@ -127,7 +128,7 @@ the number of instruction is not limited.
 
 > 8d10;$1c[>6];$1c1;$2-$3
 
-* The first instruction rolls 8 (10 sided) dice 
+* The first instruction rolls 8 (10 sided) dice
 * The second instruction counts how many dice are higher than 6.
 * The third instruction counts how many dice are equal to 1.
 * The fourth instruction substracts the result of the third instruction to the result of seconde one.
@@ -248,10 +249,19 @@ Result: `2x8 - [1,2,3,5,6,7,8,8,9,10]`
 Count and sort occurence when they occur at least 2 times, the value should respect the validator (here less than 6).
 Result: `2x3,2x5 - [3,3,5,5,6,6,6,7,7,8]`
 
+
+#### Errors
+
+> 10d10o[<6]
+
+This command is triggering a warning. As occurence operator can have 0 or 2 parameters. But only one validator is unsupported yet.
+
+
+
 ### Backward Jump
 
 This operator is dedicated to apply its next operator to the second to last result.
-For example: 
+For example:
 
 > 8D10c[>=7]+@c[=10]
 
@@ -263,7 +273,7 @@ c[=10] in this command is counting the number of 10 in the result of 8D10, if yo
 
 Paint the first die in the list in blue
 
-> 8d10p[2:blue] 
+> 8d10p[2:blue]
 
 Paint the two first dice in the list in blue.
 
@@ -300,19 +310,29 @@ It makes exploded dice as new dice.
 
 > 4d6e6u
 
-
 Result: 6 4 3 3 2
 Final result: 6+4+3 = 13
 
+### Value list
+
+Build your own value list and apply any dice operator.
+
+> [10,25,43,8]k1
+
+Get the higher score from several instruction:
+
+> 1d10;2d6+9;1d20;[$1,$2,$3,$4]k1
+
+Each value is transformed into a die.
 
 ### Bind
 
-Bind works exactly as merge but one thing.
+Bind works exactly as merge but it keeps instruction array untouched.
 
 > !2d8;2d12b;$2k2;$2k2kl1;"your total is $3 with lowest: $4"
 
 Roll two 8-sided dice and two 12-sided dice then bind their results. using this final result, we keep the 2 higher dice and then we isolate the lowest of the two highest.
-At the end, we display the result inside a setence. 
+At the end, we display the result inside a sentence.
 
 ### if
 
@@ -415,8 +435,8 @@ or
 
 In this example, the critical fail happens when there are more fails than success.
 
-  
-  
+
+
 In the next example, the critical fail happens when there was no success and a least one fail.
 
 > 8d10;$1c[>6];$1c1;$2-$3;$4i:[=0]{"Fail $4 [%2]"}{$4i:[>0]{"$2 Success[%2]"}{$2i:[=0]{"Critical Fail $4 [%2]"}{"Fail $4 [%2]"}}}
@@ -428,7 +448,7 @@ Group dices, then count the number of group (7th sea system).
 
 #### Example
 
-> 3d20g10 
+> 3d20g10
 
 This will roll 3 dices and then try to group them to make groups of 10. If you get `9 9 2`, you can only create one group whose value is more or equal to ten (`{9,2}`, the second `9` being "wasted").
 
@@ -437,7 +457,7 @@ The `g` operator is allowed to re-order dices to create groups. When rolling `4d
 
 ### Comment (\#)
 
-> 2D6 # Sword attack 
+> 2D6 # Sword attack
 
 Display "Sword attack" and the result of the two dice.
 DiceParser ignore everything after the \#. The whole part is treated as one comment.
@@ -452,7 +472,7 @@ yes
 
 ## Arithmetic
 
-Rolisteam Dice Parser is able to compute primary arithmetic operation such as: +, -, /, * and it also manages those operator priority and it can also manage parenthesis. 
+Rolisteam Dice Parser is able to compute primary arithmetic operation such as: +, -, /, * and it also manages those operator priority and it can also manage parenthesis.
 
 > 8+8+8
 
@@ -484,8 +504,8 @@ Result: 2.5
 
 ## Arithmetic and Dice
 
-It is possible to use arithmetic opearation on dice. Please pay attention that the default operation to translate a 
-dice list to scalar is the sum. So if you roll `3d6`, the result will be a list with 3 values {2, 5 ,1}. Now, we 
+It is possible to use arithmetic opearation on dice. Please pay attention that the default operation to translate a
+dice list to scalar is the sum. So if you roll `3d6`, the result will be a list with 3 values {2, 5 ,1}. Now, we
 change a bit the command `3d6+4`: It is resolved like this: {2, 5 ,1} = 8; 8+4 = 12. The final result is 12.
 
 > 3d6+4
@@ -502,14 +522,14 @@ Substract the result of 1 die to 87
 
 > (6-4)D10
 
-Substract 4 to 6 and then roll two dice. 
+Substract 4 to 6 and then roll two dice.
 
 > 1D10/2
 
 Divide by 2 the result of 1 die.
 
 > (2+2)^2
-Result: 16 
+Result: 16
 
 > 1d10^2
 
@@ -529,7 +549,7 @@ There are three kind of Validator:
 
 Any operator which requires validator (such as `a,r,e,c`) can use those three kind.
 
-### Scalar 
+### Scalar
 
 The scalar value sets the validator on eguality between the dice value and the validator
 
@@ -612,7 +632,7 @@ compute: 24
 
 > 1L[sword,bow,knife,gun,shotgun]
 
-One of this word will be picked. 
+One of this word will be picked.
 
 > 8D10c[Validator1]-@c[validator2]
 
@@ -624,7 +644,7 @@ Old World in darkness system.
 
 > 8D10c[>=7]+@c[=10]
 
-Exalted 2nd edition system. 
+Exalted 2nd edition system.
 
 
 ## Best Practices
@@ -682,7 +702,7 @@ The k operator to keeps as many dice as you roll is pretty useless because it is
 ### To change the prefix
 > !prefix set newprefix
 
-/!\ Please, don't set "newprefix" as your new prefix. 
+/!\ Please, don't set "newprefix" as your new prefix.
 
 ### Set the prefix by default
 
@@ -694,7 +714,7 @@ The k operator to keeps as many dice as you roll is pretty useless because it is
 
 > roll 2d6
 
-> rollprefix set ! 
+> rollprefix set !
 
 # Macro management
 
@@ -761,5 +781,3 @@ All lines must be part of the same messages, so prepare it first.
 
 Please fulfill a ticket in our [Bug tracker](https://github.com/Rolisteam/DiceParser/issues) system.
 Or contact us on [discord](https://discordapp.com/invite/MrMrQwX) or any [other ways](http://www.rolisteam.org/contact.html)
-
-
