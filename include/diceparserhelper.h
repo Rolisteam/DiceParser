@@ -6,7 +6,7 @@ namespace Dice
 
 enum class CONDITION_STATE : int
 {
-    ERROR,
+    ERROR_STATE,
     ALWAYSTRUE,
     UNREACHABLE,
     REACHABLE

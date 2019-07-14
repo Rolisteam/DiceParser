@@ -604,7 +604,7 @@ Dice::CONDITION_STATE ParsingToolBox::isValidValidator(ExecutionNode* previous, 
 {
     DiceRollerNode* node= getDiceRollerNode(previous);
     if(nullptr == node)
-        return Dice::CONDITION_STATE::ERROR;
+        return Dice::CONDITION_STATE::ERROR_STATE;
 
     return val->isValidRangeSize(node->getRange());
 }

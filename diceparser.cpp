@@ -1134,7 +1134,7 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                                                       .arg(symbol));
                             }
                             break;
-                        case Dice::CONDITION_STATE::ERROR:
+                        case Dice::CONDITION_STATE::ERROR_STATE:
                         default:
                             break;
                         }

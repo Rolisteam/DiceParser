@@ -116,7 +116,7 @@ Dice::CONDITION_STATE OperationCondition::isValidRangeSize(const std::pair<qint6
     die.insertRollValue(range.first);
 
     if(nullptr == m_boolean)
-        return Dice::CONDITION_STATE::ERROR;
+        return Dice::CONDITION_STATE::ERROR_STATE;
 
     if(rangeIsClose && m_boolean->hasValid(&die, false, false))
         valid= Dice::CONDITION_STATE::ALWAYSTRUE;

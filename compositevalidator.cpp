@@ -136,15 +136,15 @@ Dice::CONDITION_STATE CompositeValidator::isValidRangeSize(const std::pair<qint6
         m_validatorList.begin(), m_validatorList.end(), std::back_inserter(vec),
         [range](Validator* validator) -> Dice::CONDITION_STATE { return validator->isValidRangeSize(range); });
 
-    auto itError= std::find(vec.begin(), vec.end(), Dice::CONDITION_STATE::ERROR);
+    auto itError= std::find(vec.begin(), vec.end(), Dice::CONDITION_STATE::ERROR_STATE);
 
     if((static_cast<int>(vec.size()) != m_operators.size() + 1) || (itError != vec.end()))
     {
-        return Dice::CONDITION_STATE::ERROR;
+        return Dice::CONDITION_STATE::ERROR_STATE;
     }
 
     std::size_t i= 0;
-    Dice::CONDITION_STATE val;
+    Dice::CONDITION_STATE val = Dice::CONDITION_STATE::ERROR_STATE;
     for(const auto& op : m_operators)
     {
         auto currentState= vec[i + 1];
@@ -164,7 +164,7 @@ Dice::CONDITION_STATE CompositeValidator::isValidRangeSize(const std::pair<qint6
             val= testXOR(val, currentState);
             break;
         case NONE:
-            val= Dice::CONDITION_STATE::ERROR;
+            val= Dice::CONDITION_STATE::ERROR_STATE;
             break;
         }
 
