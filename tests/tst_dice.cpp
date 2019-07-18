@@ -105,6 +105,9 @@ private slots:
     void ifTest();
     void ifTest_data();
 
+    void ifCommandTest();
+    void ifCommandTest_data();
+
     void paintTest();
     void paintTest_data();
 
@@ -931,6 +934,64 @@ void TestDice::occurenceTest_data()
 
     QTest::addRow("cmd1") << QVector<int>({8, 8, 2}) << 7 << "2x8";
     QTest::addRow("cmd2") << QVector<int>({0, 0, 0}) << 1 << "No matching result";
+}
+
+void TestDice::ifCommandTest()
+{
+    QFETCH(QString, cmd);
+    QFETCH(BooleanCondition::LogicOperator, compare);
+    QFETCH(QList<int>, level);
+    QFETCH(QStringList, startExperted);
+
+    bool test= m_diceParser->parseLine(cmd);
+    QVERIFY2(test, cmd.toStdString().c_str());
+    m_diceParser->start();
+    auto results= m_diceParser->getLastIntegerResults();
+    auto strResult= m_diceParser->getStringResult();
+
+    QCOMPARE(results.size(), 1);
+    QCOMPARE(strResult.size(), 1);
+
+    auto result= results.first();
+    auto it= std::find_if(level.begin(), level.end(), [compare, result](int level) {
+        if(compare == BooleanCondition::GreaterOrEqual)
+            return result >= level;
+        else if(compare == BooleanCondition::GreaterThan)
+            return result > level;
+        else if(compare == BooleanCondition::LesserThan)
+            return result < level;
+        else if(compare == BooleanCondition::LesserOrEqual)
+            return result <= level;
+        else if(compare == BooleanCondition::Equal)
+            return qFuzzyCompare(result, level);
+        else // if(compare == BooleanCondition::Different)
+            return !qFuzzyCompare(result, level);
+    });
+
+    auto index= std::distance(level.begin(), it);
+
+    auto strResultExpected= startExperted[index];
+    auto resultText= strResult.first();
+
+    QVERIFY2(resultText.startsWith(strResultExpected), "string result does not fit the expectation");
+}
+
+void TestDice::ifCommandTest_data()
+{
+    QTest::addColumn<QString>("cmd");
+    QTest::addColumn<BooleanCondition::LogicOperator>("compare");
+    QTest::addColumn<QList<int>>("level");
+    QTest::addColumn<QStringList>("startExperted");
+
+    QTest::addRow("cmd1") << "2d10i:[>=15]{\"Complete Success: %1 [%2]\"}{i:[>=10]{\"Success with Complications: %1 "
+                             "[%2]\"}{\"Failure: %1 [%2]\"}}"
+                          << BooleanCondition::GreaterOrEqual << QList<int>({15, 10, 1})
+                          << QStringList({"Complete Success:", "Success with Complications:", "Failure:"});
+    QTest::addRow("cmd2")
+        << "2d10;$1i:[>=15]{\"Complete Success: %1 [%2]\"}{$1i:[>=10]{\"Success with Complications: %1 "
+           "[%2]\"}{\"Failure: %1 [%2]\"}}"
+        << BooleanCondition::GreaterOrEqual << QList<int>({15, 10, 1})
+        << QStringList({"Complete Success:", "Success with Complications:", "Failure:"});
 }
 
 void TestDice::cleanupTestCase() {}

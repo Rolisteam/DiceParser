@@ -65,4 +65,5 @@ private:
     ExecutionNode* m_value= nullptr;
 };
 
+Q_DECLARE_METATYPE(BooleanCondition::LogicOperator)
 #endif // BOOLEANCONDITION_H
