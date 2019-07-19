@@ -52,7 +52,7 @@ public:
     TestDice();
 
 private slots:
-    void initTestCase();
+    void init();
     void getAndSetTest();
     void diceRollD10Test();
     void diceRollD20Test();
@@ -114,11 +114,11 @@ private slots:
     void filterTest();
     void filterTest_data();
 
-    void splitTest();
-    void splitTest_data();
-
     void uniqueTest();
     void uniqueTest_data();
+
+    void spreadTest();
+    void spreadTest_data();
 
     void groupTest();
     void groupTest_data();
@@ -136,7 +136,7 @@ private:
 
 TestDice::TestDice() {}
 
-void TestDice::initTestCase()
+void TestDice::init()
 {
     m_die.reset(new Die());
     m_diceParser.reset(new DiceParser());
@@ -471,6 +471,18 @@ void makeResult(DiceResult& result, const QVector<int>& values)
         die->insertRollValue(val);
         result.insertResult(die);
     }
+}
+
+void makeResultExplode(DiceResult& result, const QVector<int>& values)
+{
+    auto die= new Die();
+    die->setBase(1);
+    die->setMaxValue(10);
+    for(int val : values)
+    {
+        die->insertRollValue(val);
+    }
+    result.insertResult(die);
 }
 
 Validator* makeValidator(int number, BooleanCondition::LogicOperator op)
@@ -891,9 +903,34 @@ void TestDice::filterTest_data()
     QTest::addRow("cmd2") << QVector<int>({0, 0, 0}) << 1 << false;
 }
 
-void TestDice::splitTest() {}
-void TestDice::splitTest_data() {}
 
+void TestDice::spreadTest()
+{
+    QFETCH(QVector<int>, values);
+
+    TestNode node;
+    SplitNode split;
+
+    DiceResult result;
+    makeResultExplode(result, values);
+    node.setResult(&result);
+
+    node.setNextNode(&split);
+
+    node.run(nullptr);
+
+    auto list= dynamic_cast<DiceResult*>(split.getResult())->getResultList();
+
+    auto expected= result.getResultList();
+    QVERIFY(list.size() == values.size());
+}
+
+void TestDice::spreadTest_data()
+{
+    QTest::addColumn<QVector<int>>("values");
+
+    QTest::addRow("cmd1") << QVector<int>({8, 4, 2});
+}
 void TestDice::uniqueTest() {}
 void TestDice::uniqueTest_data() {}
 
