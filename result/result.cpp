@@ -27,7 +27,7 @@ Result::Result() : m_resultTypes(NONE), m_id(QString("\"%1\"").arg(QUuid::create
 }
 Result::~Result() {}
 
-Result* Result::getPrevious()
+Result* Result::getPrevious() const
 {
     return m_previous;
 }

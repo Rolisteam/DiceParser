@@ -64,7 +64,7 @@ public:
      * @brief getPrevious
      * @return
      */
-    virtual Result* getPrevious();
+    virtual Result* getPrevious() const;
     /**
      * @brief setPrevious
      */
