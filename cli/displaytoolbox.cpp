@@ -133,12 +133,12 @@ QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList, bool&
         {
             allSameFaceCount= false;
         }
-        for(int face : dice.keys())
+        for(quint64 face : dice.keys())
         {
             ListDiceResult diceResults= dice.value(face);
             QJsonObject object;
             QJsonArray values;
-            object["face"]= face;
+            object["face"]= static_cast<int>(face);
             for(auto const& dice : diceResults)
             {
                 QJsonObject diceObj;
@@ -146,7 +146,7 @@ QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList, bool&
                 if(!listValues.isEmpty())
                 {
                     diceObj["total"]= static_cast<qint64>(listValues.takeFirst());
-                    diceObj["face"]= face;
+                    diceObj["face"]= static_cast<int>(face);
                     auto color= dice.getColor();
                     diceObj["color"]= color;
                     if(!colorList.contains(color))

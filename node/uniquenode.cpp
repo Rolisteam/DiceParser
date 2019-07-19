@@ -31,31 +31,27 @@ void UniqueNode::run(ExecutionNode* previous)
     if(nullptr != previous)
     {
         m_result->setPrevious(previous->getResult());
-
-
         Result* tmpResult= previous->getResult();
         if(nullptr != tmpResult)
         {
             DiceResult* dice= dynamic_cast<DiceResult*>(tmpResult);
             if(nullptr != dice)
             {
-                auto const& resultList = dice->getResultList();
+                auto const& resultList= dice->getResultList();
                 std::vector<qint64> formerValues;
                 formerValues.reserve(resultList.size());
                 for(auto& oldDie : resultList)
                 {
-                   auto value=oldDie->getValue();
-                   auto it = std::find(formerValues.begin(), formerValues.end(), value);
+                    auto value= oldDie->getValue();
+                    auto it= std::find(formerValues.begin(), formerValues.end(), value);
 
-
-                   if(it == formerValues.end())
-                   {
-                       auto die = new Die(*oldDie);
-                       //*die = *oldDie;
-                       m_diceResult->insertResult(die);
-                       formerValues.push_back(value);
-                   }
-                   oldDie->displayed();
+                    if(it == formerValues.end())
+                    {
+                        auto die= new Die(*oldDie);
+                        m_diceResult->insertResult(die);
+                        formerValues.push_back(value);
+                    }
+                    oldDie->displayed();
                 }
             }
         }
