@@ -71,3 +71,8 @@ void Result::generateDotTree(QString& s)
         s.append(" [label=\"previousResult\", shape=\"box\"];\n");
     }
 }
+
+QString Result::getId() const
+{
+    return m_id;
+}
