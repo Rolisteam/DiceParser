@@ -48,7 +48,6 @@
 #include "node/sortresult.h"
 #include "node/splitnode.h"
 #include "node/startingnode.h"
-#include "node/stringnode.h"
 #include "node/uniquenode.h"
 #include "node/valueslistnode.h"
 #include "node/variablenode.h"
@@ -232,6 +231,11 @@ bool DiceParser::readExpression(QString& str, ExecutionNode*& node)
             }
         }
     }
+    else if(readOptionFromNull(str, operandNode))
+    {
+        node= operandNode;
+        return true;
+    }
     else if(readOperatorFromNull(str, operandNode))
     {
         node= operandNode;
@@ -261,11 +265,6 @@ bool DiceParser::readExpression(QString& str, ExecutionNode*& node)
         return true;
     }
     else if(readNode(str, operandNode))
-    {
-        node= operandNode;
-        return true;
-    }
-    else if(readOptionFromNull(str, operandNode))
     {
         node= operandNode;
         return true;
@@ -385,6 +384,7 @@ void DiceParser::start()
 QList<qreal> DiceParser::getLastIntegerResults()
 {
     QList<qreal> resultValues;
+    QStringList alreadyVisitedNode;
     for(auto node : m_startNodes)
     {
         ExecutionNode* next= getLeafNode(node);
@@ -394,7 +394,11 @@ QList<qreal> DiceParser::getLastIntegerResults()
         {
             if(result->hasResultOfType(Result::SCALAR))
             {
-                resultValues << result->getResult(Result::SCALAR).toReal();
+                if(!alreadyVisitedNode.contains(result->getId()))
+                {
+                    resultValues << result->getResult(Result::SCALAR).toReal();
+                    alreadyVisitedNode << result->getId();
+                }
                 scalarDone= true;
             }
             result= result->getPrevious();
@@ -420,7 +424,8 @@ QStringList DiceParser::getStringResult()
             }
             result= result->getPrevious();
         }
-        stringListResult << str;
+        if(!str.isEmpty())
+            stringListResult << str;
     }
     return stringListResult;
 }

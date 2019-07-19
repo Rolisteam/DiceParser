@@ -133,30 +133,30 @@ void IfNode::run(ExecutionNode* previous)
                     }
                 }
             }
-        }
-
-        if(m_conditionType == OnScalar)
-        {
-            Die* dice= new Die();
-            dice->setValue(value);
-            dice->insertRollValue(value);
-            dice->setMaxValue(value);
-            if(m_validator->hasValid(dice, true, true))
+            if(m_conditionType == OnScalar)
             {
-                nextNode= m_true;
-            }
-            else
-            {
-                nextNode= m_false;
-            }
-            if(nullptr != nextNode)
-            {
-                if(nullptr == m_nextNode)
+                Die dice;
+                auto val= static_cast<qint64>(value);
+                dice.setValue(val);
+                dice.insertRollValue(val);
+                dice.setMaxValue(val);
+                if(m_validator->hasValid(&dice, true, true))
                 {
-                    m_nextNode= nextNode;
+                    nextNode= m_true;
                 }
-                nextNode->run(previousLoop);
-                previousLoop= getLeafNode(nextNode);
+                else
+                {
+                    nextNode= m_false;
+                }
+                if(nullptr != nextNode)
+                {
+                    if(nullptr == m_nextNode)
+                    {
+                        m_nextNode= nextNode;
+                    }
+                    nextNode->run(previousLoop);
+                    previousLoop= getLeafNode(nextNode);
+                }
             }
         }
     }

@@ -174,7 +174,10 @@ void Die::displayed()
 {
     m_displayStatus= true;
 }
-
+void Die::setDisplayed(bool b)
+{
+    m_displayStatus= b;
+}
 void Die::setHighlighted(bool a)
 {
     m_highlighted= a;

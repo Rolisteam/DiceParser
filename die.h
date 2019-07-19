@@ -142,6 +142,7 @@ public:
 
     Die::ArithmeticOperator getOp() const;
     void setOp(const Die::ArithmeticOperator& op);
+    void setDisplayed(bool b);
 
 private:
     qint64 m_value= 0;

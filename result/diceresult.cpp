@@ -178,13 +178,16 @@ Result* DiceResult::getCopy() const
     auto copy= new DiceResult();
     copy->setHomogeneous(m_homogeneous);
     copy->setOperator(m_operator);
+    copy->m_id= m_id;
     QList<Die*> list;
     for(auto die : m_diceValues)
     {
         auto newdie= new Die(*die);
+        newdie->setDisplayed(false);
         die->displayed();
         list.append(newdie);
     }
     copy->setResultList(list);
+    copy->setPrevious(getPrevious());
     return copy;
 }
