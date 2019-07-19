@@ -40,7 +40,9 @@
 #include "node/occurencecountnode.h"
 #include "node/rerolldicenode.h"
 #include "node/sortresult.h"
+#include "node/splitnode.h"
 #include "node/stringnode.h"
+#include "node/uniquenode.h"
 #include "result/stringresult.h"
 #include "testnode.h"
 
@@ -903,6 +905,37 @@ void TestDice::filterTest_data()
     QTest::addRow("cmd2") << QVector<int>({0, 0, 0}) << 1 << false;
 }
 
+void TestDice::uniqueTest()
+{
+    QFETCH(QVector<int>, values);
+    QFETCH(QVector<int>, expected);
+
+    TestNode node;
+    UniqueNode unique;
+
+    DiceResult result;
+    makeResult(result, values);
+    node.setResult(&result);
+
+    node.setNextNode(&unique);
+    node.run(nullptr);
+
+    auto list= dynamic_cast<DiceResult*>(unique.getResult())->getResultList();
+    QVector<int> resultVal;
+
+    std::transform(list.begin(), list.end(), std::back_inserter(resultVal), [](Die* die) { return die->getValue(); });
+
+    QVERIFY(resultVal == expected);
+}
+
+void TestDice::uniqueTest_data()
+{
+    QTest::addColumn<QVector<int>>("values");
+    QTest::addColumn<QVector<int>>("expected");
+
+    QTest::addRow("cmd1") << QVector<int>({8, 4, 2, 8}) << QVector<int>({8, 4, 2});
+    QTest::addRow("cmd2") << QVector<int>({8, 4, 2}) << QVector<int>({8, 4, 2});
+}
 
 void TestDice::spreadTest()
 {
@@ -931,8 +964,6 @@ void TestDice::spreadTest_data()
 
     QTest::addRow("cmd1") << QVector<int>({8, 4, 2});
 }
-void TestDice::uniqueTest() {}
-void TestDice::uniqueTest_data() {}
 
 void TestDice::groupTest() {}
 void TestDice::groupTest_data() {}
