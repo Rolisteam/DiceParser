@@ -7,9 +7,9 @@ static DiceParser* parser= new DiceParser();
 
 void runCommand(const QString& cmd)
 {
+    qDebug() << "cmd" << cmd;
     if(parser->parseLine(cmd))
     {
-        // qDebug() << "valide cmd" << cmd;
         parser->start();
     }
 }
