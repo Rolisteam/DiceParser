@@ -53,24 +53,27 @@ SET( dice_sources
     node/valueslistnode.cpp
 )
 
+IF(STATIC_BUILD)
+    add_library(diceparser_static STATIC ${dice_sources} )
+    target_include_directories(diceparser_static PRIVATE include)
+    SET_TARGET_PROPERTIES(diceparser_static PROPERTIES OUTPUT_NAME diceparser CLEAN_DIRECT_OUTPUT 1)
+    target_link_libraries(diceparser_static PUBLIC Qt5::Core Qt5::Gui Qt5::Svg)
+    install(TARGETS diceparser_static
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
+
 add_library(diceparser_shared SHARED ${dice_sources} )
-add_library(diceparser_static STATIC ${dice_sources} )
 
 target_include_directories(diceparser_shared PRIVATE include)
-target_include_directories(diceparser_static PRIVATE include)
 
-SET_TARGET_PROPERTIES(diceparser_static PROPERTIES OUTPUT_NAME diceparser CLEAN_DIRECT_OUTPUT 1)
+
 SET_TARGET_PROPERTIES(diceparser_shared PROPERTIES OUTPUT_NAME diceparser CLEAN_DIRECT_OUTPUT 1)
-
 target_link_libraries(diceparser_shared PUBLIC Qt5::Core Qt5::Gui Qt5::Svg)
-target_link_libraries(diceparser_static PUBLIC Qt5::Core Qt5::Gui Qt5::Svg)
 
 set_target_properties(diceparser_shared PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(diceparser_shared PROPERTIES SOVERSION 1)
-#target_link_libraries(diceparsersta PROPERTIES VERSION ${PROJECT_VERSION})
 
 set_target_properties(diceparser_shared PROPERTIES PUBLIC_HEADER "include/diceparser.h;include/highlightdice.h;include/parsingtoolbox.h;include/dicealias.h;include/diceparserhelper.h")
-#set_target_properties(diceparsersta PROPERTIES PUBLIC_HEADER "include/diceparser.h;include/highlightdice.h;include/parsingtoolbox.h;include/dicealias.h;include/diceparserhelper.h")
 
 add_subdirectory(cli)
 add_subdirectory( tests )
@@ -85,8 +88,6 @@ install(TARGETS diceparser_shared
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-install(TARGETS diceparser_static
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 configure_file(diceparser.pc.in diceparser.pc @ONLY)
 
