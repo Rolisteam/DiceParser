@@ -41,6 +41,10 @@ void OperationCondition::setBoolean(BooleanCondition* boolean)
 
 qint64 OperationCondition::hasValid(Die* b, bool recursive, bool unhighlight) const
 {
+    if(nullptr == m_boolean)
+    {
+        return 0;
+    }
     QList<qint64> listValues;
     if(recursive)
     {

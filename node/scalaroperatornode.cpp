@@ -66,6 +66,13 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
                     m_internalNode->getResult()->setPrevious(previousResult);
                 }
 
+                if(internalResult == nullptr)
+                {
+                    m_errors.insert(Dice::ERROR_CODE::NO_VALID_RESULT,
+                                    QObject::tr("No Valid result in arithmetic operatoion: %1").arg(toString(true)));
+                    return;
+                }
+
                 switch(m_arithmeticOperator)
                 {
                 case Die::PLUS:

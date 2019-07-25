@@ -204,13 +204,17 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
         {
             OperationCondition* condition= new OperationCondition();
             condition->setValueNode(operandNode);
-            Validator* valid= readValidator(str,hasSquare);
+            Validator* valid= readValidator(str, hasSquare);
             BooleanCondition* boolC= dynamic_cast<BooleanCondition*>(valid);
             if(nullptr != boolC)
             {
                 condition->setBoolean(boolC);
+                returnVal= condition;
             }
-            returnVal= condition;
+            else
+            {
+                delete condition;
+            }
         }
     }
     else if(readOperand(str, operandNode))
