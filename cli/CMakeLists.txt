@@ -74,6 +74,8 @@ SET( cli_sources
 set(documentation_files ../HelpMe.md ../README.md)
 
 add_executable( dice ${cli_sources} ${dice_QM}   ${documentation_files})
+target_include_directories(dice PRIVATE ../include)
+
 
 target_link_libraries(dice diceparser ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Svg_LIBRARIES})
 INSTALL_TARGETS(/bin dice)

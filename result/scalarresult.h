@@ -39,7 +39,7 @@ public:
      * @brief getResult
      * @return
      */
-    virtual QVariant getResult(Result::RESULT_TYPE);
+    virtual QVariant getResult(Dice::RESULT_TYPE);
     /**
      * @brief setValue
      * @param i

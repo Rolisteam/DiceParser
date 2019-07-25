@@ -58,7 +58,7 @@ void ForLoopNode::run(ExecutionNode* previous)
                     tmp= tmp->getNextNode();
                 }
                 Result* internalResult= tmp->getResult();
-                auto value= internalResult->getResult(Result::SCALAR).toInt();
+                auto value= internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
 
                 Die* neodie= new Die();
                 *neodie= *dice;

@@ -35,6 +35,7 @@
 #include <QCoreApplication>
 #endif
 
+#include "dicealias.h"
 #include "diceparser.h"
 #include "displaytoolbox.h"
 #include "highlightdice.h"
@@ -115,7 +116,7 @@ QString diceToMarkdown(QJsonArray array, bool withColor, bool allSameColor, bool
 }
 
 void displayJSon(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString error,
-    QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
+                 QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
 {
     Q_UNUSED(withColor);
     QJsonDocument doc;
@@ -133,7 +134,7 @@ void displayJSon(QString scalarText, QString resultStr, QJsonArray array, bool w
     out << doc.toJson() << "\n";
 }
 void displayMarkdown(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd,
-    QString error, QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
+                     QString error, QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
 {
     Q_UNUSED(withColor);
     QString str("```Markdown\n");
@@ -165,7 +166,7 @@ void displayMarkdown(QString scalarText, QString resultStr, QJsonArray array, bo
     out << str;
 }
 QString displaySVG(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString error,
-    QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
+                   QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
 {
     QString str(
         "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg version=\"1.1\"  xmlns=\"http://www.w3.org/2000/svg\" "
@@ -222,16 +223,16 @@ QString displaySVG(QString scalarText, QString resultStr, QJsonArray array, bool
 
 #ifdef PAINTER_OP
 void displayImage(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString error,
-    QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
+                  QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
 {
-    auto svg= displaySVG(
-        scalarText, resultStr, array, withColor, cmd, error, warning, comment, allSameFaceCount, allSameColor);
+    auto svg= displaySVG(scalarText, resultStr, array, withColor, cmd, error, warning, comment, allSameFaceCount,
+                         allSameColor);
     out << DisplayToolBox::makeImage(svg.toUtf8());
 }
 #endif
 
 void displayCommandResult(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd,
-    QString error, QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
+                          QString error, QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
 {
     // TODO display warning
     if(!error.isEmpty())
@@ -405,26 +406,26 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
             {
             case TERMINAL:
                 displayCommandResult(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
-                    allSameFaceCount, allSameColor);
+                                     allSameFaceCount, allSameColor);
                 break;
             case SVG:
                 out << displaySVG(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
-                           allSameFaceCount, allSameColor)
+                                  allSameFaceCount, allSameColor)
                     << "\n";
                 break;
             case BOT:
             case MARKDOWN:
                 displayMarkdown(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
-                    allSameFaceCount, allSameColor);
+                                allSameFaceCount, allSameColor);
                 break;
             case JSON:
                 displayJSon(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
-                    allSameFaceCount, allSameColor);
+                            allSameFaceCount, allSameColor);
                 break;
 #ifdef PAINTER_OP
             case IMAGE:
                 displayImage(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
-                    allSameFaceCount, allSameColor);
+                             allSameFaceCount, allSameColor);
                 break;
 #endif
             }
@@ -466,38 +467,39 @@ int main(int argc, char* argv[])
     QCommandLineParser optionParser;
     QCommandLineOption color(QStringList() << "c"
                                            << "color-off",
-        "Disable color to highlight result");
+                             "Disable color to highlight result");
     QCommandLineOption version(QStringList() << "v"
                                              << "version",
-        "Show the version and quit.");
+                               "Show the version and quit.");
     QCommandLineOption reset(QStringList() << "reset-settings", "Erase the settings and use the default parameters");
     QCommandLineOption alias(QStringList() << "a"
                                            << "alias",
-        "path to alias json files: <aliasfile>", "aliasfile");
+                             "path to alias json files: <aliasfile>", "aliasfile");
     QCommandLineOption character(QStringList() << "s"
                                                << "charactersheet",
-        "set Parameters to simulate character sheet: <sheetfile>", "sheetfile");
+                                 "set Parameters to simulate character sheet: <sheetfile>", "sheetfile");
     QCommandLineOption markdown(QStringList() << "m"
                                               << "markdown",
-        "The output is formatted in markdown.");
+                                "The output is formatted in markdown.");
     QCommandLineOption bot(QStringList() << "b"
                                          << "bot",
-        "Discord bot.");
+                           "Discord bot.");
     QCommandLineOption svg(QStringList() << "g"
                                          << "svg",
-        "The output is formatted in svg.");
+                           "The output is formatted in svg.");
     QCommandLineOption json(QStringList() << "j"
                                           << "json",
-        "The output is formatted in json.");
+                            "The output is formatted in json.");
     QCommandLineOption dotFile(QStringList() << "d"
                                              << "dot-file",
-        "Instead of rolling dice, generate the execution tree and write it in <dotfile>", "dotfile");
+                               "Instead of rolling dice, generate the execution tree and write it in <dotfile>",
+                               "dotfile");
     QCommandLineOption translation(QStringList() << "t"
                                                  << "translation",
-        "path to the translation file: <translationfile>", "translationfile");
+                                   "path to the translation file: <translationfile>", "translationfile");
     QCommandLineOption help(QStringList() << "h"
                                           << "help",
-        "Display this help");
+                            "Display this help");
 
     optionParser.addOption(color);
     optionParser.addOption(version);

@@ -19,10 +19,10 @@ void DiceRollerNode::run(ExecutionNode* previous)
         Result* result= previous->getResult();
         if(nullptr != result)
         {
-            auto num= result->getResult(Result::SCALAR).toReal();
+            auto num= result->getResult(Dice::RESULT_TYPE::SCALAR).toReal();
             if(num <= 0)
             {
-                m_errors.insert(NO_DICE_TO_ROLL, QObject::tr("No dice to roll"));
+                m_errors.insert(Dice::ERROR_CODE::NO_DICE_TO_ROLL, QObject::tr("No dice to roll"));
             }
             m_diceCount= num > 0 ? static_cast<quint64>(num) : 0;
             m_result->setPrevious(result);
@@ -30,7 +30,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
             auto possibleValue= static_cast<quint64>(std::abs((m_max - m_min) + 1));
             if(possibleValue < m_diceCount && m_unique)
             {
-                m_errors.insert(TOO_MANY_DICE,
+                m_errors.insert(Dice::ERROR_CODE::TOO_MANY_DICE,
                                 QObject::tr("More unique values asked than possible values (D operator)"));
                 return;
             }
@@ -62,7 +62,7 @@ void DiceRollerNode::run(ExecutionNode* previous)
 
 quint64 DiceRollerNode::getFaces() const
 {
-    return std::abs(m_max - m_min) + 1;
+    return static_cast<quint64>(std::abs(m_max - m_min) + 1);
 }
 
 std::pair<qint64, qint64> DiceRollerNode::getRange() const

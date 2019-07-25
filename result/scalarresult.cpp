@@ -21,18 +21,15 @@
  ***************************************************************************/
 #include "scalarresult.h"
 
-ScalarResult::ScalarResult()
-{
-    m_resultTypes= Result::SCALAR;
-}
+ScalarResult::ScalarResult() {}
 
 void ScalarResult::setValue(qreal i)
 {
     m_value= i;
 }
-QVariant ScalarResult::getResult(Result::RESULT_TYPE type)
+QVariant ScalarResult::getResult(Dice::RESULT_TYPE type)
 {
-    if(SCALAR == type)
+    if(Dice::RESULT_TYPE::SCALAR == type)
     {
         return m_value;
     }

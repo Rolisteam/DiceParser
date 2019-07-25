@@ -58,9 +58,10 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
 
         if(m_numberOfDice > static_cast<qint64>(diceList.size()))
         {
-            m_errors.insert(TOO_MANY_DICE, QObject::tr(" You ask to keep %1 dice but the result only has %2")
-                                               .arg(m_numberOfDice)
-                                               .arg(diceList.size()));
+            m_errors.insert(Dice::ERROR_CODE::TOO_MANY_DICE,
+                            QObject::tr(" You ask to keep %1 dice but the result only has %2")
+                                .arg(m_numberOfDice)
+                                .arg(diceList.size()));
         }
 
         for(auto& tmp : diceList.mid(static_cast<int>(m_numberOfDice), -1))

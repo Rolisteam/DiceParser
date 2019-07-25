@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(diceparser)
+project(diceparser VERSION 1.9.0 DESCRIPTION "Parser of dice command")
 
 set(QT_REQUIRED_VERSION "5.12.0")
 find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Test Gui Svg)
@@ -53,11 +53,42 @@ SET( dice_sources
     node/valueslistnode.cpp
 )
 
-add_library(diceparser SHARED ${dice_sources} )
-target_link_libraries(diceparser PUBLIC Qt5::Core Qt5::Gui Qt5::Svg)
+add_library(diceparser_shared SHARED ${dice_sources} )
+add_library(diceparser_static STATIC ${dice_sources} )
+
+target_include_directories(diceparser_shared PRIVATE include)
+target_include_directories(diceparser_static PRIVATE include)
+
+SET_TARGET_PROPERTIES(diceparser_static PROPERTIES OUTPUT_NAME diceparser CLEAN_DIRECT_OUTPUT 1)
+SET_TARGET_PROPERTIES(diceparser_shared PROPERTIES OUTPUT_NAME diceparser CLEAN_DIRECT_OUTPUT 1)
+
+target_link_libraries(diceparser_shared PUBLIC Qt5::Core Qt5::Gui Qt5::Svg)
+target_link_libraries(diceparser_static PUBLIC Qt5::Core Qt5::Gui Qt5::Svg)
+
+set_target_properties(diceparser_shared PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(diceparser_shared PROPERTIES SOVERSION 1)
+#target_link_libraries(diceparsersta PROPERTIES VERSION ${PROJECT_VERSION})
+
+set_target_properties(diceparser_shared PROPERTIES PUBLIC_HEADER "include/diceparser.h;include/highlightdice.h;include/parsingtoolbox.h;include/dicealias.h;include/diceparserhelper.h")
+#set_target_properties(diceparsersta PROPERTIES PUBLIC_HEADER "include/diceparser.h;include/highlightdice.h;include/parsingtoolbox.h;include/dicealias.h;include/diceparserhelper.h")
 
 add_subdirectory(cli)
 add_subdirectory( tests )
 #add_subdirectory(irc)
 #add_subdirectory(mobile)
 #add_subdirectory(webserver)
+
+
+include(GNUInstallDirs)
+
+install(TARGETS diceparser_shared
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(TARGETS diceparser_static
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+configure_file(diceparser.pc.in diceparser.pc @ONLY)
+
+install(FILES ${CMAKE_BINARY_DIR}/diceparser.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+

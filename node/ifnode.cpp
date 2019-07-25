@@ -45,7 +45,7 @@ void IfNode::run(ExecutionNode* previous)
 
     if(nullptr != m_result)
     {
-        qreal value= previousResult->getResult(Result::SCALAR).toReal();
+        qreal value= previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal();
 
         if(nullptr != m_validator)
         {

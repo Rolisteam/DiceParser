@@ -524,7 +524,7 @@ void TestDice::keepTest()
     if(error)
         return;
 
-    auto resultScore= keepN.getResult()->getResult(Result::SCALAR).toInt();
+    auto resultScore= keepN.getResult()->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
 
     QCOMPARE(score, resultScore);
 }
@@ -609,7 +609,7 @@ void TestDice::countTest()
 
     node.run(nullptr);
 
-    QCOMPARE(score, countN.getResult()->getResult(Result::SCALAR).toInt());
+    QCOMPARE(score, countN.getResult()->getResult(Dice::RESULT_TYPE::SCALAR).toInt());
 
     countN.setValidator(nullptr);
 }

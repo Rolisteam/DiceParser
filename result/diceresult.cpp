@@ -25,7 +25,7 @@
 
 DiceResult::DiceResult() : m_operator(Die::PLUS)
 {
-    m_resultTypes= (DICE_LIST | SCALAR);
+    m_resultTypes= (static_cast<int>(Dice::RESULT_TYPE::DICE_LIST) | static_cast<int>(Dice::RESULT_TYPE::SCALAR));
     m_homogeneous= true;
 }
 void DiceResult::insertResult(Die* die)
@@ -63,15 +63,15 @@ DiceResult::~DiceResult()
         m_diceValues.clear();
     }
 }
-QVariant DiceResult::getResult(RESULT_TYPE type)
+QVariant DiceResult::getResult(Dice::RESULT_TYPE type)
 {
     switch(type)
     {
-    case SCALAR:
+    case Dice::RESULT_TYPE::SCALAR:
     {
         return getScalarResult();
     }
-    case DICE_LIST:
+    case Dice::RESULT_TYPE::DICE_LIST:
     {
         return QVariant();
     }

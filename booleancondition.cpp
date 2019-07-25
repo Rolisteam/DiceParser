@@ -159,5 +159,5 @@ qint64 BooleanCondition::valueToScalar() const
 
     m_value->run(nullptr);
     auto result= m_value->getResult();
-    return result->getResult(Result::SCALAR).toInt();
+    return result->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
 }

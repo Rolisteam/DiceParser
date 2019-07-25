@@ -29,7 +29,7 @@ void MergeNode::run(ExecutionNode* previous)
 {
     if(nullptr == previous)
     {
-        m_errors.insert(ExecutionNode::NO_PREVIOUS_ERROR, QObject::tr("No previous node before Merge operator"));
+        m_errors.insert(Dice::ERROR_CODE::NO_PREVIOUS_ERROR, QObject::tr("No previous node before Merge operator"));
         return;
     }
 
@@ -69,7 +69,7 @@ void MergeNode::run(ExecutionNode* previous)
                     }
                 }
                 auto it= std::find_if(pastResult.begin(), pastResult.end(),
-                    [tmpResult](const Result* a) { return (a == tmpResult->getPrevious()); });
+                                      [tmpResult](const Result* a) { return (a == tmpResult->getPrevious()); });
                 if(it == pastResult.end())
                 {
                     pastResult.push_back(previousLast->getResult());

@@ -20,6 +20,7 @@
 #include "occurencecountnode.h"
 #include "result/diceresult.h"
 #include "result/stringresult.h"
+#include <QVector>
 
 OccurenceCountNode::OccurenceCountNode() : ExecutionNode() {}
 

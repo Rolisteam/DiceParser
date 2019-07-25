@@ -1,4 +1,34 @@
 #ifndef DICEPARSERHELPER_H
 #define DICEPARSERHELPER_H
 
+namespace Dice
+{
+
+enum class ERROR_CODE : int
+{
+   NO_DICE_ERROR,
+   DIE_RESULT_EXPECTED,
+   BAD_SYNTAXE,
+   ENDLESS_LOOP_ERROR,
+   DIVIDE_BY_ZERO,
+   NOTHING_UNDERSTOOD,
+   NO_DICE_TO_ROLL,
+   TOO_MANY_DICE,
+   NO_VARIBALE,
+   INVALID_INDEX,
+   UNEXPECTED_CHARACTER,
+   NO_PREVIOUS_ERROR
+};
+
+/**
+ * @brief The RESULT_TYPE enum or combinaison
+ */
+enum class RESULT_TYPE : int
+{
+    NONE= 0,
+    SCALAR= 1,
+    STRING= 2,
+    DICE_LIST= 4
+};
+}
 #endif // DICEPARSERHELPER_H

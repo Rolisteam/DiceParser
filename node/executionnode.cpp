@@ -6,7 +6,7 @@ ExecutionNode::ExecutionNode()
     : m_previousNode(nullptr)
     , m_result(nullptr)
     , m_nextNode(nullptr)
-    , m_errors(QMap<ExecutionNode::DICE_ERROR_CODE, QString>())
+    , m_errors(QMap<Dice::ERROR_CODE, QString>())
     , m_id(QString("\"%1\"").arg(QUuid::createUuid().toString()))
 {
 }
@@ -40,7 +40,7 @@ ExecutionNode* ExecutionNode::getNextNode()
 {
     return m_nextNode;
 }
-QMap<ExecutionNode::DICE_ERROR_CODE, QString> ExecutionNode::getExecutionErrorMap()
+QMap<Dice::ERROR_CODE, QString> ExecutionNode::getExecutionErrorMap()
 {
     if(nullptr != m_nextNode)
     {
@@ -97,5 +97,5 @@ qint64 ExecutionNode::getScalarResult()
 {
     if(m_result == nullptr)
         return 0;
-    return m_result->getResult(Result::SCALAR).toInt();
+    return m_result->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
 }

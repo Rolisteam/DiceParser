@@ -62,11 +62,11 @@ void ListSetRollNode::run(ExecutionNode* previous)
         Result* result= previous->getResult();
         if(nullptr != result)
         {
-            quint64 diceCount= result->getResult(Result::SCALAR).toReal();
+            quint64 diceCount= result->getResult(Dice::RESULT_TYPE::SCALAR).toReal();
             if(diceCount > static_cast<quint64>(m_values.size()) && m_unique)
             {
-                m_errors.insert(
-                    TOO_MANY_DICE, QObject::tr("More unique values asked than possible values (L operator)"));
+                m_errors.insert(Dice::ERROR_CODE::TOO_MANY_DICE,
+                                QObject::tr("More unique values asked than possible values (L operator)"));
             }
             else
             {

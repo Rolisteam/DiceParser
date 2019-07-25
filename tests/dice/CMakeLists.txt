@@ -5,5 +5,8 @@ find_package(Qt5Test REQUIRED)
 set(test_source testnode.cpp tst_dice.cpp)
 
 add_executable(test_dice ${test_source} )
+
+target_include_directories(test_dice PRIVATE ../../include)
+
 target_link_libraries(test_dice diceparser Qt5::Test)
 add_test(tst_diceparser test_dice)

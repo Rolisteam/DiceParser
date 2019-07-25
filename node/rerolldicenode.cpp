@@ -79,7 +79,8 @@ void RerollDiceNode::run(ExecutionNode* previous)
         }
         else
         {
-            m_errors.insert(ExecutionNode::DIE_RESULT_EXPECTED,
+            m_errors.insert(
+                Dice::ERROR_CODE::DIE_RESULT_EXPECTED,
                 QObject::tr(
                     " The a operator expects dice result. Please check the documentation and fix your command."));
         }
