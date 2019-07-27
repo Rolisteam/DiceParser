@@ -23,3 +23,8 @@
 
 Validator::Validator() {}
 Validator::~Validator() {}
+
+const std::set<qint64>& Validator::getPossibleValues(const std::pair<qint64, qint64>&)
+{
+    return m_values;
+}
