@@ -42,20 +42,20 @@ public:
         Different
     };
     BooleanCondition();
-    virtual ~BooleanCondition();
+    virtual ~BooleanCondition() override;
 
-    virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const;
+    virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const override;
 
     void setOperator(LogicOperator m);
     void setValueNode(ExecutionNode*);
     QString toString();
 
-    virtual bool isValidRangeSize(std::pair<qint64, qint64> range) const;
+    virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const override;
     /**
      * @brief getCopy
      * @return
      */
-    virtual Validator* getCopy() const;
+    virtual Validator* getCopy() const override;
 
 private:
     qint64 valueToScalar() const;
