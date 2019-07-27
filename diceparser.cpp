@@ -640,7 +640,11 @@ bool DiceParser::hasResultOfType(Dice::RESULT_TYPE type, ExecutionNode* node, bo
     Result* result= next->getResult();
     while((result != nullptr) && (!scalarDone))
     {
-        if(result->hasResultOfType(type) && ((!notthelast) || (nullptr != result->getPrevious())))
+        bool lastResult= false;
+        if(notthelast)
+            lastResult= (nullptr != result->getPrevious());
+
+        if(result->hasResultOfType(type) && !lastResult)
         {
             scalarDone= true;
         }
@@ -1104,14 +1108,33 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 // Todo: I think that Exploding and Rerolling could share the same code
                 {
                     Validator* validator= m_parsingToolbox->readCompositeValidator(str);
+                    QString symbol= m_OptionOp->key(operatorName);
                     if(nullptr != validator)
                     {
-                        if(!m_parsingToolbox->isValidValidator(previous, validator))
+                        switch(m_parsingToolbox->isValidValidator(previous, validator))
                         {
-                            m_errorMap.insert(
-                                Dice::ERROR_CODE::BAD_SYNTAXE,
-                                QObject::tr("Validator is missing after the %1 operator. Please, change it")
-                                    .arg(operatorName == Reroll ? "r" : "a"));
+                        case Dice::CONDITION_STATE::ALWAYSTRUE:
+                            if(operatorName == RerollAndAdd)
+                            {
+                                m_errorMap.insert(
+                                    Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
+                                    QObject::tr(
+                                        "Validator is always true missing after the %1 operator. Please, change it")
+                                        .arg(symbol));
+                            }
+                            break;
+                        case Dice::CONDITION_STATE::UNREACHABLE:
+                            if(operatorName == RerollUntil)
+                            {
+                                m_errorMap.insert(Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
+                                                  QObject::tr("Candition can be reached, causing endless loop. Please, "
+                                                              "change the %1 option condition")
+                                                      .arg(symbol));
+                            }
+                            break;
+                        case Dice::CONDITION_STATE::ERROR:
+                        default:
+                            break;
                         }
 
                         auto reroll= (operatorName == RerollAndAdd || operatorName == Reroll);
@@ -1129,13 +1152,9 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                     }
                     else
                     {
-                        m_errorMap.insert(Dice::ERROR_CODE::BAD_SYNTAXE,
-                                          QObject::tr("Validator is missing after the %1 operator. Please, change it")
-                                              .arg(operatorName == Reroll ?
-                                                       QStringLiteral("r") :
-                                                       operatorName == RerollUntil ?
-                                                       QStringLiteral("R") :
-                                                       operatorName == RerollAndAdd ? QStringLiteral("a") : ""));
+                        m_errorMap.insert(
+                            Dice::ERROR_CODE::BAD_SYNTAXE,
+                            QObject::tr("Validator is missing after the %1 operator. Please, change it").arg(symbol));
                     }
                 }
                 break;
@@ -1144,7 +1163,7 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 Validator* validator= m_parsingToolbox->readCompositeValidator(str);
                 if(nullptr != validator)
                 {
-                    if(!m_parsingToolbox->isValidValidator(previous, validator))
+                    if(Dice::CONDITION_STATE::ALWAYSTRUE == m_parsingToolbox->isValidValidator(previous, validator))
                     {
                         m_errorMap.insert(Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
                                           QObject::tr("This condition %1 introduces an endless loop. Please, change it")
@@ -1216,10 +1235,18 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
             case Painter:
             {
                 PainterNode* painter= new PainterNode();
-                m_parsingToolbox->readPainterParameter(painter, str);
-                previous->setNextNode(painter);
-                node= painter;
-                found= true;
+                if(!m_parsingToolbox->readPainterParameter(painter, str))
+                {
+                    m_errorMap.insert(Dice::ERROR_CODE::BAD_SYNTAXE,
+                                      QObject::tr("Missing parameter for Painter node (p)"));
+                    delete painter;
+                }
+                else
+                {
+                    previous->setNextNode(painter);
+                    node= painter;
+                    found= true;
+                }
             }
             break;
             case ifOperator:
