@@ -210,7 +210,7 @@ Validator* BooleanCondition::getCopy() const
 {
     BooleanCondition* val= new BooleanCondition();
     val->setOperator(m_operator);
-    val->setValueNode(m_value);
+    val->setValueNode(m_value->getCopy());
     return val;
 }
 qint64 BooleanCondition::valueToScalar() const
