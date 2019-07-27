@@ -21,22 +21,18 @@
  ***************************************************************************/
 #include "compositevalidator.h"
 
-CompositeValidator::CompositeValidator() : m_operators(nullptr), m_validatorList(nullptr) {}
+CompositeValidator::CompositeValidator() {}
 
 CompositeValidator::~CompositeValidator()
 {
-    qDeleteAll(*m_validatorList);
-    if(nullptr != m_operators)
-    {
-        delete m_operators;
-    }
+    qDeleteAll(m_validatorList);
 }
 qint64 CompositeValidator::hasValid(Die* b, bool recursive, bool unhighlight) const
 {
     int i= 0;
     qint64 sum= 0;
     bool highLight= false;
-    for(auto& validator : *m_validatorList)
+    for(auto& validator : m_validatorList)
     {
         qint64 val= validator->hasValid(b, recursive, unhighlight);
         if(i == 0)
@@ -49,7 +45,7 @@ qint64 CompositeValidator::hasValid(Die* b, bool recursive, bool unhighlight) co
         }
         else
         {
-            switch(m_operators->at(i - 1))
+            switch(m_operators.at(i - 1))
             {
             case OR:
                 sum|= val;
@@ -99,41 +95,98 @@ QString CompositeValidator::toString()
     return QString("[%1%2]").arg(str).arg(m_value);*/
     return str;
 }
-bool CompositeValidator::isValidRangeSize(std::pair<qint64, qint64> range) const
+
+Dice::CONDITION_STATE testAND(Dice::CONDITION_STATE before, Dice::CONDITION_STATE current)
 {
-    bool val= true;
-    int i= -1;
-    for(auto& tmp : *m_validatorList)
+    if(before == Dice::CONDITION_STATE::UNREACHABLE || current == Dice::CONDITION_STATE::UNREACHABLE)
+        return Dice::CONDITION_STATE::UNREACHABLE;
+    else if(before == Dice::CONDITION_STATE::ALWAYSTRUE && current == Dice::CONDITION_STATE::ALWAYSTRUE)
+        return Dice::CONDITION_STATE::ALWAYSTRUE;
+    else
+        return Dice::CONDITION_STATE::REACHABLE;
+}
+
+Dice::CONDITION_STATE testOR(Dice::CONDITION_STATE before, Dice::CONDITION_STATE current)
+{
+    if(before == Dice::CONDITION_STATE::UNREACHABLE && current == Dice::CONDITION_STATE::UNREACHABLE)
+        return Dice::CONDITION_STATE::UNREACHABLE;
+    else if(before == Dice::CONDITION_STATE::ALWAYSTRUE || current == Dice::CONDITION_STATE::ALWAYSTRUE)
+        return Dice::CONDITION_STATE::ALWAYSTRUE;
+    else
+        return Dice::CONDITION_STATE::REACHABLE;
+}
+
+Dice::CONDITION_STATE testXOR(Dice::CONDITION_STATE before, Dice::CONDITION_STATE current)
+{
+    if(before == current
+       && (before == Dice::CONDITION_STATE::UNREACHABLE || before == Dice::CONDITION_STATE::ALWAYSTRUE))
+        return Dice::CONDITION_STATE::UNREACHABLE;
+    else if((before != current)
+            && (before == Dice::CONDITION_STATE::ALWAYSTRUE || before == Dice::CONDITION_STATE::UNREACHABLE)
+            && (before != Dice::CONDITION_STATE::REACHABLE || current != Dice::CONDITION_STATE::REACHABLE))
+        return Dice::CONDITION_STATE::ALWAYSTRUE;
+    else
+        return Dice::CONDITION_STATE::REACHABLE;
+}
+
+Dice::CONDITION_STATE CompositeValidator::isValidRangeSize(const std::pair<qint64, qint64>& range) const
+{
+    std::vector<Dice::CONDITION_STATE> vec;
+    std::transform(
+        m_validatorList.begin(), m_validatorList.end(), std::back_inserter(vec),
+        [range](Validator* validator) -> Dice::CONDITION_STATE { return validator->isValidRangeSize(range); });
+
+    auto itError= std::find(vec.begin(), vec.end(), Dice::CONDITION_STATE::ERROR);
+
+    if((static_cast<int>(vec.size()) != m_operators.size() + 1) || (itError != vec.end()))
     {
-        bool rel= tmp->isValidRangeSize(range);
-        val|= rel;
-        ++i;
+        return Dice::CONDITION_STATE::ERROR;
     }
 
+    std::size_t i= 0;
+    Dice::CONDITION_STATE val;
+    for(const auto& op : m_operators)
+    {
+        auto currentState= vec[i + 1];
+        if(i == 0)
+        {
+            val= vec[i];
+        }
+        switch(op)
+        {
+        case OR:
+            val= testAND(val, currentState);
+            break;
+        case EXCLUSIVE_OR:
+            val= testOR(val, currentState);
+            break;
+        case AND:
+            val= testXOR(val, currentState);
+            break;
+        case NONE:
+            val= Dice::CONDITION_STATE::ERROR;
+            break;
+        }
+
+        ++i;
+    }
     return val;
 }
-void CompositeValidator::setOperationList(QVector<LogicOperation>* m)
+
+void CompositeValidator::setOperationList(const QVector<LogicOperation>& m)
 {
     m_operators= m;
 }
 
-void CompositeValidator::setValidatorList(QList<Validator*>* m)
+void CompositeValidator::setValidatorList(const QList<Validator*>& valids)
 {
-    m_validatorList= m;
+    qDeleteAll(m_validatorList);
+    m_validatorList= valids;
 }
 Validator* CompositeValidator::getCopy() const
 {
-    QVector<LogicOperation>* vector= new QVector<LogicOperation>();
-    *vector= *m_operators;
-
-    QList<Validator*>* list= new QList<Validator*>();
-    for(auto& val : *m_validatorList)
-    {
-        list->append(val->getCopy());
-    }
-
     CompositeValidator* val= new CompositeValidator();
-    val->setOperationList(vector);
-    val->setValidatorList(list);
+    val->setOperationList(m_operators);
+    val->setValidatorList(m_validatorList);
     return val;
 }

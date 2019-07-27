@@ -43,22 +43,22 @@ public:
         NONE
     };
     CompositeValidator();
-    virtual ~CompositeValidator();
+    virtual ~CompositeValidator() override;
 
-    virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const;
+    virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const override;
 
-    void setOperationList(QVector<LogicOperation>* m);
-    void setValidatorList(QList<Validator*>*);
+    void setOperationList(const QVector<LogicOperation>& m);
+    void setValidatorList(const QList<Validator*>& valids);
 
-    QString toString();
+    QString toString() override;
 
-    virtual bool isValidRangeSize(std::pair<qint64, qint64> range) const;
+    virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const override;
 
-    virtual Validator* getCopy() const;
+    virtual Validator* getCopy() const override;
 
 private:
-    QVector<LogicOperation>* m_operators;
-    QList<Validator*>* m_validatorList;
+    QVector<LogicOperation> m_operators;
+    QList<Validator*> m_validatorList;
 };
 
 #endif // BOOLEANCONDITION_H
