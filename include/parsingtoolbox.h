@@ -175,7 +175,7 @@ public:
      * @param val
      * @return
      */
-    bool isValidValidator(ExecutionNode* previous, Validator* val);
+    Dice::CONDITION_STATE isValidValidator(ExecutionNode* previous, Validator* val);
     /**
      * @brief getDiceRollerNode
      * @param previous

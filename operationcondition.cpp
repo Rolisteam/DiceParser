@@ -106,15 +106,22 @@ QString OperationCondition::toString()
     }
     return QStringLiteral("[%1%2%3]").arg(str).arg(valueToScalar()).arg(m_boolean->toString());
 }
-bool OperationCondition::isValidRangeSize(std::pair<qint64, qint64>) const
+Dice::CONDITION_STATE OperationCondition::isValidRangeSize(const std::pair<qint64, qint64>& range) const
 {
-    auto value= valueToScalar();
-    bool valid= true;
+    Dice::CONDITION_STATE valid= Dice::CONDITION_STATE::REACHABLE;
 
-    if(value == 0)
-        valid= false;
-    /*  else if(nullptr != m_boolean)
-          valid = m_boolean->isValidRangeSize(range);*/
+    auto rangeIsClose= (range.first == range.second);
+
+    Die die;
+    die.insertRollValue(range.first);
+
+    if(nullptr == m_boolean)
+        return Dice::CONDITION_STATE::ERROR;
+
+    if(rangeIsClose && m_boolean->hasValid(&die, false, false))
+        valid= Dice::CONDITION_STATE::ALWAYSTRUE;
+    else if(rangeIsClose && !m_boolean->hasValid(&die, false, false))
+        valid= Dice::CONDITION_STATE::UNREACHABLE;
 
     return valid;
 }

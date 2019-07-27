@@ -58,12 +58,20 @@ QString Range::toString()
 {
     return QStringLiteral("[%1-%2]").arg(m_start).arg(m_end);
 }
-bool Range::isValidRangeSize(std::pair<qint64, qint64> range) const
+Dice::CONDITION_STATE Range::isValidRangeSize(const std::pair<qint64, qint64>& range) const
 {
-    auto newStart= qBound(range.first, m_start, range.second);
-    auto newEnd= qBound(range.first, m_end, range.second);
+    auto minRange= std::min(m_start, m_end);
+    auto minPossibleValue= std::min(range.first, range.second);
 
-    return (newStart == m_start && newEnd == m_end && m_end >= m_start);
+    auto maxRange= std::max(m_start, m_end);
+    auto maxPossibleValue= std::max(range.first, range.second);
+
+    if(minRange == minPossibleValue && maxRange == maxPossibleValue)
+        return Dice::CONDITION_STATE::ALWAYSTRUE;
+    else if(maxRange < minPossibleValue || minRange > maxPossibleValue)
+        return Dice::CONDITION_STATE::UNREACHABLE;
+    else
+        return Dice::CONDITION_STATE::UNREACHABLE;
 }
 void Range::setStart(qint64 start)
 {

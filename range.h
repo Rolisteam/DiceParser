@@ -39,6 +39,7 @@ public:
 
     virtual QString toString();
     virtual bool isValidRangeSize(std::pair<qint64, qint64> range) const;
+    virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const override;
 
     bool isFullyDefined() const;
     qint64 getStart() const;

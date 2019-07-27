@@ -601,19 +601,13 @@ bool ParsingToolBox::readAscending(QString& str)
     }
     return false;
 }
-bool ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
+Dice::CONDITION_STATE ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
 {
     DiceRollerNode* node= getDiceRollerNode(previous);
-    bool valid= false;
-    if(nullptr != node)
-    {
-        valid= val->isValidRangeSize(node->getRange());
-    }
-    else
-    {
-        valid= true;
-    }
-    return valid;
+    if(nullptr == node)
+        return Dice::CONDITION_STATE::ERROR;
+
+    return val->isValidRangeSize(node->getRange());
 }
 DiceRollerNode* ParsingToolBox::getDiceRollerNode(ExecutionNode* previous)
 {

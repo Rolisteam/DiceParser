@@ -16,7 +16,6 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
             for(auto& die : previous_result->getResultList())
             {
                 Die* tmpdie= new Die(*die);
-//                *tmpdie= *die;
                 m_diceResult->insertResult(tmpdie);
                 die->displayed();
             }
@@ -25,12 +24,23 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
 
             for(auto& die : list)
             {
+                if(Dice::CONDITION_STATE::ALWAYSTRUE
+                   == m_validator->isValidRangeSize(std::make_pair<qint64, qint64>(die->getBase(), die->getMaxValue())))
+                {
+                    m_errors.insert(Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
+                                    QObject::tr("Condition (%1) cause an endless loop with this dice: %2")
+                                        .arg(toString(true))
+                                        .arg(QStringLiteral("d[%1,%2]")
+                                                 .arg(static_cast<int>(die->getBase()))
+                                                 .arg(static_cast<int>(die->getMaxValue()))));
+                    continue;
+                }
+
                 while(m_validator->hasValid(die, false))
                 {
                     die->roll(true);
                 }
             }
-            // m_diceResult->setResultList(list);
 
             if(nullptr != m_nextNode)
             {

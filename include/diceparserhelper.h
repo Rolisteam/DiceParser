@@ -4,6 +4,14 @@
 namespace Dice
 {
 
+enum class CONDITION_STATE : int
+{
+    ERROR,
+    ALWAYSTRUE,
+    UNREACHABLE,
+    REACHABLE
+};
+
 enum class ERROR_CODE : int
 {
    NO_DICE_ERROR,

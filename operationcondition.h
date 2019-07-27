@@ -43,7 +43,7 @@ public:
     void setValueNode(ExecutionNode* node);
     QString toString();
 
-    virtual bool isValidRangeSize(std::pair<qint64, qint64> range) const;
+    virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const override;
 
     BooleanCondition* getBoolean() const;
     void setBoolean(BooleanCondition* boolean);
