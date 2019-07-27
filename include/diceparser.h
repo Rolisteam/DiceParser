@@ -230,7 +230,7 @@ public:
     QString humanReadableWarning();
 
     bool readValuesList(QString& str, ExecutionNode*& node);
-
+    void cleanAll();
 private:
     /**
      * @brief readIfInstruction reads the current command to build if node with proper parameters.

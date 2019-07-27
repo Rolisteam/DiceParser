@@ -165,11 +165,7 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
 {
     m_errorMap.clear();
     m_comment= QString("");
-    if(!m_startNodes.empty())
-    {
-        qDeleteAll(m_startNodes);
-        m_startNodes.clear();
-    }
+    cleanAll();
     m_currentTreeHasSeparator= false;
     if(allowAlias)
     {
@@ -372,6 +368,15 @@ bool DiceParser::readNode(QString& str, ExecutionNode*& node)
         return true;
     }
     return false;
+}
+
+void DiceParser::cleanAll()
+{
+    if(!m_startNodes.empty())
+    {
+        qDeleteAll(m_startNodes);
+        m_startNodes.clear();
+    }
 }
 
 void DiceParser::start()
