@@ -367,11 +367,6 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
                 stringResult.replace("\\n", "\n");
 
                 stringResult= ParsingToolBox::replaceVariableToValue(stringResult, strLst);
-                /*for(auto it= strLst.rbegin(); it != strLst.rend(); ++it)
-                {
-                    stringResult.replace(QStringLiteral("$%1").arg(i), (*it));
-                    --i;
-                }*/
 
                 int i= strLst.size();
                 for(auto it= strLst.rbegin(); it != strLst.rend(); ++it)
@@ -441,10 +436,12 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
         }
         else
         {
+            QString error= parser.humanReadableError();
+            err << "Error: " << error << "\n";
             rt= 1;
         }
     }
-
+    parser.cleanAll();
     return rt;
 }
 #include <QTextCodec>
