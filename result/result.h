@@ -90,7 +90,7 @@ protected:
     QString m_id;
 
 private:
-    Result* m_previous; /// @brief
+    Result* m_previous= nullptr; /// @brief
 };
 
 #endif // RESULT_H

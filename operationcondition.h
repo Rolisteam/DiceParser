@@ -54,7 +54,7 @@ private:
     qint64 valueToScalar() const;
 
 private:
-    ConditionOperator m_operator;
+    ConditionOperator m_operator= Modulo;
     BooleanCondition* m_boolean= nullptr;
     // qint64 m_value;
     ExecutionNode* m_value= nullptr;

@@ -86,7 +86,7 @@ protected:
     /**
      * @brief m_result
      */
-    Result* m_result;
+    Result* m_result= nullptr;
     /**
      * @brief m_nextNode
      */
