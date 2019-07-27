@@ -151,8 +151,8 @@ private:
     bool m_hasValue= false;
     bool m_displayStatus= false;
     bool m_highlighted= true;
-    qint64 m_maxValue;
-    qint64 m_base;
+    qint64 m_maxValue= 0;
+    qint64 m_base= 0;
     QString m_color;
 
     Die::ArithmeticOperator m_op;
