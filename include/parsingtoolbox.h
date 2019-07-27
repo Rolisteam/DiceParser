@@ -206,7 +206,7 @@ public:
 
     bool readArithmeticOperator(QString& str, Die::ArithmeticOperator& op);
 
-    static void readPainterParameter(PainterNode* painter, QString& str);
+    static bool readPainterParameter(PainterNode* painter, QString& str);
 
     static QHash<QString, QString> getVariableHash();
     static void setVariableHash(const QHash<QString, QString>& variableHash);

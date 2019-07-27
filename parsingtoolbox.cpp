@@ -661,28 +661,32 @@ ParsingToolBox::LIST_OPERATOR ParsingToolBox::readListOperator(QString& str)
     return NONE;
 }
 
-void ParsingToolBox::readPainterParameter(PainterNode* painter, QString& str)
+bool ParsingToolBox::readPainterParameter(PainterNode* painter, QString& str)
 {
-    if(str.startsWith('['))
-    {
-        str= str.remove(0, 1);
-        int pos= str.indexOf(']');
+    if(!str.startsWith('['))
+        return false;
 
-        if(pos > -1)
+    str= str.remove(0, 1);
+    int pos= str.indexOf(']');
+
+    if(pos == -1)
+        return false;
+
+    QString data= str.left(pos);
+    str= str.remove(0, pos + 1);
+    QStringList duos= data.split(',');
+    bool result= false;
+    for(QString& duoStr : duos)
+    {
+        QStringList keyValu= duoStr.split(':');
+        if(keyValu.size() == 2)
         {
-            QString data= str.left(pos);
-            str= str.remove(0, pos + 1);
-            QStringList duos= data.split(',');
-            for(QString& duoStr : duos)
-            {
-                QStringList keyValu= duoStr.split(':');
-                if(keyValu.size() == 2)
-                {
-                    painter->insertColorItem(keyValu[1], keyValu[0].toInt());
-                }
-            }
+            painter->insertColorItem(keyValu[1], keyValu[0].toInt());
+            result= true;
         }
     }
+
+    return result;
 }
 
 QHash<QString, QString> ParsingToolBox::getVariableHash()
