@@ -41,7 +41,7 @@ void IfNode::run(ExecutionNode* previous)
     ExecutionNode* nextNode= nullptr;
     bool runNext= (nullptr == m_nextNode) ? false : true;
     Result* previousResult= previous->getResult();
-    m_result= previousResult;
+    m_result= previousResult->getCopy();
 
     if(nullptr != m_result)
     {

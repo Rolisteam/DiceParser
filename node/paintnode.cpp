@@ -47,7 +47,6 @@ void ColorItem::setColor(const QString& color)
 
 PainterNode::PainterNode() : ExecutionNode()
 {
-    m_result= nullptr;
     m_nextNode= nullptr;
 }
 
@@ -90,7 +89,7 @@ void PainterNode::run(ExecutionNode* previous)
 }
 Result* PainterNode::getResult()
 {
-    return (nullptr != m_previousNode) ? m_previousNode->getResult() : nullptr;
+    return m_diceResult;
 }
 
 QString PainterNode::toString(bool wl) const
