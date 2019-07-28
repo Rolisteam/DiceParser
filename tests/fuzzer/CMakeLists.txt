@@ -5,6 +5,7 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Svg REQUIRED)
+find_package(Qt5Concurrent REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -21,5 +22,5 @@ set(fdsource testcase.cpp)
 add_executable(fuzzTestCase ${fdsource} )
 
 
-target_link_libraries(fuzzTestCase libdiceparser.a Qt5::Core Qt5::Gui Qt5::Svg)
+target_link_libraries(fuzzTestCase libdiceparser.a Qt5::Core Qt5::Gui Qt5::Svg Qt5::Concurrent)
 #target_link_libraries(fuzzTestCase )
