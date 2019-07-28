@@ -34,21 +34,22 @@ public:
         Modulo
     };
     OperationCondition();
-    virtual ~OperationCondition();
+    virtual ~OperationCondition() override;
 
-    virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const;
+    virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const override;
 
     void setOperator(ConditionOperator m);
     // void setValue(qint64);
     void setValueNode(ExecutionNode* node);
-    QString toString();
+    QString toString() override;
 
     virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const override;
 
     BooleanCondition* getBoolean() const;
     void setBoolean(BooleanCondition* boolean);
 
-    virtual Validator* getCopy() const;
+    virtual Validator* getCopy() const override;
+
     const std::set<qint64>& getPossibleValues(const std::pair<qint64, qint64>& range) override;
 
 private:
