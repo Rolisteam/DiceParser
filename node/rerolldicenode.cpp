@@ -1,5 +1,6 @@
 #include "rerolldicenode.h"
 #include "parsingtoolbox.h"
+#include <utility>
 
 RerollDiceNode::RerollDiceNode(bool reroll, bool addingMode)
     : m_diceResult(new DiceResult()), m_validator(nullptr), m_reroll(reroll), m_adding(addingMode)
@@ -26,7 +27,6 @@ void RerollDiceNode::run(ExecutionNode* previous)
             for(auto& die : previous_result->getResultList())
             {
                 Die* tmpdie= new Die(*die);
-                //*tmpdie= *die;
                 m_diceResult->insertResult(tmpdie);
                 die->displayed();
             }
@@ -35,10 +35,22 @@ void RerollDiceNode::run(ExecutionNode* previous)
             QList<Die*>& list= m_diceResult->getResultList();
             QList<Die*> toRemove;
 
-            for(int i= 0; i < list.size(); ++i)
+            for(auto& die : list)
             {
-                auto die= list.at(i);
                 bool finished= false;
+                auto state
+                    = m_validator->isValidRangeSize(std::make_pair<qint64, qint64>(die->getBase(), die->getMaxValue()));
+                if((Dice::CONDITION_STATE::ALWAYSTRUE == state && m_adding)
+                   || (!m_reroll && !m_adding && state == Dice::CONDITION_STATE::UNREACHABLE))
+                {
+                    m_errors.insert(Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
+                                    QObject::tr("Condition (%1) cause an endless loop with this dice: %2")
+                                        .arg(toString(true))
+                                        .arg(QStringLiteral("d[%1,%2]")
+                                                 .arg(static_cast<int>(die->getBase()))
+                                                 .arg(static_cast<int>(die->getMaxValue()))));
+                    continue;
+                }
                 while(m_validator->hasValid(die, false) && !finished)
                 {
                     if(m_instruction != nullptr)
