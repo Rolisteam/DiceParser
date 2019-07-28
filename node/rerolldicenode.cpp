@@ -64,8 +64,8 @@ void RerollDiceNode::run(ExecutionNode* previous)
                             {
                                 toRemove.append(die);
                                 list.append(lastResult->getResultList());
+                                lastResult->clear();
                             }
-                            lastResult->clear();
                         }
                     }
                     else
