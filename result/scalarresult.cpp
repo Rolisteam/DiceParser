@@ -21,7 +21,10 @@
  ***************************************************************************/
 #include "scalarresult.h"
 
-ScalarResult::ScalarResult() {}
+ScalarResult::ScalarResult()
+{
+    m_resultTypes= static_cast<int>(Dice::RESULT_TYPE::SCALAR);
+}
 
 void ScalarResult::setValue(qreal i)
 {
