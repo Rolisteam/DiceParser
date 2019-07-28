@@ -281,16 +281,16 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
     Validator* tmp= readValidator(str, expectSquareBrasket);
     CompositeValidator::LogicOperation opLogic;
 
-    QVector<CompositeValidator::LogicOperation>* operators= new QVector<CompositeValidator::LogicOperation>();
-    QList<Validator*>* validatorList= new QList<Validator*>();
+    QVector<CompositeValidator::LogicOperation> operators;
+    QList<Validator*> validatorList;
 
     while(nullptr != tmp)
     {
         bool hasOperator= readLogicOperation(str, opLogic);
         if(hasOperator)
         {
-            operators->append(opLogic);
-            validatorList->append(tmp);
+            operators.append(opLogic);
+            validatorList.append(tmp);
             tmp= readValidator(str, expectSquareBrasket);
         }
         else
@@ -301,19 +301,19 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
                 // isOk=true;
             }
 
-            if(!validatorList->isEmpty())
+            if(!validatorList.isEmpty())
             {
-                validatorList->append(tmp);
+                validatorList.append(tmp);
             }
             else
             {
-                delete operators;
+                operators.clear();
                 return tmp;
             }
             tmp= nullptr;
         }
     }
-    if(!validatorList->isEmpty())
+    if(!validatorList.isEmpty())
     {
         CompositeValidator* validator= new CompositeValidator();
         validator->setOperationList(operators);
@@ -322,7 +322,6 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
     }
     else
     {
-        delete operators;
         return nullptr;
     }
 }
