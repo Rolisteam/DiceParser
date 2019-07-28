@@ -68,7 +68,7 @@ qint64 OperationCondition::hasValid(Die* b, bool recursive, bool unhighlight) co
             if(valueScalar == 0)
                 valueScalar= 1;
             die.insertRollValue(value % valueScalar);
-            sum+= m_boolean->hasValid(&die, recursive, false);
+            sum+= m_boolean->hasValid(&die, recursive, false) ? 1 : 0;
         }
         break;
         }
@@ -125,6 +125,7 @@ Dice::CONDITION_STATE OperationCondition::isValidRangeSize(const std::pair<qint6
 
     return valid;
 }
+
 Validator* OperationCondition::getCopy() const
 {
     OperationCondition* val= new OperationCondition();
@@ -143,4 +144,21 @@ qint64 OperationCondition::valueToScalar() const
     m_value->run(nullptr);
     auto result= m_value->getResult();
     return result->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
+}
+
+const std::set<qint64>& OperationCondition::getPossibleValues(const std::pair<qint64, qint64>& range)
+{
+    if(nullptr == m_boolean)
+        return m_values;
+
+    for(qint64 i= std::min(range.first, range.second); i <= std::max(range.first, range.second); ++i)
+    {
+        auto valueScalar= valueToScalar();
+        auto val= i % valueScalar;
+        Die die;
+        die.insertRollValue(val);
+        if(m_boolean->hasValid(&die, false, false))
+            m_values.insert(i);
+    }
+    return m_values;
 }

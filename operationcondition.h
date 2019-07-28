@@ -49,6 +49,7 @@ public:
     void setBoolean(BooleanCondition* boolean);
 
     virtual Validator* getCopy() const;
+    const std::set<qint64>& getPossibleValues(const std::pair<qint64, qint64>& range) override;
 
 private:
     qint64 valueToScalar() const;
