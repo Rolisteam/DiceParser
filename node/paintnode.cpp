@@ -64,11 +64,13 @@ void PainterNode::run(ExecutionNode* previous)
         return;
     }
     Result* previousResult= previous->getResult();
-    // m_result = previousResult;
-    DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(previousResult);
-    if(nullptr != previousDiceResult)
+    if(nullptr == previousResult)
+        return;
+
+    m_diceResult= dynamic_cast<DiceResult*>(previousResult->getCopy());
+    if(nullptr != m_diceResult)
     {
-        QList<Die*> diceList= previousDiceResult->getResultList();
+        QList<Die*> diceList= m_diceResult->getResultList();
         int pastDice= 0;
         for(ColorItem& item : m_colors)
         {
