@@ -204,13 +204,17 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
         {
             OperationCondition* condition= new OperationCondition();
             condition->setValueNode(operandNode);
-            Validator* valid= readValidator(str,hasSquare);
+            Validator* valid= readValidator(str, hasSquare);
             BooleanCondition* boolC= dynamic_cast<BooleanCondition*>(valid);
             if(nullptr != boolC)
             {
                 condition->setBoolean(boolC);
+                returnVal= condition;
             }
-            returnVal= condition;
+            else
+            {
+                delete condition;
+            }
         }
     }
     else if(readOperand(str, operandNode))
@@ -277,16 +281,16 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
     Validator* tmp= readValidator(str, expectSquareBrasket);
     CompositeValidator::LogicOperation opLogic;
 
-    QVector<CompositeValidator::LogicOperation>* operators= new QVector<CompositeValidator::LogicOperation>();
-    QList<Validator*>* validatorList= new QList<Validator*>();
+    QVector<CompositeValidator::LogicOperation> operators;
+    QList<Validator*> validatorList;
 
     while(nullptr != tmp)
     {
         bool hasOperator= readLogicOperation(str, opLogic);
         if(hasOperator)
         {
-            operators->append(opLogic);
-            validatorList->append(tmp);
+            operators.append(opLogic);
+            validatorList.append(tmp);
             tmp= readValidator(str, expectSquareBrasket);
         }
         else
@@ -297,19 +301,19 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
                 // isOk=true;
             }
 
-            if(!validatorList->isEmpty())
+            if(!validatorList.isEmpty())
             {
-                validatorList->append(tmp);
+                validatorList.append(tmp);
             }
             else
             {
-                delete operators;
+                operators.clear();
                 return tmp;
             }
             tmp= nullptr;
         }
     }
-    if(!validatorList->isEmpty())
+    if(!validatorList.isEmpty())
     {
         CompositeValidator* validator= new CompositeValidator();
         validator->setOperationList(operators);
@@ -318,7 +322,6 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
     }
     else
     {
-        delete operators;
         return nullptr;
     }
 }
@@ -597,19 +600,13 @@ bool ParsingToolBox::readAscending(QString& str)
     }
     return false;
 }
-bool ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
+Dice::CONDITION_STATE ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
 {
     DiceRollerNode* node= getDiceRollerNode(previous);
-    bool valid= false;
-    if(nullptr != node)
-    {
-        valid= val->isValidRangeSize(node->getRange());
-    }
-    else
-    {
-        valid= true;
-    }
-    return valid;
+    if(nullptr == node)
+        return Dice::CONDITION_STATE::ERROR;
+
+    return val->isValidRangeSize(node->getRange());
 }
 DiceRollerNode* ParsingToolBox::getDiceRollerNode(ExecutionNode* previous)
 {
@@ -663,28 +660,32 @@ ParsingToolBox::LIST_OPERATOR ParsingToolBox::readListOperator(QString& str)
     return NONE;
 }
 
-void ParsingToolBox::readPainterParameter(PainterNode* painter, QString& str)
+bool ParsingToolBox::readPainterParameter(PainterNode* painter, QString& str)
 {
-    if(str.startsWith('['))
-    {
-        str= str.remove(0, 1);
-        int pos= str.indexOf(']');
+    if(!str.startsWith('['))
+        return false;
 
-        if(pos > -1)
+    str= str.remove(0, 1);
+    int pos= str.indexOf(']');
+
+    if(pos == -1)
+        return false;
+
+    QString data= str.left(pos);
+    str= str.remove(0, pos + 1);
+    QStringList duos= data.split(',');
+    bool result= false;
+    for(QString& duoStr : duos)
+    {
+        QStringList keyValu= duoStr.split(':');
+        if(keyValu.size() == 2)
         {
-            QString data= str.left(pos);
-            str= str.remove(0, pos + 1);
-            QStringList duos= data.split(',');
-            for(QString& duoStr : duos)
-            {
-                QStringList keyValu= duoStr.split(':');
-                if(keyValu.size() == 2)
-                {
-                    painter->insertColorItem(keyValu[1], keyValu[0].toInt());
-                }
-            }
+            painter->insertColorItem(keyValu[1], keyValu[0].toInt());
+            result= true;
         }
     }
+
+    return result;
 }
 
 QHash<QString, QString> ParsingToolBox::getVariableHash()

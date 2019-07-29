@@ -35,10 +35,10 @@ public:
     void setValue(qint64, qint64);
     void setStart(qint64);
     void setEnd(qint64);
-    virtual qint64 hasValid(Die* b, bool recursive, bool unlight= false) const;
+    virtual qint64 hasValid(Die* b, bool recursive, bool unlight= false) const override;
 
-    virtual QString toString();
-    virtual bool isValidRangeSize(std::pair<qint64, qint64> range) const;
+    virtual QString toString() override;
+    virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const override;
 
     bool isFullyDefined() const;
     qint64 getStart() const;
@@ -47,7 +47,7 @@ public:
     void setEmptyRange(bool);
     bool isEmptyRange();
 
-    virtual Validator* getCopy() const;
+    virtual Validator* getCopy() const override;
 
 private:
     qint64 m_start= 0;

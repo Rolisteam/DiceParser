@@ -16,7 +16,7 @@ void ValuesListNode::run(ExecutionNode* previous)
         auto result= node->getResult();
         if(!result)
             continue;
-        auto val= result->getResult(Result::SCALAR).toInt();
+        auto val= result->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
         Die* die= new Die();
         auto dyna= dynamic_cast<VariableNode*>(node);
         if(nullptr != dyna)

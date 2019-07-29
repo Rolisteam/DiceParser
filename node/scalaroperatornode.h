@@ -76,7 +76,7 @@ public:
      * @brief getErrorList
      * @return
      */
-    virtual QMap<ExecutionNode::DICE_ERROR_CODE, QString> getExecutionErrorMap();
+    virtual QMap<Dice::ERROR_CODE, QString> getExecutionErrorMap();
     /**
      * @brief getArithmeticOperator
      * @return

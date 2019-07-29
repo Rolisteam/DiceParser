@@ -35,7 +35,7 @@ Die::Die()
     , m_op(Die::PLUS) //,m_mt(m_randomDevice)
 {
     auto seed= std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    m_rng= std::mt19937(quintptr(this) + seed);
+    m_rng= std::mt19937(quintptr(this) + static_cast<unsigned long long>(seed));
 }
 Die::Die(const Die& die)
 {
@@ -49,6 +49,8 @@ Die::Die(const Die& die)
     m_base= die.m_base;
     m_color= die.getColor();
     m_op= die.getOp();
+    auto seed= std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    m_rng= std::mt19937(quintptr(this) + static_cast<unsigned long long>(seed));
 }
 
 void Die::setValue(qint64 r)

@@ -20,3 +20,8 @@ qrc_*.cpp
 Makefile
 *-build-*
 build*
+
+*crashes*
+*hangs*
+*queue*
+*fuzzer0*

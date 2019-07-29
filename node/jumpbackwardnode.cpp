@@ -96,7 +96,7 @@ void JumpBackwardNode::run(ExecutionNode* previous)
         if(nullptr != result)
         {
             //--i;
-            if(/*(i==0)&&*/ (result->hasResultOfType(Result::DICE_LIST)))
+            if(/*(i==0)&&*/ (result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST)))
             {
                 found= true;
                 m_backwardNode= parent;
@@ -118,7 +118,8 @@ void JumpBackwardNode::run(ExecutionNode* previous)
     }
     if(nullptr == result)
     {
-        m_errors.insert(DIE_RESULT_EXPECTED,
+        m_errors.insert(
+            Dice::ERROR_CODE::DIE_RESULT_EXPECTED,
             QObject::tr(" The @ operator expects dice result. Please check the documentation to fix your command."));
     }
     else

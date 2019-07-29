@@ -34,7 +34,7 @@ void CountExecuteNode::run(ExecutionNode* previous)
         {
             if(nullptr != m_validator)
             {
-                sum+= m_validator->hasValid(dice, true, true);
+                sum+= m_validator->hasValid(dice, true, true) ? 1 : 0;
             }
         }
         m_scalarResult->setValue(sum);

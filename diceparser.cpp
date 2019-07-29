@@ -29,6 +29,7 @@
 #include "node/bind.h"
 #include "node/countexecutenode.h"
 #include "node/dicerollernode.h"
+#include "node/executionnode.h"
 #include "node/explodedicenode.h"
 #include "node/filternode.h"
 #include "node/groupnode.h"
@@ -164,11 +165,7 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
 {
     m_errorMap.clear();
     m_comment= QString("");
-    if(!m_startNodes.empty())
-    {
-        qDeleteAll(m_startNodes);
-        m_startNodes.clear();
-    }
+    cleanAll();
     m_currentTreeHasSeparator= false;
     if(allowAlias)
     {
@@ -180,7 +177,7 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
     if(!hasInstruction)
     {
         m_errorMap.insert(
-            ExecutionNode::NOTHING_UNDERSTOOD,
+            Dice::ERROR_CODE::NOTHING_UNDERSTOOD,
             QObject::tr("Nothing was understood. To roll dice: !1d6 - full documation: "
                         "<a "
                         "href=\"https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md\">https://github.com/"
@@ -190,7 +187,7 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
     {
         auto i= m_command.size() - str.size();
         m_warningMap.insert(
-            ExecutionNode::UNEXPECTED_CHARACTER,
+            Dice::ERROR_CODE::UNEXPECTED_CHARACTER,
             QObject::tr("Unexpected character at %1 - end of command was ignored \"%2\"").arg(i).arg(str));
     }
     if(!m_errorMap.isEmpty())
@@ -226,7 +223,7 @@ bool DiceParser::readExpression(QString& str, ExecutionNode*& node)
             }
             else
             {
-                m_warningMap.insert(ExecutionNode::BAD_SYNTAXE,
+                m_warningMap.insert(Dice::ERROR_CODE::BAD_SYNTAXE,
                                     QObject::tr("Expected closing parenthesis - can't validate the inside."));
             }
         }
@@ -373,6 +370,15 @@ bool DiceParser::readNode(QString& str, ExecutionNode*& node)
     return false;
 }
 
+void DiceParser::cleanAll()
+{
+    if(!m_startNodes.empty())
+    {
+        qDeleteAll(m_startNodes);
+        m_startNodes.clear();
+    }
+}
+
 void DiceParser::start()
 {
     for(auto start : m_startNodes)
@@ -392,11 +398,11 @@ QList<qreal> DiceParser::getLastIntegerResults()
         bool scalarDone= false;
         while((result != nullptr) && (!scalarDone))
         {
-            if(result->hasResultOfType(Result::SCALAR))
+            if(result->hasResultOfType(Dice::RESULT_TYPE::SCALAR))
             {
                 if(!alreadyVisitedNode.contains(result->getId()))
                 {
-                    resultValues << result->getResult(Result::SCALAR).toReal();
+                    resultValues << result->getResult(Dice::RESULT_TYPE::SCALAR).toReal();
                     alreadyVisitedNode << result->getId();
                 }
                 scalarDone= true;
@@ -417,9 +423,9 @@ QStringList DiceParser::getStringResult()
         bool found= false;
         while((nullptr != result) && (!found))
         {
-            if(result->hasResultOfType(Result::STRING))
+            if(result->hasResultOfType(Dice::RESULT_TYPE::STRING))
             {
-                str= result->getResult(Result::STRING).toString();
+                str= result->getResult(Dice::RESULT_TYPE::STRING).toString();
                 found= true;
             }
             result= result->getPrevious();
@@ -440,7 +446,7 @@ QStringList DiceParser::getAllStringResult(bool& hasAlias)
 
         while(nullptr != result)
         {
-            if(result->hasResultOfType(Result::STRING))
+            if(result->hasResultOfType(Dice::RESULT_TYPE::STRING))
             {
                 StringResult* stringResult= dynamic_cast<StringResult*>(result);
                 if(nullptr != stringResult)
@@ -465,7 +471,7 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
 
         while(nullptr != result)
         {
-            if(result->hasResultOfType(Result::DICE_LIST))
+            if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
             {
                 DiceResult* stringResult= dynamic_cast<DiceResult*>(result);
                 if(nullptr != stringResult)
@@ -508,7 +514,7 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
         ExportedDiceResult nodeResult;
         while(nullptr != result)
         {
-            if(result->hasResultOfType(Result::DICE_LIST))
+            if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
             {
                 DiceResult* diceResult= dynamic_cast<DiceResult*>(result);
                 QList<HighLightDice> list;
@@ -540,7 +546,7 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList, bo
         Result* result= next->getResult();
         while(nullptr != result)
         {
-            if(result->hasResultOfType(Result::DICE_LIST))
+            if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
             {
                 DiceResult* diceResult= dynamic_cast<DiceResult*>(result);
                 if(nullptr != diceResult)
@@ -604,7 +610,7 @@ bool DiceParser::hasIntegerResultNotInFirst()
     bool result= false;
     for(auto node : m_startNodes)
     {
-        result|= hasResultOfType(Result::SCALAR, node);
+        result|= hasResultOfType(Dice::RESULT_TYPE::SCALAR, node);
     }
     return result;
 }
@@ -614,7 +620,7 @@ bool DiceParser::hasDiceResult()
     bool result= false;
     for(auto node : m_startNodes)
     {
-        result|= hasResultOfType(Result::DICE_LIST, node);
+        result|= hasResultOfType(Dice::RESULT_TYPE::DICE_LIST, node);
     }
     return result;
 }
@@ -623,18 +629,22 @@ bool DiceParser::hasStringResult()
     bool result= false;
     for(auto node : m_startNodes)
     {
-        result|= hasResultOfType(Result::STRING, node);
+        result|= hasResultOfType(Dice::RESULT_TYPE::STRING, node);
     }
     return result;
 }
-bool DiceParser::hasResultOfType(Result::RESULT_TYPE type, ExecutionNode* node, bool notthelast)
+bool DiceParser::hasResultOfType(Dice::RESULT_TYPE type, ExecutionNode* node, bool notthelast)
 {
     bool scalarDone= false;
     ExecutionNode* next= getLeafNode(node);
     Result* result= next->getResult();
     while((result != nullptr) && (!scalarDone))
     {
-        if(result->hasResultOfType(type) && ((!notthelast) || (nullptr != result->getPrevious())))
+        bool lastResult= false;
+        if(notthelast)
+            lastResult= (nullptr != result->getPrevious());
+
+        if(result->hasResultOfType(type) && !lastResult)
         {
             scalarDone= true;
         }
@@ -653,7 +663,7 @@ QList<qreal> DiceParser::getSumOfDiceResult()
         bool found= false;
         while((nullptr != result) && (!found))
         {
-            if(result->hasResultOfType(Result::DICE_LIST))
+            if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
             {
                 DiceResult* myDiceResult= dynamic_cast<DiceResult*>(result);
                 if(nullptr != myDiceResult)
@@ -704,7 +714,7 @@ bool DiceParser::readDice(QString& str, ExecutionNode*& node)
                 if(max < 1)
                 {
                     m_errorMap.insert(
-                        ExecutionNode::BAD_SYNTAXE,
+                        Dice::ERROR_CODE::BAD_SYNTAXE,
                         QObject::tr("Dice with %1 face(s) does not exist. Please, put a value higher than 0").arg(max));
                     return false;
                 }
@@ -759,7 +769,7 @@ bool DiceParser::readDice(QString& str, ExecutionNode*& node)
             else
             {
                 m_errorMap.insert(
-                    ExecutionNode::BAD_SYNTAXE,
+                    Dice::ERROR_CODE::BAD_SYNTAXE,
                     QObject::tr(
                         "List is missing after the L operator. Please, add it (e.g : 1L[sword,spear,gun,arrow])"));
             }
@@ -1087,7 +1097,7 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 }
                 else
                 {
-                    m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,
+                    m_errorMap.insert(Dice::ERROR_CODE::BAD_SYNTAXE,
                                       QObject::tr("Validator is missing after the c operator. Please, change it"));
                 }
             }
@@ -1098,14 +1108,33 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 // Todo: I think that Exploding and Rerolling could share the same code
                 {
                     Validator* validator= m_parsingToolbox->readCompositeValidator(str);
+                    QString symbol= m_OptionOp->key(operatorName);
                     if(nullptr != validator)
                     {
-                        if(!m_parsingToolbox->isValidValidator(previous, validator))
+                        switch(m_parsingToolbox->isValidValidator(previous, validator))
                         {
-                            m_errorMap.insert(
-                                ExecutionNode::BAD_SYNTAXE,
-                                QObject::tr("Validator is missing after the %1 operator. Please, change it")
-                                    .arg(operatorName == Reroll ? "r" : "a"));
+                        case Dice::CONDITION_STATE::ALWAYSTRUE:
+                            if(operatorName == RerollAndAdd)
+                            {
+                                m_errorMap.insert(
+                                    Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
+                                    QObject::tr(
+                                        "Validator is always true missing after the %1 operator. Please, change it")
+                                        .arg(symbol));
+                            }
+                            break;
+                        case Dice::CONDITION_STATE::UNREACHABLE:
+                            if(operatorName == RerollUntil)
+                            {
+                                m_errorMap.insert(Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
+                                                  QObject::tr("Candition can be reached, causing endless loop. Please, "
+                                                              "change the %1 option condition")
+                                                      .arg(symbol));
+                            }
+                            break;
+                        case Dice::CONDITION_STATE::ERROR:
+                        default:
+                            break;
                         }
 
                         auto reroll= (operatorName == RerollAndAdd || operatorName == Reroll);
@@ -1123,13 +1152,9 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                     }
                     else
                     {
-                        m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,
-                                          QObject::tr("Validator is missing after the %1 operator. Please, change it")
-                                              .arg(operatorName == Reroll ?
-                                                       QStringLiteral("r") :
-                                                       operatorName == RerollUntil ?
-                                                       QStringLiteral("R") :
-                                                       operatorName == RerollAndAdd ? QStringLiteral("a") : ""));
+                        m_errorMap.insert(
+                            Dice::ERROR_CODE::BAD_SYNTAXE,
+                            QObject::tr("Validator is missing after the %1 operator. Please, change it").arg(symbol));
                     }
                 }
                 break;
@@ -1138,9 +1163,9 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 Validator* validator= m_parsingToolbox->readCompositeValidator(str);
                 if(nullptr != validator)
                 {
-                    if(!m_parsingToolbox->isValidValidator(previous, validator))
+                    if(Dice::CONDITION_STATE::ALWAYSTRUE == m_parsingToolbox->isValidValidator(previous, validator))
                     {
-                        m_errorMap.insert(ExecutionNode::ENDLESS_LOOP_ERROR,
+                        m_errorMap.insert(Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
                                           QObject::tr("This condition %1 introduces an endless loop. Please, change it")
                                               .arg(validator->toString()));
                     }
@@ -1152,7 +1177,7 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 }
                 else
                 {
-                    m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,
+                    m_errorMap.insert(Dice::ERROR_CODE::BAD_SYNTAXE,
                                       QObject::tr("Validator is missing after the e operator. Please, change it"));
                 }
             }
@@ -1210,10 +1235,18 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
             case Painter:
             {
                 PainterNode* painter= new PainterNode();
-                m_parsingToolbox->readPainterParameter(painter, str);
-                previous->setNextNode(painter);
-                node= painter;
-                found= true;
+                if(!m_parsingToolbox->readPainterParameter(painter, str))
+                {
+                    m_errorMap.insert(Dice::ERROR_CODE::BAD_SYNTAXE,
+                                      QObject::tr("Missing parameter for Painter node (p)"));
+                    delete painter;
+                }
+                else
+                {
+                    previous->setNextNode(painter);
+                    node= painter;
+                    found= true;
+                }
             }
             break;
             case ifOperator:
@@ -1345,9 +1378,9 @@ void DiceParser::setComment(const QString& comment)
     m_comment= comment;
 }
 
-QMap<ExecutionNode::DICE_ERROR_CODE, QString> DiceParser::getErrorMap()
+QMap<Dice::ERROR_CODE, QString> DiceParser::getErrorMap()
 {
-    QMap<ExecutionNode::DICE_ERROR_CODE, QString> map;
+    QMap<Dice::ERROR_CODE, QString> map;
 
     for(auto start : m_startNodes)
     {
@@ -1362,7 +1395,7 @@ QMap<ExecutionNode::DICE_ERROR_CODE, QString> DiceParser::getErrorMap()
 }
 QString DiceParser::humanReadableError()
 {
-    QMapIterator<ExecutionNode::DICE_ERROR_CODE, QString> i(m_errorMap);
+    QMapIterator<Dice::ERROR_CODE, QString> i(m_errorMap);
     QString str("");
     while(i.hasNext())
     {
@@ -1372,7 +1405,7 @@ QString DiceParser::humanReadableError()
     }
 
     /// list
-    QMapIterator<ExecutionNode::DICE_ERROR_CODE, QString> j(getErrorMap());
+    QMapIterator<Dice::ERROR_CODE, QString> j(getErrorMap());
     while(j.hasNext())
     {
         j.next();
@@ -1384,7 +1417,7 @@ QString DiceParser::humanReadableError()
 
 QString DiceParser::humanReadableWarning()
 {
-    QMapIterator<ExecutionNode::DICE_ERROR_CODE, QString> i(m_warningMap);
+    QMapIterator<Dice::ERROR_CODE, QString> i(m_warningMap);
     QString str("");
     while(i.hasNext())
     {

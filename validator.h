@@ -22,9 +22,11 @@
 #ifndef VALIDATOR_H
 #define VALIDATOR_H
 
+#include "diceparserhelper.h"
 #include "die.h"
 #include <QString>
 #include <Qt>
+#include <set>
 /**
  * @brief The Validator class is an abstract class for checking the validity of dice for some
  * operator.
@@ -58,12 +60,17 @@ public:
      * @param faces
      * @return
      */
-    virtual bool isValidRangeSize(std::pair<qint64, qint64> range) const= 0;
+    virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const= 0;
     /**
      * @brief getCopy
      * @return return  a copy of this validator
      */
     virtual Validator* getCopy() const= 0;
+
+    virtual const std::set<qint64>& getPossibleValues(const std::pair<qint64, qint64>& range);
+
+protected:
+    std::set<qint64> m_values;
 };
 
 #endif // VALIDATOR_H

@@ -34,27 +34,29 @@ public:
         Modulo
     };
     OperationCondition();
-    virtual ~OperationCondition();
+    virtual ~OperationCondition() override;
 
-    virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const;
+    virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const override;
 
     void setOperator(ConditionOperator m);
     // void setValue(qint64);
     void setValueNode(ExecutionNode* node);
-    QString toString();
+    QString toString() override;
 
-    virtual bool isValidRangeSize(std::pair<qint64, qint64> range) const;
+    virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const override;
 
     BooleanCondition* getBoolean() const;
     void setBoolean(BooleanCondition* boolean);
 
-    virtual Validator* getCopy() const;
+    virtual Validator* getCopy() const override;
+
+    const std::set<qint64>& getPossibleValues(const std::pair<qint64, qint64>& range) override;
 
 private:
     qint64 valueToScalar() const;
 
 private:
-    ConditionOperator m_operator;
+    ConditionOperator m_operator= Modulo;
     BooleanCondition* m_boolean= nullptr;
     // qint64 m_value;
     ExecutionNode* m_value= nullptr;

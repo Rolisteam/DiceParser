@@ -23,16 +23,16 @@
 
 ScalarResult::ScalarResult()
 {
-    m_resultTypes= Result::SCALAR;
+    m_resultTypes= static_cast<int>(Dice::RESULT_TYPE::SCALAR);
 }
 
 void ScalarResult::setValue(qreal i)
 {
     m_value= i;
 }
-QVariant ScalarResult::getResult(Result::RESULT_TYPE type)
+QVariant ScalarResult::getResult(Dice::RESULT_TYPE type)
 {
-    if(SCALAR == type)
+    if(Dice::RESULT_TYPE::SCALAR == type)
     {
         return m_value;
     }

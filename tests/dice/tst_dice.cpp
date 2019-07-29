@@ -43,6 +43,7 @@
 #include "node/splitnode.h"
 #include "node/stringnode.h"
 #include "node/uniquenode.h"
+#include "operationcondition.h"
 #include "result/stringresult.h"
 #include "testnode.h"
 
@@ -130,6 +131,8 @@ private slots:
 
     void occurenceTest();
     void occurenceTest_data();
+
+    void operatoionConditionValidatorTest();
 
 private:
     std::unique_ptr<Die> m_die;
@@ -463,13 +466,13 @@ void TestDice::dangerousCommandsTest_data()
     // QTest::addRow("cmd5") << "10d10g10";
 }
 
-void makeResult(DiceResult& result, const QVector<int>& values)
+void makeResult(DiceResult& result, const QVector<int>& values, int base= 1, int max= 10)
 {
     for(int val : values)
     {
         auto die= new Die();
-        die->setBase(1);
-        die->setMaxValue(10);
+        die->setBase(base);
+        die->setMaxValue(max);
         die->insertRollValue(val);
         result.insertResult(die);
     }
@@ -524,7 +527,7 @@ void TestDice::keepTest()
     if(error)
         return;
 
-    auto resultScore= keepN.getResult()->getResult(Result::SCALAR).toInt();
+    auto resultScore= keepN.getResult()->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
 
     QCOMPARE(score, resultScore);
 }
@@ -609,7 +612,7 @@ void TestDice::countTest()
 
     node.run(nullptr);
 
-    QCOMPARE(score, countN.getResult()->getResult(Result::SCALAR).toInt());
+    QCOMPARE(score, countN.getResult()->getResult(Dice::RESULT_TYPE::SCALAR).toInt());
 
     countN.setValidator(nullptr);
 }
@@ -722,7 +725,7 @@ void TestDice::rerollUntilTest()
     RerollDiceNode reroll(false, false);
 
     DiceResult result;
-    makeResult(result, values);
+    makeResult(result, values, 0);
     node.setResult(&result);
 
     auto validator= makeValidator(condition, BooleanCondition::Equal);
@@ -742,7 +745,6 @@ void TestDice::rerollUntilTest()
             resultDiff= true;
         ++i;
     }
-
     QCOMPARE(different, resultDiff);
 }
 void TestDice::rerollUntilTest_data()
@@ -1060,6 +1062,31 @@ void TestDice::ifCommandTest_data()
            "[%2]\"}{\"Failure: %1 [%2]\"}}"
         << BooleanCondition::GreaterOrEqual << QList<int>({15, 10, 1})
         << QStringList({"Complete Success:", "Success with Complications:", "Failure:"});
+}
+
+void TestDice::operatoionConditionValidatorTest()
+{
+    OperationCondition validator;
+    NumberNode number;
+    number.setNumber(2);
+    validator.setValueNode(&number);
+
+    BooleanCondition subValidator;
+    subValidator.setOperator(BooleanCondition::Equal);
+    NumberNode subnumber;
+    subnumber.setNumber(0);
+    subValidator.setValueNode(&subnumber);
+
+    validator.setBoolean(&subValidator);
+
+    std::set<qint64> data= {2, 4, 6, 8, 10};
+    auto value= validator.getPossibleValues(std::make_pair<qint64, qint64>(1, 10));
+
+    subValidator.setValueNode(nullptr);
+    validator.setValueNode(nullptr);
+    validator.setBoolean(nullptr);
+
+    QCOMPARE(value, data);
 }
 
 void TestDice::cleanupTestCase() {}

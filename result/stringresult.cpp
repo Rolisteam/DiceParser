@@ -3,20 +3,21 @@
 StringResult::StringResult()
 {
     m_highlight= true;
-    m_resultTypes= Result::STRING;
+    m_resultTypes= static_cast<int>(Dice::RESULT_TYPE::STRING);
 }
 void StringResult::setText(QString text)
 {
     m_value= text;
 }
 StringResult::~StringResult() {}
-bool StringResult::hasResultOfType(RESULT_TYPE resultType) const
+bool StringResult::hasResultOfType(Dice::RESULT_TYPE resultType) const
 {
-    if(resultType & Result::STRING)
+
+    if(resultType == Dice::RESULT_TYPE::STRING)
     {
         return true;
     }
-    else if(resultType & Result::SCALAR)
+    else if(resultType == Dice::RESULT_TYPE::SCALAR)
     {
         bool ok= false;
         getText().toInt(&ok);
@@ -28,13 +29,13 @@ QString StringResult::getText() const
 {
     return m_value;
 }
-QVariant StringResult::getResult(RESULT_TYPE type)
+QVariant StringResult::getResult(Dice::RESULT_TYPE type)
 {
     switch(type)
     {
-    case STRING:
+    case Dice::RESULT_TYPE::STRING:
         return getText();
-    case SCALAR:
+    case Dice::RESULT_TYPE::SCALAR:
         return getText().toInt();
     default:
         return QVariant();

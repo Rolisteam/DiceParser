@@ -1,8 +1,8 @@
 #ifndef EXECUTIONNODE_H
 #define EXECUTIONNODE_H
 
+#include "diceparserhelper.h"
 #include "result/result.h"
-#include <QDebug>
 
 /**
  * @brief The ExecutionNode class
@@ -10,21 +10,6 @@
 class ExecutionNode
 {
 public:
-    enum DICE_ERROR_CODE
-    {
-        NO_DICE_ERROR,
-        DIE_RESULT_EXPECTED,
-        BAD_SYNTAXE,
-        ENDLESS_LOOP_ERROR,
-        DIVIDE_BY_ZERO,
-        NOTHING_UNDERSTOOD,
-        NO_DICE_TO_ROLL,
-        TOO_MANY_DICE,
-        NO_VARIBALE,
-        INVALID_INDEX,
-        UNEXPECTED_CHARACTER,
-        NO_PREVIOUS_ERROR
-    };
     /**
      * @brief ExecutionNode
      */
@@ -72,7 +57,7 @@ public:
      * @brief getErrorList
      * @return
      */
-    virtual QMap<ExecutionNode::DICE_ERROR_CODE, QString> getExecutionErrorMap();
+    virtual QMap<Dice::ERROR_CODE, QString> getExecutionErrorMap();
 
     /**
      * @brief generateDotTree
@@ -101,7 +86,7 @@ protected:
     /**
      * @brief m_result
      */
-    Result* m_result;
+    Result* m_result= nullptr;
     /**
      * @brief m_nextNode
      */
@@ -109,7 +94,7 @@ protected:
     /**
      * @brief m_errors
      */
-    QMap<ExecutionNode::DICE_ERROR_CODE, QString> m_errors;
+    QMap<Dice::ERROR_CODE, QString> m_errors;
 
     QString m_id;
 };

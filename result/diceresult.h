@@ -61,7 +61,7 @@ public:
      * @brief getScalar
      * @return
      */
-    virtual QVariant getResult(RESULT_TYPE);
+    virtual QVariant getResult(Dice::RESULT_TYPE);
     /**
      * @brief toString
      * @return

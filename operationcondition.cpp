@@ -41,6 +41,10 @@ void OperationCondition::setBoolean(BooleanCondition* boolean)
 
 qint64 OperationCondition::hasValid(Die* b, bool recursive, bool unhighlight) const
 {
+    if(nullptr == m_boolean)
+    {
+        return 0;
+    }
     QList<qint64> listValues;
     if(recursive)
     {
@@ -64,7 +68,7 @@ qint64 OperationCondition::hasValid(Die* b, bool recursive, bool unhighlight) co
             if(valueScalar == 0)
                 valueScalar= 1;
             die.insertRollValue(value % valueScalar);
-            sum+= m_boolean->hasValid(&die, recursive, false);
+            sum+= m_boolean->hasValid(&die, recursive, false) ? 1 : 0;
         }
         break;
         }
@@ -102,18 +106,26 @@ QString OperationCondition::toString()
     }
     return QStringLiteral("[%1%2%3]").arg(str).arg(valueToScalar()).arg(m_boolean->toString());
 }
-bool OperationCondition::isValidRangeSize(std::pair<qint64, qint64>) const
+Dice::CONDITION_STATE OperationCondition::isValidRangeSize(const std::pair<qint64, qint64>& range) const
 {
-    auto value= valueToScalar();
-    bool valid= true;
+    Dice::CONDITION_STATE valid= Dice::CONDITION_STATE::REACHABLE;
 
-    if(value == 0)
-        valid= false;
-    /*  else if(nullptr != m_boolean)
-          valid = m_boolean->isValidRangeSize(range);*/
+    auto rangeIsClose= (range.first == range.second);
+
+    Die die;
+    die.insertRollValue(range.first);
+
+    if(nullptr == m_boolean)
+        return Dice::CONDITION_STATE::ERROR;
+
+    if(rangeIsClose && m_boolean->hasValid(&die, false, false))
+        valid= Dice::CONDITION_STATE::ALWAYSTRUE;
+    else if(rangeIsClose && !m_boolean->hasValid(&die, false, false))
+        valid= Dice::CONDITION_STATE::UNREACHABLE;
 
     return valid;
 }
+
 Validator* OperationCondition::getCopy() const
 {
     OperationCondition* val= new OperationCondition();
@@ -131,5 +143,22 @@ qint64 OperationCondition::valueToScalar() const
 
     m_value->run(nullptr);
     auto result= m_value->getResult();
-    return result->getResult(Result::SCALAR).toInt();
+    return result->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
+}
+
+const std::set<qint64>& OperationCondition::getPossibleValues(const std::pair<qint64, qint64>& range)
+{
+    if(nullptr == m_boolean)
+        return m_values;
+
+    for(qint64 i= std::min(range.first, range.second); i <= std::max(range.first, range.second); ++i)
+    {
+        auto valueScalar= valueToScalar();
+        auto val= i % valueScalar;
+        Die die;
+        die.insertRollValue(val);
+        if(m_boolean->hasValid(&die, false, false))
+            m_values.insert(i);
+    }
+    return m_values;
 }

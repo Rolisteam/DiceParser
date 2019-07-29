@@ -20,7 +20,66 @@
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
  ***************************************************************************/
 #include "booleancondition.h"
-#include <QDebug>
+
+Dice::CONDITION_STATE testEqual(bool insideRange, const std::pair<qint64, qint64>& range)
+{
+    if(!insideRange)
+        return Dice::CONDITION_STATE::UNREACHABLE;
+    else if(insideRange && (range.first == range.second))
+        return Dice::CONDITION_STATE::ALWAYSTRUE;
+    else
+        return Dice::CONDITION_STATE::REACHABLE;
+}
+
+Dice::CONDITION_STATE testGreatherThan(qint64 value, const std::pair<qint64, qint64>& range)
+{
+    if(value >= std::max(range.first, range.second))
+        return Dice::CONDITION_STATE::UNREACHABLE;
+    else if(value < std::min(range.first, range.second))
+        return Dice::CONDITION_STATE::ALWAYSTRUE;
+    else
+        return Dice::CONDITION_STATE::REACHABLE;
+}
+
+Dice::CONDITION_STATE testLesserThan(qint64 value, const std::pair<qint64, qint64>& range)
+{
+    if(value <= std::min(range.first, range.second))
+        return Dice::CONDITION_STATE::UNREACHABLE;
+    else if(value > std::max(range.first, range.second))
+        return Dice::CONDITION_STATE::ALWAYSTRUE;
+    else
+        return Dice::CONDITION_STATE::REACHABLE;
+}
+
+Dice::CONDITION_STATE testGreaterOrEqual(qint64 value, const std::pair<qint64, qint64>& range)
+{
+    if(value > std::max(range.first, range.second))
+        return Dice::CONDITION_STATE::UNREACHABLE;
+    else if(value <= std::min(range.first, range.second))
+        return Dice::CONDITION_STATE::ALWAYSTRUE;
+    else
+        return Dice::CONDITION_STATE::REACHABLE;
+}
+
+Dice::CONDITION_STATE testLesserOrEqual(qint64 value, const std::pair<qint64, qint64>& range)
+{
+    if(value < std::min(range.first, range.second))
+        return Dice::CONDITION_STATE::UNREACHABLE;
+    else if(value >= std::max(range.first, range.second))
+        return Dice::CONDITION_STATE::ALWAYSTRUE;
+    else
+        return Dice::CONDITION_STATE::REACHABLE;
+}
+
+Dice::CONDITION_STATE testDifferent(bool inside, const std::pair<qint64, qint64>& range)
+{
+    if(inside && (range.first == range.second))
+        return Dice::CONDITION_STATE::UNREACHABLE;
+    else if(!inside)
+        return Dice::CONDITION_STATE::ALWAYSTRUE;
+    else
+        return Dice::CONDITION_STATE::REACHABLE;
+}
 
 BooleanCondition::BooleanCondition() : m_operator(Equal) {}
 
@@ -117,39 +176,41 @@ QString BooleanCondition::toString()
     }
     return QStringLiteral("[%1%2]").arg(str).arg(valueToScalar());
 }
-bool BooleanCondition::isValidRangeSize(std::pair<qint64, qint64> range) const
+
+Dice::CONDITION_STATE BooleanCondition::isValidRangeSize(const std::pair<qint64, qint64>& range) const
 {
-    bool isValid= false;
+    Dice::CONDITION_STATE state;
     auto valueScalar= valueToScalar();
     qint64 boundValue= qBound(range.first, valueScalar, range.second);
+    bool isInsideRange= (boundValue == valueScalar);
     switch(m_operator)
     {
     case Equal:
-        isValid= (boundValue == valueScalar);
+        state= testEqual(isInsideRange, range); //(isInsideRange && (range.first != range.second)) ? ;
         break;
     case GreaterThan:
-        isValid= range.first <= valueScalar;
+        state= testGreatherThan(valueScalar, range);
         break;
     case LesserThan:
-        isValid= range.second >= valueScalar;
+        state= testLesserThan(valueScalar, range);
         break;
     case GreaterOrEqual:
-        isValid= range.first < valueScalar;
+        state= testGreaterOrEqual(valueScalar, range);
         break;
     case LesserOrEqual:
-        isValid= range.second > valueScalar;
+        state= testLesserOrEqual(valueScalar, range);
         break;
     case Different:
-        isValid= (boundValue == valueScalar);
+        state= testDifferent(isInsideRange, range);
         break;
     }
-    return isValid;
+    return state;
 }
 Validator* BooleanCondition::getCopy() const
 {
     BooleanCondition* val= new BooleanCondition();
     val->setOperator(m_operator);
-    val->setValueNode(m_value);
+    val->setValueNode(m_value->getCopy());
     return val;
 }
 qint64 BooleanCondition::valueToScalar() const
@@ -159,5 +220,8 @@ qint64 BooleanCondition::valueToScalar() const
 
     m_value->run(nullptr);
     auto result= m_value->getResult();
-    return result->getResult(Result::SCALAR).toInt();
+    if(result)
+        return result->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
+    else
+        return 0;
 }

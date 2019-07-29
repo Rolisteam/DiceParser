@@ -29,7 +29,7 @@ void MergeNode::run(ExecutionNode* previous)
 {
     if(nullptr == previous)
     {
-        m_errors.insert(ExecutionNode::NO_PREVIOUS_ERROR, QObject::tr("No previous node before Merge operator"));
+        m_errors.insert(Dice::ERROR_CODE::NO_PREVIOUS_ERROR, QObject::tr("No previous node before Merge operator"));
         return;
     }
 
@@ -40,46 +40,46 @@ void MergeNode::run(ExecutionNode* previous)
     for(auto start : *m_startList)
     {
         ExecutionNode* last= getLatestNode(start);
-        if(nullptr != last)
+        if(nullptr == last || nullptr == previousLast)
+            continue;
+
+        auto startResult= start->getResult();
+        if(nullptr == startResult)
+            continue;
+
+        startResult->setPrevious(previousLast->getResult());
+        previousLast->setNextNode(start);
+
+        previousLast= last;
+        Result* tmpResult= last->getResult();
+        while(nullptr != tmpResult)
         {
-            if(nullptr != previousLast)
+            DiceResult* dice= dynamic_cast<DiceResult*>(tmpResult);
+            if(nullptr == dice)
             {
-                auto startResult= start->getResult();
-                startResult->setPrevious(previousLast->getResult());
-                previousLast->setNextNode(start);
-            }
-            previousLast= last;
-            Result* tmpResult= last->getResult();
-            while(nullptr != tmpResult)
-            {
-                DiceResult* dice= dynamic_cast<DiceResult*>(tmpResult);
-                if(nullptr != dice)
+                ///@todo TODO improve here to set homogeneous while is really
+                m_diceResult->setHomogeneous(false);
+                for(auto& die : dice->getResultList())
                 {
-                    ///@todo TODO improve here to set homogeneous while is really
-                    m_diceResult->setHomogeneous(false);
-                    for(auto& die : dice->getResultList())
+                    if(!m_diceResult->getResultList().contains(die) && (!die->hasBeenDisplayed()))
                     {
-                        if(!m_diceResult->getResultList().contains(die) && (!die->hasBeenDisplayed()))
-                        {
-                            Die* tmpdie= new Die(*die);
-                            //*tmpdie= *die;
-                            die->displayed();
-                            m_diceResult->getResultList().append(tmpdie);
-                        }
+                        Die* tmpdie= new Die(*die);
+                        die->displayed();
+                        m_diceResult->getResultList().append(tmpdie);
                     }
                 }
-                auto it= std::find_if(pastResult.begin(), pastResult.end(),
-                    [tmpResult](const Result* a) { return (a == tmpResult->getPrevious()); });
-                if(it == pastResult.end())
-                {
-                    pastResult.push_back(previousLast->getResult());
-                    tmpResult= tmpResult->getPrevious();
-                }
-                else
-                {
-                    tmpResult->setPrevious(nullptr);
-                    tmpResult= nullptr;
-                }
+            }
+            auto it= std::find_if(pastResult.begin(), pastResult.end(),
+                                  [tmpResult](const Result* a) { return (a == tmpResult->getPrevious()); });
+            if(it == pastResult.end())
+            {
+                pastResult.push_back(previousLast->getResult());
+                tmpResult= tmpResult->getPrevious();
+            }
+            else
+            {
+                tmpResult->setPrevious(nullptr);
+                tmpResult= nullptr;
             }
         }
     }

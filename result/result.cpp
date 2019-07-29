@@ -22,7 +22,10 @@
 #include "result.h"
 #include <QUuid>
 
-Result::Result() : m_resultTypes(NONE), m_id(QString("\"%1\"").arg(QUuid::createUuid().toString())), m_previous(nullptr)
+Result::Result()
+    : m_resultTypes(static_cast<int>(Dice::RESULT_TYPE::NONE))
+    , m_id(QString("\"%1\"").arg(QUuid::createUuid().toString()))
+    , m_previous(nullptr)
 {
 }
 Result::~Result() {}
@@ -43,9 +46,9 @@ bool Result::isStringResult() const
     return false;
 }
 void Result::clear() {}
-bool Result::hasResultOfType(RESULT_TYPE type) const
+bool Result::hasResultOfType(Dice::RESULT_TYPE type) const
 {
-    return (m_resultTypes & type);
+    return (m_resultTypes & static_cast<int>(type));
 }
 void Result::generateDotTree(QString& s)
 {

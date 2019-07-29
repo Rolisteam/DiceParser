@@ -3,15 +3,57 @@ cmake_minimum_required(VERSION 3.5)
 option(UPDATE_TRANSLATIONS "update Translation" OFF)
 MESSAGE(STATUS "UPDATE TRANSLATIONS: ${UPDATE_TRANSLATIONS}")
 
-
 project(dice)
 
+SET( dice_sources
+    ../diceparser.cpp
+    ../range.cpp
+    ../booleancondition.cpp
+    ../validator.cpp
+    ../compositevalidator.cpp
+    ../operationcondition.cpp
+    ../die.cpp
+    ../parsingtoolbox.cpp
+    ../dicealias.cpp
+    ../result/result.cpp
+    ../result/scalarresult.cpp
+    ../result/stringresult.cpp
+    ../result/diceresult.cpp
+    ../node/countexecutenode.cpp
+    ../node/dicerollernode.cpp
+    ../node/executionnode.cpp
+    ../node/explodedicenode.cpp
+    ../node/helpnode.cpp
+    ../node/mergenode.cpp
+    ../node/jumpbackwardnode.cpp
+    ../node/keepdiceexecnode.cpp
+    ../node/listaliasnode.cpp
+    ../node/listsetrollnode.cpp
+    ../node/numbernode.cpp
+    ../node/parenthesesnode.cpp
+  # ../ node/forloopnode.cpp
+    ../node/paintnode.cpp
+    ../node/rerolldicenode.cpp
+    ../node/scalaroperatornode.cpp
+    ../node/sortresult.cpp
+    ../node/startingnode.cpp
+    ../node/filternode.cpp
+    ../node/stringnode.cpp
+    ../node/ifnode.cpp
+    ../node/splitnode.cpp
+    ../node/groupnode.cpp
+    ../node/bind.cpp
+    ../node/occurencecountnode.cpp
+    ../node/uniquenode.cpp
+    ../highlightdice.cpp
+    ../node/variablenode.cpp
+    ../node/valueslistnode.cpp
+)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-
 set(EXECUTABLE_OUTPUT_PATH bin/)
 
 # Find the QtWidgets library
@@ -38,7 +80,6 @@ set(dice_RESOURCES diceparser.qrc)
 find_package(Qt5LinguistTools)
 find_package(Qt5Svg)
 
-
 IF(UPDATE_TRANSLATIONS)
 	MESSAGE( update Translation )
     FILE(GLOB_RECURSE translate_dice_SRCS ../*.cpp ../*.h)
@@ -50,17 +91,8 @@ ELSE()
 ENDIF(UPDATE_TRANSLATIONS)
 
 if(Qt5Core_FOUND)
-
-    #IF(UPDATE_TRANSLATIONS)
-		MESSAGE(status  "find" ${dice_TS} ${translate_SRCS} )
-        #QT5_CREATE_TRANSLATION(dice_QM ${translate_SRCS} ${dice_TS})
-        #ELSE()
-        #QT5_ADD_TRANSLATION(dice_QM ${dice_TS})
-        #ENDIF()
-
+    MESSAGE(status  "find" ${dice_TS} ${translate_SRCS} )
     QT5_ADD_RESOURCES(dice_RESOURCES_RCC ${dice_RESOURCES})
-
-    # guess plugins and libraries directory
     set(QT_PLUGINS_DIR "${Qt5Core_DIR}/../../../plugins")
     get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
     get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
@@ -73,7 +105,9 @@ SET( cli_sources
 
 set(documentation_files ../HelpMe.md ../README.md)
 
-add_executable( dice ${cli_sources} ${dice_QM}   ${documentation_files})
+add_executable( dice ${cli_sources} ${dice_QM} ${dice_sources}  ${documentation_files})
+target_include_directories(dice PRIVATE ../include)
+
 
 target_link_libraries(dice diceparser ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Svg_LIBRARIES})
 INSTALL_TARGETS(/bin dice)

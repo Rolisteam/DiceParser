@@ -22,7 +22,7 @@
 #ifndef RESULT_H
 #define RESULT_H
 
-//#include <Qt>
+#include "diceparserhelper.h"
 #include <QString>
 #include <QVariant>
 /**
@@ -31,16 +31,6 @@
 class Result
 {
 public:
-    /**
-     * @brief The RESULT_TYPE enum or combinaison
-     */
-    enum RESULT_TYPE
-    {
-        NONE= 0,
-        SCALAR= 1,
-        STRING= 2,
-        DICE_LIST= 4
-    };
     /**
      * @brief Result
      */
@@ -54,12 +44,12 @@ public:
      * @brief isScalar
      * @return
      */
-    virtual bool hasResultOfType(RESULT_TYPE) const;
+    virtual bool hasResultOfType(Dice::RESULT_TYPE) const;
     /**
      * @brief getScalar
      * @return
      */
-    virtual QVariant getResult(RESULT_TYPE)= 0;
+    virtual QVariant getResult(Dice::RESULT_TYPE)= 0;
     /**
      * @brief getPrevious
      * @return
@@ -100,7 +90,7 @@ protected:
     QString m_id;
 
 private:
-    Result* m_previous; /// @brief
+    Result* m_previous= nullptr; /// @brief
 };
 
 #endif // RESULT_H

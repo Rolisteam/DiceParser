@@ -47,7 +47,6 @@ void ColorItem::setColor(const QString& color)
 
 PainterNode::PainterNode() : ExecutionNode()
 {
-    m_result= nullptr;
     m_nextNode= nullptr;
 }
 
@@ -61,15 +60,17 @@ void PainterNode::run(ExecutionNode* previous)
     m_previousNode= previous;
     if(nullptr == previous)
     {
-        m_errors.insert(ExecutionNode::NO_PREVIOUS_ERROR, QObject::tr("No previous node before Paint operator"));
+        m_errors.insert(Dice::ERROR_CODE::NO_PREVIOUS_ERROR, QObject::tr("No previous node before Paint operator"));
         return;
     }
     Result* previousResult= previous->getResult();
-    // m_result = previousResult;
-    DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(previousResult);
-    if(nullptr != previousDiceResult)
+    if(nullptr == previousResult)
+        return;
+
+    m_diceResult= dynamic_cast<DiceResult*>(previousResult->getCopy());
+    if(nullptr != m_diceResult)
     {
-        QList<Die*> diceList= previousDiceResult->getResultList();
+        QList<Die*> diceList= m_diceResult->getResultList();
         int pastDice= 0;
         for(ColorItem& item : m_colors)
         {
@@ -90,7 +91,7 @@ void PainterNode::run(ExecutionNode* previous)
 }
 Result* PainterNode::getResult()
 {
-    return (nullptr != m_previousNode) ? m_previousNode->getResult() : nullptr;
+    return m_diceResult;
 }
 
 QString PainterNode::toString(bool wl) const

@@ -66,31 +66,39 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
                     m_internalNode->getResult()->setPrevious(previousResult);
                 }
 
+                if(internalResult == nullptr)
+                {
+                    m_errors.insert(Dice::ERROR_CODE::NO_VALID_RESULT,
+                                    QObject::tr("No Valid result in arithmetic operatoion: %1").arg(toString(true)));
+                    return;
+                }
+
                 switch(m_arithmeticOperator)
                 {
                 case Die::PLUS:
-                    m_scalarResult->setValue(add(previousResult->getResult(Result::SCALAR).toReal(),
-                        internalResult->getResult(Result::SCALAR).toReal()));
+                    m_scalarResult->setValue(add(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
+                                                 internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal()));
                     break;
                 case Die::MINUS:
-                    m_scalarResult->setValue(substract(previousResult->getResult(Result::SCALAR).toReal(),
-                        internalResult->getResult(Result::SCALAR).toReal()));
+                    m_scalarResult->setValue(substract(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
+                                                       internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal()));
                     break;
                 case Die::MULTIPLICATION:
-                    m_scalarResult->setValue(multiple(previousResult->getResult(Result::SCALAR).toReal(),
-                        internalResult->getResult(Result::SCALAR).toReal()));
+                    m_scalarResult->setValue(multiple(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
+                                                      internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal()));
                     break;
                 case Die::DIVIDE:
-                    m_scalarResult->setValue(divide(previousResult->getResult(Result::SCALAR).toReal(),
-                        internalResult->getResult(Result::SCALAR).toReal()));
+                    m_scalarResult->setValue(divide(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
+                                                    internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal()));
                     break;
                 case Die::INTEGER_DIVIDE:
-                    m_scalarResult->setValue(static_cast<int>(divide(previousResult->getResult(Result::SCALAR).toReal(),
-                        internalResult->getResult(Result::SCALAR).toReal())));
+                    m_scalarResult->setValue(
+                        static_cast<int>(divide(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
+                                                internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal())));
                     break;
                 case Die::POW:
-                    m_scalarResult->setValue(pow(previousResult->getResult(Result::SCALAR).toReal(),
-                        internalResult->getResult(Result::SCALAR).toReal()));
+                    m_scalarResult->setValue(pow(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
+                                                 internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal()));
                     break;
                 }
             }
@@ -128,7 +136,7 @@ qreal ScalarOperatorNode::divide(qreal a, qreal b)
 {
     if(qFuzzyCompare(b, 0))
     {
-        m_errors.insert(DIVIDE_BY_ZERO, QObject::tr("Division by zero"));
+        m_errors.insert(Dice::ERROR_CODE::DIVIDE_BY_ZERO, QObject::tr("Division by zero"));
         return 0;
     }
     return static_cast<qreal>(a / b);
@@ -240,12 +248,12 @@ void ScalarOperatorNode::generateDotTree(QString& s)
     }
     s.append(str);
 }
-QMap<ExecutionNode::DICE_ERROR_CODE, QString> ScalarOperatorNode::getExecutionErrorMap()
+QMap<Dice::ERROR_CODE, QString> ScalarOperatorNode::getExecutionErrorMap()
 {
     if(nullptr != m_internalNode)
     {
         auto keys= m_internalNode->getExecutionErrorMap().keys();
-        for(ExecutionNode::DICE_ERROR_CODE& key : keys)
+        for(const auto& key : keys)
         {
             m_errors.insert(key, m_internalNode->getExecutionErrorMap().value(key));
         }
@@ -253,7 +261,7 @@ QMap<ExecutionNode::DICE_ERROR_CODE, QString> ScalarOperatorNode::getExecutionEr
     if(nullptr != m_nextNode)
     {
         auto keys= m_nextNode->getExecutionErrorMap().keys();
-        for(ExecutionNode::DICE_ERROR_CODE& key : keys)
+        for(auto const& key : keys)
         {
             m_errors.insert(key, m_nextNode->getExecutionErrorMap().value(key));
         }

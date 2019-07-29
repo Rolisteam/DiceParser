@@ -31,7 +31,7 @@ public:
      * @brief getScalar
      * @return
      */
-    virtual QVariant getResult(RESULT_TYPE);
+    virtual QVariant getResult(Dice::RESULT_TYPE);
     /**
      * @brief toString
      * @return
@@ -40,7 +40,7 @@ public:
 
     virtual void setHighLight(bool);
     virtual bool hasHighLight() const;
-    virtual bool hasResultOfType(RESULT_TYPE resultType) const;
+    virtual bool hasResultOfType(Dice::RESULT_TYPE resultType) const;
     virtual Result* getCopy() const;
 
 private:

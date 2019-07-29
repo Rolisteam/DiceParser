@@ -24,10 +24,11 @@
 
 #include <QMap>
 #include <QString>
+#include <vector>
 
-#include "dicealias.h"
 #include "highlightdice.h"
-#include "node/executionnode.h"
+#include "diceparserhelper.h"
+//#include "node/executionnode.h"
 
 typedef QList<HighLightDice> ListDiceResult;
 typedef QMap<quint64, ListDiceResult> ExportedDiceResult;
@@ -35,6 +36,8 @@ typedef QMap<quint64, ListDiceResult> ExportedDiceResult;
 class ExplodeDiceNode;
 class ParsingToolBox;
 class DiceRollerNode;
+class DiceAlias;
+class ExecutionNode;
 /**
  * @page DiceParser Dice Parser
  *
@@ -123,18 +126,6 @@ public:
      *
      */
     void start();
-
-    /**
-     * @brief displayResult
-     */
-    QString displayResult();
-    /**
-     * @brief readExpression
-     * @param str
-     * @param node
-     * @return
-     */
-    bool readExpression(QString& str, ExecutionNode*& node);
     /**
      * @brief displayDotTree - Write the execution tree into file using dot format.
      * @param filepath absolute or relative path to the tree file.
@@ -204,7 +195,7 @@ public:
      * @brief getErrorList
      * @return
      */
-    QMap<ExecutionNode::DICE_ERROR_CODE, QString> getErrorMap();
+    QMap<Dice::ERROR_CODE, QString> getErrorMap();
     /**
      * @brief setPathToHelp set the path to the documentation, this path must be adatped to the lang of application etc…
      * @param l the path.
@@ -226,6 +217,21 @@ public:
      * @return true when the command has separator, false otherwise.
      */
     bool hasSeparator() const;
+
+    /**
+     * @brief setVariableDictionary
+     * @param variables
+     */
+    void setVariableDictionary(const QHash<QString, QString>& variables);
+    QString getComment() const;
+    void setComment(const QString& comment);
+
+    void getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resultList);
+    QString humanReadableWarning();
+
+    bool readValuesList(QString& str, ExecutionNode*& node);
+    void cleanAll();
+private:
     /**
      * @brief readIfInstruction reads the current command to build if node with proper parameters.
      * @param str is the command string, if IF istruction is found, the str will be changed, in other case the string is
@@ -235,27 +241,17 @@ public:
      * @return true, ifNode has been found, false otherwise
      */
     bool readIfInstruction(QString& str, ExecutionNode*& trueNode, ExecutionNode*& falseNode);
-    /**
-     * @brief setVariableDictionary
-     * @param variables
-     */
-    void setVariableDictionary(const QHash<QString, QString>& variables);
-    QString getComment() const;
-    void setComment(const QString& comment);
-
+    bool readInstructionList(QString& str);
     bool readOptionFromNull(QString& str, ExecutionNode*& node);
     bool readOperatorFromNull(QString& str, ExecutionNode*& node);
-
-    bool readInstructionList(QString& str);
-    void getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resultList);
-    QString humanReadableWarning();
-
-    bool readValuesList(QString& str, ExecutionNode*& node);
-
-protected:
     bool readParameterNode(QString& str, ExecutionNode*& node);
-
-private:
+    /**
+     * @brief readExpression
+     * @param str
+     * @param node
+     * @return
+     */
+    bool readExpression(QString& str, ExecutionNode*& node);
     /**
      * @brief readDice
      * @param str
@@ -336,7 +332,8 @@ private:
      * @param notthelast
      * @return
      */
-    bool hasResultOfType(Result::RESULT_TYPE, ExecutionNode* node, bool notthelast= false);
+    bool hasResultOfType(Dice::RESULT_TYPE, ExecutionNode* node, bool notthelast= false);
+    bool readBlocInstruction(QString& str, ExecutionNode*& resultnode);
 
 private:
     QMap<QString, DiceOperator>* m_mapDiceOp;
@@ -345,17 +342,15 @@ private:
     QList<DiceAlias*>* m_aliasList;
     QStringList* m_commandList;
 
-    QMap<ExecutionNode::DICE_ERROR_CODE, QString> m_errorMap;
-    QMap<ExecutionNode::DICE_ERROR_CODE, QString> m_warningMap;
+    QMap<Dice::ERROR_CODE, QString> m_errorMap;
+    QMap<Dice::ERROR_CODE, QString> m_warningMap;
 
     ExecutionNode* m_start= nullptr;
     std::vector<ExecutionNode*> m_startNodes;
-    // ExecutionNode* m_current;
     QString m_command;
     ParsingToolBox* m_parsingToolbox;
     QString m_helpPath;
     bool m_currentTreeHasSeparator;
-    bool readBlocInstruction(QString& str, ExecutionNode*& resultnode);
     QString m_comment;
 };
 

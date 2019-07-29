@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(diceparser)
+project(diceparser VERSION 1.9.0 DESCRIPTION "Parser of dice command")
 
 set(QT_REQUIRED_VERSION "5.12.0")
 find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Test Gui Svg)
@@ -9,55 +9,91 @@ enable_testing(true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} result node)
 
 SET( dice_sources
-    diceparser.cpp
-    range.cpp
-    booleancondition.cpp
-    validator.cpp
-    compositevalidator.cpp
-    operationcondition.cpp
-    die.cpp
-    parsingtoolbox.cpp
-    dicealias.cpp
-    result/result.cpp
-    result/scalarresult.cpp
-    result/stringresult.cpp
-    result/diceresult.cpp
-    node/countexecutenode.cpp
-    node/dicerollernode.cpp
-    node/executionnode.cpp
-    node/explodedicenode.cpp
-    node/helpnode.cpp
-    node/mergenode.cpp
-    node/jumpbackwardnode.cpp
-    node/keepdiceexecnode.cpp
-    node/listaliasnode.cpp
-    node/listsetrollnode.cpp
-    node/numbernode.cpp
-    node/parenthesesnode.cpp
-  #  node/forloopnode.cpp
-    node/paintnode.cpp
-    node/rerolldicenode.cpp
-    node/scalaroperatornode.cpp
-    node/sortresult.cpp
-    node/startingnode.cpp
-    node/filternode.cpp
-    node/stringnode.cpp
-    node/ifnode.cpp
-    node/splitnode.cpp
-    node/groupnode.cpp
-    node/bind.cpp
-    node/occurencecountnode.cpp
-    node/uniquenode.cpp
-    highlightdice.cpp
-    node/variablenode.cpp
-    node/valueslistnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/diceparser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/range.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/booleancondition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/validator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/compositevalidator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/operationcondition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/die.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/parsingtoolbox.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/dicealias.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/result/result.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/result/scalarresult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/result/stringresult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/result/diceresult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/countexecutenode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/dicerollernode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/executionnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/explodedicenode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/helpnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/mergenode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/jumpbackwardnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/keepdiceexecnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/listaliasnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/listsetrollnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/numbernode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/parenthesesnode.cpp
+  # ${CMAKE_CURRENT_SOURCE_DIR}/ node/forloopnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/paintnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/rerolldicenode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/scalaroperatornode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/sortresult.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/startingnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/filternode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/stringnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/ifnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/splitnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/groupnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/bind.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/occurencecountnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/uniquenode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/highlightdice.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/variablenode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/valueslistnode.cpp
 )
 
-add_library(diceparser SHARED ${dice_sources} )
-target_link_libraries(diceparser PUBLIC Qt5::Core Qt5::Gui Qt5::Svg)
+IF(STATIC_BUILD)
+    add_library(diceparser_static STATIC ${dice_sources} )
+    target_include_directories(diceparser_static PRIVATE include)
+    SET_TARGET_PROPERTIES(diceparser_static PROPERTIES OUTPUT_NAME diceparser CLEAN_DIRECT_OUTPUT 1)
+    target_link_libraries(diceparser_static PUBLIC Qt5::Core Qt5::Gui Qt5::Svg)
+    install(TARGETS diceparser_static
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
+
+set(documentation README.md HelpMe.md)
+
+add_library(diceparser_shared SHARED ${dice_sources} ${documentation})
+
+target_include_directories(diceparser_shared PRIVATE include)
+
+
+SET_TARGET_PROPERTIES(diceparser_shared PROPERTIES OUTPUT_NAME diceparser CLEAN_DIRECT_OUTPUT 1)
+target_link_libraries(diceparser_shared PUBLIC Qt5::Core Qt5::Gui Qt5::Svg)
+
+set_target_properties(diceparser_shared PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(diceparser_shared PROPERTIES SOVERSION 1)
+
+set_target_properties(diceparser_shared PROPERTIES PUBLIC_HEADER "include/diceparser.h;include/highlightdice.h;include/parsingtoolbox.h;include/dicealias.h;include/diceparserhelper.h")
 
 add_subdirectory(cli)
 add_subdirectory( tests )
 #add_subdirectory(irc)
 #add_subdirectory(mobile)
 #add_subdirectory(webserver)
+
+
+include(GNUInstallDirs)
+
+install(TARGETS diceparser_shared
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+
+configure_file(diceparser.pc.in diceparser.pc @ONLY)
+
+install(FILES ${CMAKE_BINARY_DIR}/diceparser.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+
+
+

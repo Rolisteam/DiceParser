@@ -24,7 +24,7 @@ void VariableNode::run(ExecutionNode* previous)
     }
     else
     {
-        m_errors.insert(NO_VARIBALE, QObject::tr("No variable at index:%1").arg(m_index + 1));
+        m_errors.insert(Dice::ERROR_CODE::NO_VARIBALE, QObject::tr("No variable at index:%1").arg(m_index + 1));
     }
 }
 

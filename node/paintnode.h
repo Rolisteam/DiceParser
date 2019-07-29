@@ -55,6 +55,7 @@ public:
 
 protected:
     QList<ColorItem> m_colors;
+    DiceResult* m_diceResult= nullptr;
 };
 
 #endif
