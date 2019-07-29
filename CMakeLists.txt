@@ -62,7 +62,9 @@ IF(STATIC_BUILD)
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
-add_library(diceparser_shared SHARED ${dice_sources} )
+set(documentation README.md HelpMe.md)
+
+add_library(diceparser_shared SHARED ${dice_sources} ${documentation})
 
 target_include_directories(diceparser_shared PRIVATE include)
 
@@ -92,4 +94,6 @@ install(TARGETS diceparser_shared
 configure_file(diceparser.pc.in diceparser.pc @ONLY)
 
 install(FILES ${CMAKE_BINARY_DIR}/diceparser.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+
+
 

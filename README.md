@@ -59,44 +59,111 @@ More examples at : https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md
 The grammar is something like this:
 
 ```
-Command =: Instruction [';',Instruction]*
-Instruction =: Expression
-Expression =: number | number Dice DiceOperation | ScalarOperator Expression | string | variable Expression
-Dice =: DiceOperator Number(faces) | DiceOperator ListOfValues
-DiceOperator =: D | L
-DiceOperation =: Keep | KeepAndExplode | Sort | Count | Reroll | RerollUntil | If | Explode | Jumpbackward | Merge | Filter | Split | Parenthese | Count | Paint | Group
+Program =: Instruction [InstructionSeparator, Instruction]* Comment
+InstructionSeparator = ;
+Instruction =: Expression ([Operator, Expression]* | [Option]*)
+Operator =: ScalarOperator
+Expression =: OpenParenthesis Expression closeParenthesis
+| Option*
+| [Operator, Expression]*
+| Operand Dice
+| Command
+| NodeOperator [Option]*
+| ValuesList
+| Dice (Operand == 1)
+Operand =: DynamicVariable | Number | String
+OpenParenthesis = (
+closeParenthesis = )
+OpenList = [
+CloseList = ]
+ListSeparator = ,
+ValuesList=: OpenList (DynamicVariable | Number)? [ ListSeparator,(DynamicVariable | Number)]*  CloseList
+Dice =: DiceOperator [uniqueValue] DiceParameter
+DiceOperator =: D ParameterDice | L ParameterList
+DiceParameter =: ParameterDice | ParameterList
+ParameterDice =: Number|Range
+ParameterList =: List
+List=: OpenList String[Probability] [ListSeparator,String[Probability]]* CloseList
+Probability=: OpenList (Range|Percentage) CloseList
+Percentage =: number
+Option =: Keep
+| KeepAndExplode
+| Filter
+| Sort
+| Count
+| Reroll
+| RerollUntil
+| RerollAndAdd
+| Explode
+| Merge
+| Bind
+| Occurences
+| Unique
+| Paint
+| If
+| Split
+| Group
+Range =: OpenList Number RangeSeparator Number CloseList
+RangeSeparator =: -
 ScalarOperator =: [x,-,*,x,/]
-number =: [0-9]+ | constantValue
-constantValue =: ${id | label}
-id=[_,a-z][_,A-z,0-9]*
-label=[_,a-z][_,A-z,0-9,é,è,ç,û,ê,â]*
-variable = ${[0-9]+}
-Validator =: BooleanValidator | RangeValidator | CompositeValidator
-CompositeValidator =: Validator LogicOpetator Validator
-LogicOpetator =: = | > | => | < | =<
-RangeValidator =: [ number - number ]
-BooleanValidator =: number | [operator number] |
+number =: [-] [0-9]+ | constantValue
+OpenVaribale=: ${
+CloseVariable=: }
+constantValue =: OpenVaribale (id | label) CloseVariable
+id=[_,a-z][_,A-z,0-9]* # must respect rules of QML id
+label=.*
+variable = OpenVaribale [0-9]+ CloseVariable
+CompositeValidator =: OpenList Validator [LogicOpetator,Validator]* CloseList
+LogicOpetator =: AND | XOR |  OR
+AND =: &
+XOR =: ^
+OR =: |
+Ascendant=:l
+Validator =: BooleanValidator | RangeValidator | OperationValidator
+CompareOpetator =: = | > | => | < | =< | !=
+RangeValidator =: Range
+OperationValidator =: Modulo operandNode BooleanValidator
+Modulo =: %
+BooleanValidator =: [=]Operand | [CompareOpetator Operand]
 ListOfValue=: String[Range],ListOfValue | String[Range]
-String =: [A-z0-9]+
-Keep =: k Number
-KeepAndExplode =: K number
-Reroll =: r
-RerollUntil =: R
-Exploding =: e
-RerollOnceAndAdd =: a
-RerollAndAdd =: A
-Painter =: p
-Split =: u
-Group =: g
+String =: .*[^ListSeparator]
+Keep =: k[Ascendant] Number
+KeepAndExplode =: K[Ascendant] number
+Filter =: f CompositeValidator
+Sort =: s[Ascendant]
+Count =: c CompositeValidator
+Reroll =: r CompositeValidator
+RerollUntil =: R CompositeValidator
+RerollAndAdd =: a CompositeValidator
+Merge =: m
+Bind =: b
+Occurences =: OccurencesWidth ( ListSeparator  number | CompositeValidator)
+OccurencesWidth =: number
+unique =: u
+Painter =: p PainterParameters
+PainterParameters =: OpenList PairColorOccurence [ListSeparator , PairColorOccurence]* CloseList
+PairColorOccurence =: Color PairSeparator Number
+PairSeparator =: :
+If =: i [compareMethod] CompositeValidator Bloc[Bloc]
+compareMethod =: OnEach | OneOfThem | AllOfThem | onScalar
+OnEach =: ''
+OneOfThem = '.'
+AllOfThem = '*'
+onScalar = ':'
+Bloc =: OpenBranch Expression CloseBranch
+OpenBloc =: {
+CloseBloc =: }
+Split =: y
+Group =: g Number
 Sort =: s
-If =: i compareMethod [Validator] {Expression}[{Expression}]
-Paint =: p [ Count : color ]
 Group =: number
-Explode =: e Validator
-Jumpbackward =: @DiceOperation
+Explode =: e CompositeValidator
+NodeOperator = Jumpbackward
+Jumpbackward =: @
 Merge =: m | m Expression
-Filter =: f Validator
-Parenthese =: (expression)
-Count =: c Validator
+Command =: help | la
+uniqueValue = u
+Comment =: StartComment String
+StartComment =: #
 ```
 
