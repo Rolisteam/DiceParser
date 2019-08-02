@@ -222,7 +222,7 @@ QList<DieGroup> GroupNode::getGroup(DieGroup values)
     }
     else
     {
-        DieGroup::reverse_iterator it= values.rbegin();
+        auto it= values.rbegin();
         bool foundPerfect= false;
         qint64 cumuledValue= 0;
         DieGroup previousValue;

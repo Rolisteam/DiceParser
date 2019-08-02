@@ -25,6 +25,7 @@
 #include "node/executionnode.h"
 #include "result/scalarresult.h"
 // typedef QList<qint64> DieGroup;
+#include <QList>
 
 class DieGroup : public QList<qint64>
 {
