@@ -864,7 +864,7 @@ SubtituteInfo ParsingToolBox::readVariableFromString(const QString& source, int&
     int i= start;
     for(; i >= 0 && !found; --i)
     {
-        if(source.at(i) == "$")
+        if(source.at(i) == '$')
         {
             auto rest= source.mid(i + 1, 1 + start - i);
             qint64 number;
