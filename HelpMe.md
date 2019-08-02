@@ -302,7 +302,7 @@ The operator is trigged by *y*.
 
 First Result: `10 [6, 4], 3, 3, 2`  
 Result after spead: `6, 4, 3, 2`  
-Final result: `6+4+3 = 13`  
+Final result: `6+4+3 = 13`  
 
 ### Unique
 
@@ -311,7 +311,7 @@ It makes exploded dice as new dice.
 > 4d6e6u
 
 Result: 6 4 3 3 2
-Final result: 6+4+3 = 13
+Final result: 6+4+3 = 13
 
 ### Value list
 
@@ -541,11 +541,13 @@ Division of 15 by 2. Result: 7.5
 
 ## Validator
 
-There are three kind of Validator:
+There are five kinds of Validator:
 
 * Scalar
 * Range
 * Boolean expression
+* Operation Condition
+* Composite
 
 Any operator which requires validator (such as `a,r,e,c`) can use those three kind.
 
@@ -571,7 +573,7 @@ The command counts how many dice have values between >=8 and <=10.
 
 The command counts how many dice are aboved 7.
 
-#### Logic Operator
+#### Compare Operator
 
 The Rolisteam Dice Parser allows you to use several logic operator:
 * Egual: `=`
@@ -580,6 +582,39 @@ The Rolisteam Dice Parser allows you to use several logic operator:
 * Lesser: `<`
 * Greater: `>`
 * Different: `!=`
+
+### Operation Condition
+
+This validator offers modulo as operation and a Boolean Condition to validate the value:
+
+> 4d10c[%2=0]
+
+Count how many even numbers have been rolled.
+
+
+> 4d10c[%2=1]
+
+Count how many odd numbers have been rolled.
+
+[modulo](https://en.wikipedia.org/wiki/Modulo_operation)
+
+### Composite Validator
+
+Validator can be the result of several validator.
+
+> 4d10c[>4&%2=0]
+
+Count all dice greater than 4 and even [6,8,10].
+
+Composite Validator supports 3 logical operations:
+
+* AND : `&`
+* OR : `|`
+* Exclusive OR : `^`
+
+Composite Validator accepts as many validator as you need:
+
+> !9d100c[=1|=3|=5|=7|=11|=13|=17|=19|=23|=29|=31|=37|=41|=43|=47|=53|=59|=61|=67|=71|=73|=79|=83|=89|=97]
 
 ## Select value from List
 

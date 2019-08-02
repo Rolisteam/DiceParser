@@ -109,5 +109,5 @@ add_executable( dice ${cli_sources} ${dice_QM} ${dice_sources}  ${documentation_
 target_include_directories(dice PRIVATE ../include)
 
 
-target_link_libraries(dice diceparser ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Svg_LIBRARIES})
+target_link_libraries(dice ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Svg_LIBRARIES})
 INSTALL_TARGETS(/bin dice)
