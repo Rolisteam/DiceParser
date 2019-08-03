@@ -1,6 +1,7 @@
 
 INCLUDEPATH += $$PWD/result
 INCLUDEPATH += $$PWD/node
+INCLUDEPATH += $$PWD/include
 INCLUDEPATH += $$PWD
 
 SOURCES += $$PWD/diceparser.cpp \
@@ -49,19 +50,19 @@ SOURCES += $$PWD/diceparser.cpp \
 
 
 HEADERS += \
-    $$PWD/diceparser.h \
+    $$PWD/include/diceparser.h \
     $$PWD/result/diceresult.h \
     $$PWD/range.h \
     $$PWD/booleancondition.h \
-    $$PWD/highlightdice.h \
+    $$PWD/include/highlightdice.h \
     $$PWD/validator.h \
     $$PWD/die.h \
     $$PWD/result/result.h \
     $$PWD/result/scalarresult.h \
-    $$PWD/parsingtoolbox.h \
+    $$PWD/include/parsingtoolbox.h \
     $$PWD/result/stringresult.h \
     $$PWD/compositevalidator.h \
-    $$PWD/dicealias.h \
+    $$PWD/include/dicealias.h \
     $$PWD/operationcondition.h \
     $$PWD/node/stringnode.h \
     $$PWD/node/filternode.h\
@@ -91,6 +92,7 @@ HEADERS += \
     $$PWD/node/listsetrollnode.h \
     $$PWD/node/occurencecountnode.h\
     $$PWD/diceroller.h \
+    $$PWD/include/diceparserhelper.h \
     $$PWD/qmltypesregister.h
 
 
