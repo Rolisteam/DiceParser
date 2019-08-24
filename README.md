@@ -120,7 +120,7 @@ XOR =: ^
 OR =: |
 Ascendant=:l
 Validator =: BooleanValidator | RangeValidator | OperationValidator
-CompareOpetator =: = | > | => | < | =< | !=
+CompareOpetator =: = | > | >= | < | <= | !=
 RangeValidator =: Range
 OperationValidator =: Modulo operandNode BooleanValidator
 Modulo =: %
