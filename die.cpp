@@ -24,10 +24,12 @@
 
 #include <QDateTime>
 #include <QDebug>
+#include <QUuid>
 #include <chrono>
 
 Die::Die()
-    : m_hasValue(false)
+    : m_uuid(QUuid::createUuid().toString(QUuid::WithoutBraces))
+    , m_hasValue(false)
     , m_displayStatus(false)
     , m_highlighted(true)
     , m_base(1)
@@ -43,6 +45,7 @@ Die::Die(const Die& die)
     m_rollResult= die.m_rollResult;
     m_selected= die.m_selected;
     m_hasValue= die.m_hasValue;
+    m_uuid= die.m_uuid;
     m_displayStatus= die.m_displayStatus;
     m_maxValue= die.m_maxValue;
     m_highlighted= die.m_highlighted;
@@ -225,4 +228,13 @@ Die::ArithmeticOperator Die::getOp() const
 void Die::setOp(const Die::ArithmeticOperator& op)
 {
     m_op= op;
+}
+QString Die::getUuid() const
+{
+    return m_uuid;
+}
+
+void Die::setUuid(const QString& uuid)
+{
+    m_uuid= uuid;
 }

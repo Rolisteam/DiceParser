@@ -144,7 +144,11 @@ public:
     void setOp(const Die::ArithmeticOperator& op);
     void setDisplayed(bool b);
 
+    QString getUuid() const;
+    void setUuid(const QString& uuid);
+
 private:
+    QString m_uuid;
     qint64 m_value= 0;
     QList<qint64> m_rollResult;
     bool m_selected= false;

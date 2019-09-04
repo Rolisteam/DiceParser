@@ -539,6 +539,7 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
 
 void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList, bool& homogeneous)
 {
+    QStringList alreadySeenDice;
     for(auto start : m_startNodes)
     {
         ExportedDiceResult diceValues;
@@ -559,23 +560,24 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList, bo
                     ListDiceResult listpair;
                     for(auto& die : diceResult->getResultList())
                     {
-                        if(!die->hasBeenDisplayed())
+                        if(die->hasBeenDisplayed() || alreadySeenDice.contains(die->getUuid()))
+                            continue;
+
+                        QList<qint64> valuesResult;
+                        valuesResult.append(die->getValue());
+                        die->displayed();
+                        face= die->getFaces();
+                        if(die->hasChildrenValue())
                         {
-                            QList<qint64> valuesResult;
-                            valuesResult.append(die->getValue());
-                            die->displayed();
-                            face= die->getFaces();
-                            if(die->hasChildrenValue())
+                            for(qint64& i : die->getListValue())
                             {
-                                for(qint64& i : die->getListValue())
-                                {
-                                    valuesResult.append(i);
-                                }
+                                valuesResult.append(i);
                             }
-                            HighLightDice hlDice(valuesResult, die->isHighlighted(), die->getColor(),
-                                                 die->hasBeenDisplayed(), 0);
-                            listpair.append(hlDice);
                         }
+                        HighLightDice hlDice(valuesResult, die->isHighlighted(), die->getColor(),
+                                             die->hasBeenDisplayed(), 0);
+                        listpair.append(hlDice);
+                        alreadySeenDice << die->getUuid();
                     }
                     if(!listpair.isEmpty())
                     {
