@@ -284,6 +284,7 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
     int rt= 0;
     for(QString cmd : cmds)
     {
+
         if(parser.parseLine(cmd))
         {
             parser.start();
@@ -324,32 +325,30 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
                 }
                 scalarText= QString("%1").arg(strLst.join(','));
             }
-            if(!list.isEmpty())
+
+            for(auto map : list)
             {
-                for(auto map : list)
+                for(auto key : map.keys())
                 {
-                    for(auto key : map.keys())
+                    auto dice= map[key];
+                    QString stringVal;
+                    for(auto val : dice)
                     {
-                        auto dice= map[key];
-                        QString stringVal;
-                        for(auto val : dice)
+                        qint64 total= 0;
+                        QStringList dicelist;
+                        for(auto score : val.getResult())
                         {
-                            qint64 total= 0;
-                            QStringList dicelist;
-                            for(auto score : val.getResult())
-                            {
-                                total+= score;
-                                dicelist << QString::number(score);
-                            }
-                            if(val.getResult().size() > 1)
-                            {
-                                stringVal= QString("%1 [%2]").arg(total).arg(dicelist.join(','));
-                                listOfDiceResult << stringVal;
-                            }
-                            else
-                            {
-                                listOfDiceResult << QString::number(total);
-                            }
+                            total+= score;
+                            dicelist << QString::number(score);
+                        }
+                        if(val.getResult().size() > 1)
+                        {
+                            stringVal= QString("%1 [%2]").arg(total).arg(dicelist.join(','));
+                            listOfDiceResult << stringVal;
+                        }
+                        else
+                        {
+                            listOfDiceResult << QString::number(total);
                         }
                     }
                 }
@@ -472,6 +471,9 @@ int main(int argc, char* argv[])
     QCommandLineOption alias(QStringList() << "a"
                                            << "alias",
                              "path to alias json files: <aliasfile>", "aliasfile");
+
+    QCommandLineOption aliasData(QStringList() << "alias-data", "alias in json data <aliasdata>", "aliasdata");
+
     QCommandLineOption character(QStringList() << "s"
                                                << "charactersheet",
                                  "set Parameters to simulate character sheet: <sheetfile>", "sheetfile");
@@ -503,6 +505,7 @@ int main(int argc, char* argv[])
     optionParser.addOption(reset);
     optionParser.addOption(dotFile);
     optionParser.addOption(alias);
+    optionParser.addOption(aliasData);
     optionParser.addOption(character);
     optionParser.addOption(markdown);
     optionParser.addOption(bot);
@@ -561,11 +564,10 @@ int main(int argc, char* argv[])
     QStringList cmdList= optionParser.positionalArguments();
     // cmdList << "8d10;\$1c[>6];\$1c[=1];\$2-\$3i:[>0]{\"%3 Success[%2]\"}{i:[<0]{\"Critical fail %3 [%2]\"}{\"Fail %3
     // [%2]\"}}";
-    QString aliasstr;
     QJsonArray aliases;
     if(optionParser.isSet(alias))
     {
-        aliasstr= optionParser.value(alias);
+        auto aliasstr= optionParser.value(alias);
 
         QFile file(aliasstr);
 
@@ -574,6 +576,12 @@ int main(int argc, char* argv[])
             QJsonDocument doc= QJsonDocument::fromJson(file.readAll());
             aliases= doc.array();
         }
+    }
+    else if(optionParser.isSet(aliasData))
+    {
+        auto aliasstr= optionParser.value(aliasData);
+        QJsonDocument doc= QJsonDocument::fromJson(aliasstr.toUtf8());
+        aliases= doc.array();
     }
 
     returnValue= startDiceParsing(cmdList, dotFileStr, colorb, format, aliases);
