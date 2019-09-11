@@ -466,15 +466,25 @@ void TestDice::dangerousCommandsTest_data()
     // QTest::addRow("cmd5") << "10d10g10";
 }
 
-void makeResult(DiceResult& result, const QVector<int>& values, int base= 1, int max= 10)
+void makeResult(DiceResult& result, const QVector<int>& values, const QVector<int>& subvalues= QVector<int>(),
+                int base= 1, int max= 10)
 {
+    int i= 0;
     for(int val : values)
     {
         auto die= new Die();
         die->setBase(base);
         die->setMaxValue(max);
         die->insertRollValue(val);
+        if(i == 0 && !subvalues.empty())
+        {
+            for(int sval : subvalues)
+            {
+                die->insertRollValue(sval);
+            }
+        }
         result.insertResult(die);
+        ++i;
     }
 }
 
@@ -597,6 +607,7 @@ void TestDice::countTest()
     QFETCH(QVector<int>, values);
     QFETCH(int, condition);
     QFETCH(int, score);
+    QFETCH(QVector<int>, subvalues);
 
     TestNode node;
     CountExecuteNode countN;
@@ -608,7 +619,7 @@ void TestDice::countTest()
     node.setResult(&result);
     node.setNextNode(&countN);
 
-    makeResult(result, values);
+    makeResult(result, values, subvalues);
 
     node.run(nullptr);
 
@@ -622,9 +633,11 @@ void TestDice::countTest_data()
     QTest::addColumn<QVector<int>>("values");
     QTest::addColumn<int>("condition");
     QTest::addColumn<int>("score");
+    QTest::addColumn<QVector<int>>("subvalues");
 
-    QTest::addRow("cmd1") << QVector<int>({10, 9, 2}) << 3 << 2;
-    QTest::addRow("cmd2") << QVector<int>({1, 2, 3}) << 3 << 0;
+    QTest::addRow("cmd1") << QVector<int>({10, 9, 2}) << 3 << 2 << QVector<int>();
+    QTest::addRow("cmd2") << QVector<int>({1, 2, 3}) << 3 << 0 << QVector<int>();
+    QTest::addRow("cmd3") << QVector<int>({10, 7, 4}) << 7 << 3 << QVector<int>({10, 10, 2});
 }
 
 void TestDice::rerollTest()
@@ -725,7 +738,7 @@ void TestDice::rerollUntilTest()
     RerollDiceNode reroll(false, false);
 
     DiceResult result;
-    makeResult(result, values, 0);
+    makeResult(result, values, QVector<int>(), 0);
     node.setResult(&result);
 
     auto validator= makeValidator(condition, BooleanCondition::Equal);
