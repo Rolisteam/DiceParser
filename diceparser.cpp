@@ -1120,18 +1120,18 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                             {
                                 m_errorMap.insert(
                                     Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
-                                    QObject::tr(
-                                        "Validator is always true missing after the %1 operator. Please, change it")
+                                    QObject::tr("Validator is always true for the %1 operator. Please, change it")
                                         .arg(symbol));
                             }
                             break;
                         case Dice::CONDITION_STATE::UNREACHABLE:
                             if(operatorName == RerollUntil)
                             {
-                                m_errorMap.insert(Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
-                                                  QObject::tr("Candition can be reached, causing endless loop. Please, "
-                                                              "change the %1 option condition")
-                                                      .arg(symbol));
+                                m_errorMap.insert(
+                                    Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
+                                    QObject::tr("Condition can't be reached, causing endless loop. Please, "
+                                                "change the %1 option condition")
+                                        .arg(symbol));
                             }
                             break;
                         case Dice::CONDITION_STATE::ERROR_STATE:

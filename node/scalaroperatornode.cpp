@@ -69,7 +69,7 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
                 if(internalResult == nullptr)
                 {
                     m_errors.insert(Dice::ERROR_CODE::NO_VALID_RESULT,
-                                    QObject::tr("No Valid result in arithmetic operatoion: %1").arg(toString(true)));
+                                    QObject::tr("No Valid result in arithmetic operation: %1").arg(toString(true)));
                     return;
                 }
 
