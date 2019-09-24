@@ -29,8 +29,33 @@ QString makeReplament(const QString& pattern, const QString& replacement, QStrin
     auto hasPattern= cmd.contains(pattern);
     if(hasPattern)
     {
+        auto idxPattern= cmd.indexOf(pattern);
+        std::vector<std::pair<int, int>> quotes;
+
+        int pos= 0;
+        bool open= true;
+        while(pos != -1 && pos < cmd.size())
+        {
+            auto oldPos= pos;
+            pos= cmd.indexOf("\"", pos);
+            if(open && pos != -1)
+                open= false;
+            else if(pos != -1)
+            {
+                quotes.push_back({oldPos, pos});
+            }
+
+            if(pos != -1)
+                pos+= 1;
+        }
+        auto hasQuote= false;
+        for(auto range : quotes)
+        {
+            if(idxPattern < range.second && idxPattern > range.first)
+                hasQuote= true;
+        }
+
         auto hasVariable= cmd.contains("${");
-        auto hasQuote= cmd.contains("\"");
         auto commentPos= cmd.lastIndexOf("#");
 
         if(!hasQuote && !hasVariable)
