@@ -19,8 +19,8 @@ public:
      * @return
      */
     virtual ExecutionNode* getCopy() const;
-    qint64 getIndex() const;
-    void setIndex(qint64 index);
+    quint64 getIndex() const;
+    void setIndex(quint64 index);
 
     std::vector<ExecutionNode*>* getData() const;
     void setData(std::vector<ExecutionNode*>* data);

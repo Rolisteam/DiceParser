@@ -74,12 +74,12 @@ ExecutionNode* VariableNode::getCopy() const
     return node;
 }
 
-qint64 VariableNode::getIndex() const
+quint64 VariableNode::getIndex() const
 {
     return m_index;
 }
 
-void VariableNode::setIndex(qint64 index)
+void VariableNode::setIndex(quint64 index)
 {
     m_index= index;
 }
