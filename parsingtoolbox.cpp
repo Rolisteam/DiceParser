@@ -167,7 +167,7 @@ bool ParsingToolBox::readOperand(QString& str, ExecutionNode*& node)
     if(readDynamicVariable(str, intValue))
     {
         VariableNode* variableNode= new VariableNode();
-        variableNode->setIndex(intValue - 1);
+        variableNode->setIndex(static_cast<quint64>(intValue - 1));
         variableNode->setData(m_startNodes);
         node= variableNode;
         return true;
@@ -722,7 +722,7 @@ void ParsingToolBox::readProbability(QStringList& str, QList<Range>& ranges)
                 Range range;
                 range.setValue(start, end);
                 ranges.append(range);
-                totalDistance+= end - start + 1;
+                totalDistance+= static_cast<quint64>(end - start + 1);
                 ++i;
             }
             else // percentage
@@ -732,11 +732,11 @@ void ParsingToolBox::readProbability(QStringList& str, QList<Range>& ranges)
                 range.setStart(start);
                 ranges.append(range);
                 ++undefCount;
-                undefDistance+= start;
+                undefDistance+= static_cast<quint64>(start);
             }
             if((end > maxValue) || (i == 1))
             {
-                maxValue= end;
+                maxValue= static_cast<int>(end);
             }
         }
         else
@@ -757,11 +757,11 @@ void ParsingToolBox::readProbability(QStringList& str, QList<Range>& ranges)
             Range tmp= ranges.at(i);
             if(!tmp.isFullyDefined())
             {
-                int dist= tmp.getStart();
+                int dist= static_cast<int>(tmp.getStart());
                 tmp.setStart(realStart + 1);
                 double truc= dist * ratio;
 
-                tmp.setEnd(realStart + truc);
+                tmp.setEnd(static_cast<int>(realStart + truc));
                 realStart= tmp.getEnd();
                 ranges[i]= tmp;
             }

@@ -59,11 +59,10 @@ QString CountExecuteNode::toString(bool withlabel) const
 qint64 CountExecuteNode::getPriority() const
 {
     qint64 priority= 0;
-    if(nullptr != m_nextNode)
+    if(nullptr != m_previousNode)
     {
-        priority= m_nextNode->getPriority();
+        priority= m_previousNode->getPriority();
     }
-
     return priority;
 }
 

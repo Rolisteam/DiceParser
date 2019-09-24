@@ -253,7 +253,7 @@ bool DiceParser::readExpression(QString& str, ExecutionNode*& node)
         {
             // operandNode->setNextNode(operatorNode);
             operandNode= ParsingToolBox::getLatestNode(operandNode);
-        };
+        }
         return true;
     }
     else if(readCommand(str, operandNode))
@@ -335,7 +335,7 @@ bool DiceParser::readValuesList(QString& str, ExecutionNode*& node)
                 if(ParsingToolBox::readDynamicVariable(var, number))
                 {
                     VariableNode* variableNode= new VariableNode();
-                    variableNode->setIndex(number - 1);
+                    variableNode->setIndex(static_cast<quint64>(number - 1));
                     variableNode->setData(&m_startNodes);
                     values->insertValue(variableNode);
                 }
@@ -510,7 +510,6 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
     {
         ExecutionNode* next= getLeafNode(start);
         Result* result= next->getResult();
-        // qDebug() << "result id" << result->toString(true);
         ExportedDiceResult nodeResult;
         while(nullptr != result)
         {
