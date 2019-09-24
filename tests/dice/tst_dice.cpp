@@ -79,6 +79,7 @@ private slots:
 
     void severalInstruction();
     void testAlias();
+    void testAlias_data();
     void cleanupTestCase();
 
     void keepTest();
@@ -375,28 +376,30 @@ void TestDice::testAlias()
     m_diceParser->insertAlias(new DiceAlias("g", "d10k"), 1);
     m_diceParser->insertAlias(new DiceAlias("(.*)C(.*)", QStringLiteral("\\1d10e10c[>=\\2]"), false), 2);
 
-    QStringList cmds;
-    cmds << "!2"
-         << "${rang}g4"
-         << "${rang}g4 # gerald"
-         << "5C3"
-         << "1d100i:[<101]{\"great!\"}{\"try again\"}";
+    QFETCH(QString, cmd);
+    QFETCH(QString, expected);
 
-    QStringList expected;
-    expected << "3d6c2"
-             << "${rang}d10k4"
-             << "${rang}d10k4 # gerald"
-             << "5d10e10c[>=3]"
-             << "1d100i:[<101]{\"great!\"}{\"try again\"}";
-
-    int i= 0;
-    for(auto cmd : cmds)
-    {
-        auto result= m_diceParser->convertAlias(cmd);
-        QVERIFY2(result == expected[i], result.toLatin1());
-        ++i;
-    }
+    auto result= m_diceParser->convertAlias(cmd);
+    QCOMPARE(result, expected);
 }
+
+void TestDice::testAlias_data()
+{
+    QTest::addColumn<QString>("cmd");
+    QTest::addColumn<QString>("expected");
+
+    /* QTest::newRow("test1") << "!2"
+                            << "3d6c2";
+     QTest::newRow("test2") << "${rang}g4"
+                            << "${rang}d10k4";
+     QTest::newRow("test3") << "${rang}g4 # gerald"
+                            << "${rang}d10k4 # gerald";
+     QTest::newRow("test4") << "5C3"
+                            << "5d10e10c[>=3]";*/
+    QTest::newRow("test5") << "1d100i:[<101]{\"great!\"}{\"try again\"}"
+                           << "1d100i:[<101]{\"great!\"}{\"try again\"}";
+}
+
 void TestDice::severalInstruction()
 {
     QStringList commands;
