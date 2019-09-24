@@ -24,6 +24,20 @@
 #include "result/diceresult.h"
 #include "validator.h"
 #include <QDebug>
+class PartialDiceRollNode : public ExecutionNode
+{
+public:
+    PartialDiceRollNode();
+
+    void insertDie(Die* die);
+    virtual void run(ExecutionNode* previous= nullptr) override;
+    virtual qint64 getPriority() const override;
+    virtual ExecutionNode* getCopy() const override;
+    virtual QString toString(bool withLabel) const override;
+
+private:
+    DiceResult* m_diceResult;
+};
 
 /**
  * @brief The ifNode class explode dice while is valid by the validator.

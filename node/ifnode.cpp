@@ -20,6 +20,66 @@
 #include "ifnode.h"
 #include "result/diceresult.h"
 
+PartialDiceRollNode::PartialDiceRollNode() : m_diceResult(new DiceResult)
+{
+    m_result= m_diceResult;
+}
+
+void PartialDiceRollNode::insertDie(Die* die)
+{
+    m_diceResult->insertResult(die);
+}
+
+void PartialDiceRollNode::run(ExecutionNode* previous)
+{
+    m_previousNode= previous;
+    Result* presult= previous->getResult();
+    if(nullptr != presult)
+    {
+        m_result->setPrevious(presult);
+    }
+    if(nullptr != m_nextNode)
+    {
+        m_nextNode->run(this);
+    }
+}
+ExecutionNode* PartialDiceRollNode::getCopy() const
+{
+    return new PartialDiceRollNode();
+}
+qint64 PartialDiceRollNode::getPriority() const
+{
+    qint64 priority= 4;
+    return priority;
+}
+
+QString PartialDiceRollNode::toString(bool withLabel) const
+{
+    if(withLabel)
+    {
+        return QString("%1 [label=\"PartialDiceRollNode \"]").arg(m_id);
+    }
+    else
+    {
+        return m_id;
+    }
+}
+
+DiceResult* getFirstDiceResult(Result* result)
+{
+    DiceResult* found= nullptr;
+
+    if(nullptr == result)
+        return found;
+    do
+    {
+        found= dynamic_cast<DiceResult*>(result);
+        result= result->getPrevious();
+    } while((nullptr == found) && (result != nullptr));
+
+    return found;
+}
+
 IfNode::IfNode() : m_validator(nullptr), m_conditionType(AllOfThem), m_true(nullptr), m_false(nullptr)
 {
     // m_result = new DiceResult();
@@ -49,7 +109,7 @@ void IfNode::run(ExecutionNode* previous)
 
         if(nullptr != m_validator)
         {
-            DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(previousResult);
+            DiceResult* previousDiceResult= getFirstDiceResult(previousResult);
             if(nullptr != previousDiceResult)
             {
                 QList<Die*> diceList= previousDiceResult->getResultList();
@@ -58,6 +118,8 @@ void IfNode::run(ExecutionNode* previous)
                 {
                     for(Die* dice : diceList)
                     {
+                        auto diceNode= new PartialDiceRollNode();
+                        diceNode->insertDie(new Die(*dice));
                         if(m_validator->hasValid(dice, true, true))
                         {
                             nextNode= (nullptr == m_true) ? nullptr : m_true->getCopy();
@@ -77,7 +139,8 @@ void IfNode::run(ExecutionNode* previous)
                             {
                                 m_nextNode= nextNode;
                             }
-                            nextNode->run(previousLoop);
+                            diceNode->setNextNode(nextNode);
+                            diceNode->run(previousLoop);
                             previousLoop= getLeafNode(nextNode);
                         }
                     }
@@ -133,6 +196,7 @@ void IfNode::run(ExecutionNode* previous)
                     }
                 }
             }
+
             if(m_conditionType == OnScalar)
             {
                 Die dice;
