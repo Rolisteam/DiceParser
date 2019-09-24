@@ -51,7 +51,7 @@ QString VariableNode::toString(bool withLabel) const
 
 qint64 VariableNode::getPriority() const
 {
-    qint64 priority= 0;
+    qint64 priority= 4;
     if(nullptr != m_previousNode)
     {
         priority= m_previousNode->getPriority();
