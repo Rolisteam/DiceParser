@@ -64,6 +64,7 @@ bool StringResult::hasHighLight() const
 Result* StringResult::getCopy() const
 {
     auto copy= new StringResult();
+    copy->setPrevious(getPrevious());
     copy->setHighLight(m_highlight);
     copy->setText(m_value);
     return copy;
