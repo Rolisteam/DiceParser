@@ -51,7 +51,7 @@ QString makeReplament(const QString& pattern, const QString& replacement, QStrin
         auto hasQuote= false;
         for(auto range : quotes)
         {
-            if(idxPattern < range.second && idxPattern > range.first)
+            if(idxPattern < range.second && idxPattern >= range.first)
                 hasQuote= true;
         }
 
