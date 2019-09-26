@@ -91,7 +91,8 @@ public:
         Group,
         Occurences,
         Unique,
-        Bind
+        Bind,
+        AllSameExplode
     };
     /**
      * @brief The CommandOperator enum

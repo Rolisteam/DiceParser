@@ -22,6 +22,7 @@
     * [Group](#group)
     * [Spread](#spread)
     * [Unique](#unique)
+    * [All The same](#allsame)
     * [Value list](#Value-list)
     * [Comment (\#)](#comment-)
 * [Arithmetic](#arithmetic)
@@ -303,6 +304,21 @@ The operator is trigged by *y*.
 First Result: `10 [6, 4], 3, 3, 2`  
 Result after spead: `6, 4, 3, 2`  
 Final result: `6+4+3 = 13`  
+
+### All the same
+
+This operator is temporary. It is dedicated to answer issue about Tunnels and Trolls system. It is why the marker operator is `t`.
+Dice explode when all dice has the same value.
+
+> 2d6t
+
+```
+# Explode twice because 2,1
+Result: 12 - details:[2d6t (5 [2,1,2] 7 [2,1,4])]
+
+# Nothing happened
+Result: 10 - details:[2d6t (4 6)]
+```
 
 ### Unique
 

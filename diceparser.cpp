@@ -26,6 +26,7 @@
 #include <QStringList>
 #include <functional>
 
+#include "node/allsamenode.h"
 #include "node/bind.h"
 #include "node/countexecutenode.h"
 #include "node/dicerollernode.h"
@@ -86,6 +87,7 @@ DiceParser::DiceParser()
     m_OptionOp->insert(QStringLiteral("f"), Filter);
     m_OptionOp->insert(QStringLiteral("y"), Split);
     m_OptionOp->insert(QStringLiteral("u"), Unique);
+    m_OptionOp->insert(QStringLiteral("t"), AllSameExplode);
     m_OptionOp->insert(QStringLiteral("g"), Group);
     m_OptionOp->insert(QStringLiteral("b"), Bind);
     m_OptionOp->insert(QStringLiteral("o"), Occurences);
@@ -1190,6 +1192,14 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 previous->setNextNode(mergeNode);
                 node= mergeNode;
                 found= true;
+            }
+            break;
+            case AllSameExplode:
+            {
+                AllSameNode* allSame = new AllSameNode();
+                previous->setNextNode(allSame);
+                node=allSame;
+                found = true;
             }
             break;
             case Bind:

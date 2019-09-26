@@ -28,6 +28,7 @@ SET( dice_sources
     ../node/jumpbackwardnode.cpp
     ../node/keepdiceexecnode.cpp
     ../node/listaliasnode.cpp
+    ../node/allsamenode.cpp
     ../node/listsetrollnode.cpp
     ../node/numbernode.cpp
     ../node/parenthesesnode.cpp

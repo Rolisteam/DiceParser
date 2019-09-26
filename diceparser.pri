@@ -20,6 +20,7 @@ SOURCES += $$PWD/diceparser.cpp \
     $$PWD/operationcondition.cpp \
     $$PWD/node/stringnode.cpp \
     $$PWD/node/filternode.cpp \
+    $$PWD/node/allsamenode.cpp \
     $$PWD/node/groupnode.cpp \
     $$PWD/node/dicerollernode.cpp \
     $$PWD/node/executionnode.cpp \
@@ -66,6 +67,7 @@ HEADERS += \
     $$PWD/operationcondition.h \
     $$PWD/node/stringnode.h \
     $$PWD/node/filternode.h\
+    $$PWD/node/allsamenode.h\
     $$PWD/node/groupnode.h \
     $$PWD/node/variablenode.h\
     $$PWD/node/dicerollernode.h \

@@ -27,6 +27,7 @@ SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/node/executionnode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/explodedicenode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/helpnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/allsamenode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/mergenode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/jumpbackwardnode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/keepdiceexecnode.cpp
