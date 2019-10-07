@@ -518,18 +518,21 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
             if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
             {
                 DiceResult* diceResult= dynamic_cast<DiceResult*>(result);
-                QList<HighLightDice> list;
-                quint64 faces= 0;
-
-                for(auto& die : diceResult->getResultList())
+                if(diceResult)
                 {
-                    faces= die->getFaces();
-                    // qDebug() << "face" << faces;
-                    HighLightDice hlDice(die->getListValue(), die->isHighlighted(), die->getColor(),
-                                         die->hasBeenDisplayed(), die->getFaces());
-                    list.append(hlDice);
+                    QList<HighLightDice> list;
+                    quint64 faces= 0;
+
+                    for(auto& die : diceResult->getResultList())
+                    {
+                        faces= die->getFaces();
+                        // qDebug() << "face" << faces;
+                        HighLightDice hlDice(die->getListValue(), die->isHighlighted(), die->getColor(),
+                                             die->hasBeenDisplayed(), die->getFaces());
+                        list.append(hlDice);
+                    }
+                    nodeResult.insert(faces, list);
                 }
-                nodeResult.insert(faces, list);
             }
             result= result->getPrevious();
         }
