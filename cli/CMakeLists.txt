@@ -10,7 +10,7 @@ SET( dice_sources
     ../range.cpp
     ../booleancondition.cpp
     ../validator.cpp
-    ../compositevalidator.cpp
+    ../validatorlist.cpp
     ../operationcondition.cpp
     ../die.cpp
     ../parsingtoolbox.cpp

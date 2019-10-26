@@ -25,7 +25,6 @@
 #include <QMap>
 
 #include "booleancondition.h"
-#include "compositevalidator.h"
 #include "node/dicerollernode.h"
 #include "node/executionnode.h"
 #include "node/ifnode.h"
@@ -33,6 +32,7 @@
 #include "node/scalaroperatornode.h"
 #include "operationcondition.h"
 #include "range.h"
+#include "validatorlist.h"
 
 class SubtituteInfo
 {
@@ -117,7 +117,7 @@ public:
      * @param str
      * @return
      */
-    Validator* readCompositeValidator(QString& str);
+    ValidatorList* readValidatorList(QString& str);
 
     /**
      * @brief readNumber read number in the given str and remove from the string the read character.
@@ -175,7 +175,7 @@ public:
      * @param val
      * @return
      */
-    Dice::CONDITION_STATE isValidValidator(ExecutionNode* previous, Validator* val);
+    Dice::CONDITION_STATE isValidValidator(ExecutionNode* previous, ValidatorList* val);
     /**
      * @brief getDiceRollerNode
      * @param previous
@@ -200,7 +200,7 @@ public:
 
     void readProbability(QStringList& str, QList<Range>& ranges);
 
-    bool readLogicOperation(QString& str, CompositeValidator::LogicOperation& op);
+    bool readLogicOperation(QString& str, ValidatorList::LogicOperation& op);
 
     bool readDiceLogicOperator(QString& str, OperationCondition::ConditionOperator& op);
 
@@ -236,7 +236,7 @@ public:
 
 private:
     QMap<QString, BooleanCondition::LogicOperator>* m_logicOp;
-    QMap<QString, CompositeValidator::LogicOperation>* m_logicOperation;
+    QMap<QString, ValidatorList::LogicOperation>* m_logicOperation;
     QMap<QString, OperationCondition::ConditionOperator>* m_conditionOperation;
     QHash<QString, Die::ArithmeticOperator>* m_arithmeticOperation;
 

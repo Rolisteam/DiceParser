@@ -3,16 +3,16 @@
 #include <utility>
 
 RerollDiceNode::RerollDiceNode(bool reroll, bool addingMode)
-    : m_diceResult(new DiceResult()), m_validator(nullptr), m_reroll(reroll), m_adding(addingMode)
+    : m_diceResult(new DiceResult()), m_validatorList(nullptr), m_reroll(reroll), m_adding(addingMode)
 {
     m_result= m_diceResult;
 }
 RerollDiceNode::~RerollDiceNode()
 {
-    if(nullptr != m_validator)
+    if(nullptr != m_validatorList)
     {
-        delete m_validator;
-        m_validator= nullptr;
+        delete m_validatorList;
+        m_validatorList= nullptr;
     }
 }
 void RerollDiceNode::run(ExecutionNode* previous)
@@ -38,8 +38,8 @@ void RerollDiceNode::run(ExecutionNode* previous)
             for(auto& die : list)
             {
                 bool finished= false;
-                auto state
-                    = m_validator->isValidRangeSize(std::make_pair<qint64, qint64>(die->getBase(), die->getMaxValue()));
+                auto state= m_validatorList->isValidRangeSize(
+                    std::make_pair<qint64, qint64>(die->getBase(), die->getMaxValue()));
                 if((Dice::CONDITION_STATE::ALWAYSTRUE == state && m_adding)
                    || (!m_reroll && !m_adding && state == Dice::CONDITION_STATE::UNREACHABLE))
                 {
@@ -51,7 +51,7 @@ void RerollDiceNode::run(ExecutionNode* previous)
                                                  .arg(static_cast<int>(die->getMaxValue()))));
                     continue;
                 }
-                while(m_validator->hasValid(die, false) && !finished)
+                while(m_validatorList->hasValid(die, false) && !finished)
                 {
                     if(m_instruction != nullptr)
                     {
@@ -98,15 +98,15 @@ void RerollDiceNode::run(ExecutionNode* previous)
         }
     }
 }
-void RerollDiceNode::setValidator(Validator* val)
+void RerollDiceNode::setValidatorList(ValidatorList* val)
 {
-    m_validator= val;
+    m_validatorList= val;
 }
 QString RerollDiceNode::toString(bool wl) const
 {
     if(wl)
     {
-        return QString("%1 [label=\"RerollDiceNode validatior: %2\"]").arg(m_id, m_validator->toString());
+        return QString("%1 [label=\"RerollDiceNode validatior: %2\"]").arg(m_id, m_validatorList->toString());
     }
     else
     {
@@ -127,7 +127,7 @@ qint64 RerollDiceNode::getPriority() const
 ExecutionNode* RerollDiceNode::getCopy() const
 {
     RerollDiceNode* node= new RerollDiceNode(m_reroll, m_adding);
-    node->setValidator(m_validator);
+    node->setValidatorList(m_validatorList);
     if(nullptr != m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());

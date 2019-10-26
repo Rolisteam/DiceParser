@@ -334,6 +334,7 @@ bool DiceParser::readValuesList(QString& str, ExecutionNode*& node)
             {
                 qint64 number= 1;
                 QString error;
+                var= var.trimmed();
                 if(ParsingToolBox::readDynamicVariable(var, number))
                 {
                     VariableNode* variableNode= new VariableNode();
@@ -989,8 +990,10 @@ ExplodeDiceNode* DiceParser::addExplodeDiceNode(qint64 value, ExecutionNode* pre
     condition->setConditionType(Dice::OnEach);
     condition->setValueNode(node);
     condition->setOperator(BooleanCondition::Equal);
-    m_parsingToolbox->isValidValidator(previous, condition);
-    explodeDiceNode->setValidator(condition);
+    auto valList= new ValidatorList();
+    valList->setValidators(QList<Validator*>() << condition);
+    auto validity= m_parsingToolbox->isValidValidator(previous, valList);
+    explodeDiceNode->setValidatorList(valList);
     previous->setNextNode(explodeDiceNode);
     return explodeDiceNode;
 }
@@ -1059,13 +1062,13 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
             break;
             case Filter:
             {
-                Validator* validator= m_parsingToolbox->readCompositeValidator(str);
-                if(nullptr != validator)
+                auto validatorList= m_parsingToolbox->readValidatorList(str);
+                if(nullptr != validatorList)
                 {
-                    m_parsingToolbox->isValidValidator(previous, validator);
+                    auto validity= m_parsingToolbox->isValidValidator(previous, validatorList);
 
                     FilterNode* filterNode= new FilterNode();
-                    filterNode->setValidator(validator);
+                    filterNode->setValidatorList(validatorList);
 
                     previous->setNextNode(filterNode);
                     node= filterNode;
@@ -1087,13 +1090,13 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
             break;
             case Count:
             {
-                Validator* validator= m_parsingToolbox->readCompositeValidator(str);
-                if(nullptr != validator)
+                auto validatorList= m_parsingToolbox->readValidatorList(str);
+                if(nullptr != validatorList)
                 {
-                    m_parsingToolbox->isValidValidator(previous, validator);
+                    auto validity= m_parsingToolbox->isValidValidator(previous, validatorList);
 
                     CountExecuteNode* countNode= new CountExecuteNode();
-                    countNode->setValidator(validator);
+                    countNode->setValidatorList(validatorList);
 
                     previous->setNextNode(countNode);
                     node= countNode;
@@ -1111,11 +1114,11 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
             case RerollAndAdd:
                 // Todo: I think that Exploding and Rerolling could share the same code
                 {
-                    Validator* validator= m_parsingToolbox->readCompositeValidator(str);
+                    auto validatorList= m_parsingToolbox->readValidatorList(str);
                     QString symbol= m_OptionOp->key(operatorName);
-                    if(nullptr != validator)
+                    if(nullptr != validatorList)
                     {
-                        switch(m_parsingToolbox->isValidValidator(previous, validator))
+                        switch(m_parsingToolbox->isValidValidator(previous, validatorList))
                         {
                         case Dice::CONDITION_STATE::ALWAYSTRUE:
                             if(operatorName == RerollAndAdd)
@@ -1149,7 +1152,7 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                         {
                             rerollNode->setInstruction(nodeParam);
                         }
-                        rerollNode->setValidator(validator);
+                        rerollNode->setValidatorList(validatorList);
                         previous->setNextNode(rerollNode);
                         node= rerollNode;
                         found= true;
@@ -1164,17 +1167,17 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 break;
             case Explode:
             {
-                Validator* validator= m_parsingToolbox->readCompositeValidator(str);
-                if(nullptr != validator)
+                auto validatorList= m_parsingToolbox->readValidatorList(str);
+                if(nullptr != validatorList)
                 {
-                    if(Dice::CONDITION_STATE::ALWAYSTRUE == m_parsingToolbox->isValidValidator(previous, validator))
+                    if(Dice::CONDITION_STATE::ALWAYSTRUE == m_parsingToolbox->isValidValidator(previous, validatorList))
                     {
                         m_errorMap.insert(Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
                                           QObject::tr("This condition %1 introduces an endless loop. Please, change it")
-                                              .arg(validator->toString()));
+                                              .arg(validatorList->toString()));
                     }
                     ExplodeDiceNode* explodedNode= new ExplodeDiceNode();
-                    explodedNode->setValidator(validator);
+                    explodedNode->setValidatorList(validatorList);
                     previous->setNextNode(explodedNode);
                     node= explodedNode;
                     found= true;
@@ -1197,10 +1200,10 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
             break;
             case AllSameExplode:
             {
-                AllSameNode* allSame = new AllSameNode();
+                AllSameNode* allSame= new AllSameNode();
                 previous->setNextNode(allSame);
-                node=allSame;
-                found = true;
+                node= allSame;
+                found= true;
             }
             break;
             case Bind:
@@ -1219,10 +1222,10 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                 if(m_parsingToolbox->readNumber(str, number))
                 {
                     occNode->setWidth(number);
-                    Validator* validator= m_parsingToolbox->readCompositeValidator(str);
-                    if(validator)
+                    auto validatorList= m_parsingToolbox->readValidatorList(str);
+                    if(validatorList)
                     {
-                        occNode->setValidator(validator);
+                        occNode->setValidatorList(validatorList);
                     }
                     else if(m_parsingToolbox->readComma(str))
                     {
@@ -1265,8 +1268,8 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
             {
                 IfNode* nodeif= new IfNode();
                 nodeif->setConditionType(m_parsingToolbox->readConditionType(str));
-                Validator* validator= m_parsingToolbox->readCompositeValidator(str);
-                if(nullptr != validator)
+                auto validatorList= m_parsingToolbox->readValidatorList(str);
+                if(nullptr != validatorList)
                 {
                     ExecutionNode* trueNode= nullptr;
                     ExecutionNode* falseNode= nullptr;
@@ -1274,7 +1277,7 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
                     {
                         nodeif->setInstructionTrue(trueNode);
                         nodeif->setInstructionFalse(falseNode);
-                        nodeif->setValidator(validator);
+                        nodeif->setValidatorList(validatorList);
                         previous->setNextNode(nodeif);
                         node= nodeif;
                         found= true;

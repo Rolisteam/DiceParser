@@ -23,8 +23,8 @@
 #include "diceparserhelper.h"
 #include "executionnode.h"
 #include "result/diceresult.h"
-#include "validator.h"
-#include <QDebug>
+
+class ValidatorList;
 class PartialDiceRollNode : public ExecutionNode
 {
 public:
@@ -62,7 +62,7 @@ public:
     /**
      * @brief setValidator
      */
-    virtual void setValidator(Validator*);
+    virtual void setValidatorList(ValidatorList*);
     /**
      * @brief setInstructionTrue
      */
@@ -108,7 +108,7 @@ protected:
     ExecutionNode* getLeafNode(ExecutionNode* node);
 
 protected:
-    Validator* m_validator;
+    ValidatorList* m_validatorList= nullptr;
     Dice::ConditionType m_conditionType;
 
     ExecutionNode* m_true;

@@ -32,7 +32,7 @@ std::vector<ExecutionNode*>* ParsingToolBox::m_startNodes= nullptr;
 
 ParsingToolBox::ParsingToolBox()
     : m_logicOp(new QMap<QString, BooleanCondition::LogicOperator>())
-    , m_logicOperation(new QMap<QString, CompositeValidator::LogicOperation>())
+    , m_logicOperation(new QMap<QString, ValidatorList::LogicOperation>())
     , m_conditionOperation(new QMap<QString, OperationCondition::ConditionOperator>())
     , m_arithmeticOperation(new QHash<QString, Die::ArithmeticOperator>())
 {
@@ -45,9 +45,9 @@ ParsingToolBox::ParsingToolBox()
     m_logicOp->insert("!=", BooleanCondition::Different);
 
     // m_logicOperation = ;
-    m_logicOperation->insert("|", CompositeValidator::OR);
-    m_logicOperation->insert("^", CompositeValidator::EXCLUSIVE_OR);
-    m_logicOperation->insert("&", CompositeValidator::AND);
+    m_logicOperation->insert("|", ValidatorList::OR);
+    m_logicOperation->insert("^", ValidatorList::EXCLUSIVE_OR);
+    m_logicOperation->insert("&", ValidatorList::AND);
 
     // m_conditionOperation = ;
     m_conditionOperation->insert("%", OperationCondition::Modulo);
@@ -192,6 +192,7 @@ bool ParsingToolBox::readOperand(QString& str, ExecutionNode*& node)
 Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
 {
     Validator* returnVal= nullptr;
+    auto opCompare= readConditionType(str);
     BooleanCondition::LogicOperator myLogicOp= BooleanCondition::Equal;
     readLogicOperator(str, myLogicOp);
 
@@ -203,6 +204,7 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
         if(readOperand(str, operandNode))
         {
             OperationCondition* condition= new OperationCondition();
+            condition->setConditionType(opCompare);
             condition->setValueNode(operandNode);
             Validator* valid= readValidator(str, hasSquare);
             BooleanCondition* boolC= dynamic_cast<BooleanCondition*>(valid);
@@ -229,6 +231,7 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
                 str= str.remove(0, 1);
                 qint64 start= operandNode->getScalarResult();
                 Range* range= new Range();
+                range->setConditionType(opCompare);
                 range->setValue(start, end);
                 returnVal= range;
                 isRange= true;
@@ -242,6 +245,7 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
         if(!isRange)
         {
             BooleanCondition* condition= new BooleanCondition();
+            condition->setConditionType(opCompare);
             condition->setValueNode(operandNode);
             condition->setOperator(myLogicOp);
             returnVal= condition;
@@ -271,7 +275,7 @@ Dice::ConditionType ParsingToolBox::readConditionType(QString& str)
     return type;
 }
 
-Validator* ParsingToolBox::readCompositeValidator(QString& str)
+ValidatorList* ParsingToolBox::readValidatorList(QString& str)
 {
     bool expectSquareBrasket= false;
     if((str.startsWith("[")))
@@ -280,9 +284,9 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
         expectSquareBrasket= true;
     }
     Validator* tmp= readValidator(str, expectSquareBrasket);
-    CompositeValidator::LogicOperation opLogic;
+    ValidatorList::LogicOperation opLogic;
 
-    QVector<CompositeValidator::LogicOperation> operators;
+    QVector<ValidatorList::LogicOperation> operators;
     QList<Validator*> validatorList;
 
     while(nullptr != tmp)
@@ -301,24 +305,15 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
                 str= str.remove(0, 1);
                 // isOk=true;
             }
-
-            if(!validatorList.isEmpty())
-            {
-                validatorList.append(tmp);
-            }
-            else
-            {
-                operators.clear();
-                return tmp;
-            }
+            validatorList.append(tmp);
             tmp= nullptr;
         }
     }
     if(!validatorList.isEmpty())
     {
-        CompositeValidator* validator= new CompositeValidator();
+        ValidatorList* validator= new ValidatorList();
         validator->setOperationList(operators);
-        validator->setValidatorList(validatorList);
+        validator->setValidators(validatorList);
         return validator;
     }
     else
@@ -326,7 +321,7 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
         return nullptr;
     }
 }
-bool ParsingToolBox::readLogicOperation(QString& str, CompositeValidator::LogicOperation& op)
+bool ParsingToolBox::readLogicOperation(QString& str, ValidatorList::LogicOperation& op)
 {
     QString longKey;
     auto const& keys= m_logicOperation->keys();
@@ -601,7 +596,7 @@ bool ParsingToolBox::readAscending(QString& str)
     }
     return false;
 }
-Dice::CONDITION_STATE ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
+Dice::CONDITION_STATE ParsingToolBox::isValidValidator(ExecutionNode* previous, ValidatorList* val)
 {
     DiceRollerNode* node= getDiceRollerNode(previous);
     if(nullptr == node)

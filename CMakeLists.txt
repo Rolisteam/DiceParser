@@ -13,7 +13,7 @@ SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/range.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/booleancondition.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/validator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/compositevalidator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/validatorlist.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/operationcondition.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/die.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/parsingtoolbox.cpp
@@ -35,7 +35,6 @@ SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/node/listsetrollnode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/numbernode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/parenthesesnode.cpp
-  # ${CMAKE_CURRENT_SOURCE_DIR}/ node/forloopnode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/paintnode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/rerolldicenode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/scalaroperatornode.cpp
@@ -79,10 +78,7 @@ set_target_properties(diceparser_shared PROPERTIES SOVERSION 1)
 set_target_properties(diceparser_shared PROPERTIES PUBLIC_HEADER "include/diceparser.h;include/highlightdice.h;include/parsingtoolbox.h;include/dicealias.h;include/diceparserhelper.h")
 
 add_subdirectory(cli)
-add_subdirectory( tests )
-#add_subdirectory(irc)
-#add_subdirectory(mobile)
-#add_subdirectory(webserver)
+add_subdirectory(tests)
 
 
 include(GNUInstallDirs)

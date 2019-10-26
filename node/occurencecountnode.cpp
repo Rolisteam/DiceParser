@@ -20,6 +20,7 @@
 #include "occurencecountnode.h"
 #include "result/diceresult.h"
 #include "result/stringresult.h"
+#include "validatorlist.h"
 #include <QVector>
 
 OccurenceCountNode::OccurenceCountNode() : ExecutionNode() {}
@@ -106,14 +107,14 @@ void OccurenceCountNode::setHeight(const qint64& height)
     m_height= height;
 }
 
-Validator* OccurenceCountNode::getValidator() const
+ValidatorList* OccurenceCountNode::getValidatorList() const
 {
-    return m_validator;
+    return m_validatorList;
 }
 
-void OccurenceCountNode::setValidator(Validator* validator)
+void OccurenceCountNode::setValidatorList(ValidatorList* validatorlist)
 {
-    m_validator= validator;
+    m_validatorList= validatorlist;
 }
 void OccurenceCountNode::runForStringResult(const std::map<qint64, qint64>& mapOccurence, QVector<qint64>& vec)
 {
@@ -122,11 +123,11 @@ void OccurenceCountNode::runForStringResult(const std::map<qint64, qint64>& mapO
     QStringList list;
     for(auto key : mapOccurence)
     {
-        if(nullptr != m_validator)
+        if(nullptr != m_validatorList)
         {
             Die die;
             die.insertRollValue(key.first);
-            if(!m_validator->hasValid(&die, true))
+            if(!m_validatorList->hasValid(&die, true))
                 continue;
         }
 
@@ -156,11 +157,11 @@ void OccurenceCountNode::runForDiceResult(const std::map<qint64, qint64>& mapOcc
     QStringList list;
     for(auto key : mapOccurence)
     {
-        if(nullptr != m_validator)
+        if(nullptr != m_validatorList)
         {
             Die die;
             die.insertRollValue(key.first);
-            if(!m_validator->hasValid(&die, true))
+            if(!m_validatorList->hasValid(&die, true))
                 continue;
         }
 

@@ -1,6 +1,7 @@
 #include "explodedicenode.h"
+#include "validatorlist.h"
 
-ExplodeDiceNode::ExplodeDiceNode() : m_diceResult(new DiceResult()), m_validator(nullptr)
+ExplodeDiceNode::ExplodeDiceNode() : m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
 }
@@ -25,7 +26,8 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
             for(auto& die : list)
             {
                 if(Dice::CONDITION_STATE::ALWAYSTRUE
-                   == m_validator->isValidRangeSize(std::make_pair<qint64, qint64>(die->getBase(), die->getMaxValue())))
+                   == m_validatorList->isValidRangeSize(
+                          std::make_pair<qint64, qint64>(die->getBase(), die->getMaxValue())))
                 {
                     m_errors.insert(Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
                                     QObject::tr("Condition (%1) cause an endless loop with this dice: %2")
@@ -36,7 +38,7 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
                     continue;
                 }
 
-                while(m_validator->hasValid(die, false))
+                while(m_validatorList->hasValid(die, false))
                 {
                     die->roll(true);
                 }
@@ -51,20 +53,20 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
 }
 ExplodeDiceNode::~ExplodeDiceNode()
 {
-    if(nullptr != m_validator)
+    if(nullptr != m_validatorList)
     {
-        delete m_validator;
+        delete m_validatorList;
     }
 }
-void ExplodeDiceNode::setValidator(Validator* val)
+void ExplodeDiceNode::setValidatorList(ValidatorList* val)
 {
-    m_validator= val;
+    m_validatorList= val;
 }
 QString ExplodeDiceNode::toString(bool withlabel) const
 {
     if(withlabel)
     {
-        return QString("%1 [label=\"ExplodeDiceNode %2\"]").arg(m_id, m_validator->toString());
+        return QString("%1 [label=\"ExplodeDiceNode %2\"]").arg(m_id, m_validatorList->toString());
     }
     else
     {
@@ -84,9 +86,9 @@ qint64 ExplodeDiceNode::getPriority() const
 ExecutionNode* ExplodeDiceNode::getCopy() const
 {
     ExplodeDiceNode* node= new ExplodeDiceNode();
-    if(nullptr != m_validator)
+    if(nullptr != m_validatorList)
     {
-        node->setValidator(m_validator->getCopy());
+        node->setValidatorList(m_validatorList->getCopy());
     }
     if(nullptr != m_nextNode)
     {

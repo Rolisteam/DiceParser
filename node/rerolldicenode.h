@@ -3,7 +3,8 @@
 
 #include "executionnode.h"
 #include "result/diceresult.h"
-#include "validator.h"
+
+class ValidatorList;
 /**
  * @brief The RerollDiceNode class reroll dice given a condition and replace(or add) the result.
  */
@@ -38,7 +39,7 @@ public:
     /**
      * @brief setValidator
      */
-    virtual void setValidator(Validator*);
+    virtual void setValidatorList(ValidatorList*);
     /**
      * @brief toString
      * @return
@@ -61,7 +62,7 @@ public:
 
 private:
     DiceResult* m_diceResult= nullptr;
-    Validator* m_validator= nullptr;
+    ValidatorList* m_validatorList= nullptr;
     ExecutionNode* m_instruction= nullptr;
 
     const bool m_reroll;
