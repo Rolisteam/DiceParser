@@ -19,15 +19,54 @@
  * Free Software Foundation, Inc.,                                          *
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
  ***************************************************************************/
-#include "compositevalidator.h"
+#include "validatorlist.h"
 
-CompositeValidator::CompositeValidator() {}
+#include "diceresult.h"
+#include "result.h"
+#include "validator.h"
 
-CompositeValidator::~CompositeValidator()
+bool isValid(Die* die, const ValidatorResult& diceList, ValidatorList::LogicOperation op)
+{
+    if(op == ValidatorList::OR)
+        return true;
+
+    bool newResult= false;
+
+    if(diceList.m_allTrue)
+    {
+        newResult= true;
+    }
+    else
+    {
+        auto it= std::find(diceList.m_validDice.begin(), diceList.m_validDice.end(), die);
+        if(it != diceList.m_validDice.end())
+            newResult= true;
+    }
+
+    if(op == ValidatorList::EXCLUSIVE_OR)
+        return !newResult;
+
+    return newResult;
+}
+
+DiceResult* getDiceResult(Result* result)
+{
+    auto dice= dynamic_cast<DiceResult*>(result);
+    if(nullptr == dice)
+    {
+        qFatal("Error, no dice result");
+        // TODO: manage error here.
+    }
+    return dice;
+}
+
+ValidatorList::ValidatorList() {}
+
+ValidatorList::~ValidatorList()
 {
     qDeleteAll(m_validatorList);
 }
-qint64 CompositeValidator::hasValid(Die* b, bool recursive, bool unhighlight) const
+qint64 ValidatorList::hasValid(Die* b, bool recursive, bool unhighlight) const
 {
     int i= 0;
     qint64 sum= 0;
@@ -71,7 +110,7 @@ qint64 CompositeValidator::hasValid(Die* b, bool recursive, bool unhighlight) co
     return sum;
 }
 
-QString CompositeValidator::toString()
+QString ValidatorList::toString()
 {
     QString str= "";
     /*switch (m_operator)
@@ -129,7 +168,7 @@ Dice::CONDITION_STATE testXOR(Dice::CONDITION_STATE before, Dice::CONDITION_STAT
         return Dice::CONDITION_STATE::REACHABLE;
 }
 
-Dice::CONDITION_STATE CompositeValidator::isValidRangeSize(const std::pair<qint64, qint64>& range) const
+Dice::CONDITION_STATE ValidatorList::isValidRangeSize(const std::pair<qint64, qint64>& range) const
 {
     std::vector<Dice::CONDITION_STATE> vec;
     std::transform(
@@ -144,7 +183,7 @@ Dice::CONDITION_STATE CompositeValidator::isValidRangeSize(const std::pair<qint6
     }
 
     std::size_t i= 0;
-    Dice::CONDITION_STATE val = Dice::CONDITION_STATE::ERROR_STATE;
+    Dice::CONDITION_STATE val= Dice::CONDITION_STATE::ERROR_STATE;
     for(const auto& op : m_operators)
     {
         auto currentState= vec[i + 1];
@@ -173,56 +212,132 @@ Dice::CONDITION_STATE CompositeValidator::isValidRangeSize(const std::pair<qint6
     return val;
 }
 
-void CompositeValidator::setOperationList(const QVector<LogicOperation>& m)
+void ValidatorList::setOperationList(const QVector<LogicOperation>& m)
 {
     m_operators= m;
 }
 
-void CompositeValidator::setValidatorList(const QList<Validator*>& valids)
+void ValidatorList::setValidators(const QList<Validator*>& valids)
 {
     qDeleteAll(m_validatorList);
     m_validatorList= valids;
 }
 
-template <typename Functor>
-qint64 CompositeValidator::validResult(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const
+void ValidatorList::validResult(Result* result, bool recursive, bool unlight, std::function<void(Die*)> functor) const
 {
-    int i= 0;
-    qint64 sum= 0;
-    bool highLight= false;
+    std::vector<ValidatorResult> validityData;
     for(auto& validator : m_validatorList)
     {
-        qint64 val= validator->validResult(b, recursive, unlight, functor);
-        if(i == 0)
+        ValidatorResult validResult({{}, false});
+        switch(validator->getConditionType())
         {
-            sum= val;
-        }
-        else
+        case Dice::OnScalar:
         {
-            switch(m_operators.at(i - 1))
+            Die die;
+            auto scalar= result->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
+            die.insertRollValue(scalar);
+            if(validator->hasValid(&die, recursive, unlight))
             {
-            case OR:
-                sum|= val;
-                break;
-            case EXCLUSIVE_OR:
-                sum^= val; /// @todo may required to be done by hand
-                break;
-            case AND:
-                sum&= val;
-                break;
-            default:
-                break;
+                validResult.m_allTrue= true;
             }
         }
-        ++i;
+        break;
+        case Dice::OnEach:
+        {
+            DiceResult* diceResult= getDiceResult(result);
+            if(nullptr == diceResult)
+                break;
+            for(auto die : diceResult->getResultList())
+            {
+                if(validator->hasValid(die, recursive, unlight))
+                {
+                    validResult.m_validDice.push_back(die);
+                }
+            }
+        }
+        break;
+        case Dice::AllOfThem:
+        {
+            DiceResult* diceResult= getDiceResult(result);
+            if(nullptr == diceResult)
+                break;
+            auto diceList= diceResult->getResultList();
+            auto all= std::all_of(diceList.begin(), diceList.end(), [validator, recursive, unlight](Die* die) {
+                return validator->hasValid(die, recursive, unlight);
+            });
+            if(all)
+                validResult.m_allTrue= true;
+        }
+        break;
+        case Dice::OneOfThem:
+        {
+            DiceResult* diceResult= getDiceResult(result);
+            if(nullptr == diceResult)
+                break;
+            auto diceList= diceResult->getResultList();
+            auto any= std::any_of(diceList.begin(), diceList.end(), [validator, recursive, unlight](Die* die) {
+                return validator->hasValid(die, recursive, unlight);
+            });
+            if(any)
+                validResult.m_allTrue= true;
+        }
+        }
+        validityData.push_back(validResult);
     }
-    return sum;
+    if(validityData.empty())
+        return;
+
+    std::size_t i= 0;
+    ValidatorResult finalResult({{}, false});
+    {
+        auto vec= validityData[i];
+        finalResult.m_validDice.reserve(vec.m_validDice.size());
+        finalResult= vec;
+    }
+    ++i;
+    for(auto op : m_operators)
+    {
+        ValidatorResult tmpResult({{}, false});
+        if(validityData.size() > i)
+        {
+            auto vec= validityData[i];
+
+            auto bigger= (vec > finalResult) ? vec : finalResult;
+            auto smaller= (vec > finalResult) ? finalResult : vec;
+
+            if(bigger.m_allTrue && smaller.m_allTrue)
+                tmpResult.m_allTrue= true;
+            for(auto die : bigger.m_validDice)
+            {
+                if(isValid(die, smaller, op))
+                {
+                    tmpResult.m_validDice.push_back(die);
+                }
+            }
+            finalResult= tmpResult;
+        }
+    }
+
+    if(finalResult.m_allTrue)
+    {
+        DiceResult* diceResult= getDiceResult(result);
+        if(nullptr == diceResult)
+            return;
+        auto diceList= diceResult->getResultList();
+        std::transform(diceList.begin(), diceList.end(), std::back_inserter(finalResult.m_validDice),
+                       [](Die* die) { return die; });
+    }
+
+    for(auto die : finalResult.m_validDice)
+    {
+        functor(die);
+    }
 }
 
-Validator* CompositeValidator::getCopy() const
+ValidatorList* ValidatorList::getCopy() const
 {
-    CompositeValidator* val= new CompositeValidator();
+    ValidatorList* val= new ValidatorList();
     val->setOperationList(m_operators);
-    val->setValidatorList(m_validatorList);
+    val->setValidators(m_validatorList);
     return val;
 }

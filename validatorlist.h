@@ -27,12 +27,35 @@
 #include <QVector>
 #include <Qt>
 
-#include "validator.h"
+#include "diceparserhelper.h"
+#include <functional>
+
+class Validator;
+class Die;
+class Result;
+
+struct ValidatorResult {
+    std::vector<Die*> m_validDice;
+    bool m_allTrue;
+
+    friend bool operator>(const ValidatorResult& a, const ValidatorResult& b) {
+        if(a.m_validDice.size() > b.m_validDice.size())
+            return true;
+        if(a.m_validDice.size() == b.m_validDice.size())
+        {
+            if(!a.m_allTrue && b.m_allTrue)
+                return true;
+            else
+                return false;
+        }
+        return false;
+    }
+};
 /**
  * @brief The BooleanCondition class is a Validator class checking validity from logic expression.
  * It manages many operators (see : @ref LogicOperator).
  */
-class CompositeValidator
+class ValidatorList
 {
 public:
     enum LogicOperation
@@ -42,22 +65,22 @@ public:
         AND,
         NONE
     };
-    CompositeValidator();
-    virtual ~CompositeValidator();
+
+    ValidatorList();
+    virtual ~ValidatorList();
 
     virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const;
 
     void setOperationList(const QVector<LogicOperation>& m);
-    void setValidatorList(const QList<Validator*>& valids);
+    void setValidators(const QList<Validator*>& valids);
 
-    QString toString() override;
+    QString toString();
 
     virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const;
 
-    virtual Validator* getCopy() const;
+    virtual ValidatorList* getCopy() const;
 
-    template <typename Functor>
-    qint64 validResult(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const;
+    void validResult(Result* result, bool recursive, bool unlight, std::function<void(Die*)> functor) const;
 
 private:
     QVector<LogicOperation> m_operators;

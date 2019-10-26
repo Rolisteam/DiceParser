@@ -1,4 +1,5 @@
 #include "filternode.h"
+#include "validatorlist.h"
 
 FilterNode::FilterNode() : m_diceResult(new DiceResult()), m_eachValue(false)
 {
@@ -7,14 +8,14 @@ FilterNode::FilterNode() : m_diceResult(new DiceResult()), m_eachValue(false)
 
 FilterNode::~FilterNode()
 {
-    if(nullptr != m_validator)
+    if(nullptr != m_validatorList)
     {
-        delete m_validator;
+        delete m_validatorList;
     }
 }
-void FilterNode::setValidator(Validator* validator)
+void FilterNode::setValidatorList(ValidatorList* validatorlist)
 {
-    m_validator= validator;
+    m_validatorList= validatorlist;
 }
 void FilterNode::run(ExecutionNode* previous)
 {
@@ -25,24 +26,27 @@ void FilterNode::run(ExecutionNode* previous)
     }
     DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(previous->getResult());
     m_result->setPrevious(previousDiceResult);
+
     if(nullptr != previousDiceResult)
     {
-        QList<Die*> diceList= previousDiceResult->getResultList();
         QList<Die*> diceList2;
+        std::function<void(Die*)> f= [&diceList2](Die* die) {
+            if(die == nullptr)
+                return;
+            Die* tmpdie= new Die(*die);
+            diceList2.append(tmpdie);
+            die->displayed();
+        };
+        m_validatorList->validResult(previousDiceResult, true, true, f);
 
+        QList<Die*> diceList= previousDiceResult->getResultList();
+
+        diceList.erase(std::remove_if(diceList.begin(), diceList.end(),
+                                      [&diceList2](Die* die) { return diceList2.contains(die); }),
+                       diceList.end());
         for(Die* tmp : diceList)
         {
-            if(m_validator->hasValid(tmp, m_eachValue))
-            {
-                Die* tmpdie= new Die(*tmp);
-                //*tmpdie= *tmp;
-                diceList2.append(tmpdie);
-                tmp->displayed();
-            }
-            else
-            {
-                tmp->setHighlighted(false);
-            }
+            tmp->setHighlighted(false);
         }
 
         m_diceResult->setResultList(diceList2);
@@ -77,9 +81,9 @@ qint64 FilterNode::getPriority() const
 ExecutionNode* FilterNode::getCopy() const
 {
     FilterNode* node= new FilterNode();
-    if(nullptr != m_validator)
+    if(nullptr != m_validatorList)
     {
-        node->setValidator(m_validator->getCopy());
+        node->setValidatorList(m_validatorList->getCopy());
     }
     if(nullptr != m_nextNode)
     {

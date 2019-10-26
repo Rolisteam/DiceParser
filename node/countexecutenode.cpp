@@ -1,19 +1,20 @@
 #include "countexecutenode.h"
 #include "result/diceresult.h"
+#include "validatorlist.h"
 
-CountExecuteNode::CountExecuteNode() : m_scalarResult(new ScalarResult()), m_validator(nullptr)
+CountExecuteNode::CountExecuteNode() : m_scalarResult(new ScalarResult()), m_validatorList(nullptr)
 {
     m_result= m_scalarResult;
 }
-void CountExecuteNode::setValidator(Validator* validator)
+void CountExecuteNode::setValidatorList(ValidatorList* validatorlist)
 {
-    m_validator= validator;
+    m_validatorList= validatorlist;
 }
 CountExecuteNode::~CountExecuteNode()
 {
-    if(nullptr != m_validator)
+    if(nullptr != m_validatorList)
     {
-        delete m_validator;
+        delete m_validatorList;
     }
 }
 
@@ -28,17 +29,10 @@ void CountExecuteNode::run(ExecutionNode* previous)
     if(nullptr != previousResult)
     {
         m_result->setPrevious(previousResult);
-        QList<Die*> diceList= previousResult->getResultList();
         qint64 sum= 0;
-        for(Die* dice : diceList)
-        {
-            if(nullptr != m_validator)
-            {
-                sum+= m_validator->hasValid(dice, true, true);
-            }
-        }
+        std::function<void(Die*)> f= [&sum](const Die*) { sum+= 1; };
+        m_validatorList->validResult(previousResult, true, true, f);
         m_scalarResult->setValue(sum);
-
         if(nullptr != m_nextNode)
         {
             m_nextNode->run(this);
@@ -49,7 +43,7 @@ QString CountExecuteNode::toString(bool withlabel) const
 {
     if(withlabel)
     {
-        return QString("%1 [label=\"CountExecuteNode %2\"]").arg(m_id, m_validator->toString());
+        return QString("%1 [label=\"CountExecuteNode %2\"]").arg(m_id, m_validatorList->toString());
     }
     else
     {
@@ -69,9 +63,9 @@ qint64 CountExecuteNode::getPriority() const
 ExecutionNode* CountExecuteNode::getCopy() const
 {
     CountExecuteNode* node= new CountExecuteNode();
-    if(nullptr != m_validator)
+    if(nullptr != m_validatorList)
     {
-        node->setValidator(m_validator->getCopy());
+        node->setValidatorList(m_validatorList->getCopy());
     }
     if(nullptr != m_nextNode)
     {
