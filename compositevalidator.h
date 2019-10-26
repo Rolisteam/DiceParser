@@ -32,7 +32,7 @@
  * @brief The BooleanCondition class is a Validator class checking validity from logic expression.
  * It manages many operators (see : @ref LogicOperator).
  */
-class CompositeValidator : public Validator
+class CompositeValidator
 {
 public:
     enum LogicOperation
@@ -43,18 +43,21 @@ public:
         NONE
     };
     CompositeValidator();
-    virtual ~CompositeValidator() override;
+    virtual ~CompositeValidator();
 
-    virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const override;
+    virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const;
 
     void setOperationList(const QVector<LogicOperation>& m);
     void setValidatorList(const QList<Validator*>& valids);
 
     QString toString() override;
 
-    virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const override;
+    virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const;
 
-    virtual Validator* getCopy() const override;
+    virtual Validator* getCopy() const;
+
+    template <typename Functor>
+    qint64 validResult(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const;
 
 private:
     QVector<LogicOperation> m_operators;

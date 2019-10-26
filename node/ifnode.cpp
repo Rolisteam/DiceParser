@@ -80,7 +80,7 @@ DiceResult* getFirstDiceResult(Result* result)
     return found;
 }
 
-IfNode::IfNode() : m_validator(nullptr), m_conditionType(AllOfThem), m_true(nullptr), m_false(nullptr)
+IfNode::IfNode() : m_validator(nullptr), m_conditionType(Dice::AllOfThem), m_true(nullptr), m_false(nullptr)
 {
     // m_result = new DiceResult();
 }
@@ -114,7 +114,7 @@ void IfNode::run(ExecutionNode* previous)
             {
                 QList<Die*> diceList= previousDiceResult->getResultList();
 
-                if(m_conditionType == OnEach)
+                if(m_conditionType == Dice::OnEach)
                 {
                     for(Die* dice : diceList)
                     {
@@ -145,7 +145,7 @@ void IfNode::run(ExecutionNode* previous)
                         }
                     }
                 }
-                else if((m_conditionType == OneOfThem) || (m_conditionType == AllOfThem))
+                else if((m_conditionType == Dice::OneOfThem) || (m_conditionType == Dice::AllOfThem))
                 {
                     bool trueForAll= true;
                     bool falseForAll= true;
@@ -162,7 +162,7 @@ void IfNode::run(ExecutionNode* previous)
                         oneIsTrue|= result;
                         oneIsFalse= !result ? true : oneIsFalse;
                     }
-                    if(m_conditionType == OneOfThem)
+                    if(m_conditionType == Dice::OneOfThem)
                     {
                         if(oneIsTrue)
                         {
@@ -173,7 +173,7 @@ void IfNode::run(ExecutionNode* previous)
                             nextNode= (nullptr == m_false) ? nullptr : m_false->getCopy();
                         }
                     }
-                    else if(m_conditionType == AllOfThem)
+                    else if(m_conditionType == Dice::AllOfThem)
                     {
                         if(trueForAll)
                         {
@@ -197,7 +197,7 @@ void IfNode::run(ExecutionNode* previous)
                 }
             }
 
-            if(m_conditionType == OnScalar)
+            if(m_conditionType == Dice::OnScalar)
             {
                 Die dice;
                 auto val= static_cast<qint64>(value);
@@ -319,12 +319,12 @@ ExecutionNode* IfNode::getLeafNode(ExecutionNode* node)
     return next;
 }
 
-IfNode::ConditionType IfNode::getConditionType() const
+Dice::ConditionType IfNode::getConditionType() const
 {
     return m_conditionType;
 }
 
-void IfNode::setConditionType(const IfNode::ConditionType& conditionType)
+void IfNode::setConditionType(const Dice::ConditionType& conditionType)
 {
     m_conditionType= conditionType;
 }

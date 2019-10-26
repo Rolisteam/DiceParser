@@ -986,6 +986,7 @@ ExplodeDiceNode* DiceParser::addExplodeDiceNode(qint64 value, ExecutionNode* pre
     NumberNode* node= new NumberNode();
     node->setNumber(value);
     BooleanCondition* condition= new BooleanCondition();
+    condition->setConditionType(Dice::OnEach);
     condition->setValueNode(node);
     condition->setOperator(BooleanCondition::Equal);
     m_parsingToolbox->isValidValidator(previous, condition);

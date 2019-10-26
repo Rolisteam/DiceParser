@@ -249,23 +249,24 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
     }
     return returnVal;
 }
-IfNode::ConditionType ParsingToolBox::readConditionType(QString& str)
+
+Dice::ConditionType ParsingToolBox::readConditionType(QString& str)
 {
-    IfNode::ConditionType type= IfNode::OnEach;
+    Dice::ConditionType type= Dice::OnEach;
     if(str.startsWith('.'))
     {
         str= str.remove(0, 1);
-        type= IfNode::OneOfThem;
+        type= Dice::OneOfThem;
     }
     else if(str.startsWith('*'))
     {
         str= str.remove(0, 1);
-        type= IfNode::AllOfThem;
+        type= Dice::AllOfThem;
     }
     else if(str.startsWith(':'))
     {
         str= str.remove(0, 1);
-        type= IfNode::OnScalar;
+        type= Dice::OnScalar;
     }
     return type;
 }

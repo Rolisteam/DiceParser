@@ -826,7 +826,7 @@ void TestDice::ifTest()
     QFETCH(int, valCondition);
     QFETCH(QString, expectedResult);
 
-    IfNode::ConditionType conditionType= static_cast<IfNode::ConditionType>(condition);
+    Dice::ConditionType conditionType= static_cast<Dice::ConditionType>(condition);
 
     TestNode node;
     IfNode ifNode;

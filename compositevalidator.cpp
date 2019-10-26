@@ -183,6 +183,42 @@ void CompositeValidator::setValidatorList(const QList<Validator*>& valids)
     qDeleteAll(m_validatorList);
     m_validatorList= valids;
 }
+
+template <typename Functor>
+qint64 CompositeValidator::validResult(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const
+{
+    int i= 0;
+    qint64 sum= 0;
+    bool highLight= false;
+    for(auto& validator : m_validatorList)
+    {
+        qint64 val= validator->validResult(b, recursive, unlight, functor);
+        if(i == 0)
+        {
+            sum= val;
+        }
+        else
+        {
+            switch(m_operators.at(i - 1))
+            {
+            case OR:
+                sum|= val;
+                break;
+            case EXCLUSIVE_OR:
+                sum^= val; /// @todo may required to be done by hand
+                break;
+            case AND:
+                sum&= val;
+                break;
+            default:
+                break;
+            }
+        }
+        ++i;
+    }
+    return sum;
+}
+
 Validator* CompositeValidator::getCopy() const
 {
     CompositeValidator* val= new CompositeValidator();

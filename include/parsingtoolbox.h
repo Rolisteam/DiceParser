@@ -111,7 +111,7 @@ public:
      * @param str
      * @return
      */
-    Validator* readValidator(QString& str, bool hasSquare=false);
+    Validator* readValidator(QString& str, bool hasSquare= false);
     /**
      * @brief readCompositeValidator
      * @param str
@@ -215,7 +215,7 @@ public:
      * @param str
      * @return
      */
-    static IfNode::ConditionType readConditionType(QString& str);
+    static Dice::ConditionType readConditionType(QString& str);
 
     bool readComment(QString& str, QString&, QString&);
     static ExecutionNode* getLatestNode(ExecutionNode* node);

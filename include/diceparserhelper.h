@@ -14,19 +14,19 @@ enum class CONDITION_STATE : int
 
 enum class ERROR_CODE : int
 {
-   NO_DICE_ERROR,
-   DIE_RESULT_EXPECTED,
-   BAD_SYNTAXE,
-   ENDLESS_LOOP_ERROR,
-   DIVIDE_BY_ZERO,
-   NOTHING_UNDERSTOOD,
-   NO_DICE_TO_ROLL,
-   TOO_MANY_DICE,
-   NO_VARIBALE,
-   INVALID_INDEX,
-   UNEXPECTED_CHARACTER,
-   NO_PREVIOUS_ERROR,
-   NO_VALID_RESULT
+    NO_DICE_ERROR,
+    DIE_RESULT_EXPECTED,
+    BAD_SYNTAXE,
+    ENDLESS_LOOP_ERROR,
+    DIVIDE_BY_ZERO,
+    NOTHING_UNDERSTOOD,
+    NO_DICE_TO_ROLL,
+    TOO_MANY_DICE,
+    NO_VARIBALE,
+    INVALID_INDEX,
+    UNEXPECTED_CHARACTER,
+    NO_PREVIOUS_ERROR,
+    NO_VALID_RESULT
 };
 
 /**
@@ -39,5 +39,15 @@ enum class RESULT_TYPE : int
     STRING= 2,
     DICE_LIST= 4
 };
-}
+/**
+ * @brief The ConditionType enum defines compare method
+ */
+enum ConditionType
+{
+    OnEach,
+    OneOfThem,
+    AllOfThem,
+    OnScalar
+};
+} // namespace Dice
 #endif // DICEPARSERHELPER_H

@@ -20,6 +20,7 @@
 #ifndef IFNODE_H
 #define IFNODE_H
 
+#include "diceparserhelper.h"
 #include "executionnode.h"
 #include "result/diceresult.h"
 #include "validator.h"
@@ -45,16 +46,6 @@ private:
 class IfNode : public ExecutionNode
 {
 public:
-    /**
-     * @brief The ConditionType enum
-     */
-    enum ConditionType
-    {
-        OnEach,
-        OneOfThem,
-        AllOfThem,
-        OnScalar
-    };
     /**
      * @brief IfNode
      */
@@ -105,20 +96,20 @@ public:
      * @brief getConditionType
      * @return
      */
-    ConditionType getConditionType() const;
+    Dice::ConditionType getConditionType() const;
 
     /**
      * @brief setConditionType
      * @param conditionType
      */
-    void setConditionType(const IfNode::ConditionType& conditionType);
+    void setConditionType(const Dice::ConditionType& conditionType);
 
 protected:
     ExecutionNode* getLeafNode(ExecutionNode* node);
 
 protected:
     Validator* m_validator;
-    ConditionType m_conditionType;
+    Dice::ConditionType m_conditionType;
 
     ExecutionNode* m_true;
     ExecutionNode* m_false;

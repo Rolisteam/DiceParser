@@ -1,7 +1,9 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFile>
+#include <QtConcurrent>
 #include <diceparser.h>
+#include <vector>
 
 static DiceParser* parser= new DiceParser();
 
@@ -16,22 +18,27 @@ void runCommand(const QString& cmd)
 
 int main(int argc, char** argv)
 {
-    // qDebug() << "first";
     QCoreApplication app(argc, argv);
+    QDir dir("/home/renaud/application/mine/DiceParser/tests/fuzzer/sync_dir/fuzzer06/crashes");
+    dir.setFilter(QDir::Files);
+    dir.setSorting(QDir::Name);
 
-    // qDebug() << "start";
-    QFile file(app.arguments().at(1));
-    // qDebug() << "file" << app.arguments().at(1);
-    if(!file.open(QIODevice::ReadOnly))
-        return 1;
-
-    auto line= file.readLine();
-    while(!line.isEmpty())
+    QFileInfoList list= dir.entryInfoList();
+    for(auto fileInfo : list)
     {
-        // qDebug() << line;
-        runCommand(QString::fromUtf8(line));
-        line= file.readLine();
-    }
+        // QFile file(app.arguments().at(1));
+        QFile file(fileInfo.absoluteFilePath());
 
+        if(!file.open(QIODevice::ReadOnly))
+            return 1;
+
+        auto line= file.readLine();
+        while(!line.isEmpty())
+        {
+            // qDebug() << line;
+            runCommand(QString::fromUtf8(line));
+            line= file.readLine();
+        }
+    }
     return 0;
 }
