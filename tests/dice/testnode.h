@@ -3,7 +3,7 @@
 
 #include <Qt>
 
-#include "executionnode.h"
+#include "node/executionnode.h"
 #include "result/diceresult.h"
 #include <utility>
 /**
