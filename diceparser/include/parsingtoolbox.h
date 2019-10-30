@@ -23,6 +23,7 @@
 #define PARSINGTOOLBOX_H
 
 #include <QMap>
+#include <vector>
 
 #include "booleancondition.h"
 #include "node/dicerollernode.h"
@@ -33,6 +34,10 @@
 #include "operationcondition.h"
 #include "range.h"
 #include "validatorlist.h"
+
+class RepeaterNode;
+class DiceAlias;
+class ExplodeDiceNode;
 
 class SubtituteInfo
 {
@@ -72,7 +77,49 @@ public:
         NONE,
         UNIQUE
     };
-
+    enum Function
+    {
+        REPEAT
+    };
+    /**
+     * @brief The OptionOperator enum gathering all options  availables for result.
+     */
+    enum OptionOperator
+    {
+        KeepAndExplode,
+        Keep,
+        Reroll,
+        RerollUntil,
+        Explode,
+        Sort,
+        Count,
+        RerollAndAdd,
+        Merge,
+        ifOperator,
+        Painter,
+        Filter,
+        Split,
+        Group,
+        Occurences,
+        Unique,
+        Bind,
+        AllSameExplode
+    };
+    /**
+     * @brief The DiceOperator enum gathering all dice operators
+     */
+    enum DiceOperator
+    {
+        D,
+        L
+    };
+    /**
+     * @brief The DiceSymbol enum
+     */
+    enum NodeAction
+    {
+        JumpBackward
+    };
     /**
      * @brief ParsingToolBox
      */
@@ -86,6 +133,8 @@ public:
      * @brief ~ParsingToolBox
      */
     virtual ~ParsingToolBox();
+
+    void clearUp();
     /**
      * @brief addSort
      * @param e
@@ -220,10 +269,9 @@ public:
     bool readComment(QString& str, QString&, QString&);
     static ExecutionNode* getLatestNode(ExecutionNode* node);
 
-    static std::vector<ExecutionNode*>* getStartNodes();
+    const std::vector<ExecutionNode*>& getStartNodes();
     static void setStartNodes(std::vector<ExecutionNode*>* startNodes);
 
-    static bool readOperand(QString& str, ExecutionNode*& node);
     static int findClosingCharacterIndexOf(QChar open, QChar closing, const QString& str, int offset);
 
     static QString replaceVariableToValue(const QString& source, QStringList values);
@@ -234,14 +282,146 @@ public:
 
     static bool readComma(QString& str);
 
+    bool readReaperArguments(RepeaterNode* node, QString& source);
+
+    bool readInstructionList(QString& str);
+
+    /**
+     * @brief addRollDiceNode
+     * @param faces
+     * @return
+     */
+    DiceRollerNode* addRollDiceNode(qint64 faces, ExecutionNode*);
+    /**
+     * @brief addExplodeDiceNode
+     * @param faces
+     * @param previous
+     * @return
+     */
+    ExplodeDiceNode* addExplodeDiceNode(qint64 faces, ExecutionNode* previous);
+
+    /**
+     * @brief readExpression
+     * @param str
+     * @param node
+     * @return
+     */
+    bool readExpression(QString& str, ExecutionNode*& node);
+
+    static ExecutionNode* getLeafNode(ExecutionNode* start);
+    /**
+     * @brief readOperand
+     * @param node
+     * @return
+     */
+    bool readOperand(QString&, ExecutionNode*& node);
+    bool hasError() const;
+    /**
+     * @brief readInstructionOperator
+     * @param c
+     * @return
+     */
+    bool readInstructionOperator(QChar c);
+    /**
+     * @brief readNode
+     * @param str
+     * @param node
+     * @return
+     */
+    bool readNode(QString& str, ExecutionNode*& node);
+    /**
+     * @brief readIfInstruction reads the current command to build if node with proper parameters.
+     * @param str is the command string, if IF istruction is found, the str will be changed, in other case the string is
+     * unmodified
+     * @param trueNode is the branch's beginning to be executed if the IfNode is true.
+     * @param falseNode is the branch's beginning to be executed if the IfNode is false.
+     * @return true, ifNode has been found, false otherwise
+     */
+    bool readIfInstruction(QString& str, ExecutionNode*& trueNode, ExecutionNode*& falseNode);
+
+    bool readOptionFromNull(QString& str, ExecutionNode*& node);
+    bool readOperatorFromNull(QString& str, ExecutionNode*& node);
+    bool readParameterNode(QString& str, ExecutionNode*& node);
+
+    /**
+     *
+     */
+    bool readFunction(QString& str, ExecutionNode*& node);
+    /**
+     * @brief readDice
+     * @param str
+     * @return
+     */
+    bool readDice(QString& str, ExecutionNode*& node);
+    /**
+     * @brief readDiceOperator
+     * @return
+     */
+    bool readDiceOperator(QString&, DiceOperator&);
+    /**
+     * @brief readDiceExpression
+     * @param node
+     * @return
+     */
+    bool readDiceExpression(QString&, ExecutionNode*& node);
+    /**
+     * @brief readOperator
+     * @return
+     */
+    bool readOperator(QString&, ExecutionNode* previous);
+    /**
+     * @brief DiceParser::readCommand
+     * @param str
+     * @param node
+     * @return
+     */
+    bool readCommand(QString& str, ExecutionNode*& node);
+
+    /**
+     * @brief readOption
+     */
+    bool readOption(QString&, ExecutionNode* node); // OptionOperator& option,
+
+    bool readValuesList(QString& str, ExecutionNode*& node);
+
+    void addError(Dice::ERROR_CODE code, const QString& msg);
+    void addWarning(Dice::ERROR_CODE code, const QString& msg);
+
+    void setComment(const QString& comment);
+    QString getComment() const;
+
+    const QMap<Dice::ERROR_CODE, QString>& getErrorList() const;
+    const QMap<Dice::ERROR_CODE, QString>& getWarningList() const;
+
+    QString convertAlias(QString str);
+
+    bool readBlocInstruction(QString& str, ExecutionNode*& resultnode);
+
+    void setHelpPath(const QString& path);
+
+    void insertAlias(DiceAlias* dice, int i);
+    const QList<DiceAlias*>& getAliases() const;
+
 private:
-    QMap<QString, BooleanCondition::LogicOperator>* m_logicOp;
-    QMap<QString, ValidatorList::LogicOperation>* m_logicOperation;
-    QMap<QString, OperationCondition::ConditionOperator>* m_conditionOperation;
-    QHash<QString, Die::ArithmeticOperator>* m_arithmeticOperation;
+    QMap<QString, BooleanCondition::LogicOperator> m_logicOp;
+    QMap<QString, ValidatorList::LogicOperation> m_logicOperation;
+    QMap<QString, OperationCondition::ConditionOperator> m_conditionOperation;
+    QHash<QString, Die::ArithmeticOperator> m_arithmeticOperation;
+    QMap<QString, DiceOperator> m_mapDiceOp;
+    QMap<QString, OptionOperator> m_OptionOp;
+    QMap<QString, NodeAction> m_nodeActionMap;
+    std::map<QString, Function> m_functionMap;
+    QStringList m_commandList;
+
+    QMap<Dice::ERROR_CODE, QString> m_errorMap;
+    QMap<Dice::ERROR_CODE, QString> m_warningMap;
+    std::vector<ExecutionNode*> m_startNodes;
+
+    QString m_comment;
 
     static QHash<QString, QString> m_variableHash;
-    static std::vector<ExecutionNode*>* m_startNodes;
+    QString m_helpPath;
+    QList<DiceAlias*> m_aliasList;
 };
 
 #endif // PARSINGTOOLBOX_H

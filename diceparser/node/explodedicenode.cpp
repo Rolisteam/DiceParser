@@ -14,17 +14,19 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
         m_result->setPrevious(previous_result);
         if(nullptr != previous_result)
         {
+            Die* exampleDie;
             for(auto& die : previous_result->getResultList())
             {
                 Die* tmpdie= new Die(*die);
                 m_diceResult->insertResult(tmpdie);
                 die->displayed();
+                exampleDie= tmpdie;
             }
 
-            QList<Die*> list= m_diceResult->getResultList();
+            // QList<Die*> list= m_diceResult->getResultList();
 
-            for(auto& die : list)
-            {
+            bool hasExploded= false;
+            std::function<void(Die*, qint64)> f= [&hasExploded, this](Die* die, qint64) {
                 if(Dice::CONDITION_STATE::ALWAYSTRUE
                    == m_validatorList->isValidRangeSize(
                           std::make_pair<qint64, qint64>(die->getBase(), die->getMaxValue())))
@@ -35,6 +37,23 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
                                         .arg(QStringLiteral("d[%1,%2]")
                                                  .arg(static_cast<int>(die->getBase()))
                                                  .arg(static_cast<int>(die->getMaxValue()))));
+                }
+                hasExploded= true;
+                die->roll(true);
+            };
+            do
+            {
+                hasExploded= false;
+                m_validatorList->validResult(m_diceResult, false, false, f);
+            } while(hasExploded);
+
+            /*for(auto& die : list)
+            {
+                if(Dice::CONDITION_STATE::ALWAYSTRUE
+                   == m_validatorList->isValidRangeSize(
+                          std::make_pair<qint64, qint64>(die->getBase(), die->getMaxValue())))
+                {
+
                     continue;
                 }
 
@@ -42,7 +61,7 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
                 {
                     die->roll(true);
                 }
-            }
+            }*/
 
             if(nullptr != m_nextNode)
             {

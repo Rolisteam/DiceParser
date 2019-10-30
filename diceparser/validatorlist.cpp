@@ -24,6 +24,7 @@
 #include "diceresult.h"
 #include "result.h"
 #include "validator.h"
+#include <utility>
 
 bool isValid(Die* die, const ValidatorResult& diceList, ValidatorList::LogicOperation op)
 {
@@ -38,7 +39,8 @@ bool isValid(Die* die, const ValidatorResult& diceList, ValidatorList::LogicOper
     }
     else
     {
-        auto it= std::find(diceList.m_validDice.begin(), diceList.m_validDice.end(), die);
+        auto it= std::find_if(diceList.m_validDice.begin(), diceList.m_validDice.end(),
+                              [die](const std::pair<Die*, qint64>& pair) { return die == pair.first; });
         if(it != diceList.m_validDice.end())
             newResult= true;
     }
@@ -177,6 +179,9 @@ Dice::CONDITION_STATE ValidatorList::isValidRangeSize(const std::pair<qint64, qi
 
     auto itError= std::find(vec.begin(), vec.end(), Dice::CONDITION_STATE::ERROR_STATE);
 
+    if(vec.size() == 1)
+        return vec.front();
+
     if((static_cast<int>(vec.size()) != m_operators.size() + 1) || (itError != vec.end()))
     {
         return Dice::CONDITION_STATE::ERROR_STATE;
@@ -223,7 +228,8 @@ void ValidatorList::setValidators(const QList<Validator*>& valids)
     m_validatorList= valids;
 }
 
-void ValidatorList::validResult(Result* result, bool recursive, bool unlight, std::function<void(Die*)> functor) const
+void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
+                                std::function<void(Die*, qint64)> functor) const
 {
     std::vector<ValidatorResult> validityData;
     for(auto& validator : m_validatorList)
@@ -249,9 +255,10 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight, st
                 break;
             for(auto die : diceResult->getResultList())
             {
-                if(validator->hasValid(die, recursive, unlight))
+                auto score= validator->hasValid(die, recursive, unlight);
+                if(score)
                 {
-                    validResult.m_validDice.push_back(die);
+                    validResult.m_validDice.push_back({die, score});
                 }
             }
         }
@@ -266,7 +273,9 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight, st
                 return validator->hasValid(die, recursive, unlight);
             });
             if(all)
+            {
                 validResult.m_allTrue= true;
+            }
         }
         break;
         case Dice::OneOfThem:
@@ -279,7 +288,9 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight, st
                 return validator->hasValid(die, recursive, unlight);
             });
             if(any)
+            {
                 validResult.m_allTrue= true;
+            }
         }
         }
         validityData.push_back(validResult);
@@ -309,7 +320,7 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight, st
                 tmpResult.m_allTrue= true;
             for(auto die : bigger.m_validDice)
             {
-                if(isValid(die, smaller, op))
+                if(isValid(die.first, smaller, op))
                 {
                     tmpResult.m_validDice.push_back(die);
                 }
@@ -324,13 +335,14 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight, st
         if(nullptr == diceResult)
             return;
         auto diceList= diceResult->getResultList();
-        std::transform(diceList.begin(), diceList.end(), std::back_inserter(finalResult.m_validDice),
-                       [](Die* die) { return die; });
+        std::transform(diceList.begin(), diceList.end(), std::back_inserter(finalResult.m_validDice), [](Die* die) {
+            return std::pair<Die*, qint64>({die, 0});
+        });
     }
 
     for(auto die : finalResult.m_validDice)
     {
-        functor(die);
+        functor(die.first, die.second);
     }
 }
 

@@ -30,7 +30,7 @@ void FilterNode::run(ExecutionNode* previous)
     if(nullptr != previousDiceResult)
     {
         QList<Die*> diceList2;
-        std::function<void(Die*)> f= [&diceList2](Die* die) {
+        std::function<void(Die*, qint64)> f= [&diceList2](Die* die, qint64) {
             if(die == nullptr)
                 return;
             Die* tmpdie= new Die(*die);

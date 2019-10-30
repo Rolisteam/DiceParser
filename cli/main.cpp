@@ -440,7 +440,6 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
             rt= 1;
         }
     }
-    parser.cleanAll();
     return rt;
 }
 #include <QTextCodec>
@@ -561,7 +560,7 @@ int main(int argc, char* argv[])
     {
         cmd= "help";
     }
-    QStringList cmdList = optionParser.positionalArguments();
+    QStringList cmdList= optionParser.positionalArguments();
     // cmdList << "8d10;\$1c[>6];\$1c[=1];\$2-\$3i:[>0]{\"%3 Success[%2]\"}{i:[<0]{\"Critical fail %3 [%2]\"}{\"Fail %3
     // [%2]\"}}";
     QJsonArray aliases;

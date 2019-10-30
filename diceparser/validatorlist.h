@@ -19,8 +19,8 @@
  * Free Software Foundation, Inc.,                                          *
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
  ***************************************************************************/
-#ifndef COMPOSITEVALIDATOR_H
-#define COMPOSITEVALIDATOR_H
+#ifndef VALIDATORLIST_H
+#define VALIDATORLIST_H
 
 #include <QList>
 #include <QString>
@@ -34,11 +34,13 @@ class Validator;
 class Die;
 class Result;
 
-struct ValidatorResult {
-    std::vector<Die*> m_validDice;
+struct ValidatorResult
+{
+    std::vector<std::pair<Die*, qint64>> m_validDice;
     bool m_allTrue;
 
-    friend bool operator>(const ValidatorResult& a, const ValidatorResult& b) {
+    friend bool operator>(const ValidatorResult& a, const ValidatorResult& b)
+    {
         if(a.m_validDice.size() > b.m_validDice.size())
             return true;
         if(a.m_validDice.size() == b.m_validDice.size())
@@ -80,11 +82,11 @@ public:
 
     virtual ValidatorList* getCopy() const;
 
-    void validResult(Result* result, bool recursive, bool unlight, std::function<void(Die*)> functor) const;
+    void validResult(Result* result, bool recursive, bool unlight, std::function<void(Die*, qint64)> functor) const;
 
 private:
     QVector<LogicOperation> m_operators;
     QList<Validator*> m_validatorList;
 };
 
-#endif // BOOLEANCONDITION_H
+#endif // VALIDATORLIST_H

@@ -30,7 +30,7 @@ void CountExecuteNode::run(ExecutionNode* previous)
     {
         m_result->setPrevious(previousResult);
         qint64 sum= 0;
-        std::function<void(Die*)> f= [&sum](const Die*) { sum+= 1; };
+        std::function<void(Die*, qint64)> f= [&sum](const Die*, qint64 score) { sum+= score; };
         m_validatorList->validResult(previousResult, true, true, f);
         m_scalarResult->setValue(sum);
         if(nullptr != m_nextNode)

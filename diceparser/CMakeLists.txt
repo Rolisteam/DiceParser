@@ -50,6 +50,7 @@ SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/highlightdice.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/variablenode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/valueslistnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/repeaternode.cpp
 )
 
 IF(STATIC_BUILD)
