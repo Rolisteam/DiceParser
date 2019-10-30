@@ -76,12 +76,12 @@ ParsingToolBox::ParsingToolBox()
     // m_arithmeticOperation = new QHash<QString,ScalarOperatorNode::ArithmeticOperator>();
     m_arithmeticOperation.insert(QStringLiteral("+"), Die::PLUS);
     m_arithmeticOperation.insert(QStringLiteral("-"), Die::MINUS);
+    m_arithmeticOperation.insert(QStringLiteral("**"), Die::POW);
     m_arithmeticOperation.insert(QStringLiteral("*"), Die::MULTIPLICATION);
     m_arithmeticOperation.insert(QStringLiteral("x"), Die::MULTIPLICATION);
     m_arithmeticOperation.insert(QStringLiteral("|"), Die::INTEGER_DIVIDE);
     m_arithmeticOperation.insert(QStringLiteral("/"), Die::DIVIDE);
     m_arithmeticOperation.insert(QStringLiteral("÷"), Die::DIVIDE);
-    m_arithmeticOperation.insert(QStringLiteral("^"), Die::POW);
 
     m_mapDiceOp.insert(QStringLiteral("D"), D);
     m_mapDiceOp.insert(QStringLiteral("L"), L);
@@ -288,9 +288,9 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
     else if(readOperand(str, operandNode))
     {
         bool isRange= false;
-        if(str.startsWith("-") && hasSquare)
+        if(str.startsWith("..") && hasSquare)
         {
-            str= str.remove(0, 1);
+            str= str.remove(0, 2);
             qint64 end= 0;
             if(readNumber(str, end))
             {
@@ -301,10 +301,6 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
                 range->setValue(start, end);
                 returnVal= range;
                 isRange= true;
-            }
-            else
-            {
-                str.prepend("-");
             }
         }
 

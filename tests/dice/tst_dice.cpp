@@ -306,9 +306,9 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd15") << "10D10e[>=6]sc[>=6]";
     QTest::addRow("cmd16") << "10D10e10s";
     QTest::addRow("cmd17") << "10D10s";
-    QTest::addRow("cmd18") << "15D10e10c[8-10]";
+    QTest::addRow("cmd18") << "15D10e10c[8..10]";
     QTest::addRow("cmd19") << "10d10e10";
-    QTest::addRow("cmd30") << "(4+4)^4";
+    QTest::addRow("cmd30") << "(4+4)**4";
     QTest::addRow("cmd31") << "(1d20+20)*7/10";
     QTest::addRow("cmd32") << "20*7/10";
     QTest::addRow("cmd33") << "1D8+2D6+7";

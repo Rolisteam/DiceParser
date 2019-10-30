@@ -104,8 +104,8 @@ Option =: Keep
 | Split
 | Group
 Range =: OpenList Number RangeSeparator Number CloseList
-RangeSeparator =: -
-ScalarOperator =: [x,-,*,x,/]
+RangeSeparator =: ..
+ScalarOperator =: [x,-,*,x,/,**]
 number =: [-] [0-9]+ | constantValue
 OpenVaribale=: ${
 CloseVariable=: }
