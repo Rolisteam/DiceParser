@@ -68,6 +68,7 @@ Expression =: OpenParenthesis Expression closeParenthesis
 | [Operator, Expression]*
 | Operand Dice
 | Command
+| function
 | NodeOperator [Option]*
 | ValuesList
 | Dice (Operand == 1)
@@ -86,6 +87,9 @@ ParameterList =: List
 List=: OpenList String[Probability] [ListSeparator,String[Probability]]* CloseList
 Probability=: OpenList (Range|Percentage) CloseList
 Percentage =: number
+function =: functionName OpenParenthesis [function_args] closeParenthesis
+function_args =: Instruction [InstructionSeparator, Instruction] | Operand | ValidatorList
+functionName =: repeat
 Option =: Keep
 | KeepAndExplode
 | Filter
@@ -113,8 +117,13 @@ constantValue =: OpenVaribale (id | label) CloseVariable
 id=[_,a-z][_,A-z,0-9]* # must respect rules of QML id
 label=.*
 variable = OpenVaribale [0-9]+ CloseVariable
-CompositeValidator =: OpenList Validator [LogicOpetator,Validator]* CloseList
+ValidatorList =: OpenList CompareMethod Validator [LogicOpetator CompareMethod Validator]* CloseList
 LogicOpetator =: AND | XOR |  OR
+CompareMethod =: Each |  All | Scalar | ANY
+Each=:
+All=: *
+Scalar=: :
+ANY=: .
 AND =: &
 XOR =: ^
 OR =: |
@@ -129,22 +138,22 @@ ListOfValue=: String[Range],ListOfValue | String[Range]
 String =: .*[^ListSeparator]
 Keep =: k[Ascendant] Number
 KeepAndExplode =: K[Ascendant] number
-Filter =: f CompositeValidator
+Filter =: f ValidatorList
 Sort =: s[Ascendant]
-Count =: c CompositeValidator
-Reroll =: r CompositeValidator
-RerollUntil =: R CompositeValidator
-RerollAndAdd =: a CompositeValidator
+Count =: c ValidatorList
+Reroll =: r ValidatorList
+RerollUntil =: R ValidatorList
+RerollAndAdd =: a ValidatorList
 Merge =: m
 Bind =: b
-Occurences =: OccurencesWidth ( ListSeparator  number | CompositeValidator)
+Occurences =: OccurencesWidth ( ListSeparator  number | ValidatorList)
 OccurencesWidth =: number
 unique =: u
 Painter =: p PainterParameters
 PainterParameters =: OpenList PairColorOccurence [ListSeparator , PairColorOccurence]* CloseList
 PairColorOccurence =: Color PairSeparator Number
 PairSeparator =: :
-If =: i [compareMethod] CompositeValidator Bloc[Bloc]
+If =: i [compareMethod] ValidatorList Bloc[Bloc]
 compareMethod =: OnEach | OneOfThem | AllOfThem | onScalar
 OnEach =: ''
 OneOfThem = '.'
@@ -157,7 +166,7 @@ Split =: y
 Group =: g Number
 Sort =: s
 Group =: number
-Explode =: e CompositeValidator
+Explode =: e ValidatorList
 NodeOperator = Jumpbackward
 Jumpbackward =: @
 Merge =: m | m Expression
