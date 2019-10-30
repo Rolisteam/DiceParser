@@ -284,7 +284,7 @@ public:
 
     bool readReaperArguments(RepeaterNode* node, QString& source);
 
-    bool readInstructionList(QString& str);
+    std::vector<ExecutionNode*> readInstructionList(QString& str, bool startNode);
 
     /**
      * @brief addRollDiceNode

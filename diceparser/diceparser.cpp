@@ -54,10 +54,10 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
         str= m_parsingToolbox->convertAlias(str);
     }
     m_command= str;
-    bool hasInstruction= m_parsingToolbox->readInstructionList(str);
+    auto instructions= m_parsingToolbox->readInstructionList(str, true);
     m_command.remove(m_parsingToolbox->getComment());
-    bool value= hasInstruction;
-    if(!hasInstruction)
+    bool value= !instructions.empty();
+    if(!value)
     {
         m_parsingToolbox->addError(
             Dice::ERROR_CODE::NOTHING_UNDERSTOOD,
@@ -66,7 +66,7 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
                         "href=\"https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md\">https://github.com/"
                         "Rolisteam/DiceParser/blob/master/HelpMe.md</a>"));
     }
-    else if(hasInstruction && !str.isEmpty())
+    else if(value && !str.isEmpty())
     {
         auto i= m_command.size() - str.size();
         m_parsingToolbox->addWarning(

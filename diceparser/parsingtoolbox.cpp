@@ -919,16 +919,29 @@ void ParsingToolBox::readSubtitutionParameters(SubtituteInfo& info, QString& res
 
 bool ParsingToolBox::readReaperArguments(RepeaterNode* node, QString& source)
 {
-    if(source.startsWith("("))
+    if(readOpenParentheses(source))
     {
-        readInstructionList(source);
-        ExecutionNode* tmp;
-        readOperand(source, tmp);
-        if(source.startsWith("+"))
+        auto instructions= readInstructionList(source, false);
+        if(!instructions.empty())
         {
-            node->setSumAll(true);
+            readComma(source);
+            ExecutionNode* tmp;
+            if(readOperand(source, tmp))
+            {
+                if(source.startsWith("+"))
+                {
+                    node->setSumAll(true);
+                }
+                if(readCloseParentheses(source))
+                {
+                    node->setCommand(instructions);
+                    node->setTimeNode(tmp);
+                    return true;
+                }
+            }
         }
     }
+    return false;
 }
 bool ParsingToolBox::readExpression(QString& str, ExecutionNode*& node)
 {
@@ -1738,8 +1751,10 @@ bool ParsingToolBox::readFunction(QString& str, ExecutionNode*& node)
             case REPEAT:
             {
                 auto repeaterNode= new RepeaterNode();
-                ParsingToolBox::readReaperArguments(repeaterNode, str);
-                node= repeaterNode;
+                if(ParsingToolBox::readReaperArguments(repeaterNode, str))
+                {
+                    node= repeaterNode;
+                }
             }
             break;
             }
@@ -1789,10 +1804,12 @@ const QList<DiceAlias*>& ParsingToolBox::getAliases() const
     return m_aliasList;
 }
 
-bool ParsingToolBox::readInstructionList(QString& str)
+std::vector<ExecutionNode*> ParsingToolBox::readInstructionList(QString& str, bool global)
 {
     if(str.isEmpty())
-        return false;
+        return {};
+
+    std::vector<ExecutionNode*> startNodes;
 
     bool hasInstruction= false;
     bool readInstruction= true;
@@ -1803,7 +1820,7 @@ bool ParsingToolBox::readInstructionList(QString& str)
         if(nullptr != startNode)
         {
             hasInstruction= true;
-            m_startNodes.push_back(startNode);
+            startNodes.push_back(startNode);
             auto latest= startNode;
             if(keepParsing)
             {
@@ -1839,7 +1856,9 @@ bool ParsingToolBox::readInstructionList(QString& str)
             readInstruction= false;
         }
     }
-    return hasInstruction;
+    if(global)
+        m_startNodes= startNodes;
+    return startNodes;
 }
 
 SubtituteInfo ParsingToolBox::readVariableFromString(const QString& source, int& start)

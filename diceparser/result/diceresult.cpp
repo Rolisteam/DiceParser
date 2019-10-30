@@ -73,7 +73,7 @@ QVariant DiceResult::getResult(Dice::RESULT_TYPE type)
     }
     case Dice::RESULT_TYPE::DICE_LIST:
     {
-        return QVariant();
+        return QVariant::fromValue(m_diceValues);
     }
     default:
         break;

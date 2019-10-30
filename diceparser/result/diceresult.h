@@ -92,5 +92,5 @@ private:
     bool m_homogeneous;
     Die::ArithmeticOperator m_operator;
 };
-
+Q_DECLARE_METATYPE(QList<Die*>)
 #endif // DICERESULT_H
