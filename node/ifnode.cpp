@@ -79,6 +79,7 @@ DiceResult* getFirstDiceResult(Result* result)
 
     return found;
 }
+//
 
 IfNode::IfNode() : m_validator(nullptr), m_conditionType(AllOfThem), m_true(nullptr), m_false(nullptr)
 {
@@ -116,10 +117,12 @@ void IfNode::run(ExecutionNode* previous)
 
                 if(m_conditionType == OnEach)
                 {
+                    auto diceResult= new DiceResult;
                     for(Die* dice : diceList)
                     {
                         auto diceNode= new PartialDiceRollNode();
-                        diceNode->insertDie(new Die(*dice));
+                        auto cpyDice= new Die(*dice);
+                        diceNode->insertDie(cpyDice);
                         if(m_validator->hasValid(dice, true, true))
                         {
                             nextNode= (nullptr == m_true) ? nullptr : m_true->getCopy();
@@ -135,15 +138,26 @@ void IfNode::run(ExecutionNode* previous)
                             {
                                 previousLoop->setNextNode(nextNode);
                             }
-                            if(nullptr == m_nextNode)
-                            {
-                                m_nextNode= nextNode;
-                            }
                             diceNode->setNextNode(nextNode);
                             diceNode->run(previousLoop);
                             previousLoop= getLeafNode(nextNode);
                         }
+
+                        if(nullptr == nextNode)
+                        {
+                            diceResult->insertResult(cpyDice);
+                        }
+                        else
+                        {
+                            delete cpyDice;
+                            auto branchResult= previousLoop->getResult();
+                            auto val= branchResult->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
+                            auto valDie= new Die();
+                            valDie->insertRollValue(val);
+                            diceResult->insertResult(valDie);
+                        }
                     }
+                    m_result= diceResult;
                 }
                 else if((m_conditionType == OneOfThem) || (m_conditionType == AllOfThem))
                 {
