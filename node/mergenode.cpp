@@ -40,22 +40,25 @@ void MergeNode::run(ExecutionNode* previous)
     for(auto start : *m_startList)
     {
         ExecutionNode* last= getLatestNode(start);
-        if(nullptr == last || nullptr == previousLast)
+        if(nullptr == last)
             continue;
 
         auto startResult= start->getResult();
         if(nullptr == startResult)
             continue;
 
-        startResult->setPrevious(previousLast->getResult());
-        previousLast->setNextNode(start);
+        if(nullptr != previousLast)
+        {
+            startResult->setPrevious(previousLast->getResult());
+            previousLast->setNextNode(start);
+        }
 
         previousLast= last;
         Result* tmpResult= last->getResult();
         while(nullptr != tmpResult)
         {
             DiceResult* dice= dynamic_cast<DiceResult*>(tmpResult);
-            if(nullptr == dice)
+            if(nullptr != dice)
             {
                 ///@todo TODO improve here to set homogeneous while is really
                 m_diceResult->setHomogeneous(false);
