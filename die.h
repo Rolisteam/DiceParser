@@ -161,7 +161,7 @@ private:
 
     Die::ArithmeticOperator m_op;
 
-    std::mt19937 m_rng;
+    static std::mt19937 s_rng;
 };
 
 #endif // DIE_H
