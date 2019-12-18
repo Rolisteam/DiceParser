@@ -543,7 +543,7 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
 
 void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList, bool& homogeneous)
 {
-    QStringList alreadySeenDice;
+    QSet<QString> alreadySeenDice;
     for(auto start : m_startNodes)
     {
         ExportedDiceResult diceValues;
@@ -1199,10 +1199,10 @@ bool DiceParser::readOption(QString& str, ExecutionNode* previous) //,
             break;
             case AllSameExplode:
             {
-                AllSameNode* allSame = new AllSameNode();
+                AllSameNode* allSame= new AllSameNode();
                 previous->setNextNode(allSame);
-                node=allSame;
-                found = true;
+                node= allSame;
+                found= true;
             }
             break;
             case Bind:
