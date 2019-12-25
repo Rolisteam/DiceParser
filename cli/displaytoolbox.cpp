@@ -121,6 +121,7 @@ QString DisplayToolBox::diceToSvg(QJsonArray array, bool withColor, bool allSame
         return result.join("");
     }
 }
+#include <QVariantList>
 QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList, bool& allSameFaceCount, bool& allSameColor)
 {
     allSameFaceCount= true;
@@ -137,8 +138,9 @@ QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList, bool&
         {
             ListDiceResult diceResults= dice.value(face);
             QJsonObject object;
-            QJsonArray values;
+            QVariantList listVariant;
             object["face"]= static_cast<int>(face);
+            listVariant.reserve(diceResults.size());
             for(auto const& dice : diceResults)
             {
                 QJsonObject diceObj;
@@ -158,9 +160,9 @@ QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList, bool&
                     }
                     diceObj["subvalues"]= subValues;
                 }
-                values.push_back(diceObj);
+                listVariant.append(QVariant::fromValue(diceObj));
             }
-            object["values"]= values;
+            object["values"]= QJsonArray::fromVariantList(listVariant);
             array.push_back(object);
         }
     }
