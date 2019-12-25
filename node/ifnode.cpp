@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "ifnode.h"
 #include "result/diceresult.h"
+#include "result/stringresult.h"
 
 PartialDiceRollNode::PartialDiceRollNode() : m_diceResult(new DiceResult)
 {
@@ -117,9 +118,11 @@ void IfNode::run(ExecutionNode* previous)
 
                 if(m_conditionType == OnEach)
                 {
-                    auto diceResult= new DiceResult;
+                    auto resultOnEach= m_result;
                     for(Die* dice : diceList)
                     {
+                        auto diceResult= new DiceResult;
+                        StringResult* stringResult= nullptr;
                         auto diceNode= new PartialDiceRollNode();
                         auto cpyDice= new Die(*dice);
                         diceNode->insertDie(cpyDice);
@@ -151,13 +154,34 @@ void IfNode::run(ExecutionNode* previous)
                         {
                             delete cpyDice;
                             auto branchResult= previousLoop->getResult();
-                            auto val= branchResult->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
-                            auto valDie= new Die();
-                            valDie->insertRollValue(val);
-                            diceResult->insertResult(valDie);
+                            if(branchResult->hasResultOfType(Dice::RESULT_TYPE::SCALAR))
+                            {
+                                auto val= branchResult->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
+                                auto valDie= new Die();
+                                valDie->insertRollValue(val);
+                                diceResult->insertResult(valDie);
+                            }
+                            else if(branchResult->hasResultOfType(Dice::RESULT_TYPE::STRING))
+                            {
+                                auto val= branchResult->getResult(Dice::RESULT_TYPE::STRING).toString();
+                                stringResult= new StringResult;
+                                stringResult->setText(val);
+                            }
+                        }
+                        if(nullptr != stringResult)
+                        {
+                            stringResult->setPrevious(resultOnEach);
+                            resultOnEach= stringResult;
+                            delete diceResult;
+                        }
+                        else
+                        {
+                            diceResult->setPrevious(resultOnEach);
+                            resultOnEach= diceResult;
                         }
                     }
-                    m_result= diceResult;
+
+                    m_result= resultOnEach;
                 }
                 else if((m_conditionType == OneOfThem) || (m_conditionType == AllOfThem))
                 {

@@ -850,7 +850,11 @@ void TestDice::ifTest()
 
     node.run(nullptr);
 
-    auto text= dynamic_cast<StringResult*>(ifNode.getNextNode()->getResult())->getText();
+    QString text;
+    if(nullptr != ifNode.getNextNode())
+        text= dynamic_cast<StringResult*>(ifNode.getNextNode()->getResult())->getText();
+    else
+        text= dynamic_cast<StringResult*>(ifNode.getResult())->getText();
 
     QCOMPARE(expectedResult, text);
 
