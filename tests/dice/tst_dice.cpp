@@ -282,6 +282,7 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd85") << "8d10ok2";
     QTest::addRow("cmd86") << "[100,200,300]k2";
     QTest::addRow("cmd87") << "100;200;300;[$1,$2,$3]k2";
+    QTest::addRow("cmd88") << "1d20|3i:[>1]{\"Success\"}{\"Failure\"}";
 }
 
 void TestDice::wrongCommandsTest()
