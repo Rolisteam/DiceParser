@@ -344,7 +344,7 @@ QString IfNode::toString(bool wl) const
 
 qint64 IfNode::getPriority() const
 {
-    return 4;
+    return 0;
 }
 
 ExecutionNode* IfNode::getLeafNode(ExecutionNode* node)

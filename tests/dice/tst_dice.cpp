@@ -430,7 +430,7 @@ void TestDice::mathPriority()
     QCOMPARE(resultList.size(), 1);
 
     auto value= resultList.first();
-    QVERIFY(qFuzzyCompare(value, expected) == 1);
+    QCOMPARE(value, expected);
 }
 
 void TestDice::mathPriority_data()
