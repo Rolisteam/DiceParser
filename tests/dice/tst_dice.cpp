@@ -222,9 +222,9 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd15") << "10D10e[>=6]sc[>=6]";
     QTest::addRow("cmd16") << "10D10e10s";
     QTest::addRow("cmd17") << "10D10s";
-    QTest::addRow("cmd18") << "15D10e10c[8-10]";
+    QTest::addRow("cmd18") << "15D10e10c[8..10]";
     QTest::addRow("cmd19") << "10d10e10";
-    QTest::addRow("cmd30") << "(4+4)^4";
+    QTest::addRow("cmd30") << "(4+4)**4";
     QTest::addRow("cmd31") << "(1d20+20)*7/10";
     QTest::addRow("cmd32") << "20*7/10";
     QTest::addRow("cmd33") << "1D8+2D6+7";
@@ -245,7 +245,7 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd48") << "10D10c[<2|>7]";
     QTest::addRow("cmd49") << "10D6c[=2|=4|=6]";
     QTest::addRow("cmd50") << "10D10e[=1|=10]k4";
-    QTest::addRow("cmd51") << "1L[tete,bras droit,bras gauche,jambe droite,jambe gauche,ventre[6-7],buste[8-10]]";
+    QTest::addRow("cmd51") << "1L[tete,bras droit,bras gauche,jambe droite,jambe gauche,ventre[6..7],buste[8..10]]";
     QTest::addRow("cmd52") << "10+10s";
     QTest::addRow("cmd53") << "1d6e6;1d4e4mk1";
     QTest::addRow("cmd54") << "1d6e6;1d4e4mk1";
