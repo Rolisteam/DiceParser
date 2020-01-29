@@ -26,12 +26,9 @@
 #include <QString>
 #include <vector>
 
-#include "highlightdice.h"
 #include "diceparserhelper.h"
+#include "highlightdice.h"
 //#include "node/executionnode.h"
-
-typedef QList<HighLightDice> ListDiceResult;
-typedef QMap<quint64, ListDiceResult> ExportedDiceResult;
 
 class ExplodeDiceNode;
 class ParsingToolBox;
@@ -232,6 +229,7 @@ public:
 
     bool readValuesList(QString& str, ExecutionNode*& node);
     void cleanAll();
+
 private:
     /**
      * @brief readIfInstruction reads the current command to build if node with proper parameters.

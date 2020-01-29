@@ -407,57 +407,6 @@ Same as above, but the final result is displayed beside Success or Fail.
 Same as above, but the result of each die is displayed inside square brackets.
 
 
-
-
-#### String Result
-
-To improve readability, it is possible to set the text that should be displayed after the roll.
-
-Several data can be displayed:
-
-* %1: last scalar result from each instruction.
-* %2: all dice results
-* %3: last scalar result from the last instruction.
-
-The default output is `%1 details[%2]`.
-So, it shows the last scalar result of each instruction and dice result.
-
-%1 and %3 are equivalent when there is only one instruction (no \;).
-
-
-#### Specific value from instrustion
-
-It is also possible to set reference to the scalar result of specific instruction.
-- To reference the first instruction: `$1`
-- To reference the second instruction: `$2`
-- To reference the third instruction: `$3`
-etc…
-The number of instruction is not limited.
-
-
-#### Examples:
-
-> 8d10;$1c[>6];$1c1;$2-$3
-
-The default output displays: `45,4,0,4 details[4,3,10,7,2,2,7,10]`
-
-> 8d10;$1c[>6];$1c1;$2-$3i:[>0]{"%3 Success[%2]"}{i:[<0]{"Critical fail %3 [%2]"}{"Fail %3 [%2]"}}
-
-The output is now: `4 Success[4,3,10,7,2,2,7,10]`
-or
-`Fail 0 [10,3,1,1,2,2,7,5]` (2 success - 2 fails = 0)
-or
-`Critical fail -2 [1,3,1,1,2,2,7,5]` (1 success - 3 fails = -2)
-
-In this example, the critical fail happens when there are more fails than success.
-
-
-
-In the next example, the critical fail happens when there was no success and a least one fail.
-
-> 8d10;$1c[>6];$1c1;$2-$3;$4i:[=0]{"Fail $4 [%2]"}{$4i:[>0]{"$2 Success[%2]"}{$2i:[=0]{"Critical Fail $4 [%2]"}{"Fail $4 [%2]"}}}
-
-
 ### Group
 
 Group dices, then count the number of group (7th sea system).
@@ -485,6 +434,84 @@ So DiceParser can answer question:
 Am I evil ?
 yes
 ```
+
+## The output
+
+DiceParser provides features to let you control the command output.
+The final instruction must be a string instruction.
+String instruction starts with `"` and ends with `"`.
+
+Rolling:
+> `"result"`
+
+Output:
+`result`
+
+You can set string instruction inside if operator:
+
+> 1d6i:[>3]{"Success"}{"Fail"}
+
+Output:
+`Success` or `Fail`
+
+
+It offers a quick answer but sometimes you need to see the rolled values.
+DiceParser can replace some special tags in order to see values, computation result and whatever.
+
+### Shortcuts
+
+There are 3 shortcut tags.
+
+* `%1`: last scalar result from each instruction.
+* `%2`: all dice results.
+* `%3`: last scalar result from the last instruction.
+
+The default output is `%1 details[%2]`.
+So, it shows the last scalar result of each instruction and dice result.
+
+`%1` and `%3` are equivalent when there is only one instruction (no \;).
+
+They are really useful but if you have many instructions that can become a bit messy.
+
+### Final result
+
+It is also possible to set reference to the scalar result of specific instruction.
+- To reference the first instruction: `$1`
+- To reference the second instruction: `$2`
+- To reference the third instruction: `$3`
+etc…
+The number of instruction is not limited.
+
+#### Let see some examples:
+
+> 8d10;$1c[>6];$1c1;$2-$3
+
+The default output displays: `45,4,0,4 details[4,3,10,7,2,2,7,10]`
+
+> 8d10;$1c[>6];$1c1;$2-$3i:[>0]{"%3 Success[%2]"}{i:[<0]{"Critical fail %3 [%2]"}{"Fail %3 [%2]"}}
+
+The output is now: `4 Success[4,3,10,7,2,2,7,10]`
+or
+`Fail 0 [10,3,1,1,2,2,7,5]` (2 success - 2 fails = 0)
+or
+`Critical fail -2 [1,3,1,1,2,2,7,5]` (1 success - 3 fails = -2)
+
+In this example, the critical fail happens when there are more fails than success.
+
+In the next example, the critical fail happens when there was no success and a least one fail.
+
+> 8d10;$1c[>6];$1c1;$2-$3;$4i:[=0]{"Fail $4 [%2]"}{$4i:[>0]{"$2 Success[%2]"}{$2i:[=0]{"Critical Fail $4 [%2]"}{"Fail $4 [%2]"}}}
+
+### Dice Result
+
+DiceParser provides tags to display dice result (and each rolled values from a specific instruction).
+
+To show dice values from a specific instrustion, just add `@` followed by the instruction's number (e.g: `@1`)
+
+> `2d6;3d8;"Result $2 - d8:[@2] - d6:[@1]"`
+
+The output:
+`Result 15 - d8:[7,4,4] - d6:[3,6]`
 
 ## Arithmetic
 

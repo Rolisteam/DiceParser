@@ -26,6 +26,7 @@
 
 #include "booleancondition.h"
 #include "compositevalidator.h"
+#include "highlightdice.h"
 #include "node/dicerollernode.h"
 #include "node/executionnode.h"
 #include "node/ifnode.h"
@@ -111,7 +112,7 @@ public:
      * @param str
      * @return
      */
-    Validator* readValidator(QString& str, bool hasSquare=false);
+    Validator* readValidator(QString& str, bool hasSquare= false);
     /**
      * @brief readCompositeValidator
      * @param str
@@ -227,8 +228,10 @@ public:
     static int findClosingCharacterIndexOf(QChar open, QChar closing, const QString& str, int offset);
 
     static QString replaceVariableToValue(const QString& source, QStringList values);
+    static QString replacePlaceHolderToValue(const QString& source, const QList<ExportedDiceResult>& list);
 
     static SubtituteInfo readVariableFromString(const QString& source, int& start);
+    static SubtituteInfo readPlaceHolderFromString(const QString& source, int& start);
 
     static void readSubtitutionParameters(SubtituteInfo& info, QString& rest);
 

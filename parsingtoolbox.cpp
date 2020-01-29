@@ -838,6 +838,68 @@ QString ParsingToolBox::replaceVariableToValue(const QString& source, QStringLis
     return result;
 }
 
+QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const QList<ExportedDiceResult>& list)
+{
+    QStringList resultList;
+    std::transform(
+        std::begin(list), std::end(list), std::back_inserter(resultList), [](const ExportedDiceResult& dice) {
+            QStringList valuesStr;
+            if(dice.size() == 1)
+            {
+                auto values= dice.values();
+                std::transform(std::begin(values), std::end(values), std::back_inserter(valuesStr),
+                               [](const ListDiceResult& dice) {
+                                   QStringList textList;
+                                   std::transform(std::begin(dice), std::end(dice), std::back_inserter(textList),
+                                                  [](const HighLightDice& dice) { return dice.getResultString(); });
+                                   return textList.join(",");
+                               });
+            }
+            else if(dice.size() > 1)
+            {
+                for(auto key : dice.keys())
+                {
+                    auto values= dice[key];
+                    QStringList textVals;
+                    std::transform(std::begin(values), std::end(values), std::back_inserter(textVals),
+                                   [](const HighLightDice& dice) { return dice.getResultString(); });
+                    valuesStr.append(QString("d%1 [%2]").arg(key).arg(textVals.join(",")));
+                }
+            }
+            return valuesStr.join(",");
+        });
+
+    QString result= source;
+    int start= source.size() - 1;
+    bool valid= true;
+    do
+    {
+        auto ref= readPlaceHolderFromString(source, start);
+        if(ref.isValid())
+        {
+            result.remove(ref.position(), ref.length());
+            auto val= resultList[ref.resultIndex() - 1];
+            result.insert(ref.position(), val);
+            /*            if(ref.digitNumber() != 0)
+                        {
+                            auto realVal= QString("%1").arg(val, ref.digitNumber(), QChar('0'));
+                            result.insert(ref.position(), realVal);
+                        }
+                        else
+                        {
+                        }*/
+        }
+        else
+        {
+            valid= false;
+        }
+    } while(valid);
+
+    return result;
+
+    // return source;
+}
+
 void ParsingToolBox::readSubtitutionParameters(SubtituteInfo& info, QString& rest)
 {
     auto sizeS= rest.size();
@@ -865,6 +927,32 @@ SubtituteInfo ParsingToolBox::readVariableFromString(const QString& source, int&
     for(; i >= 0 && !found; --i)
     {
         if(source.at(i) == '$')
+        {
+            auto rest= source.mid(i + 1, 1 + start - i);
+            qint64 number;
+            if(readNumber(rest, number))
+            {
+                auto len= QString::number(number).size() - 1;
+                readSubtitutionParameters(info, rest);
+                info.setLength(info.length() + len);
+                info.setResultIndex(static_cast<int>(number));
+                info.setPosition(i);
+                found= true;
+            }
+        }
+    }
+    start= i;
+    return info;
+}
+
+SubtituteInfo ParsingToolBox::readPlaceHolderFromString(const QString& source, int& start)
+{
+    bool found= false;
+    SubtituteInfo info;
+    int i= start;
+    for(; i >= 0 && !found; --i)
+    {
+        if(source.at(i) == '@')
         {
             auto rest= source.mid(i + 1, 1 + start - i);
             qint64 number;

@@ -21,6 +21,7 @@
 #define HighLightDice_H
 
 #include <QList>
+#include <QMap>
 #include <QString>
 
 class HighLightDice
@@ -44,6 +45,8 @@ public:
     quint64 getFaces() const;
     void setFaces(const quint64& faces);
 
+    QString getResultString() const;
+
 private:
     QList<qint64> m_result;
     bool m_hasHighlight= true;
@@ -51,5 +54,8 @@ private:
     bool m_displayed= false;
     quint64 m_faces;
 };
+
+typedef QList<HighLightDice> ListDiceResult;
+typedef QMap<quint64, ListDiceResult> ExportedDiceResult;
 
 #endif // HighLightDice_H

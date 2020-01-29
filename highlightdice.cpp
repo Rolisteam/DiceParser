@@ -75,3 +75,11 @@ void HighLightDice::setFaces(const quint64& faces)
 {
     m_faces= faces;
 }
+
+QString HighLightDice::getResultString() const
+{
+    QStringList list;
+    std::transform(std::begin(m_result), std::end(m_result), std::back_inserter(list),
+                   [](qint64 value) { return QString::number(value); });
+    return list.join(",");
+}
