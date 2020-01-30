@@ -11,14 +11,14 @@ class VariableNode : public ExecutionNode
 {
 public:
     VariableNode();
-    void run(ExecutionNode* previous);
-    virtual QString toString(bool withLabel) const;
-    virtual qint64 getPriority() const;
+    void run(ExecutionNode* previous) override;
+    virtual QString toString(bool withLabel) const override;
+    virtual qint64 getPriority() const override;
     /**
      * @brief getCopy
      * @return
      */
-    virtual ExecutionNode* getCopy() const;
+    virtual ExecutionNode* getCopy() const override;
     quint64 getIndex() const;
     void setIndex(quint64 index);
 

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ifnode.h"
 #include "result/diceresult.h"
-#include "result/stringresult.h"
+#include "validatorlist.h"
 
 PartialDiceRollNode::PartialDiceRollNode() : m_diceResult(new DiceResult)
 {
@@ -80,9 +80,8 @@ DiceResult* getFirstDiceResult(Result* result)
 
     return found;
 }
-//
 
-IfNode::IfNode() : m_validator(nullptr), m_conditionType(AllOfThem), m_true(nullptr), m_false(nullptr)
+IfNode::IfNode() : m_conditionType(Dice::AllOfThem), m_true(nullptr), m_false(nullptr)
 {
     // m_result = new DiceResult();
 }
@@ -109,24 +108,20 @@ void IfNode::run(ExecutionNode* previous)
     {
         qreal value= previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal();
 
-        if(nullptr != m_validator)
+        if(nullptr != m_validatorList)
         {
             DiceResult* previousDiceResult= getFirstDiceResult(previousResult);
             if(nullptr != previousDiceResult)
             {
                 QList<Die*> diceList= previousDiceResult->getResultList();
 
-                if(m_conditionType == OnEach)
+                if(m_conditionType == Dice::OnEach)
                 {
-                    auto resultOnEach= m_result;
                     for(Die* dice : diceList)
                     {
-                        auto diceResult= new DiceResult;
-                        StringResult* stringResult= nullptr;
                         auto diceNode= new PartialDiceRollNode();
-                        auto cpyDice= new Die(*dice);
-                        diceNode->insertDie(cpyDice);
-                        if(m_validator->hasValid(dice, true, true))
+                        diceNode->insertDie(new Die(*dice));
+                        if(m_validatorList->hasValid(dice, true, true))
                         {
                             nextNode= (nullptr == m_true) ? nullptr : m_true->getCopy();
                         }
@@ -141,49 +136,17 @@ void IfNode::run(ExecutionNode* previous)
                             {
                                 previousLoop->setNextNode(nextNode);
                             }
+                            if(nullptr == m_nextNode)
+                            {
+                                m_nextNode= nextNode;
+                            }
                             diceNode->setNextNode(nextNode);
                             diceNode->run(previousLoop);
                             previousLoop= getLeafNode(nextNode);
                         }
-
-                        if(nullptr == nextNode)
-                        {
-                            diceResult->insertResult(cpyDice);
-                        }
-                        else
-                        {
-                            delete cpyDice;
-                            auto branchResult= previousLoop->getResult();
-                            if(branchResult->hasResultOfType(Dice::RESULT_TYPE::SCALAR))
-                            {
-                                auto val= branchResult->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
-                                auto valDie= new Die();
-                                valDie->insertRollValue(val);
-                                diceResult->insertResult(valDie);
-                            }
-                            else if(branchResult->hasResultOfType(Dice::RESULT_TYPE::STRING))
-                            {
-                                auto val= branchResult->getResult(Dice::RESULT_TYPE::STRING).toString();
-                                stringResult= new StringResult;
-                                stringResult->setText(val);
-                            }
-                        }
-                        if(nullptr != stringResult)
-                        {
-                            stringResult->setPrevious(resultOnEach);
-                            resultOnEach= stringResult;
-                            delete diceResult;
-                        }
-                        else
-                        {
-                            diceResult->setPrevious(resultOnEach);
-                            resultOnEach= diceResult;
-                        }
                     }
-
-                    m_result= resultOnEach;
                 }
-                else if((m_conditionType == OneOfThem) || (m_conditionType == AllOfThem))
+                else if((m_conditionType == Dice::OneOfThem) || (m_conditionType == Dice::AllOfThem))
                 {
                     bool trueForAll= true;
                     bool falseForAll= true;
@@ -193,14 +156,14 @@ void IfNode::run(ExecutionNode* previous)
 
                     for(Die* dice : diceList)
                     {
-                        bool result= m_validator->hasValid(dice, true, true);
+                        bool result= m_validatorList->hasValid(dice, true, true);
                         trueForAll= trueForAll ? result : false;
                         falseForAll= falseForAll ? result : false;
 
                         oneIsTrue|= result;
                         oneIsFalse= !result ? true : oneIsFalse;
                     }
-                    if(m_conditionType == OneOfThem)
+                    if(m_conditionType == Dice::OneOfThem)
                     {
                         if(oneIsTrue)
                         {
@@ -211,7 +174,7 @@ void IfNode::run(ExecutionNode* previous)
                             nextNode= (nullptr == m_false) ? nullptr : m_false->getCopy();
                         }
                     }
-                    else if(m_conditionType == AllOfThem)
+                    else if(m_conditionType == Dice::AllOfThem)
                     {
                         if(trueForAll)
                         {
@@ -235,14 +198,14 @@ void IfNode::run(ExecutionNode* previous)
                 }
             }
 
-            if(m_conditionType == OnScalar)
+            if(m_conditionType == Dice::OnScalar)
             {
                 Die dice;
                 auto val= static_cast<qint64>(value);
                 dice.setValue(val);
                 dice.insertRollValue(val);
                 dice.setMaxValue(val);
-                if(m_validator->hasValid(&dice, true, true))
+                if(m_validatorList->hasValid(&dice, true, true))
                 {
                     nextNode= m_true;
                 }
@@ -269,9 +232,9 @@ void IfNode::run(ExecutionNode* previous)
     }
 }
 
-void IfNode::setValidator(Validator* val)
+void IfNode::setValidatorList(ValidatorList* val)
 {
-    m_validator= val;
+    m_validatorList= val;
 }
 void IfNode::setInstructionTrue(ExecutionNode* node)
 {
@@ -292,7 +255,7 @@ void IfNode::generateDotTree(QString& s)
         s.append(toString(false));
         s.append(" -> ");
         s.append(m_true->toString(false));
-        s.append("[label=\"true" + m_validator->toString() + "\"];\n");
+        s.append("[label=\"true" + m_validatorList->toString() + "\"];\n");
 
         m_true->generateDotTree(s);
     }
@@ -357,12 +320,12 @@ ExecutionNode* IfNode::getLeafNode(ExecutionNode* node)
     return next;
 }
 
-IfNode::ConditionType IfNode::getConditionType() const
+Dice::ConditionType IfNode::getConditionType() const
 {
     return m_conditionType;
 }
 
-void IfNode::setConditionType(const IfNode::ConditionType& conditionType)
+void IfNode::setConditionType(const Dice::ConditionType& conditionType)
 {
     m_conditionType= conditionType;
 }
@@ -371,9 +334,9 @@ ExecutionNode* IfNode::getCopy() const
     IfNode* node= new IfNode();
 
     node->setConditionType(m_conditionType);
-    if(nullptr != m_validator)
+    if(nullptr != m_validatorList)
     {
-        node->setValidator(m_validator->getCopy());
+        node->setValidatorList(m_validatorList->getCopy());
     }
     if(nullptr != m_false)
     {

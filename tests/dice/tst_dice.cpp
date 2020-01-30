@@ -44,8 +44,57 @@
 #include "node/stringnode.h"
 #include "node/uniquenode.h"
 #include "operationcondition.h"
+#include "parsingtoolbox.h"
 #include "result/stringresult.h"
 #include "testnode.h"
+#include "validatorlist.h"
+
+void makeResult(DiceResult& result, const QVector<int>& values, const QVector<int>& subvalues= QVector<int>(),
+                int base= 1, int max= 10)
+{
+    int i= 0;
+    for(int val : values)
+    {
+        auto die= new Die();
+        die->setBase(base);
+        die->setMaxValue(max);
+        die->insertRollValue(val);
+        if(i == 0 && !subvalues.empty())
+        {
+            for(int sval : subvalues)
+            {
+                die->insertRollValue(sval);
+            }
+        }
+        result.insertResult(die);
+        ++i;
+    }
+}
+
+void makeResultExplode(DiceResult& result, const QVector<int>& values)
+{
+    auto die= new Die();
+    die->setBase(1);
+    die->setMaxValue(10);
+    for(int val : values)
+    {
+        die->insertRollValue(val);
+    }
+    result.insertResult(die);
+}
+
+ValidatorList* makeValidator(int number, BooleanCondition::LogicOperator op)
+{
+    BooleanCondition* validator= new BooleanCondition();
+    NumberNode* node= new NumberNode();
+    node->setNumber(number);
+    validator->setValueNode(node);
+    validator->setOperator(op);
+
+    ValidatorList* list= new ValidatorList();
+    list->setValidators(QList<Validator*>() << validator);
+    return list;
+}
 
 class TestDice : public QObject
 {
@@ -57,6 +106,10 @@ public:
 private slots:
     void init();
     void getAndSetTest();
+
+    void validatorListTest();
+    void validatorListTest_data();
+
     void diceRollD10Test();
     void diceRollD20Test();
     void commandEndlessLoop();
@@ -138,6 +191,7 @@ private slots:
 private:
     std::unique_ptr<Die> m_die;
     std::unique_ptr<DiceParser> m_diceParser;
+    std::unique_ptr<ParsingToolBox> m_parsingToolBox;
 };
 
 TestDice::TestDice() {}
@@ -146,6 +200,7 @@ void TestDice::init()
 {
     m_die.reset(new Die());
     m_diceParser.reset(new DiceParser());
+    m_parsingToolBox.reset(new ParsingToolBox());
 }
 
 void TestDice::getAndSetTest()
@@ -161,6 +216,34 @@ void TestDice::getAndSetTest()
 
     m_die->setSelected(false);
     QVERIFY(m_die->isSelected() == false);
+}
+
+void TestDice::validatorListTest()
+{
+    QFETCH(QString, cmd);
+    QFETCH(int, result);
+
+    auto parsing= m_diceParser->parseLine(cmd);
+    QVERIFY2(parsing, "parsing");
+
+    m_diceParser->start();
+    QVERIFY2(m_diceParser->humanReadableError().isEmpty(), "no error");
+    QVERIFY2(m_diceParser->humanReadableWarning().isEmpty(), "no warning");
+
+    auto resultCmd= m_diceParser->getLastIntegerResults();
+
+    QCOMPARE(resultCmd.size(), 1);
+
+    QCOMPARE(resultCmd.first(), result);
+}
+
+void TestDice::validatorListTest_data()
+{
+    QTest::addColumn<QString>("cmd");
+    QTest::addColumn<int>("result");
+
+    QTest::addRow("cmd1") << "2d[6-6]c6" << 2;
+    QTest::addRow("cmd2") << "[6,2]c[:>6&%2=0]" << 2;
 }
 
 void TestDice::diceRollD10Test()
@@ -183,6 +266,7 @@ void TestDice::diceRollD20Test()
         QVERIFY(m_die->getValue() < 21);
     }
 }
+
 void TestDice::commandEndlessLoop()
 {
     bool a= m_diceParser->parseLine("1D10e[>0]");
@@ -373,14 +457,14 @@ void TestDice::scopeDF_data()
 }
 void TestDice::testAlias()
 {
-    m_diceParser->insertAlias(new DiceAlias("!", "3d6c"), 0);
-    m_diceParser->insertAlias(new DiceAlias("g", "d10k"), 1);
-    m_diceParser->insertAlias(new DiceAlias("(.*)C(.*)", QStringLiteral("\\1d10e10c[>=\\2]"), false), 2);
+    m_parsingToolBox->insertAlias(new DiceAlias("!", "3d6c"), 0);
+    m_parsingToolBox->insertAlias(new DiceAlias("g", "d10k"), 1);
+    m_parsingToolBox->insertAlias(new DiceAlias("(.*)C(.*)", QStringLiteral("\\1d10e10c[>=\\2]"), false), 2);
 
     QFETCH(QString, cmd);
     QFETCH(QString, expected);
 
-    auto result= m_diceParser->convertAlias(cmd);
+    auto result= m_parsingToolBox->convertAlias(cmd);
     QCOMPARE(result, expected);
 }
 
@@ -452,12 +536,9 @@ void TestDice::dangerousCommandsTest()
 {
     QFETCH(QString, cmd);
 
-    for(int i= 0; i < 1000; ++i)
-    {
-        auto b= m_diceParser->parseLine(cmd);
-        QVERIFY(b);
-        m_diceParser->start();
-    }
+    auto b= m_diceParser->parseLine(cmd);
+    QVERIFY(b);
+    m_diceParser->start();
 }
 void TestDice::dangerousCommandsTest_data()
 {
@@ -468,50 +549,6 @@ void TestDice::dangerousCommandsTest_data()
     QTest::addRow("cmd3") << "10d10g10";
     // QTest::addRow("cmd4") << "10d10g10";
     // QTest::addRow("cmd5") << "10d10g10";
-}
-
-void makeResult(DiceResult& result, const QVector<int>& values, const QVector<int>& subvalues= QVector<int>(),
-                int base= 1, int max= 10)
-{
-    int i= 0;
-    for(int val : values)
-    {
-        auto die= new Die();
-        die->setBase(base);
-        die->setMaxValue(max);
-        die->insertRollValue(val);
-        if(i == 0 && !subvalues.empty())
-        {
-            for(int sval : subvalues)
-            {
-                die->insertRollValue(sval);
-            }
-        }
-        result.insertResult(die);
-        ++i;
-    }
-}
-
-void makeResultExplode(DiceResult& result, const QVector<int>& values)
-{
-    auto die= new Die();
-    die->setBase(1);
-    die->setMaxValue(10);
-    for(int val : values)
-    {
-        die->insertRollValue(val);
-    }
-    result.insertResult(die);
-}
-
-Validator* makeValidator(int number, BooleanCondition::LogicOperator op)
-{
-    BooleanCondition* validator= new BooleanCondition();
-    NumberNode* node= new NumberNode();
-    node->setNumber(number);
-    validator->setValueNode(node);
-    validator->setOperator(op);
-    return validator;
 }
 
 void TestDice::keepTest()
@@ -618,7 +655,7 @@ void TestDice::countTest()
 
     auto validator= makeValidator(condition, BooleanCondition::GreaterThan);
 
-    countN.setValidator(validator);
+    countN.setValidatorList(validator);
     DiceResult result;
     node.setResult(&result);
     node.setNextNode(&countN);
@@ -629,7 +666,7 @@ void TestDice::countTest()
 
     QCOMPARE(score, countN.getResult()->getResult(Dice::RESULT_TYPE::SCALAR).toInt());
 
-    countN.setValidator(nullptr);
+    countN.setValidatorList(nullptr);
 }
 
 void TestDice::countTest_data()
@@ -658,7 +695,7 @@ void TestDice::rerollTest()
     node.setResult(&result);
 
     auto validator= makeValidator(condition, BooleanCondition::GreaterThan);
-    reroll.setValidator(validator);
+    reroll.setValidatorList(validator);
     node.setNextNode(&reroll);
 
     node.run(nullptr);
@@ -702,7 +739,7 @@ void TestDice::explodeTest()
     node.setResult(&result);
 
     auto validator= makeValidator(condition, BooleanCondition::Equal);
-    explode.setValidator(validator);
+    explode.setValidatorList(validator);
     node.setNextNode(&explode);
 
     node.run(nullptr);
@@ -746,7 +783,7 @@ void TestDice::rerollUntilTest()
     node.setResult(&result);
 
     auto validator= makeValidator(condition, BooleanCondition::Equal);
-    reroll.setValidator(validator);
+    reroll.setValidatorList(validator);
     node.setNextNode(&reroll);
 
     node.run(nullptr);
@@ -788,7 +825,7 @@ void TestDice::rerollAddTest()
     node.setResult(&result);
 
     auto validator= makeValidator(condition, BooleanCondition::Equal);
-    reroll.setValidator(validator);
+    reroll.setValidatorList(validator);
     node.setNextNode(&reroll);
 
     node.run(nullptr);
@@ -827,7 +864,7 @@ void TestDice::ifTest()
     QFETCH(int, valCondition);
     QFETCH(QString, expectedResult);
 
-    IfNode::ConditionType conditionType= static_cast<IfNode::ConditionType>(condition);
+    Dice::ConditionType conditionType= static_cast<Dice::ConditionType>(condition);
 
     TestNode node;
     IfNode ifNode;
@@ -846,16 +883,12 @@ void TestDice::ifTest()
     ifNode.setInstructionFalse(&falseNode);
 
     auto validator= makeValidator(valCondition, BooleanCondition::Equal);
-    ifNode.setValidator(validator);
+    ifNode.setValidatorList(validator);
     node.setNextNode(&ifNode);
 
     node.run(nullptr);
 
-    QString text;
-    if(nullptr != ifNode.getNextNode())
-        text= dynamic_cast<StringResult*>(ifNode.getNextNode()->getResult())->getText();
-    else
-        text= dynamic_cast<StringResult*>(ifNode.getResult())->getText();
+    auto text= dynamic_cast<StringResult*>(ifNode.getNextNode()->getResult())->getText();
 
     QCOMPARE(expectedResult, text);
 
@@ -893,39 +926,34 @@ void TestDice::paintTest_data() {}
 
 void TestDice::filterTest()
 {
-    QFETCH(QVector<int>, values);
-    QFETCH(int, condition);
-    QFETCH(bool, different);
+    QFETCH(QString, cmd);
+    QFETCH(int, result);
 
-    TestNode node;
-    FilterNode filter;
+    auto parsing= m_diceParser->parseLine(cmd);
+    QVERIFY2(parsing, "parsing");
 
-    DiceResult result;
-    makeResult(result, values);
-    node.setResult(&result);
+    m_diceParser->start();
+    QVERIFY2(m_diceParser->humanReadableError().isEmpty(), "no error");
+    QVERIFY2(m_diceParser->humanReadableWarning().isEmpty(), "no warning");
 
-    auto validator= makeValidator(condition, BooleanCondition::Different);
-    filter.setValidator(validator);
-    node.setNextNode(&filter);
+    auto resultCmd= m_diceParser->getLastIntegerResults();
 
-    node.run(nullptr);
+    QCOMPARE(resultCmd.size(), 1);
 
-    auto list= dynamic_cast<DiceResult*>(filter.getResult())->getResultList();
-
-    auto expected= result.getResultList();
-    bool resultDiff= (list.size() != expected.size());
-
-    QCOMPARE(different, resultDiff);
+    QCOMPARE(resultCmd.first(), result);
 }
 
 void TestDice::filterTest_data()
 {
-    QTest::addColumn<QVector<int>>("values");
-    QTest::addColumn<int>("condition");
-    QTest::addColumn<bool>("different");
+    QTest::addColumn<QString>("cmd");
+    QTest::addColumn<int>("result");
 
-    QTest::addRow("cmd1") << QVector<int>({8, 4, 2}) << 4 << true;
-    QTest::addRow("cmd2") << QVector<int>({0, 0, 0}) << 1 << false;
+    QTest::addRow("cmd1") << "[8, 4, 2]f4" << 4;
+    QTest::addRow("cmd2") << "[0, 0, 0]f1" << 0;
+    QTest::addRow("cmd3") << "[1, 2, 3]f[.>2&:>5]" << 6;
+    QTest::addRow("cmd4") << "[1, 2, 6]f[.<2&>5]" << 6;
+    QTest::addRow("cmd5") << "[2, 2, 6]f[.<2&>5]" << 0;
+    QTest::addRow("cmd5") << "[1, 5, 1]f[.<2&>5]" << 0;
 }
 
 void TestDice::uniqueTest()
@@ -1008,7 +1036,7 @@ void TestDice::occurenceTest()
     node.setResult(&result);
 
     auto validator= makeValidator(condition, BooleanCondition::GreaterThan);
-    count.setValidator(validator);
+    count.setValidatorList(validator);
     node.setNextNode(&count);
 
     node.run(nullptr);

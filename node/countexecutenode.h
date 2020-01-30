@@ -4,8 +4,8 @@
 #include "executionnode.h"
 
 #include "result/scalarresult.h"
-#include "validator.h"
 
+class ValidatorList;
 /**
  * @brief The CountExecuteNode class
  */
@@ -25,7 +25,7 @@ public:
     /**
      * @brief setValidator
      */
-    virtual void setValidator(Validator*);
+    virtual void setValidatorList(ValidatorList*);
     /**
      * @brief toString
      * @return
@@ -44,7 +44,7 @@ public:
 
 private:
     ScalarResult* m_scalarResult;
-    Validator* m_validator;
+    ValidatorList* m_validatorList;
 };
 
 #endif // COUNTEXECUTENODE_H

@@ -35,12 +35,12 @@ public:
 
     virtual ExecutionNode* getCopy() const override;
 
-    void setCommand(ExecutionNode* node);
+    void setCommand(const std::vector<ExecutionNode*>& node);
     void setTimeNode(ExecutionNode* times);
     void setSumAll(bool b);
 
 private:
-    std::unique_ptr<ExecutionNode> m_cmd;
+    std::vector<ExecutionNode*> m_cmd;
     ExecutionNode* m_times= nullptr;
     bool m_sumAll= false;
 };

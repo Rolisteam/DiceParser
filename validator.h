@@ -31,6 +31,7 @@
  * @brief The Validator class is an abstract class for checking the validity of dice for some
  * operator.
  */
+// template <Dice::ConditionType C>
 class Validator
 {
 public:
@@ -66,11 +67,38 @@ public:
      * @return return  a copy of this validator
      */
     virtual Validator* getCopy() const= 0;
-
+    /**
+     * @brief getPossibleValues
+     * @param range
+     * @return
+     */
     virtual const std::set<qint64>& getPossibleValues(const std::pair<qint64, qint64>& range);
+    /**
+     * @brief validResult
+     * @param b
+     * @param recursive
+     * @param unlight
+     * @return
+     */
+    template <typename Functor>
+    qint64 validResult(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const;
+
+    Dice::ConditionType getConditionType() const;
+    void setConditionType(const Dice::ConditionType& conditionType);
+
+protected:
+    template <typename Functor>
+    qint64 onEach(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const;
+    template <typename Functor>
+    qint64 oneOfThem(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const;
+    template <typename Functor>
+    qint64 allOfThem(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const;
+    template <typename Functor>
+    qint64 onScalar(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const;
 
 protected:
     std::set<qint64> m_values;
+    Dice::ConditionType m_conditionType= Dice::OnEach;
 };
 
 #endif // VALIDATOR_H

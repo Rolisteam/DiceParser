@@ -13,7 +13,7 @@ SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/range.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/booleancondition.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/validator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/compositevalidator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/validatorlist.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/operationcondition.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/die.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/parsingtoolbox.cpp
@@ -52,6 +52,7 @@ SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/highlightdice.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/variablenode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/valueslistnode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/repeaternode.cpp
 )
 
 IF(STATIC_BUILD)

@@ -24,6 +24,7 @@
 
 #include <QMap>
 #include <QString>
+#include <memory>
 #include <vector>
 
 #include "diceparserhelper.h"
@@ -52,52 +53,6 @@ class ExecutionNode;
 class DiceParser
 {
 public:
-    /**
-     * @brief The DiceOperator enum gathering all dice operators
-     */
-    enum DiceOperator
-    {
-        D,
-        L
-    };
-    /**
-     * @brief The DiceSymbol enum
-     */
-    enum NodeAction
-    {
-        JumpBackward
-    };
-    /**
-     * @brief The OptionOperator enum gathering all options  availables for result.
-     */
-    enum OptionOperator
-    {
-        KeepAndExplode,
-        Keep,
-        Reroll,
-        RerollUntil,
-        Explode,
-        Sort,
-        Count,
-        RerollAndAdd,
-        Merge,
-        ifOperator,
-        Painter,
-        Filter,
-        Split,
-        Group,
-        Occurences,
-        Unique,
-        Bind,
-        AllSameExplode
-    };
-    /**
-     * @brief The CommandOperator enum
-     */
-    enum CommandOperator
-    {
-    };
-
     /**
      * @brief DiceParser default constructor
      */
@@ -178,17 +133,11 @@ public:
      * @brief getAliases
      * @return
      */
-    QList<DiceAlias*>* getAliases();
+    const QList<DiceAlias*>& getAliases() const;
     /**
      * @brief insertAlias
      */
     void insertAlias(DiceAlias*, int);
-    /**
-     * @brief DiceParser::convertAlias
-     * @param str
-     * @return
-     */
-    QString convertAlias(QString str);
     /**
      * @brief getErrorList
      * @return
@@ -227,105 +176,9 @@ public:
     void getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resultList);
     QString humanReadableWarning();
 
-    bool readValuesList(QString& str, ExecutionNode*& node);
     void cleanAll();
 
 private:
-    /**
-     * @brief readIfInstruction reads the current command to build if node with proper parameters.
-     * @param str is the command string, if IF istruction is found, the str will be changed, in other case the string is
-     * unmodified
-     * @param trueNode is the branch's beginning to be executed if the IfNode is true.
-     * @param falseNode is the branch's beginning to be executed if the IfNode is false.
-     * @return true, ifNode has been found, false otherwise
-     */
-    bool readIfInstruction(QString& str, ExecutionNode*& trueNode, ExecutionNode*& falseNode);
-    bool readInstructionList(QString& str);
-    bool readOptionFromNull(QString& str, ExecutionNode*& node);
-    bool readOperatorFromNull(QString& str, ExecutionNode*& node);
-    bool readParameterNode(QString& str, ExecutionNode*& node);
-    /**
-     * @brief readExpression
-     * @param str
-     * @param node
-     * @return
-     */
-    bool readExpression(QString& str, ExecutionNode*& node);
-    /**
-     * @brief readDice
-     * @param str
-     * @return
-     */
-    bool readDice(QString& str, ExecutionNode*& node);
-    /**
-     * @brief readDiceOperator
-     * @return
-     */
-    bool readDiceOperator(QString&, DiceOperator&);
-    /**
-     * @brief readDiceExpression
-     * @param node
-     * @return
-     */
-    bool readDiceExpression(QString&, ExecutionNode*& node);
-    /**
-     * @brief readOperator
-     * @return
-     */
-    bool readOperator(QString&, ExecutionNode* previous);
-    /**
-     * @brief DiceParser::readCommand
-     * @param str
-     * @param node
-     * @return
-     */
-    bool readCommand(QString& str, ExecutionNode*& node);
-
-    /**
-     * @brief readOption
-     */
-    bool readOption(QString&, ExecutionNode* node); // OptionOperator& option,
-
-    /**
-     * @brief addRollDiceNode
-     * @param faces
-     * @return
-     */
-    DiceRollerNode* addRollDiceNode(qint64 faces, ExecutionNode*);
-    /**
-     * @brief addExplodeDiceNode
-     * @param faces
-     * @param previous
-     * @return
-     */
-    ExplodeDiceNode* addExplodeDiceNode(qint64 faces, ExecutionNode* previous);
-    /**
-     * @brief readOperand
-     * @param node
-     * @return
-     */
-    bool readOperand(QString&, ExecutionNode*& node);
-
-    /**
-     * @brief readInstructionOperator
-     * @param c
-     * @return
-     */
-    bool readInstructionOperator(QChar c);
-    /**
-     * @brief readNode
-     * @param str
-     * @param node
-     * @return
-     */
-    bool readNode(QString& str, ExecutionNode*& node);
-
-    /**
-     * @brief getLeafNode
-     * @return
-     */
-    ExecutionNode* getLeafNode(ExecutionNode* node);
-
     /**
      * @brief hasResultOfType
      * @param notthelast
@@ -335,22 +188,8 @@ private:
     bool readBlocInstruction(QString& str, ExecutionNode*& resultnode);
 
 private:
-    QMap<QString, DiceOperator>* m_mapDiceOp;
-    QMap<QString, OptionOperator>* m_OptionOp;
-    QMap<QString, NodeAction>* m_nodeActionMap;
-    QList<DiceAlias*>* m_aliasList;
-    QStringList* m_commandList;
-
-    QMap<Dice::ERROR_CODE, QString> m_errorMap;
-    QMap<Dice::ERROR_CODE, QString> m_warningMap;
-
-    ExecutionNode* m_start= nullptr;
-    std::vector<ExecutionNode*> m_startNodes;
+    std::unique_ptr<ParsingToolBox> m_parsingToolbox;
     QString m_command;
-    ParsingToolBox* m_parsingToolbox;
-    QString m_helpPath;
-    bool m_currentTreeHasSeparator;
-    QString m_comment;
 };
 
 #endif // DICEPARSER_H

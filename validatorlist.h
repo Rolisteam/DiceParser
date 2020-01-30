@@ -19,78 +19,74 @@
  * Free Software Foundation, Inc.,                                          *
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
  ***************************************************************************/
-#ifndef DICERESULT_H
-#define DICERESULT_H
+#ifndef VALIDATORLIST_H
+#define VALIDATORLIST_H
+
 #include <QList>
+#include <QString>
+#include <QVector>
+#include <Qt>
+
+#include "diceparserhelper.h"
 #include <functional>
 
-#include "die.h"
-#include "result.h"
+class Validator;
+class Die;
+class Result;
+
+struct ValidatorResult
+{
+    std::vector<std::pair<Die*, qint64>> m_validDice;
+    bool m_allTrue;
+
+    friend bool operator>(const ValidatorResult& a, const ValidatorResult& b)
+    {
+        if(a.m_validDice.size() > b.m_validDice.size())
+            return true;
+        if(a.m_validDice.size() == b.m_validDice.size())
+        {
+            if(!a.m_allTrue && b.m_allTrue)
+                return true;
+            else
+                return false;
+        }
+        return false;
+    }
+};
 /**
- * @brief The DiceResult class
+ * @brief The BooleanCondition class is a Validator class checking validity from logic expression.
+ * It manages many operators (see : @ref LogicOperator).
  */
-class DiceResult : public Result
+class ValidatorList
 {
 public:
-    /**
-     * @brief DiceResult
-     */
-    DiceResult();
-    /**
-     * @brief ~DiceResult
-     */
-    virtual ~DiceResult();
+    enum LogicOperation
+    {
+        OR,
+        EXCLUSIVE_OR,
+        AND,
+        NONE
+    };
 
-    /**
-     * @brief getResultList
-     * @return
-     */
-    QList<Die*>& getResultList();
-    /**
-     * @brief insertResult
-     */
-    void insertResult(Die*);
+    ValidatorList();
+    virtual ~ValidatorList();
 
-    /**
-     * @brief setResultList
-     * @param list
-     */
-    void setResultList(QList<Die*> list);
+    virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const;
 
-    /**
-     * @brief getScalar
-     * @return
-     */
-    virtual QVariant getResult(Dice::RESULT_TYPE);
-    /**
-     * @brief toString
-     * @return
-     */
-    virtual QString toString(bool wl);
-    /**
-     * @brief isHomogeneous
-     */
-    bool isHomogeneous() const;
-    /**
-     * @brief setHomogeneous
-     */
-    void setHomogeneous(bool);
+    void setOperationList(const QVector<LogicOperation>& m);
+    void setValidators(const QList<Validator*>& valids);
 
-    Die::ArithmeticOperator getOperator() const;
-    void setOperator(const Die::ArithmeticOperator& dieOperator);
-    bool contains(Die* die, const std::function<bool(const Die*, const Die*)> equal);
+    QString toString();
 
-    void clear();
+    virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const;
 
-    virtual Result* getCopy() const;
+    virtual ValidatorList* getCopy() const;
+
+    void validResult(Result* result, bool recursive, bool unlight, std::function<void(Die*, qint64)> functor) const;
 
 private:
-    qreal getScalarResult();
-
-private:
-    QList<Die*> m_diceValues;
-    bool m_homogeneous;
-    Die::ArithmeticOperator m_operator;
+    QVector<LogicOperation> m_operators;
+    QList<Validator*> m_validatorList;
 };
-Q_DECLARE_METATYPE(QList<Die*>)
-#endif // DICERESULT_H
+
+#endif // VALIDATORLIST_H

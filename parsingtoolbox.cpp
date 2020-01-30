@@ -19,73 +19,107 @@
  * Free Software Foundation, Inc.,                                          *
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
  ***************************************************************************/
-#include <QString>
-
-#include "node/numbernode.h"
-#include "node/sortresult.h"
-#include "node/stringnode.h"
-#include "node/variablenode.h"
 #include "parsingtoolbox.h"
 
+#include "node/allsamenode.h"
+#include "node/bind.h"
+#include "node/countexecutenode.h"
+#include "node/dicerollernode.h"
+#include "node/executionnode.h"
+#include "node/explodedicenode.h"
+#include "node/filternode.h"
+#include "node/groupnode.h"
+#include "node/helpnode.h"
+#include "node/ifnode.h"
+#include "node/jumpbackwardnode.h"
+#include "node/keepdiceexecnode.h"
+#include "node/listaliasnode.h"
+#include "node/listsetrollnode.h"
+#include "node/mergenode.h"
+#include "node/numbernode.h"
+#include "node/occurencecountnode.h"
+#include "node/paintnode.h"
+#include "node/parenthesesnode.h"
+#include "node/repeaternode.h"
+#include "node/rerolldicenode.h"
+#include "node/scalaroperatornode.h"
+#include "node/sortresult.h"
+#include "node/splitnode.h"
+#include "node/startingnode.h"
+#include "node/stringnode.h"
+#include "node/uniquenode.h"
+#include "node/valueslistnode.h"
+#include "node/variablenode.h"
+
+#include <QString>
+
 QHash<QString, QString> ParsingToolBox::m_variableHash;
-std::vector<ExecutionNode*>* ParsingToolBox::m_startNodes= nullptr;
 
 ParsingToolBox::ParsingToolBox()
-    : m_logicOp(new QMap<QString, BooleanCondition::LogicOperator>())
-    , m_logicOperation(new QMap<QString, CompositeValidator::LogicOperation>())
-    , m_conditionOperation(new QMap<QString, OperationCondition::ConditionOperator>())
-    , m_arithmeticOperation(new QHash<QString, Die::ArithmeticOperator>())
 {
     // m_logicOp = ;
-    m_logicOp->insert(">=", BooleanCondition::GreaterOrEqual);
-    m_logicOp->insert("<=", BooleanCondition::LesserOrEqual);
-    m_logicOp->insert("<", BooleanCondition::LesserThan);
-    m_logicOp->insert("=", BooleanCondition::Equal);
-    m_logicOp->insert(">", BooleanCondition::GreaterThan);
-    m_logicOp->insert("!=", BooleanCondition::Different);
+    m_logicOp.insert(">=", BooleanCondition::GreaterOrEqual);
+    m_logicOp.insert("<=", BooleanCondition::LesserOrEqual);
+    m_logicOp.insert("<", BooleanCondition::LesserThan);
+    m_logicOp.insert("=", BooleanCondition::Equal);
+    m_logicOp.insert(">", BooleanCondition::GreaterThan);
+    m_logicOp.insert("!=", BooleanCondition::Different);
 
     // m_logicOperation = ;
-    m_logicOperation->insert("|", CompositeValidator::OR);
-    m_logicOperation->insert("^", CompositeValidator::EXCLUSIVE_OR);
-    m_logicOperation->insert("&", CompositeValidator::AND);
+    m_logicOperation.insert("|", ValidatorList::OR);
+    m_logicOperation.insert("^", ValidatorList::EXCLUSIVE_OR);
+    m_logicOperation.insert("&", ValidatorList::AND);
 
     // m_conditionOperation = ;
-    m_conditionOperation->insert("%", OperationCondition::Modulo);
+    m_conditionOperation.insert("%", OperationCondition::Modulo);
 
     // m_arithmeticOperation = new QHash<QString,ScalarOperatorNode::ArithmeticOperator>();
-    m_arithmeticOperation->insert(QStringLiteral("+"), Die::PLUS);
-    m_arithmeticOperation->insert(QStringLiteral("-"), Die::MINUS);
-    m_arithmeticOperation->insert(QStringLiteral("*"), Die::MULTIPLICATION);
-    m_arithmeticOperation->insert(QStringLiteral("x"), Die::MULTIPLICATION);
-    m_arithmeticOperation->insert(QStringLiteral("|"), Die::INTEGER_DIVIDE);
-    m_arithmeticOperation->insert(QStringLiteral("/"), Die::DIVIDE);
-    m_arithmeticOperation->insert(QStringLiteral("÷"), Die::DIVIDE);
-    m_arithmeticOperation->insert(QStringLiteral("**"), Die::POW);
+    m_arithmeticOperation.insert(QStringLiteral("+"), Die::PLUS);
+    m_arithmeticOperation.insert(QStringLiteral("-"), Die::MINUS);
+    m_arithmeticOperation.insert(QStringLiteral("**"), Die::POW);
+    m_arithmeticOperation.insert(QStringLiteral("*"), Die::MULTIPLICATION);
+    m_arithmeticOperation.insert(QStringLiteral("x"), Die::MULTIPLICATION);
+    m_arithmeticOperation.insert(QStringLiteral("|"), Die::INTEGER_DIVIDE);
+    m_arithmeticOperation.insert(QStringLiteral("/"), Die::DIVIDE);
+    m_arithmeticOperation.insert(QStringLiteral("÷"), Die::DIVIDE);
+
+    m_mapDiceOp.insert(QStringLiteral("D"), D);
+    m_mapDiceOp.insert(QStringLiteral("L"), L);
+
+    m_OptionOp.insert(QStringLiteral("k"), Keep);
+    m_OptionOp.insert(QStringLiteral("K"), KeepAndExplode);
+    m_OptionOp.insert(QStringLiteral("s"), Sort);
+    m_OptionOp.insert(QStringLiteral("c"), Count);
+    m_OptionOp.insert(QStringLiteral("r"), Reroll);
+    m_OptionOp.insert(QStringLiteral("e"), Explode);
+    m_OptionOp.insert(QStringLiteral("R"), RerollUntil);
+    m_OptionOp.insert(QStringLiteral("a"), RerollAndAdd);
+    m_OptionOp.insert(QStringLiteral("m"), Merge);
+    m_OptionOp.insert(QStringLiteral("i"), ifOperator);
+    m_OptionOp.insert(QStringLiteral("p"), Painter);
+    m_OptionOp.insert(QStringLiteral("f"), Filter);
+    m_OptionOp.insert(QStringLiteral("y"), Split);
+    m_OptionOp.insert(QStringLiteral("u"), Unique);
+    m_OptionOp.insert(QStringLiteral("t"), AllSameExplode);
+    m_OptionOp.insert(QStringLiteral("g"), Group);
+    m_OptionOp.insert(QStringLiteral("b"), Bind);
+    m_OptionOp.insert(QStringLiteral("o"), Occurences);
+
+    m_functionMap.insert({QStringLiteral("repeat"), REPEAT});
+
+    m_nodeActionMap.insert(QStringLiteral("@"), JumpBackward);
+
+    m_commandList.append(QStringLiteral("help"));
+    m_commandList.append(QStringLiteral("la"));
 }
 
 ParsingToolBox::ParsingToolBox(const ParsingToolBox&) {}
-ParsingToolBox::~ParsingToolBox()
+ParsingToolBox::~ParsingToolBox() {}
+
+void ParsingToolBox::clearUp()
 {
-    if(nullptr != m_logicOp)
-    {
-        delete m_logicOp;
-        m_logicOp= nullptr;
-    }
-    if(nullptr != m_logicOperation)
-    {
-        delete m_logicOperation;
-        m_logicOperation= nullptr;
-    }
-    if(nullptr != m_conditionOperation)
-    {
-        delete m_conditionOperation;
-        m_conditionOperation= nullptr;
-    }
-    if(nullptr != m_arithmeticOperation)
-    {
-        delete m_arithmeticOperation;
-        m_arithmeticOperation= nullptr;
-    }
+    m_errorMap.clear();
+    m_comment= QString("");
 }
 ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e, bool b)
 {
@@ -94,11 +128,27 @@ ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e, bool b)
     e->setNextNode(nodeSort);
     return nodeSort;
 }
-
+ExecutionNode* ParsingToolBox::getLeafNode(ExecutionNode* start)
+{
+    ExecutionNode* next= start;
+    while(nullptr != next->getNextNode())
+    {
+        next= next->getNextNode();
+    }
+    return next;
+}
+void ParsingToolBox::addError(Dice::ERROR_CODE code, const QString& msg)
+{
+    m_errorMap.insert(code, msg);
+}
+void ParsingToolBox::addWarning(Dice::ERROR_CODE code, const QString& msg)
+{
+    m_warningMap.insert(code, msg);
+}
 bool ParsingToolBox::readDiceLogicOperator(QString& str, OperationCondition::ConditionOperator& op)
 {
     QString longKey;
-    auto const& keys= m_conditionOperation->keys();
+    auto const& keys= m_conditionOperation.keys();
     for(const QString& tmp : keys)
     {
         if(str.startsWith(tmp))
@@ -112,7 +162,7 @@ bool ParsingToolBox::readDiceLogicOperator(QString& str, OperationCondition::Con
     if(longKey.size() > 0)
     {
         str= str.remove(0, longKey.size());
-        op= m_conditionOperation->value(longKey);
+        op= m_conditionOperation.value(longKey);
         return true;
     }
 
@@ -124,7 +174,7 @@ bool ParsingToolBox::readArithmeticOperator(QString& str, Die::ArithmeticOperato
     bool found= false;
     // QHash<QString,ScalarOperatorNode::ArithmeticOperator>::Iterator
 
-    for(auto i= m_arithmeticOperation->begin(); i != m_arithmeticOperation->end() && !found; ++i)
+    for(auto i= m_arithmeticOperation.begin(); i != m_arithmeticOperation.end() && !found; ++i)
     {
         if(str.startsWith(i.key()))
         {
@@ -139,7 +189,7 @@ bool ParsingToolBox::readArithmeticOperator(QString& str, Die::ArithmeticOperato
 bool ParsingToolBox::readLogicOperator(QString& str, BooleanCondition::LogicOperator& op)
 {
     QString longKey;
-    auto const& keys= m_logicOp->keys();
+    auto const& keys= m_logicOp.keys();
     for(const QString& tmp : keys)
     {
         if(str.startsWith(tmp))
@@ -153,13 +203,29 @@ bool ParsingToolBox::readLogicOperator(QString& str, BooleanCondition::LogicOper
     if(longKey.size() > 0)
     {
         str= str.remove(0, longKey.size());
-        op= m_logicOp->value(longKey);
+        op= m_logicOp.value(longKey);
         return true;
     }
 
     return false;
 }
+QString ParsingToolBox::getComment() const
+{
+    return m_comment;
+}
 
+void ParsingToolBox::setComment(const QString& comment)
+{
+    m_comment= comment;
+}
+const QMap<Dice::ERROR_CODE, QString>& ParsingToolBox::getErrorList() const
+{
+    return m_errorMap;
+}
+const QMap<Dice::ERROR_CODE, QString>& ParsingToolBox::getWarningList() const
+{
+    return m_warningMap;
+}
 bool ParsingToolBox::readOperand(QString& str, ExecutionNode*& node)
 {
     qint64 intValue= 1;
@@ -168,7 +234,7 @@ bool ParsingToolBox::readOperand(QString& str, ExecutionNode*& node)
     {
         VariableNode* variableNode= new VariableNode();
         variableNode->setIndex(static_cast<quint64>(intValue - 1));
-        variableNode->setData(m_startNodes);
+        variableNode->setData(&m_startNodes);
         node= variableNode;
         return true;
     }
@@ -192,6 +258,7 @@ bool ParsingToolBox::readOperand(QString& str, ExecutionNode*& node)
 Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
 {
     Validator* returnVal= nullptr;
+    auto opCompare= readConditionType(str);
     BooleanCondition::LogicOperator myLogicOp= BooleanCondition::Equal;
     readLogicOperator(str, myLogicOp);
 
@@ -203,6 +270,7 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
         if(readOperand(str, operandNode))
         {
             OperationCondition* condition= new OperationCondition();
+            condition->setConditionType(opCompare);
             condition->setValueNode(operandNode);
             Validator* valid= readValidator(str, hasSquare);
             BooleanCondition* boolC= dynamic_cast<BooleanCondition*>(valid);
@@ -229,6 +297,7 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
                 str= str.remove(0, 1);
                 qint64 start= operandNode->getScalarResult();
                 Range* range= new Range();
+                range->setConditionType(opCompare);
                 range->setValue(start, end);
                 returnVal= range;
                 isRange= true;
@@ -238,6 +307,7 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
         if(!isRange)
         {
             BooleanCondition* condition= new BooleanCondition();
+            condition->setConditionType(opCompare);
             condition->setValueNode(operandNode);
             condition->setOperator(myLogicOp);
             returnVal= condition;
@@ -245,28 +315,32 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
     }
     return returnVal;
 }
-IfNode::ConditionType ParsingToolBox::readConditionType(QString& str)
+
+Dice::ConditionType ParsingToolBox::readConditionType(QString& str)
 {
-    IfNode::ConditionType type= IfNode::OnEach;
+    Dice::ConditionType type= Dice::OnEach;
     if(str.startsWith('.'))
     {
         str= str.remove(0, 1);
-        type= IfNode::OneOfThem;
+        type= Dice::OneOfThem;
     }
     else if(str.startsWith('*'))
     {
         str= str.remove(0, 1);
-        type= IfNode::AllOfThem;
+        type= Dice::AllOfThem;
     }
     else if(str.startsWith(':'))
     {
         str= str.remove(0, 1);
-        type= IfNode::OnScalar;
+        type= Dice::OnScalar;
     }
     return type;
 }
-
-Validator* ParsingToolBox::readCompositeValidator(QString& str)
+bool ParsingToolBox::hasError() const
+{
+    return !m_errorMap.isEmpty();
+}
+ValidatorList* ParsingToolBox::readValidatorList(QString& str)
 {
     bool expectSquareBrasket= false;
     if((str.startsWith("[")))
@@ -275,9 +349,9 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
         expectSquareBrasket= true;
     }
     Validator* tmp= readValidator(str, expectSquareBrasket);
-    CompositeValidator::LogicOperation opLogic;
+    ValidatorList::LogicOperation opLogic;
 
-    QVector<CompositeValidator::LogicOperation> operators;
+    QVector<ValidatorList::LogicOperation> operators;
     QList<Validator*> validatorList;
 
     while(nullptr != tmp)
@@ -296,24 +370,15 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
                 str= str.remove(0, 1);
                 // isOk=true;
             }
-
-            if(!validatorList.isEmpty())
-            {
-                validatorList.append(tmp);
-            }
-            else
-            {
-                operators.clear();
-                return tmp;
-            }
+            validatorList.append(tmp);
             tmp= nullptr;
         }
     }
     if(!validatorList.isEmpty())
     {
-        CompositeValidator* validator= new CompositeValidator();
+        ValidatorList* validator= new ValidatorList();
         validator->setOperationList(operators);
-        validator->setValidatorList(validatorList);
+        validator->setValidators(validatorList);
         return validator;
     }
     else
@@ -321,10 +386,10 @@ Validator* ParsingToolBox::readCompositeValidator(QString& str)
         return nullptr;
     }
 }
-bool ParsingToolBox::readLogicOperation(QString& str, CompositeValidator::LogicOperation& op)
+bool ParsingToolBox::readLogicOperation(QString& str, ValidatorList::LogicOperation& op)
 {
     QString longKey;
-    auto const& keys= m_logicOperation->keys();
+    auto const& keys= m_logicOperation.keys();
     for(auto& tmp : keys)
     {
         if(str.startsWith(tmp))
@@ -338,7 +403,7 @@ bool ParsingToolBox::readLogicOperation(QString& str, CompositeValidator::LogicO
     if(longKey.size() > 0)
     {
         str= str.remove(0, longKey.size());
-        op= m_logicOperation->value(longKey);
+        op= m_logicOperation.value(longKey);
         return true;
     }
 
@@ -412,14 +477,9 @@ ExecutionNode* ParsingToolBox::getLatestNode(ExecutionNode* node)
     return next;
 }
 
-std::vector<ExecutionNode*>* ParsingToolBox::getStartNodes()
+const std::vector<ExecutionNode*>& ParsingToolBox::getStartNodes()
 {
     return m_startNodes;
-}
-
-void ParsingToolBox::setStartNodes(std::vector<ExecutionNode*>* startNodes)
-{
-    m_startNodes= startNodes;
 }
 
 bool ParsingToolBox::readString(QString& str, QString& strResult)
@@ -596,7 +656,7 @@ bool ParsingToolBox::readAscending(QString& str)
     }
     return false;
 }
-Dice::CONDITION_STATE ParsingToolBox::isValidValidator(ExecutionNode* previous, Validator* val)
+Dice::CONDITION_STATE ParsingToolBox::isValidValidator(ExecutionNode* previous, ValidatorList* val)
 {
     DiceRollerNode* node= getDiceRollerNode(previous);
     if(nullptr == node)
@@ -895,7 +955,6 @@ QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const Q
 
     // return source;
 }
-
 void ParsingToolBox::readSubtitutionParameters(SubtituteInfo& info, QString& rest)
 {
     auto sizeS= rest.size();
@@ -913,6 +972,951 @@ void ParsingToolBox::readSubtitutionParameters(SubtituteInfo& info, QString& res
         }
     }
     info.setLength(info.length() + sizeS - rest.size());
+}
+
+bool ParsingToolBox::readReaperArguments(RepeaterNode* node, QString& source)
+{
+    if(readOpenParentheses(source))
+    {
+        auto instructions= readInstructionList(source, false);
+        if(!instructions.empty())
+        {
+            readComma(source);
+            ExecutionNode* tmp;
+            if(readOperand(source, tmp))
+            {
+                if(source.startsWith("+"))
+                {
+                    node->setSumAll(true);
+                    source= source.remove(0, 1);
+                }
+                if(readCloseParentheses(source))
+                {
+                    node->setCommand(instructions);
+                    node->setTimeNode(tmp);
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+bool ParsingToolBox::readExpression(QString& str, ExecutionNode*& node)
+{
+    ExecutionNode* operandNode= nullptr;
+    if(readOpenParentheses(str))
+    {
+        ExecutionNode* internalNode= nullptr;
+        if(readExpression(str, internalNode))
+        {
+            ParenthesesNode* parentheseNode= new ParenthesesNode();
+            parentheseNode->setInternelNode(internalNode);
+            node= parentheseNode;
+            if(readCloseParentheses(str))
+            {
+                ExecutionNode* diceNode= nullptr;
+                ExecutionNode* operatorNode= nullptr;
+                if(readDice(str, diceNode))
+                {
+                    parentheseNode->setNextNode(diceNode);
+                }
+                else if(readExpression(str, operatorNode))
+                {
+                    parentheseNode->setNextNode(operatorNode);
+                }
+                return true;
+            }
+            else
+            {
+                m_warningMap.insert(Dice::ERROR_CODE::BAD_SYNTAXE,
+                                    QObject::tr("Expected closing parenthesis - can't validate the inside."));
+            }
+        }
+    }
+    else if(readFunction(str, operandNode))
+    {
+        node= operandNode;
+        return true;
+    }
+    else if(readOptionFromNull(str, operandNode))
+    {
+        node= operandNode;
+        return true;
+    }
+    else if(readOperatorFromNull(str, operandNode))
+    {
+        node= operandNode;
+        return true;
+    }
+    else if(readOperand(str, operandNode))
+    {
+        ExecutionNode* diceNode= nullptr;
+        if(readDice(str, diceNode))
+        {
+            operandNode->setNextNode(diceNode);
+        }
+        node= operandNode;
+
+        operandNode= ParsingToolBox::getLatestNode(operandNode);
+        // ExecutionNode* operatorNode=nullptr;
+        while(readOperator(str, operandNode))
+        {
+            // operandNode->setNextNode(operatorNode);
+            operandNode= ParsingToolBox::getLatestNode(operandNode);
+        }
+        return true;
+    }
+    else if(readCommand(str, operandNode))
+    {
+        node= operandNode;
+        return true;
+    }
+    else if(readNode(str, operandNode))
+    {
+        node= operandNode;
+        return true;
+    }
+    else if(readValuesList(str, operandNode))
+    {
+        node= operandNode;
+        return true;
+    }
+    else
+    {
+        ExecutionNode* diceNode= nullptr;
+        if(readDice(str, diceNode))
+        {
+            NumberNode* numberNode= new NumberNode();
+            numberNode->setNumber(1);
+            numberNode->setNextNode(diceNode);
+            node= numberNode;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return false;
+}
+
+bool ParsingToolBox::readValuesList(QString& str, ExecutionNode*& node)
+{
+    if(str.startsWith("["))
+    {
+        str= str.remove(0, 1);
+        int pos= ParsingToolBox::findClosingCharacterIndexOf('[', ']', str, 1); // str.indexOf("]");
+        if(-1 != pos)
+        {
+            QString liststr= str.left(pos);
+            auto list= liststr.split(",");
+            str= str.remove(0, pos + 1);
+            auto values= new ValuesListNode();
+            for(auto var : list)
+            {
+                qint64 number= 1;
+                QString error;
+                var= var.trimmed();
+                if(ParsingToolBox::readDynamicVariable(var, number))
+                {
+                    VariableNode* variableNode= new VariableNode();
+                    variableNode->setIndex(static_cast<quint64>(number - 1));
+                    variableNode->setData(&m_startNodes);
+                    values->insertValue(variableNode);
+                }
+                else if(ParsingToolBox::readNumber(var, number))
+                {
+                    NumberNode* numberNode= new NumberNode();
+                    numberNode->setNumber(number);
+                    values->insertValue(numberNode);
+                }
+            }
+            node= values;
+            return true;
+        }
+    }
+    return false;
+}
+bool ParsingToolBox::readOptionFromNull(QString& str, ExecutionNode*& node)
+{
+    StartingNode nodePrevious;
+    if(readOption(str, &nodePrevious))
+    {
+        auto nodeNext= nodePrevious.getNextNode();
+        nodePrevious.setNextNode(nullptr);
+        node= nodeNext;
+        return true;
+    }
+    return false;
+}
+
+void ParsingToolBox::setHelpPath(const QString& path)
+{
+    m_helpPath= path;
+}
+
+bool ParsingToolBox::readOperatorFromNull(QString& str, ExecutionNode*& node)
+{
+    StartingNode nodePrevious;
+    if(readOperator(str, &nodePrevious))
+    {
+        auto nodeNext= nodePrevious.getNextNode();
+        nodePrevious.setNextNode(nullptr);
+        node= nodeNext;
+        return true;
+    }
+    return false;
+}
+
+bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
+{
+    if(str.isEmpty())
+    {
+        return false;
+    }
+
+    ExecutionNode* node= nullptr;
+    bool found= false;
+    auto keys= m_OptionOp.keys();
+    for(int i= 0; ((i < keys.size()) && (!found)); ++i)
+    {
+        QString key= keys.at(i);
+
+        if(str.startsWith(key))
+        {
+            str= str.remove(0, key.size());
+            auto operatorName= m_OptionOp.value(key);
+            switch(operatorName)
+            {
+            case Keep:
+            {
+                qint64 myNumber= 0;
+                bool ascending= readAscending(str);
+
+                if(readNumber(str, myNumber))
+                {
+                    node= addSort(previous, ascending);
+                    KeepDiceExecNode* nodeK= new KeepDiceExecNode();
+                    nodeK->setDiceKeepNumber(myNumber);
+                    node->setNextNode(nodeK);
+                    node= nodeK;
+                    found= true;
+                }
+            }
+            break;
+            case KeepAndExplode:
+            {
+                qint64 myNumber= 0;
+                bool ascending= readAscending(str);
+                if(readNumber(str, myNumber))
+                {
+                    /* if(!hasDice)
+                        {
+                            previous = addRollDiceNode(DEFAULT_FACES_NUMBER,previous);
+                        }*/
+                    DiceRollerNode* nodeTmp= dynamic_cast<DiceRollerNode*>(previous);
+                    if(nullptr != nodeTmp)
+                    {
+                        previous= addExplodeDiceNode(static_cast<qint64>(nodeTmp->getFaces()), previous);
+                    }
+
+                    node= addSort(previous, ascending);
+
+                    KeepDiceExecNode* nodeK= new KeepDiceExecNode();
+                    nodeK->setDiceKeepNumber(myNumber);
+
+                    node->setNextNode(nodeK);
+                    node= nodeK;
+                    found= true;
+                }
+            }
+            break;
+            case Filter:
+            {
+                auto validatorList= readValidatorList(str);
+                if(nullptr != validatorList)
+                {
+                    auto validity= isValidValidator(previous, validatorList);
+
+                    FilterNode* filterNode= new FilterNode();
+                    filterNode->setValidatorList(validatorList);
+
+                    previous->setNextNode(filterNode);
+                    node= filterNode;
+                    found= true;
+                }
+            }
+            break;
+            case Sort:
+            {
+                bool ascending= readAscending(str);
+                node= addSort(previous, ascending);
+                /*if(!hasDice)
+                    {
+                        m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Sort Operator does not support default
+                   dice. You should add dice command before the s"));
+                    }*/
+                found= true;
+            }
+            break;
+            case Count:
+            {
+                auto validatorList= readValidatorList(str);
+                if(nullptr != validatorList)
+                {
+                    auto validity= isValidValidator(previous, validatorList);
+
+                    CountExecuteNode* countNode= new CountExecuteNode();
+                    countNode->setValidatorList(validatorList);
+
+                    previous->setNextNode(countNode);
+                    node= countNode;
+                    found= true;
+                }
+                else
+                {
+                    m_errorMap.insert(Dice::ERROR_CODE::BAD_SYNTAXE,
+                                      QObject::tr("Validator is missing after the c operator. Please, change it"));
+                }
+            }
+            break;
+            case Reroll:
+            case RerollUntil:
+            case RerollAndAdd:
+                // Todo: I think that Exploding and Rerolling could share the same code
+                {
+                    auto validatorList= readValidatorList(str);
+                    QString symbol= m_OptionOp.key(operatorName);
+                    if(nullptr != validatorList)
+                    {
+                        switch(isValidValidator(previous, validatorList))
+                        {
+                        case Dice::CONDITION_STATE::ALWAYSTRUE:
+                            if(operatorName == RerollAndAdd)
+                            {
+                                m_errorMap.insert(
+                                    Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
+                                    QObject::tr("Validator is always true for the %1 operator. Please, change it")
+                                        .arg(symbol));
+                            }
+                            break;
+                        case Dice::CONDITION_STATE::UNREACHABLE:
+                            if(operatorName == RerollUntil)
+                            {
+                                m_errorMap.insert(
+                                    Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
+                                    QObject::tr("Condition can't be reached, causing endless loop. Please, "
+                                                "change the %1 option condition")
+                                        .arg(symbol));
+                            }
+                            break;
+                        case Dice::CONDITION_STATE::ERROR_STATE:
+                        default:
+                            break;
+                        }
+
+                        auto reroll= (operatorName == RerollAndAdd || operatorName == Reroll);
+                        auto addingMode= (operatorName == RerollAndAdd);
+                        RerollDiceNode* rerollNode= new RerollDiceNode(reroll, addingMode);
+                        ExecutionNode* nodeParam= nullptr;
+                        if(readParameterNode(str, nodeParam))
+                        {
+                            rerollNode->setInstruction(nodeParam);
+                        }
+                        rerollNode->setValidatorList(validatorList);
+                        previous->setNextNode(rerollNode);
+                        node= rerollNode;
+                        found= true;
+                    }
+                    else
+                    {
+                        m_errorMap.insert(
+                            Dice::ERROR_CODE::BAD_SYNTAXE,
+                            QObject::tr("Validator is missing after the %1 operator. Please, change it").arg(symbol));
+                    }
+                }
+                break;
+            case Explode:
+            {
+                auto validatorList= readValidatorList(str);
+                if(nullptr != validatorList)
+                {
+                    if(Dice::CONDITION_STATE::ALWAYSTRUE == isValidValidator(previous, validatorList))
+                    {
+                        m_errorMap.insert(Dice::ERROR_CODE::ENDLESS_LOOP_ERROR,
+                                          QObject::tr("This condition %1 introduces an endless loop. Please, change it")
+                                              .arg(validatorList->toString()));
+                    }
+                    ExplodeDiceNode* explodedNode= new ExplodeDiceNode();
+                    explodedNode->setValidatorList(validatorList);
+                    previous->setNextNode(explodedNode);
+                    node= explodedNode;
+                    found= true;
+                }
+                else
+                {
+                    m_errorMap.insert(Dice::ERROR_CODE::BAD_SYNTAXE,
+                                      QObject::tr("Validator is missing after the e operator. Please, change it"));
+                }
+            }
+            break;
+            case Merge:
+            {
+                MergeNode* mergeNode= new MergeNode();
+                mergeNode->setStartList(&m_startNodes);
+                previous->setNextNode(mergeNode);
+                node= mergeNode;
+                found= true;
+            }
+            break;
+            case AllSameExplode:
+            {
+                AllSameNode* allSame= new AllSameNode();
+                previous->setNextNode(allSame);
+                node= allSame;
+                found= true;
+            }
+            break;
+            case Bind:
+            {
+                BindNode* bindNode= new BindNode();
+                bindNode->setStartList(&m_startNodes);
+                previous->setNextNode(bindNode);
+                node= bindNode;
+                found= true;
+            }
+            break;
+            case Occurences:
+            {
+                qint64 number= 0;
+                auto occNode= new OccurenceCountNode();
+                if(readNumber(str, number))
+                {
+                    occNode->setWidth(number);
+                    auto validatorList= readValidatorList(str);
+                    if(validatorList)
+                    {
+                        occNode->setValidatorList(validatorList);
+                    }
+                    else if(readComma(str))
+                    {
+                        if(readNumber(str, number))
+                        {
+                            occNode->setHeight(number);
+                        }
+                    }
+                }
+                previous->setNextNode(occNode);
+                node= occNode;
+                found= true;
+            }
+            break;
+            case Unique:
+            {
+                node= new UniqueNode();
+                previous->setNextNode(node);
+                found= true;
+            }
+            break;
+            case Painter:
+            {
+                PainterNode* painter= new PainterNode();
+                if(!readPainterParameter(painter, str))
+                {
+                    m_errorMap.insert(Dice::ERROR_CODE::BAD_SYNTAXE,
+                                      QObject::tr("Missing parameter for Painter node (p)"));
+                    delete painter;
+                }
+                else
+                {
+                    previous->setNextNode(painter);
+                    node= painter;
+                    found= true;
+                }
+            }
+            break;
+            case ifOperator:
+            {
+                IfNode* nodeif= new IfNode();
+                nodeif->setConditionType(readConditionType(str));
+                auto validatorList= readValidatorList(str);
+                if(nullptr != validatorList)
+                {
+                    ExecutionNode* trueNode= nullptr;
+                    ExecutionNode* falseNode= nullptr;
+                    if(readIfInstruction(str, trueNode, falseNode))
+                    {
+                        nodeif->setInstructionTrue(trueNode);
+                        nodeif->setInstructionFalse(falseNode);
+                        nodeif->setValidatorList(validatorList);
+                        previous->setNextNode(nodeif);
+                        node= nodeif;
+                        found= true;
+                    }
+                    else
+                    {
+                        delete nodeif;
+                    }
+                }
+                else
+                {
+                    delete nodeif;
+                }
+                break;
+            }
+            case Split:
+            {
+                SplitNode* splitnode= new SplitNode();
+                previous->setNextNode(splitnode);
+                node= splitnode;
+                found= true;
+            }
+            break;
+            case Group:
+            {
+                qint64 groupNumber= 0;
+                if(readNumber(str, groupNumber))
+                {
+                    GroupNode* groupNode= new GroupNode();
+                    groupNode->setGroupValue(groupNumber);
+                    previous->setNextNode(groupNode);
+                    node= groupNode;
+                    found= true;
+                }
+            }
+            break;
+            }
+        }
+    }
+    return found;
+}
+bool ParsingToolBox::readIfInstruction(QString& str, ExecutionNode*& trueNode, ExecutionNode*& falseNode)
+{
+    if(readBlocInstruction(str, trueNode))
+    {
+        if(readBlocInstruction(str, falseNode))
+        {
+            return true;
+        }
+        return true;
+    }
+    return false;
+}
+DiceRollerNode* ParsingToolBox::addRollDiceNode(qint64 faces, ExecutionNode* previous)
+{
+    DiceRollerNode* mydiceRoller= new DiceRollerNode(faces);
+    previous->setNextNode(mydiceRoller);
+    return mydiceRoller;
+}
+ExplodeDiceNode* ParsingToolBox::addExplodeDiceNode(qint64 value, ExecutionNode* previous)
+{
+    ExplodeDiceNode* explodeDiceNode= new ExplodeDiceNode();
+    NumberNode* node= new NumberNode();
+    node->setNumber(value);
+    BooleanCondition* condition= new BooleanCondition();
+    condition->setConditionType(Dice::OnEach);
+    condition->setValueNode(node);
+    condition->setOperator(BooleanCondition::Equal);
+    auto valList= new ValidatorList();
+    valList->setValidators(QList<Validator*>() << condition);
+    auto validity= isValidValidator(previous, valList);
+    explodeDiceNode->setValidatorList(valList);
+    previous->setNextNode(explodeDiceNode);
+    return explodeDiceNode;
+}
+bool ParsingToolBox::readParameterNode(QString& str, ExecutionNode*& node)
+{
+    if(str.startsWith("("))
+    {
+        str= str.remove(0, 1);
+        if(readExpression(str, node))
+        {
+            if(str.startsWith(")"))
+            {
+                str= str.remove(0, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool ParsingToolBox::readBlocInstruction(QString& str, ExecutionNode*& resultnode)
+{
+    if(str.startsWith('{'))
+    {
+        str= str.remove(0, 1);
+        ExecutionNode* node= nullptr;
+        Die::ArithmeticOperator op;
+        ScalarOperatorNode* scalarNode= nullptr;
+        if(readArithmeticOperator(str, op))
+        {
+            scalarNode= new ScalarOperatorNode();
+            scalarNode->setArithmeticOperator(op);
+        }
+        if(readExpression(str, node))
+        {
+            if(str.startsWith('}'))
+            {
+                if(nullptr == scalarNode)
+                {
+                    resultnode= node;
+                }
+                else
+                {
+                    resultnode= scalarNode;
+                    scalarNode->setInternalNode(node);
+                }
+                str= str.remove(0, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+bool ParsingToolBox::readDice(QString& str, ExecutionNode*& node)
+{
+    DiceOperator currentOperator;
+
+    if(readDiceOperator(str, currentOperator))
+    {
+        if(currentOperator == D)
+        {
+            qint64 max;
+            qint64 min;
+            bool unique= (ParsingToolBox::UNIQUE == readListOperator(str)) ? true : false;
+            Die::ArithmeticOperator op;
+
+            bool hasOp= readArithmeticOperator(str, op);
+            if(readNumber(str, max))
+            {
+                if(max < 1)
+                {
+                    m_errorMap.insert(
+                        Dice::ERROR_CODE::BAD_SYNTAXE,
+                        QObject::tr("Dice with %1 face(s) does not exist. Please, put a value higher than 0").arg(max));
+                    return false;
+                }
+                DiceRollerNode* drNode= new DiceRollerNode(max);
+                drNode->setUnique(unique);
+                if(hasOp)
+                {
+                    drNode->setOperator(op);
+                }
+                node= drNode;
+                ExecutionNode* current= drNode;
+                while(readOption(str, current))
+                {
+                    current= ParsingToolBox::getLatestNode(current);
+                }
+                return true;
+            }
+            else if(readDiceRange(str, min, max))
+            {
+                DiceRollerNode* drNode= new DiceRollerNode(max, min);
+                drNode->setUnique(unique);
+                if(hasOp)
+                {
+                    drNode->setOperator(op);
+                }
+                node= drNode;
+                ExecutionNode* current= drNode;
+                while(readOption(str, current))
+                {
+                    current= ParsingToolBox::getLatestNode(current);
+                }
+                return true;
+            }
+        }
+        else if(currentOperator == L)
+        {
+            QStringList list;
+            QList<Range> listRange;
+            ParsingToolBox::LIST_OPERATOR op= readListOperator(str);
+            if(readList(str, list, listRange))
+            {
+                ListSetRollNode* lsrNode= new ListSetRollNode();
+                lsrNode->setRangeList(listRange);
+                if(op == ParsingToolBox::UNIQUE)
+                {
+                    lsrNode->setUnique(true);
+                }
+                lsrNode->setListValue(list);
+                node= lsrNode;
+                return true;
+            }
+            else
+            {
+                m_errorMap.insert(
+                    Dice::ERROR_CODE::BAD_SYNTAXE,
+                    QObject::tr(
+                        "List is missing after the L operator. Please, add it (e.g : 1L[sword,spear,gun,arrow])"));
+            }
+        }
+    }
+
+    return false;
+}
+bool ParsingToolBox::readDiceOperator(QString& str, DiceOperator& op)
+{
+    QStringList listKey= m_mapDiceOp.keys();
+    for(const QString& key : listKey)
+    {
+        if(str.startsWith(key, Qt::CaseInsensitive))
+        {
+            str= str.remove(0, key.size());
+            op= m_mapDiceOp.value(key);
+            return true;
+        }
+    }
+    return false;
+}
+QString ParsingToolBox::convertAlias(QString str)
+{
+    for(auto& cmd : m_aliasList)
+    {
+        if(cmd->isEnable())
+        {
+            cmd->resolved(str);
+        }
+    }
+    return str;
+}
+
+bool ParsingToolBox::readCommand(QString& str, ExecutionNode*& node)
+{
+    if(m_commandList.contains(str))
+    {
+        if(str == QLatin1String("help"))
+        {
+            str= str.remove(0, QLatin1String("help").size());
+            HelpNode* help= new HelpNode();
+            if(!m_helpPath.isEmpty())
+            {
+                help->setHelpPath(m_helpPath);
+            }
+            node= help;
+        }
+        else if(str == QLatin1String("la"))
+        {
+            str= str.remove(0, QLatin1String("la").size());
+            node= new ListAliasNode(&m_aliasList);
+        }
+        return true;
+    }
+    return false;
+}
+
+bool ParsingToolBox::readDiceExpression(QString& str, ExecutionNode*& node)
+{
+    bool returnVal= false;
+
+    ExecutionNode* next= nullptr;
+    if(readDice(str, next))
+    {
+        ExecutionNode* latest= next;
+        while(readOption(str, latest))
+        {
+            while(nullptr != latest->getNextNode())
+            {
+                latest= latest->getNextNode();
+            }
+        }
+
+        node= next;
+        returnVal= true;
+    }
+    else
+    {
+        returnVal= false;
+    }
+    return returnVal;
+}
+
+bool ParsingToolBox::readOperator(QString& str, ExecutionNode* previous)
+{
+    if(str.isEmpty() || nullptr == previous)
+    {
+        return false;
+    }
+
+    Die::ArithmeticOperator op;
+    if(readArithmeticOperator(str, op))
+    {
+        ScalarOperatorNode* node= new ScalarOperatorNode();
+        node->setArithmeticOperator(op);
+        ExecutionNode* nodeExec= nullptr;
+        if(readExpression(str, nodeExec))
+        {
+            node->setInternalNode(nodeExec);
+            if(nullptr == nodeExec)
+            {
+                delete node;
+                return false;
+            }
+            ExecutionNode* nodeExecOrChild= nodeExec;
+            ExecutionNode* parent= nullptr;
+
+            while((nullptr != nodeExecOrChild) && (node->getPriority() < nodeExecOrChild->getPriority()))
+            {
+                parent= nodeExecOrChild;
+                nodeExecOrChild= nodeExecOrChild->getNextNode();
+            }
+            // management of operator priority
+            if((nullptr != nodeExecOrChild) && (nodeExec != nodeExecOrChild))
+            {
+                // good 1 1 2 ; bad 1 0 4
+                if(nodeExecOrChild->getPriority() >= node->getPriority())
+                {
+                    node->setNextNode(nodeExecOrChild);
+                    parent->setNextNode(nullptr);
+                }
+            }
+            else if(node->getPriority() >= nodeExec->getPriority())
+            {
+                node->setNextNode(nodeExec->getNextNode());
+                nodeExec->setNextNode(nullptr);
+            }
+
+            // nodeResult = node;
+            previous->setNextNode(node);
+
+            return true;
+        }
+        else
+        {
+            delete node;
+        }
+    }
+    else
+    {
+        while(readOption(str, previous))
+        {
+            previous= ParsingToolBox::getLatestNode(previous);
+        }
+    }
+    return false;
+}
+bool ParsingToolBox::readFunction(QString& str, ExecutionNode*& node)
+{
+    for(const auto& kv : m_functionMap)
+    {
+        if(str.startsWith(kv.first))
+        {
+            str= str.remove(0, kv.first.size());
+            switch(kv.second)
+            {
+            case REPEAT:
+            {
+                auto repeaterNode= new RepeaterNode();
+                if(ParsingToolBox::readReaperArguments(repeaterNode, str))
+                {
+                    node= repeaterNode;
+                }
+            }
+            break;
+            }
+        }
+    }
+
+    if(node == nullptr)
+        return false;
+    return true;
+}
+
+bool ParsingToolBox::readNode(QString& str, ExecutionNode*& node)
+{
+    if(str.isEmpty())
+        return false;
+
+    QString key= str.at(0);
+    if(m_nodeActionMap.contains(key))
+    {
+        JumpBackwardNode* jumpNode= new JumpBackwardNode();
+        node= jumpNode;
+        str= str.remove(0, 1);
+        readOption(str, jumpNode);
+        return true;
+    }
+    return false;
+}
+
+bool ParsingToolBox::readInstructionOperator(QChar c)
+{
+    if(c == ';')
+    {
+        return true;
+    }
+    return false;
+}
+
+void ParsingToolBox::insertAlias(DiceAlias* dice, int i)
+{
+    if(i >= m_aliasList.size())
+    {
+        m_aliasList.insert(i, dice);
+    }
+}
+const QList<DiceAlias*>& ParsingToolBox::getAliases() const
+{
+    return m_aliasList;
+}
+
+std::vector<ExecutionNode*> ParsingToolBox::readInstructionList(QString& str, bool global)
+{
+    if(str.isEmpty())
+        return {};
+
+    std::vector<ExecutionNode*> startNodes;
+
+    bool hasInstruction= false;
+    bool readInstruction= true;
+    while(readInstruction)
+    {
+        ExecutionNode* startNode= nullptr;
+        bool keepParsing= readExpression(str, startNode);
+        if(nullptr != startNode)
+        {
+            hasInstruction= true;
+            startNodes.push_back(startNode);
+            auto latest= startNode;
+            if(keepParsing)
+            {
+                latest= ParsingToolBox::getLatestNode(latest);
+                keepParsing= !str.isEmpty();
+                while(keepParsing)
+                {
+                    auto before= str;
+                    if(readOperator(str, latest))
+                    {
+                        latest= ParsingToolBox::getLatestNode(latest);
+                    }
+                    keepParsing= (!str.isEmpty() && (before != str));
+                }
+            }
+            if(!str.isEmpty() && readInstructionOperator(str[0]))
+            {
+                str= str.remove(0, 1);
+            }
+            else
+            {
+                QString result;
+                QString comment;
+                if(readComment(str, result, comment))
+                {
+                    m_comment= result;
+                }
+                readInstruction= false;
+            }
+        }
+        else
+        {
+            readInstruction= false;
+        }
+    }
+    if(global)
+        m_startNodes= startNodes;
+    return startNodes;
 }
 
 SubtituteInfo ParsingToolBox::readVariableFromString(const QString& source, int& start)

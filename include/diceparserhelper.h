@@ -39,5 +39,15 @@ enum class RESULT_TYPE : int
     STRING= 2,
     DICE_LIST= 4
 };
-}
+/**
+ * @brief The ConditionType enum defines compare method
+ */
+enum ConditionType
+{
+    OnEach,
+    OneOfThem,
+    AllOfThem,
+    OnScalar
+};
+} // namespace Dice
 #endif // DICEPARSERHELPER_H
