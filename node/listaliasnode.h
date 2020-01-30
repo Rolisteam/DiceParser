@@ -31,7 +31,7 @@
 class ListAliasNode : public ExecutionNode
 {
 public:
-    ListAliasNode(QList<DiceAlias*>* mapAlias);
+    ListAliasNode(const QList<DiceAlias*>& mapAlias);
     /**
      * @brief run
      * @param previous
@@ -57,7 +57,7 @@ public:
     virtual ExecutionNode* getCopy() const;
 
 private:
-    QList<DiceAlias*>* m_aliasList;
+    const QList<DiceAlias*>& m_aliasList;
 };
 
 #endif // LISTALIASNODE_H

@@ -142,6 +142,15 @@ DiceAlias::DiceAlias(QString cmd, QString key, bool isReplace, bool isEnable)
 
 DiceAlias::~DiceAlias() {}
 
+DiceAlias::DiceAlias(const DiceAlias& alias)
+{
+    m_command= alias.getCommand();
+    m_comment= alias.getComment();
+    m_value= alias.getValue();
+    m_isEnable= alias.isEnable();
+    m_type= alias.isReplace() ? REPLACE : REGEXP;
+}
+
 bool DiceAlias::resolved(QString& str)
 {
     if(!m_isEnable)

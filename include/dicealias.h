@@ -42,6 +42,7 @@ public:
      * @param isReplace
      */
     DiceAlias(QString pattern, QString remplacement, bool isReplace= true, bool isEnable= true);
+    DiceAlias(const DiceAlias& alias);
     /**
      * @brief ~DiceAlias
      */

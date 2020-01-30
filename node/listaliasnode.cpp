@@ -20,7 +20,7 @@
  *************************************************************************/
 #include "listaliasnode.h"
 
-ListAliasNode::ListAliasNode(QList<DiceAlias*>* apAlias) : m_aliasList(apAlias)
+ListAliasNode::ListAliasNode(const QList<DiceAlias*>& apAlias) : m_aliasList(apAlias)
 {
     m_result= new StringResult();
 }
@@ -46,7 +46,7 @@ void ListAliasNode::run(ExecutionNode* previous)
 QString ListAliasNode::buildList() const
 {
     QString result(QObject::tr("List of Alias:\n"));
-    for(auto& key : *m_aliasList)
+    for(auto& key : m_aliasList)
     {
         result+= QString("%1 : %2  # %3\n").arg(key->getCommand(), key->getValue(), key->getComment());
     }
@@ -55,7 +55,7 @@ QString ListAliasNode::buildList() const
 QString ListAliasNode::toString(bool wl) const
 {
     QStringList resultList;
-    for(auto& key : *m_aliasList)
+    for(auto& key : m_aliasList)
     {
         resultList << "{" << key->getCommand() << key->getValue() << "}";
     }
