@@ -1,0 +1,17 @@
+image: gcc
+
+build:
+  stage: build
+  before_script:
+     - apt update && apt -y install make autoconf cmake qt5
+  script:
+    - cmake
+    - make
+  artifacts:
+    paths:
+      - mybinary
+
+# run tests using the binary built before
+test:
+  stage: test
+  script:
