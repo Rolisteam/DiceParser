@@ -212,6 +212,7 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
         ExecutionNode* next= ParsingToolBox::getLeafNode(start);
         Result* result= next->getResult();
         ExportedDiceResult nodeResult;
+        QSet<QString> alreadyAdded;
         while(nullptr != result)
         {
             if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
@@ -223,12 +224,19 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
                 for(auto& die : diceResult->getResultList())
                 {
                     faces= die->getFaces();
-                    // qDebug() << "face" << faces;
+                    // qDebug() << "face" << faces << die->getValue() <<
+                    // die->getListValue()
+                    //         << next->toString(true);
                     HighLightDice hlDice(die->getListValue(), die->isHighlighted(), die->getColor(),
                                          die->hasBeenDisplayed(), die->getFaces());
-                    list.append(hlDice);
+                    if(!alreadyAdded.contains(die->getUuid()))
+                    {
+                        list.append(hlDice);
+                        alreadyAdded.insert(die->getUuid());
+                    }
                 }
-                nodeResult.insert(faces, list);
+                if(!list.isEmpty())
+                    nodeResult.insert(faces, list);
             }
             result= result->getPrevious();
         }
