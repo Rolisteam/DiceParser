@@ -688,9 +688,9 @@ bool ParsingToolBox::readDiceRange(QString& str, qint64& start, qint64& end)
     }
     if(readNumber(str, start))
     {
-        if(str.startsWith("-"))
+        if(str.startsWith(".."))
         {
-            str= str.remove(0, 1);
+            str= str.remove(0, 2);
             if(readNumber(str, end))
             {
                 if(expectSquareBrasket)
