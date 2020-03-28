@@ -18,6 +18,7 @@
     * [Backward Jump](#backward-jump)
     * [Paint](#paint)
     * [Merge](#merge)
+    * [Filter](#filter)
     * [if](#if)
     * [Group](#group)
     * [Spread](#spread)
@@ -293,6 +294,20 @@ https://gist.github.com/obiwankennedy/62101383d411e55d205e44df78aa5299
 The amount of color is depending of client application of DiceParser.
 - With Rolisteam, you may set any Qt color's name or set the Hexcode of your color: #ff28AC.
 - The cli application supports few colors: black, white, blue, red, black, green, yellow.
+
+
+### Filter
+
+Filter operator allows you to ignore some dice result given a validator.
+
+> 4d6f[!=6]
+
+Result:
+```
+
+total: 11 - details[5 2 6 4]
+```
+the 6 is ignored.
 
 ### Merge
 
