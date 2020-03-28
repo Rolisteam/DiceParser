@@ -88,15 +88,15 @@ Thanks of several operations and options, you can tune a bit your rolling comman
 
 ### Roll dice in Range
 
-> 4d[-1-1]
+> 4d[-1..1]
 
 Rolling 4 dice with value between -1 to 1. (Fudge/Fate system)
 
-> 3d[0-9]
+> 3d[0..9]
 
 Rolling 3 dice with 10 faces starting at 0.
 
-> 3d[-20--9]
+> 3d[-20..-9]
 
 Rolling 3 dice, values are between -20 and -9.
 
