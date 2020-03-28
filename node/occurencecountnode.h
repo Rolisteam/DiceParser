@@ -21,8 +21,8 @@
 #define OCCURENCECOUNTNODE_H
 
 #include "executionnode.h"
-#include "validator.h"
 
+class ValidatorList;
 class StringResult;
 class DiceResult;
 class OccurenceCountNode : public ExecutionNode
@@ -42,8 +42,8 @@ public:
     qint64 getHeight() const;
     void setHeight(const qint64& height);
 
-    Validator* getValidator() const;
-    void setValidator(Validator* validator);
+    ValidatorList* getValidatorList() const;
+    void setValidatorList(ValidatorList* validator);
 
 private:
     void runForStringResult(const std::map<qint64, qint64>& mapOccurence, QVector<qint64>& vec);
@@ -52,7 +52,7 @@ private:
 private:
     qint64 m_width= 1;
     qint64 m_height= 0;
-    Validator* m_validator= nullptr;
+    ValidatorList* m_validatorList= nullptr;
     StringResult* m_stringResult= nullptr;
     DiceResult* m_diceResult= nullptr;
 };

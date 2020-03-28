@@ -18,6 +18,7 @@
     * [Backward Jump](#backward-jump)
     * [Paint](#paint)
     * [Merge](#merge)
+    * [Filter](#filter)
     * [if](#if)
     * [Group](#group)
     * [Spread](#spread)
@@ -25,6 +26,7 @@
     * [All The same](#allsame)
     * [Value list](#Value-list)
     * [Comment (\#)](#comment-)
+* [Functions](#Functions)
 * [Managing the output](#the-output)
     * [Shortcuts](#shortcuts)
     * [Final Result](#final-result)
@@ -293,6 +295,20 @@ The amount of color is depending of client application of DiceParser.
 - With Rolisteam, you may set any Qt color's name or set the Hexcode of your color: #ff28AC.
 - The cli application supports few colors: black, white, blue, red, black, green, yellow.
 
+
+### Filter
+
+Filter operator allows you to ignore some dice result given a validator.
+
+> 4d6f[!=6]
+
+Result:
+```
+
+total: 11 - details[5 2 6 4]
+```
+the 6 is ignored.
+
 ### Merge
 
 Merge operator is used for gathering several dice rolls from different die type into one dice result and then you may apply any kind of operator.
@@ -442,6 +458,26 @@ So DiceParser can answer question:
 Am I evil ?
 yes
 ```
+
+## Functions
+
+DiceParser provides function to deal with instructions.
+Some functions will come soon (e.g: max, min). It will allows to manage several commands at once.
+
+### Repeat
+
+> repeat(1d10,5)
+
+Output:
+```
+2 - Details [2]
+8 - Details [8]
+3 - Details [3]
+1 - Details [1]
+10 - Details [10]
+```
+
+Attention! Be careful, `repeat` works badly with multiple instruction commands
 
 ## The output
 
@@ -612,9 +648,11 @@ This command means: roll 4 dice and they explode on 10.
 
 ### Range
 
-The range is defined as two bounds. You have to use square brackets and the two bounds are separated by `-`.
+The range is defined as two bounds. You have to use square brackets and the two bounds are separated by `..`.
 
-> 4d10c[8-10]
+> 4d10c[8..10]
+
+> 1d[-1..8]
 
 ### Boolean Condition
 
@@ -865,5 +903,5 @@ All lines must be part of the same messages, so prepare it first.
 
 # Bug report and new features
 
-Please fulfill a ticket in our [Bug tracker](https://github.com/Rolisteam/DiceParser/issues) system.
+Please fulfill a ticket in our [Bug tracker](https://invent.kde.org/kde/rolisteam-diceparser/issues/new) system.
 Or contact us on [discord](https://discordapp.com/invite/MrMrQwX) or any [other ways](http://www.rolisteam.org/contact.html)

@@ -4,7 +4,8 @@
 #include "executionnode.h"
 
 #include "result/diceresult.h"
-#include "validator.h"
+
+class ValidatorList;
 
 class FilterNode : public ExecutionNode
 {
@@ -16,7 +17,7 @@ public:
     /**
      * @brief setValidator
      */
-    virtual void setValidator(Validator*);
+    virtual void setValidatorList(ValidatorList*);
     /**
      * @brief toString
      * @return
@@ -32,7 +33,7 @@ public:
 
 private:
     DiceResult* m_diceResult;
-    Validator* m_validator;
+    ValidatorList* m_validatorList;
     bool m_eachValue;
 };
 

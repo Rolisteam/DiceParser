@@ -1,5 +1,5 @@
 /***************************************************************************
- * Copyright (C) 2014 by Renaud Guezennec                                   *
+ * Copyright (C) 2019 by Renaud Guezennec                                   *
  * http://www.rolisteam.org/contact                      *
  *                                                                          *
  *  This file is part of DiceParser                                         *
@@ -19,78 +19,30 @@
  * Free Software Foundation, Inc.,                                          *
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
  ***************************************************************************/
-#ifndef DICERESULT_H
-#define DICERESULT_H
-#include <QList>
-#include <functional>
+#ifndef REPEATER_NODE_H
+#define REPEATER_NODE_H
 
-#include "die.h"
-#include "result.h"
-/**
- * @brief The DiceResult class
- */
-class DiceResult : public Result
+#include "node/executionnode.h"
+#include <memory>
+
+class RepeaterNode : public ExecutionNode
 {
 public:
-    /**
-     * @brief DiceResult
-     */
-    DiceResult();
-    /**
-     * @brief ~DiceResult
-     */
-    virtual ~DiceResult();
+    RepeaterNode();
+    void run(ExecutionNode* previous) override;
+    virtual QString toString(bool withLabel) const override;
+    virtual qint64 getPriority() const override;
 
-    /**
-     * @brief getResultList
-     * @return
-     */
-    QList<Die*>& getResultList();
-    /**
-     * @brief insertResult
-     */
-    void insertResult(Die*);
+    virtual ExecutionNode* getCopy() const override;
 
-    /**
-     * @brief setResultList
-     * @param list
-     */
-    void setResultList(QList<Die*> list);
-
-    /**
-     * @brief getScalar
-     * @return
-     */
-    virtual QVariant getResult(Dice::RESULT_TYPE);
-    /**
-     * @brief toString
-     * @return
-     */
-    virtual QString toString(bool wl);
-    /**
-     * @brief isHomogeneous
-     */
-    bool isHomogeneous() const;
-    /**
-     * @brief setHomogeneous
-     */
-    void setHomogeneous(bool);
-
-    Die::ArithmeticOperator getOperator() const;
-    void setOperator(const Die::ArithmeticOperator& dieOperator);
-    bool contains(Die* die, const std::function<bool(const Die*, const Die*)> equal);
-
-    void clear();
-
-    virtual Result* getCopy() const;
+    void setCommand(const std::vector<ExecutionNode*>& node);
+    void setTimeNode(ExecutionNode* times);
+    void setSumAll(bool b);
 
 private:
-    qreal getScalarResult();
-
-private:
-    QList<Die*> m_diceValues;
-    bool m_homogeneous;
-    Die::ArithmeticOperator m_operator;
+    std::vector<ExecutionNode*> m_cmd;
+    ExecutionNode* m_times= nullptr;
+    bool m_sumAll= false;
 };
-Q_DECLARE_METATYPE(QList<Die*>)
-#endif // DICERESULT_H
+
+#endif // REPEATER_NODE_H

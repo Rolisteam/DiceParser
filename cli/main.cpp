@@ -443,7 +443,6 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
             rt= 1;
         }
     }
-    parser.cleanAll();
     return rt;
 }
 #include <QTextCodec>

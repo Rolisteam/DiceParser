@@ -20,10 +20,11 @@
 #ifndef IFNODE_H
 #define IFNODE_H
 
+#include "diceparserhelper.h"
 #include "executionnode.h"
 #include "result/diceresult.h"
-#include "validator.h"
-#include <QDebug>
+
+class ValidatorList;
 class PartialDiceRollNode : public ExecutionNode
 {
 public:
@@ -46,16 +47,6 @@ class IfNode : public ExecutionNode
 {
 public:
     /**
-     * @brief The ConditionType enum
-     */
-    enum ConditionType
-    {
-        OnEach,
-        OneOfThem,
-        AllOfThem,
-        OnScalar
-    };
-    /**
      * @brief IfNode
      */
     IfNode();
@@ -71,7 +62,7 @@ public:
     /**
      * @brief setValidator
      */
-    virtual void setValidator(Validator*);
+    virtual void setValidatorList(ValidatorList*);
     /**
      * @brief setInstructionTrue
      */
@@ -105,20 +96,20 @@ public:
      * @brief getConditionType
      * @return
      */
-    ConditionType getConditionType() const;
+    Dice::ConditionType getConditionType() const;
 
     /**
      * @brief setConditionType
      * @param conditionType
      */
-    void setConditionType(const IfNode::ConditionType& conditionType);
+    void setConditionType(const Dice::ConditionType& conditionType);
 
 protected:
     ExecutionNode* getLeafNode(ExecutionNode* node);
 
 protected:
-    Validator* m_validator;
-    ConditionType m_conditionType;
+    ValidatorList* m_validatorList= nullptr;
+    Dice::ConditionType m_conditionType;
 
     ExecutionNode* m_true;
     ExecutionNode* m_false;
