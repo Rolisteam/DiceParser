@@ -1,12 +1,13 @@
 #ifndef STRINGRESULT_H
 #define STRINGRESULT_H
 
-#include "result.h"
+#include "diceresult.h"
 #include <QString>
 /**
  * @brief The StringResult class stores command result for String.
  */
-class StringResult : public Result
+
+class StringResult : public DiceResult
 {
 public:
     /**
@@ -16,36 +17,26 @@ public:
     /**
      * @brief StringResult
      */
-    virtual ~StringResult();
-    /**
-     * @brief setText
-     * @param text
-     */
-    void setText(QString text);
-    /**
-     * @brief getText
-     * @return
-     */
+    virtual ~StringResult() override;
+    void addText(QString text);
+    void finished();
     QString getText() const;
-    /**
-     * @brief getScalar
-     * @return
-     */
-    virtual QVariant getResult(Dice::RESULT_TYPE);
-    /**
-     * @brief toString
-     * @return
-     */
+    virtual QVariant getResult(Dice::RESULT_TYPE) override;
     virtual QString toString(bool);
 
     virtual void setHighLight(bool);
     virtual bool hasHighLight() const;
-    virtual bool hasResultOfType(Dice::RESULT_TYPE resultType) const;
-    virtual Result* getCopy() const;
+    virtual bool hasResultOfType(Dice::RESULT_TYPE resultType) const override;
+    virtual Result* getCopy() const override;
+
+    bool isDigitOnly() const;
+
+    void setStringCount(int count);
 
 private:
-    QString m_value;
+    QStringList m_value;
     bool m_highlight;
+    int m_stringCount= 0;
 };
 
 #endif // STRINGRESULT_H

@@ -148,7 +148,8 @@ void OccurenceCountNode::runForStringResult(const std::map<qint64, qint64>& mapO
     else
         result= QObject::tr("No matching result");
 
-    m_stringResult->setText(QStringLiteral("%1 - [%2]").arg(result).arg(resultList.join(',')));
+    m_stringResult->addText(QStringLiteral("%1 - [%2]").arg(result).arg(resultList.join(',')));
+    m_stringResult->finished();
 }
 void OccurenceCountNode::runForDiceResult(const std::map<qint64, qint64>& mapOccurence)
 {

@@ -30,7 +30,8 @@ void ListAliasNode::run(ExecutionNode* previous)
     StringResult* txtResult= dynamic_cast<StringResult*>(m_result);
     txtResult->setHighLight(false);
 
-    txtResult->setText(buildList());
+    txtResult->addText(buildList());
+    txtResult->finished();
     if(nullptr != previous)
     {
         // txtResult->setText(previous->getHelp());

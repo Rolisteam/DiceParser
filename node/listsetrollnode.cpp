@@ -21,6 +21,8 @@
 #include "listsetrollnode.h"
 #include "die.h"
 
+#include <QDebug>
+
 ListSetRollNode::ListSetRollNode() : m_diceResult(new DiceResult()), m_stringResult(new StringResult()), m_unique(false)
 {
     m_result= m_stringResult;
@@ -71,16 +73,20 @@ void ListSetRollNode::run(ExecutionNode* previous)
             else
             {
                 m_result->setPrevious(result);
-                QStringList rollResult;
                 for(quint64 i= 0; i < diceCount; ++i)
                 {
+                    QStringList rollResult;
                     Die* die= new Die();
                     computeFacesNumber(die);
                     die->roll();
                     m_diceResult->insertResult(die);
                     getValueFromDie(die, rollResult);
+                    for(auto str : rollResult)
+                    {
+                        m_stringResult->addText(str);
+                    }
                 }
-                m_stringResult->setText(rollResult.join(","));
+                m_stringResult->finished();
             }
             if(nullptr != m_nextNode)
             {

@@ -101,7 +101,8 @@ void RepeaterNode::run(ExecutionNode* previousNode)
                 list.append(QStringLiteral("%1 - Details [%2]").arg(value).arg(diceStr.join(",")));
             }
         });
-        string->setText(list.join('\n'));
+        string->addText(list.join('\n'));
+        string->finished();
         m_result= string;
     }
 

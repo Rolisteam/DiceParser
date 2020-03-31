@@ -120,6 +120,9 @@ private slots:
     void commandsTest();
     void commandsTest_data();
 
+    void rangedCommandsTest();
+    void rangedCommandsTest_data();
+
     void dangerousCommandsTest();
     void dangerousCommandsTest_data();
 
@@ -242,7 +245,7 @@ void TestDice::validatorListTest_data()
     QTest::addColumn<QString>("cmd");
     QTest::addColumn<int>("result");
 
-    QTest::addRow("cmd1") << "2d[6-6]c6" << 2;
+    QTest::addRow("cmd1") << "2d[6..6]c6" << 2;
     QTest::addRow("cmd2") << "[6,2]c[:>6&%2=0]" << 2;
 }
 
@@ -341,12 +344,12 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd60") << "5-5*5+5";
     QTest::addRow("cmd61") << "((3+4)*2)d6";
     QTest::addRow("cmd62") << "4d6i[=6]{+1d6}";
-    QTest::addRow("cmd63") << "10d[-8--1]";
+    QTest::addRow("cmd63") << "10d[-8..-1]";
     QTest::addRow("cmd64") << "4d6e6i[=4]{-4}+2";
     QTest::addRow("cmd65") << "4d6e6f[!=4]+2";
     QTest::addRow("cmd66") << "5d10g10";
     QTest::addRow("cmd67") << "4d6p[4:blue]c[>=4];1d6p[1:#FFFFFF]c6-@c1;1d6p[1:#FF0000]c[>=4]+@c6-@c1";
-    QTest::addRow("cmd68") << "10d[0-9]";
+    QTest::addRow("cmd68") << "10d[0..9]";
     QTest::addRow("cmd69") << "1d8e8;1d6e6mk1+2";
     QTest::addRow("cmd70") << "3d100g50";
     QTest::addRow("cmd71") << "3d100g33";
@@ -367,6 +370,45 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd86") << "[100,200,300]k2";
     QTest::addRow("cmd87") << "100;200;300;[$1,$2,$3]k2";
     QTest::addRow("cmd88") << "1d20|3i:[>1]{\"Success\"}{\"Failure\"}";
+    QTest::addRow("cmd89") << "1L[-3,-2,2,3]+10";
+    QTest::addRow("cmd90") << "1L[-3,-2,2,3]+10;1L[-3,-2,2,3]";
+    QTest::addRow("cmd91") << "1d20|3i:[>1]{\"Success\"}{\"Failure\"}";
+}
+
+void TestDice::rangedCommandsTest()
+{
+    QFETCH(QString, cmd);
+    QFETCH(int, min);
+    QFETCH(int, max);
+
+    bool a= m_diceParser->parseLine(cmd);
+    QVERIFY2(a, "parsing");
+
+    m_diceParser->start();
+    auto results= m_diceParser->getLastIntegerResults();
+
+    QVERIFY(results.size() == 1);
+
+    auto score= results.first();
+
+    QVERIFY(score >= min);
+    QVERIFY(score <= max);
+
+    QVERIFY2(m_diceParser->humanReadableError().isEmpty(), "no error");
+    QVERIFY2(m_diceParser->humanReadableError().isEmpty(), "no error");
+
+    QVERIFY2(m_diceParser->humanReadableError().isEmpty(), "no error");
+    QVERIFY2(m_diceParser->humanReadableWarning().isEmpty(), "no warning");
+}
+
+void TestDice::rangedCommandsTest_data()
+{
+    QTest::addColumn<QString>("cmd");
+    QTest::addColumn<int>("min");
+    QTest::addColumn<int>("max");
+
+    QTest::addRow("cmd1") << "1L[5,6,7,8]+10" << 15 << 18;
+    QTest::addRow("cmd2") << "2L[5,6,7,8]+10" << 20 << 26;
 }
 
 void TestDice::wrongCommandsTest()
@@ -442,18 +484,18 @@ void TestDice::scopeDF_data()
     QTest::addColumn<int>("max");
     QTest::addColumn<bool>("valid");
 
-    QTest::newRow("test1") << "1D[-1-1]" << -1 << 1 << true;
-    QTest::newRow("test2") << "1D[-10--5]" << -10 << -5 << true;
-    QTest::newRow("test3") << "1D[-100-100]" << -100 << 100 << true;
-    QTest::newRow("test4") << "1D[-1-0]" << -1 << 0 << true;
-    QTest::newRow("test5") << "1D[10-20]" << 10 << 20 << true;
-    QTest::newRow("test6") << "1D[30-100]" << 30 << 100 << true;
-    QTest::newRow("test7") << "1D[0-99]" << 0 << 99 << true;
+    QTest::newRow("test1") << "1D[-1..1]" << -1 << 1 << true;
+    QTest::newRow("test2") << "1D[-10..-5]" << -10 << -5 << true;
+    QTest::newRow("test3") << "1D[-100..100]" << -100 << 100 << true;
+    QTest::newRow("test4") << "1D[-1..0]" << -1 << 0 << true;
+    QTest::newRow("test5") << "1D[10..20]" << 10 << 20 << true;
+    QTest::newRow("test6") << "1D[30..100]" << 30 << 100 << true;
+    QTest::newRow("test7") << "1D[0..99]" << 0 << 99 << true;
     QTest::newRow("test8") << "5-5*5+5" << -15 << -15 << true;
     QTest::newRow("test9") << "2d20c[<=13]+@c[<=3]" << 0 << 4 << true;
     QTest::newRow("test10") << "6d10c[>=6]-@c1" << -6 << 6 << true;
     QTest::newRow("test11") << "2d6k1+2d8k1+2d10k1" << 3 << 30 << true;
-    QTest::newRow("test12") << "1D[-2-50]" << -2 << 50 << true;
+    QTest::newRow("test12") << "1D[-2..50]" << -2 << 50 << true;
 }
 void TestDice::testAlias()
 {
@@ -473,14 +515,14 @@ void TestDice::testAlias_data()
     QTest::addColumn<QString>("cmd");
     QTest::addColumn<QString>("expected");
 
-    /* QTest::newRow("test1") << "!2"
-                            << "3d6c2";
-     QTest::newRow("test2") << "${rang}g4"
-                            << "${rang}d10k4";
-     QTest::newRow("test3") << "${rang}g4 # gerald"
-                            << "${rang}d10k4 # gerald";
-     QTest::newRow("test4") << "5C3"
-                            << "5d10e10c[>=3]";*/
+    QTest::newRow("test1") << "!2"
+                           << "3d6c2";
+    QTest::newRow("test2") << "${rang}g4"
+                           << "${rang}d10k4";
+    QTest::newRow("test3") << "${rang}g4 # gerald"
+                           << "${rang}d10k4 # gerald";
+    QTest::newRow("test4") << "5C3"
+                           << "5d10e10c[>=3]";
     QTest::newRow("test5") << "1d100i:[<101]{\"great!\"}{\"try again\"}"
                            << "1d100i:[<101]{\"great!\"}{\"try again\"}";
 }

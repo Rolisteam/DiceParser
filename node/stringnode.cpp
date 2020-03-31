@@ -21,7 +21,8 @@ void StringNode::run(ExecutionNode* previous)
 void StringNode::setString(QString str)
 {
     m_data= str;
-    m_stringResult->setText(m_data);
+    m_stringResult->addText(m_data);
+    m_stringResult->finished();
 }
 QString StringNode::toString(bool withLabel) const
 {

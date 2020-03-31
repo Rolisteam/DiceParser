@@ -39,58 +39,58 @@ public:
     /**
      * @brief ~DiceResult
      */
-    virtual ~DiceResult();
+    virtual ~DiceResult() override;
 
     /**
      * @brief getResultList
      * @return
      */
-    QList<Die*>& getResultList();
+    virtual QList<Die*>& getResultList();
     /**
      * @brief insertResult
      */
-    void insertResult(Die*);
+    virtual void insertResult(Die*);
 
     /**
      * @brief setResultList
      * @param list
      */
-    void setResultList(QList<Die*> list);
+    virtual void setResultList(QList<Die*> list);
 
     /**
      * @brief getScalar
      * @return
      */
-    virtual QVariant getResult(Dice::RESULT_TYPE);
+    virtual QVariant getResult(Dice::RESULT_TYPE) override;
     /**
      * @brief toString
      * @return
      */
-    virtual QString toString(bool wl);
+    virtual QString toString(bool wl) override;
     /**
      * @brief isHomogeneous
      */
-    bool isHomogeneous() const;
+    virtual bool isHomogeneous() const;
     /**
      * @brief setHomogeneous
      */
-    void setHomogeneous(bool);
+    virtual void setHomogeneous(bool);
 
     Die::ArithmeticOperator getOperator() const;
     void setOperator(const Die::ArithmeticOperator& dieOperator);
     bool contains(Die* die, const std::function<bool(const Die*, const Die*)> equal);
 
-    void clear();
+    void clear() override;
 
-    virtual Result* getCopy() const;
+    virtual Result* getCopy() const override;
 
-private:
+protected:
     qreal getScalarResult();
 
-private:
+protected:
     QList<Die*> m_diceValues;
     bool m_homogeneous;
-    Die::ArithmeticOperator m_operator;
+    Die::ArithmeticOperator m_operator= Die::ArithmeticOperator::PLUS;
 };
 Q_DECLARE_METATYPE(QList<Die*>)
 #endif // DICERESULT_H
