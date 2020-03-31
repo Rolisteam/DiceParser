@@ -376,8 +376,10 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
                     stringResult.replace(QStringLiteral("µ%1").arg(i), (*it));
                     --i;
                 }
-
-                resultStr= stringResult;
+                bool isInt= true;
+                stringResult.toInt(&isInt);
+                if(!isInt)
+                    resultStr= stringResult;
             }
             if(format == BOT)
             {
