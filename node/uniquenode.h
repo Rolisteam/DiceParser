@@ -1,6 +1,6 @@
 /***************************************************************************
  * Copyright (C) 2014 by Renaud Guezennec                                   *
- * http://www.rolisteam.org/contact                                         *
+ * https://rolisteam.org/contact                                         *
  *                                                                          *
  *  This file is part of DiceParser                                         *
  *                                                                          *
