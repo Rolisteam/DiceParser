@@ -83,16 +83,23 @@ void makeResultExplode(DiceResult& result, const QVector<int>& values)
     result.insertResult(die);
 }
 
-ValidatorList* makeValidator(int number, BooleanCondition::LogicOperator op)
+ValidatorList* makeValidator(QVector<int> number, BooleanCondition::LogicOperator op,
+                             QVector<ValidatorList::LogicOperation> vector= QVector<ValidatorList::LogicOperation>())
 {
-    BooleanCondition* validator= new BooleanCondition();
-    NumberNode* node= new NumberNode();
-    node->setNumber(number);
-    validator->setValueNode(node);
-    validator->setOperator(op);
-
     ValidatorList* list= new ValidatorList();
-    list->setValidators(QList<Validator*>() << validator);
+    QList<Validator*> validList;
+    for(auto num : number)
+    {
+        BooleanCondition* validator= new BooleanCondition();
+        NumberNode* node= new NumberNode();
+        node->setNumber(num);
+        validator->setValueNode(node);
+        validator->setOperator(op);
+        validList.append(validator);
+    }
+    list->setValidators(validList);
+    if(!vector.isEmpty())
+        list->setOperationList(vector);
     return list;
 }
 
@@ -247,6 +254,7 @@ void TestDice::validatorListTest_data()
 
     QTest::addRow("cmd1") << "2d[6..6]c6" << 2;
     QTest::addRow("cmd2") << "[6,2]c[:>6&%2=0]" << 2;
+    QTest::addRow("cmd3") << "[6,1,1]c[=6|=1]" << 3;
 }
 
 void TestDice::diceRollD10Test()
@@ -688,14 +696,29 @@ void TestDice::sortTest_data()
 void TestDice::countTest()
 {
     QFETCH(QVector<int>, values);
-    QFETCH(int, condition);
+    QFETCH(QVector<int>, condition);
     QFETCH(int, score);
     QFETCH(QVector<int>, subvalues);
+    QFETCH(int, boolOp);
 
     TestNode node;
     CountExecuteNode countN;
 
-    auto validator= makeValidator(condition, BooleanCondition::GreaterThan);
+    QVector<ValidatorList::LogicOperation> vector;
+
+    bool first= true;
+    for(auto i : condition)
+    {
+        if(!first)
+        {
+            first= !first;
+            continue;
+        }
+
+        vector.push_back(ValidatorList::OR);
+    }
+
+    auto validator= makeValidator(condition, static_cast<BooleanCondition::LogicOperator>(boolOp), vector);
 
     countN.setValidatorList(validator);
     DiceResult result;
@@ -714,13 +737,17 @@ void TestDice::countTest()
 void TestDice::countTest_data()
 {
     QTest::addColumn<QVector<int>>("values");
-    QTest::addColumn<int>("condition");
+    QTest::addColumn<QVector<int>>("condition");
     QTest::addColumn<int>("score");
     QTest::addColumn<QVector<int>>("subvalues");
+    QTest::addColumn<int>("boolOp");
 
-    QTest::addRow("cmd1") << QVector<int>({10, 9, 2}) << 3 << 2 << QVector<int>();
-    QTest::addRow("cmd2") << QVector<int>({1, 2, 3}) << 3 << 0 << QVector<int>();
-    QTest::addRow("cmd3") << QVector<int>({10, 7, 4}) << 7 << 3 << QVector<int>({10, 10, 2});
+    // clang-format off
+    QTest::addRow("cmd1") << QVector<int>({10, 9, 2}) << QVector<int>({3}) << 2 << QVector<int>() << static_cast<int>(BooleanCondition::GreaterThan);
+    QTest::addRow("cmd2") << QVector<int>({1, 2, 3})  << QVector<int>({3}) << 0 << QVector<int>() << static_cast<int>(BooleanCondition::GreaterThan);
+    QTest::addRow("cmd3") << QVector<int>({10, 7, 4}) << QVector<int>({7}) << 3 << QVector<int>({10, 10, 2}) << static_cast<int>(BooleanCondition::GreaterThan);
+    QTest::addRow("cmd4") << QVector<int>({1, 1, 6}) << QVector<int>({1,6}) << 3 << QVector<int>() << static_cast<int>(BooleanCondition::Equal);
+    // clang-format on
 }
 
 void TestDice::rerollTest()
@@ -736,7 +763,7 @@ void TestDice::rerollTest()
     makeResult(result, values);
     node.setResult(&result);
 
-    auto validator= makeValidator(condition, BooleanCondition::GreaterThan);
+    auto validator= makeValidator(QVector<int>() << condition, BooleanCondition::GreaterThan);
     reroll.setValidatorList(validator);
     node.setNextNode(&reroll);
 
@@ -780,7 +807,7 @@ void TestDice::explodeTest()
     makeResult(result, values);
     node.setResult(&result);
 
-    auto validator= makeValidator(condition, BooleanCondition::Equal);
+    auto validator= makeValidator(QVector<int>() << condition, BooleanCondition::Equal);
     explode.setValidatorList(validator);
     node.setNextNode(&explode);
 
@@ -824,7 +851,7 @@ void TestDice::rerollUntilTest()
     makeResult(result, values, QVector<int>(), 0);
     node.setResult(&result);
 
-    auto validator= makeValidator(condition, BooleanCondition::Equal);
+    auto validator= makeValidator(QVector<int>() << condition, BooleanCondition::Equal);
     reroll.setValidatorList(validator);
     node.setNextNode(&reroll);
 
@@ -866,7 +893,7 @@ void TestDice::rerollAddTest()
     makeResult(result, values);
     node.setResult(&result);
 
-    auto validator= makeValidator(condition, BooleanCondition::Equal);
+    auto validator= makeValidator(QVector<int>() << condition, BooleanCondition::Equal);
     reroll.setValidatorList(validator);
     node.setNextNode(&reroll);
 
@@ -924,7 +951,7 @@ void TestDice::ifTest()
     ifNode.setInstructionTrue(&trueNode);
     ifNode.setInstructionFalse(&falseNode);
 
-    auto validator= makeValidator(valCondition, BooleanCondition::Equal);
+    auto validator= makeValidator(QVector<int>() << valCondition, BooleanCondition::Equal);
     ifNode.setValidatorList(validator);
     node.setNextNode(&ifNode);
 
@@ -1077,7 +1104,7 @@ void TestDice::occurenceTest()
     makeResult(result, values);
     node.setResult(&result);
 
-    auto validator= makeValidator(condition, BooleanCondition::GreaterThan);
+    auto validator= makeValidator(QVector<int>() << condition, BooleanCondition::GreaterThan);
     count.setValidatorList(validator);
     node.setNextNode(&count);
 

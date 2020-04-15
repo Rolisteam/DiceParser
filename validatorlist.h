@@ -34,12 +34,27 @@ class Validator;
 class Die;
 class Result;
 
-struct ValidatorResult
+class ValidatorResult
 {
-    std::vector<std::pair<Die*, qint64>> m_validDice;
-    bool m_allTrue;
 
-    friend bool operator>(const ValidatorResult& a, const ValidatorResult& b)
+public:
+    ValidatorResult();
+
+    const std::vector<std::pair<Die*, qint64>>& validDice() const;
+    std::vector<std::pair<Die*, qint64>>& validDiceRef();
+    void setValidDice(const std::vector<std::pair<Die*, qint64>>& pairs);
+    void appendValidDice(Die* die, qint64 sum);
+
+    void setAllTrue(bool allTrue);
+    bool allTrue() const;
+
+    bool contains(Die* die);
+
+private:
+    std::vector<std::pair<Die*, qint64>> m_validDice;
+    bool m_allTrue= false;
+
+    /*friend bool operator>(const ValidatorResult& a, const ValidatorResult& b)
     {
         if(a.m_validDice.size() > b.m_validDice.size())
             return true;
@@ -51,7 +66,7 @@ struct ValidatorResult
                 return false;
         }
         return false;
-    }
+    }*/
 };
 /**
  * @brief The BooleanCondition class is a Validator class checking validity from logic expression.

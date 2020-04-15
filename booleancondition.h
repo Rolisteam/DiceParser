@@ -41,6 +41,7 @@ public:
         LesserOrEqual,
         Different
     };
+
     BooleanCondition();
     virtual ~BooleanCondition() override;
 

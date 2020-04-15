@@ -26,29 +26,28 @@
 #include "validator.h"
 #include <utility>
 
-bool isValid(Die* die, const ValidatorResult& diceList, ValidatorList::LogicOperation op)
+void mergeResultsAsAND(const ValidatorResult& diceList, ValidatorResult& result)
 {
-    if(op == ValidatorList::OR)
-        return true;
-
-    bool newResult= false;
-
-    if(diceList.m_allTrue)
+    ValidatorResult val;
+    for(auto dice : diceList.validDice())
     {
-        newResult= true;
+        if(result.contains(dice.first) || diceList.allTrue())
+            val.appendValidDice(dice.first, dice.second);
     }
-    else
+    result= val;
+    result.setAllTrue(diceList.allTrue() & result.allTrue());
+}
+
+void mergeResultsAsExeclusiveOR(const ValidatorResult& diceList, ValidatorResult& result)
+{
+    ValidatorResult val;
+    for(auto dice : diceList.validDice())
     {
-        auto it= std::find_if(diceList.m_validDice.begin(), diceList.m_validDice.end(),
-                              [die](const std::pair<Die*, qint64>& pair) { return die == pair.first; });
-        if(it != diceList.m_validDice.end())
-            newResult= true;
+        if(!result.contains(dice.first))
+            val.appendValidDice(dice.first, dice.second);
     }
-
-    if(op == ValidatorList::EXCLUSIVE_OR)
-        return !newResult;
-
-    return newResult;
+    result= val;
+    result.setAllTrue(diceList.allTrue() ^ result.allTrue());
 }
 
 DiceResult* getDiceResult(Result* result)
@@ -61,6 +60,53 @@ DiceResult* getDiceResult(Result* result)
     }
     return dice;
 }
+
+//////////////////////////////////
+/// \brief ValidatorResult::ValidatorResult
+///
+///
+///
+/// ////////////////////////////////
+ValidatorResult::ValidatorResult() {}
+
+const std::vector<std::pair<Die*, qint64>>& ValidatorResult::validDice() const
+{
+    return m_validDice;
+}
+
+std::vector<std::pair<Die*, qint64>>& ValidatorResult::validDiceRef()
+{
+    return m_validDice;
+}
+
+void ValidatorResult::appendValidDice(Die* die, qint64 sum)
+{
+    m_validDice.push_back(std::make_pair(die, sum));
+}
+
+void ValidatorResult::setAllTrue(bool allTrue)
+{
+    m_allTrue= allTrue;
+}
+
+bool ValidatorResult::allTrue() const
+{
+    return m_allTrue;
+}
+
+bool ValidatorResult::contains(Die* die)
+{
+    auto it= std::find_if(m_validDice.begin(), m_validDice.end(),
+                          [die](const std::pair<Die*, qint64>& pair) { return pair.first == die; });
+
+    return it != m_validDice.end();
+}
+
+////////////////////////////////////
+/// \brief ValidatorList::ValidatorList
+///***
+///
+////////////////////////////////////
 
 ValidatorList::ValidatorList() {}
 
@@ -234,7 +280,7 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
     std::vector<ValidatorResult> validityData;
     for(auto& validator : m_validatorList)
     {
-        ValidatorResult validResult({{}, false});
+        ValidatorResult validResult;
         switch(validator->getConditionType())
         {
         case Dice::OnScalar:
@@ -244,7 +290,14 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
             die.insertRollValue(scalar);
             if(validator->hasValid(&die, recursive, unlight))
             {
-                validResult.m_allTrue= true;
+                validResult.setAllTrue(true);
+                DiceResult* diceResult= getDiceResult(result);
+                if(nullptr == diceResult)
+                    break;
+                for(auto die : diceResult->getResultList())
+                {
+                    validResult.appendValidDice(die, die->getValue());
+                }
             }
         }
         break;
@@ -258,7 +311,7 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
                 auto score= validator->hasValid(die, recursive, unlight);
                 if(score)
                 {
-                    validResult.m_validDice.push_back({die, score});
+                    validResult.appendValidDice(die, score);
                 }
             }
         }
@@ -274,7 +327,11 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
             });
             if(all)
             {
-                validResult.m_allTrue= true;
+                validResult.setAllTrue(true);
+                for(auto die : diceResult->getResultList())
+                {
+                    validResult.appendValidDice(die, die->getValue());
+                }
             }
         }
         break;
@@ -289,7 +346,11 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
             });
             if(any)
             {
-                validResult.m_allTrue= true;
+                validResult.setAllTrue(true);
+                for(auto die : diceResult->getResultList())
+                {
+                    validResult.appendValidDice(die, die->getValue());
+                }
             }
         }
         }
@@ -298,49 +359,54 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
     if(validityData.empty())
         return;
 
-    std::size_t i= 0;
-    ValidatorResult finalResult({{}, false});
+    int i= 0;
+    ValidatorResult finalResult;
+
+    for(auto vec : validityData)
     {
-        auto vec= validityData[i];
-        finalResult.m_validDice.reserve(vec.m_validDice.size());
-        finalResult= vec;
-    }
-    ++i;
-    for(auto op : m_operators)
-    {
-        ValidatorResult tmpResult({{}, false});
-        if(validityData.size() > i)
+        auto diceList= vec.validDice();
+        if(i == 0)
         {
-            auto vec= validityData[i];
-
-            auto bigger= (vec > finalResult) ? vec : finalResult;
-            auto smaller= (vec > finalResult) ? finalResult : vec;
-
-            if(bigger.m_allTrue && smaller.m_allTrue)
-                tmpResult.m_allTrue= true;
-            for(auto die : bigger.m_validDice)
-            {
-                if(isValid(die.first, smaller, op))
-                {
-                    tmpResult.m_validDice.push_back(die);
-                }
-            }
-            finalResult= tmpResult;
+            std::copy(diceList.begin(), diceList.end(), std::back_inserter(finalResult.validDiceRef()));
         }
+        else
+        {
+            auto id= i - 1;
+            if(m_operators.size() <= id)
+                continue;
+
+            auto op= m_operators.at(id);
+            switch(op)
+            {
+            case OR:
+                std::copy(diceList.begin(), diceList.end(), std::back_inserter(finalResult.validDiceRef()));
+                break;
+            case AND:
+                mergeResultsAsAND(vec, finalResult);
+                break;
+            case EXCLUSIVE_OR:
+                mergeResultsAsExeclusiveOR(vec, finalResult);
+                break;
+            case NONE:
+                break;
+            }
+        }
+
+        ++i;
     }
 
-    if(finalResult.m_allTrue)
+    if(finalResult.allTrue())
     {
         DiceResult* diceResult= getDiceResult(result);
         if(nullptr == diceResult)
             return;
         auto diceList= diceResult->getResultList();
-        std::transform(diceList.begin(), diceList.end(), std::back_inserter(finalResult.m_validDice), [](Die* die) {
+        std::transform(diceList.begin(), diceList.end(), std::back_inserter(finalResult.validDiceRef()), [](Die* die) {
             return std::pair<Die*, qint64>({die, 0});
         });
     }
 
-    for(auto die : finalResult.m_validDice)
+    for(auto die : finalResult.validDice())
     {
         functor(die.first, die.second);
     }
