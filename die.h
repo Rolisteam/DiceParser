@@ -147,6 +147,8 @@ public:
     QString getUuid() const;
     void setUuid(const QString& uuid);
 
+    static void buildSeed();
+
 private:
     QString m_uuid;
     qint64 m_value= 0;
