@@ -38,7 +38,10 @@
     * [Boolean Condition](#boolean-condition)
     * [Operation Condition](#operation-condition)
     * [Composite Validator](#composite-validator)
-* [Value from set](#select-value-from-list)
+* [List operator](#list-operator)
+    * [Text](#text-values)
+    * [Number](#number-values)
+    * [Change the odd](#change-the-odd)
 * [Miscellaneous examples](#examples)
 * [Best Practices](#best-practices)
 * [Platforms](#roll-dice-on-each-platform)
@@ -569,7 +572,7 @@ Result: 24
 
 Result: 20
 
-> (3+4)*2
+> (3+4)\*2
 
 Result: 14
 
@@ -705,9 +708,15 @@ Composite Validator accepts as many validator as you need:
 
 > !9d100c[=1|=3|=5|=7|=11|=13|=17|=19|=23|=29|=31|=37|=41|=43|=47|=53|=59|=61|=67|=71|=73|=79|=83|=89|=97]
 
-## Select value from List
+## List operator
 
-The L operator (meaning list) can offer you the opportunity to pick up value from list.
+
+* [Number](#number-values)
+* [Change the odd](#change-the-odd)
+
+### Text values
+
+The L operator (meaning list) provides a way to pick up value from list.
 
 > 1L[sword,bow,knife,gun,shotgun]
 
@@ -718,6 +727,62 @@ With comment
 ```
 Am I evil ?
 yes
+```
+
+### Number values
+
+If the value is a number, it is treated as well and you can do computation on it or use any operator.
+
+> 1L[-1,0,1,2,3,4]+7
+
+### Text and Number at the same time
+
+It is not recommended to use text and number in the same list operator.
+Currently, the behaviour changes given the result. If the chosen value is a number, you can do other computation, but otherwise, the result is displayed directly without any control on it.
+
+The behaviour will change in future release to base the decision on the data set. If the data set only contains numbers, then computation is possible. Otherwise, it will be treated as string result.
+
+
+### Change the odd
+
+There are 2 main ways to control the odd on the pickup in the list.
+
+#### The ant method
+
+> 1L[2,2,3,3,3,3,4,4,4,5]
+
+or
+
+> 1L[arm,arm,leg,leg,chest,chest,chest,head]
+
+#### The lazy method
+
+By range:
+
+> 1L[1,2,3,4,5,6[6..10]]
+
+
+By weight:
+
+> 1L[1[2],2[2],3[4]]
+
+Several results:
+
+```
+1
+3
+1
+2
+2
+1
+2
+3
+1
+2
+3
+2
+2
+3
 ```
 
 ## Examples
