@@ -43,8 +43,8 @@ private:
     ExecutionNode* getLatestNode(ExecutionNode* node);
 
 private:
-    DiceResult* m_diceResult;
-    std::vector<ExecutionNode*>* m_startList;
+    DiceResult* m_diceResult= nullptr;
+    std::vector<ExecutionNode*>* m_startList= nullptr;
 };
 
 #endif // NUMBERNODE_H
