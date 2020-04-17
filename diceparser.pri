@@ -42,11 +42,13 @@ SOURCES += $$PWD/diceparser.cpp \
     $$PWD/node/splitnode.cpp \
     $$PWD/node/valueslistnode.cpp \
     $$PWD/node/uniquenode.cpp \
+    $$PWD/node/repeatnode.cpp \
     $$PWD/node/listsetrollnode.cpp\
     $$PWD/node/variablenode.cpp\
     $$PWD/node/bind.cpp\
     $$PWD/node/occurencecountnode.cpp\
     $$PWD/diceroller.cpp\
+    $$PWD/validatorlist.cpp\
     $$PWD/qmltypesregister.cpp
 
 
@@ -89,11 +91,13 @@ HEADERS += \
     $$PWD/node/ifnode.h \
     $$PWD/node/bind.h\
     $$PWD/node/splitnode.h \
+    $$PWD/node/repeatnode.h \
     $$PWD/node/uniquenode.h \
     $$PWD/node/paintnode.h \
     $$PWD/node/listsetrollnode.h \
     $$PWD/node/occurencecountnode.h\
     $$PWD/diceroller.h \
+    $$PWD/validatorlist.cpp\
     $$PWD/include/diceparserhelper.h \
     $$PWD/qmltypesregister.h
 

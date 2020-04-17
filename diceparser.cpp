@@ -42,6 +42,16 @@ const QList<DiceAlias*>& DiceParser::getAliases() const
 {
     return m_parsingToolbox->getAliases();
 }
+
+QList<DiceAlias*>* DiceParser::aliases() const
+{
+    return m_parsingToolbox->aliases();
+}
+
+void DiceParser::cleanAliases()
+{
+    m_parsingToolbox->cleanUpAliases();
+}
 void DiceParser::insertAlias(DiceAlias* dice, int i)
 {
     m_parsingToolbox->insertAlias(dice, i);
@@ -78,6 +88,11 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
         value= false;
 
     return value;
+}
+
+QString DiceParser::convertAlias(const QString& cmd) const
+{
+    return m_parsingToolbox->convertAlias(cmd);
 }
 
 void DiceParser::start()

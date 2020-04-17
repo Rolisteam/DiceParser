@@ -121,6 +121,12 @@ void ParsingToolBox::clearUp()
     m_errorMap.clear();
     m_comment= QString("");
 }
+
+void ParsingToolBox::cleanUpAliases()
+{
+    m_aliasList.clear();
+}
+
 ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e, bool b)
 {
     SortResultNode* nodeSort= new SortResultNode();
@@ -1860,6 +1866,11 @@ void ParsingToolBox::insertAlias(DiceAlias* dice, int i)
 const QList<DiceAlias*>& ParsingToolBox::getAliases() const
 {
     return m_aliasList;
+}
+
+QList<DiceAlias*>* ParsingToolBox::aliases()
+{
+    return &m_aliasList;
 }
 
 std::vector<ExecutionNode*> ParsingToolBox::readInstructionList(QString& str, bool global)

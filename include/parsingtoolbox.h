@@ -374,6 +374,8 @@ public:
 
     void insertAlias(DiceAlias* dice, int i);
     const QList<DiceAlias*>& getAliases() const;
+    QList<DiceAlias*>* aliases();
+    void cleanUpAliases();
 
 private:
     QMap<QString, BooleanCondition::LogicOperator> m_logicOp;

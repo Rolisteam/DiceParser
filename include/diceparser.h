@@ -69,6 +69,7 @@ public:
      * @return bool every thing is fine or not
      */
     bool parseLine(QString str, bool allowAlias= true);
+    QString convertAlias(const QString& cmd) const;
     /**
      * @brief getStartNodeCount
      * @return
@@ -134,6 +135,8 @@ public:
      * @return
      */
     const QList<DiceAlias*>& getAliases() const;
+    QList<DiceAlias*>* aliases() const;
+    void cleanAliases();
     /**
      * @brief insertAlias
      */
