@@ -42,7 +42,7 @@ SOURCES += $$PWD/diceparser.cpp \
     $$PWD/node/splitnode.cpp \
     $$PWD/node/valueslistnode.cpp \
     $$PWD/node/uniquenode.cpp \
-    $$PWD/node/repeatnode.cpp \
+    $$PWD/node/repeaternode.cpp \
     $$PWD/node/listsetrollnode.cpp\
     $$PWD/node/variablenode.cpp\
     $$PWD/node/bind.cpp\
@@ -91,7 +91,7 @@ HEADERS += \
     $$PWD/node/ifnode.h \
     $$PWD/node/bind.h\
     $$PWD/node/splitnode.h \
-    $$PWD/node/repeatnode.h \
+    $$PWD/node/repeaternode.h \
     $$PWD/node/uniquenode.h \
     $$PWD/node/paintnode.h \
     $$PWD/node/listsetrollnode.h \
