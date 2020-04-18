@@ -182,7 +182,7 @@ QString ValidatorList::toString()
     return QString("[%1%2]").arg(str).arg(m_value);*/
     return str;
 }
-
+namespace {
 Dice::CONDITION_STATE testAND(Dice::CONDITION_STATE before, Dice::CONDITION_STATE current)
 {
     if(before == Dice::CONDITION_STATE::UNREACHABLE || current == Dice::CONDITION_STATE::UNREACHABLE)
@@ -215,6 +215,7 @@ Dice::CONDITION_STATE testXOR(Dice::CONDITION_STATE before, Dice::CONDITION_STAT
     else
         return Dice::CONDITION_STATE::REACHABLE;
 }
+} // namespace
 
 Dice::CONDITION_STATE ValidatorList::isValidRangeSize(const std::pair<qint64, qint64>& range) const
 {
