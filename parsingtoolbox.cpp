@@ -1706,7 +1706,7 @@ bool ParsingToolBox::readCommand(QString& str, ExecutionNode*& node)
         else if(str == QLatin1String("la"))
         {
             str= str.remove(0, QLatin1String("la").size());
-            node= new ListAliasNode(&m_aliasList);
+            node= new ListAliasNode(m_aliasList);
         }
         return true;
     }
