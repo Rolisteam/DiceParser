@@ -21,8 +21,8 @@
  ***************************************************************************/
 #include "validatorlist.h"
 
-#include "diceresult.h"
-#include "result.h"
+#include "result/diceresult.h"
+#include "result/result.h"
 #include "validator.h"
 #include <utility>
 
@@ -182,7 +182,8 @@ QString ValidatorList::toString()
     return QString("[%1%2]").arg(str).arg(m_value);*/
     return str;
 }
-namespace {
+namespace
+{
 Dice::CONDITION_STATE testAND(Dice::CONDITION_STATE before, Dice::CONDITION_STATE current)
 {
     if(before == Dice::CONDITION_STATE::UNREACHABLE || current == Dice::CONDITION_STATE::UNREACHABLE)
