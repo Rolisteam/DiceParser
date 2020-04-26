@@ -90,6 +90,8 @@ protected:
     template <typename Functor>
     qint64 onEach(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const;
     template <typename Functor>
+    qint64 onEachValue(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const;
+    template <typename Functor>
     qint64 oneOfThem(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const;
     template <typename Functor>
     qint64 allOfThem(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const;

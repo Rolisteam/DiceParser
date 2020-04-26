@@ -94,7 +94,11 @@ BooleanCondition::~BooleanCondition()
 qint64 BooleanCondition::hasValid(Die* b, bool recursive, bool unhighlight) const
 {
     QList<qint64> listValues;
-    if(recursive)
+    if(m_conditionType == Dice::OnEachValue)
+    {
+        listValues.append(b->getValue());
+    }
+    else if(recursive)
     {
         listValues= b->getListValue();
     }

@@ -397,11 +397,12 @@ There is also 2 optional parameters
 
 #### Compare method
 
-There are 3 different methods.
-* **On Each (default)**: the condition is tested on each die from the previous part of the command. \[Default method\]
-* **All Of Them (`*`)**: All dice must fit the condition to trigger the true instruction. If all dice do not fit the condition the false instruction is run.
-* **One Of Them (`.`)**: at least one die must fit the condition to trigger the true instruction. If no dices fit the condition the false instruction is run.
-* **On Scalar (`:`)**: the condition is evaluated on the scalar result of the dice roll.
+There are 4 different methods.
+* **On Each**: the condition is tested on each die from the previous part of the command. \[Default method\]
+* **On Each value** `?`: the condition is tested on each final value of die from the previous part of the command.
+* **All Of Them** `*`: All dice must fit the condition to trigger the true instruction. If all dice do not fit the condition the false instruction is run.
+* **One Of Them** `.`: at least one die must fit the condition to trigger the true instruction. If no dices fit the condition the false instruction is run.
+* **On Scalar** `:`: the condition is evaluated on the scalar result of the dice roll.
 
 #### Examples:
 
@@ -674,6 +675,59 @@ The Rolisteam Dice Parser allows you to use several logic operator:
 * Lesser: `<`
 * Greater: `>`
 * Different: `!=`
+
+
+#### Compare methods
+
+As the `if` operator, you can specify the compare method.
+
+* **On Each**: the condition is tested on each die from the previous part of the command. \[Default method\]
+* **On Each value** `?`: the condition is tested on each final value of die from the previous part of the command.
+* **All Of Them** `*`: All dice must fit the condition to trigger the true instruction. If all dice do not fit the condition the false instruction is run.
+* **One Of Them** `.`: at least one die must fit the condition to trigger the true instruction. If no dices fit the condition the false instruction is run.
+* **On Scalar** `:`: the condition is evaluated on the scalar result of the dice roll.
+
+##### Examples:
+
+> 1L[7,8,9]c[>6]
+
+This command will return 0 because, no die has been rolled, so the result of `1L[7,8,9]` is a final value.
+
+> 1L[7,8,9]c[?>6]
+
+Output: 1
+
+> 5d6e6sc[>=8]
+
+Output:
+```
+0
+details: [8 [6,2] 2 1 1 1]
+```
+
+> 5d6e6f[?>=16]
+
+Output:
+As the final sum is equal to 11. It's less than 16 so the filter is filtering everything.
+```
+0
+details: [2 4 1 3 1]
+```
+
+
+The final sum is higher than 16 so the whole result is accepted by the filter operator.
+```
+23
+details: [3 6 3 5 6]
+```
+
+> 5d6e6sc[:>=8]
+
+Output:
+```
+1
+details: [8 [6,2] 2 1 1 1]
+```
 
 ### Operation Condition
 

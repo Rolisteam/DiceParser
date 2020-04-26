@@ -330,6 +330,11 @@ Dice::ConditionType ParsingToolBox::readConditionType(QString& str)
         str= str.remove(0, 1);
         type= Dice::OneOfThem;
     }
+    else if(str.startsWith('?'))
+    {
+        str= str.remove(0, 1);
+        type= Dice::OnEachValue;
+    }
     else if(str.startsWith('*'))
     {
         str= str.remove(0, 1);

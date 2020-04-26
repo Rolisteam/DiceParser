@@ -39,6 +39,20 @@ qint64 Validator::onEach(const std::vector<Die*>& b, bool recursive, bool unligh
 }
 
 template <typename Functor>
+qint64 Validator::onEachValue(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const
+{
+    qint64 result= 0;
+    std::for_each(b.begin(), b.end(), [this, recursive, unlight, functor, &result](Die* die) {
+        if(hasValid(die, recursive, unlight))
+        {
+            ++result;
+            functor(die, recursive, unlight);
+        }
+    });
+    return result;
+}
+
+template <typename Functor>
 qint64 Validator::oneOfThem(const std::vector<Die*>& b, bool recursive, bool unlight, Functor functor) const
 {
     auto oneOfThem= std::any_of(b.begin(), b.end(),
@@ -89,6 +103,9 @@ qint64 Validator::validResult(const std::vector<Die*>& b, bool recursive, bool u
     {
     case Dice::OnEach:
         result= onEach(b, recursive, unlight, functor);
+        break;
+    case Dice::OnEachValue:
+        result= onEachValue(b, recursive, unlight, functor);
         break;
     case Dice::OneOfThem:
         result= oneOfThem(b, recursive, unlight, functor);

@@ -24,6 +24,7 @@
 #include "result/diceresult.h"
 #include "result/result.h"
 #include "validator.h"
+#include <QDebug>
 #include <utility>
 
 void mergeResultsAsAND(const ValidatorResult& diceList, ValidatorResult& result)
@@ -304,6 +305,21 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
         }
         break;
         case Dice::OnEach:
+        {
+            DiceResult* diceResult= getDiceResult(result);
+            if(nullptr == diceResult)
+                break;
+            for(auto die : diceResult->getResultList())
+            {
+                auto score= validator->hasValid(die, recursive, unlight);
+                if(score)
+                {
+                    validResult.appendValidDice(die, score);
+                }
+            }
+        }
+        break;
+        case Dice::OnEachValue:
         {
             DiceResult* diceResult= getDiceResult(result);
             if(nullptr == diceResult)
