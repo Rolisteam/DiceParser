@@ -971,9 +971,10 @@ void TestDice::ifTest_data()
     QTest::addColumn<QString>("expectedResult");
 
     int onEach= 0;
-    int oneOfThem= 1;
-    int allOfThem= 2;
-    int onScalar= 3;
+    int onEachValue= 1;
+    int oneOfThem= 2;
+    int allOfThem= 3;
+    int onScalar= 4;
 
     QTest::addRow("cmd1") << QVector<int>({8, 9, 2}) << onEach << 0 << "False";
     QTest::addRow("cmd2") << QVector<int>({2, 2, 2}) << onEach << 2 << "True";
