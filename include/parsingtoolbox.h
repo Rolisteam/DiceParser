@@ -381,7 +381,7 @@ private:
     QMap<QString, BooleanCondition::LogicOperator> m_logicOp;
     QMap<QString, ValidatorList::LogicOperation> m_logicOperation;
     QMap<QString, OperationCondition::ConditionOperator> m_conditionOperation;
-    QHash<QString, Die::ArithmeticOperator> m_arithmeticOperation;
+    std::vector<std::pair<QString, Die::ArithmeticOperator>> m_arithmeticOperation;
     QMap<QString, DiceOperator> m_mapDiceOp;
     QMap<QString, OptionOperator> m_OptionOp;
     QMap<QString, NodeAction> m_nodeActionMap;

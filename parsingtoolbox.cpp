@@ -74,14 +74,14 @@ ParsingToolBox::ParsingToolBox()
     m_conditionOperation.insert("%", OperationCondition::Modulo);
 
     // m_arithmeticOperation = new QHash<QString,ScalarOperatorNode::ArithmeticOperator>();
-    m_arithmeticOperation.insert(QStringLiteral("+"), Die::PLUS);
-    m_arithmeticOperation.insert(QStringLiteral("-"), Die::MINUS);
-    m_arithmeticOperation.insert(QStringLiteral("**"), Die::POW);
-    m_arithmeticOperation.insert(QStringLiteral("*"), Die::MULTIPLICATION);
-    m_arithmeticOperation.insert(QStringLiteral("x"), Die::MULTIPLICATION);
-    m_arithmeticOperation.insert(QStringLiteral("|"), Die::INTEGER_DIVIDE);
-    m_arithmeticOperation.insert(QStringLiteral("/"), Die::DIVIDE);
-    m_arithmeticOperation.insert(QStringLiteral("÷"), Die::DIVIDE);
+    m_arithmeticOperation.push_back({QStringLiteral("**"), Die::POW});
+    m_arithmeticOperation.push_back({QStringLiteral("+"), Die::PLUS});
+    m_arithmeticOperation.push_back({QStringLiteral("-"), Die::MINUS});
+    m_arithmeticOperation.push_back({QStringLiteral("*"), Die::MULTIPLICATION});
+    m_arithmeticOperation.push_back({QStringLiteral("x"), Die::MULTIPLICATION});
+    m_arithmeticOperation.push_back({QStringLiteral("|"), Die::INTEGER_DIVIDE});
+    m_arithmeticOperation.push_back({QStringLiteral("/"), Die::DIVIDE});
+    m_arithmeticOperation.push_back({QStringLiteral("÷"), Die::DIVIDE});
 
     m_mapDiceOp.insert(QStringLiteral("D"), D);
     m_mapDiceOp.insert(QStringLiteral("L"), L);
@@ -177,19 +177,16 @@ bool ParsingToolBox::readDiceLogicOperator(QString& str, OperationCondition::Con
 
 bool ParsingToolBox::readArithmeticOperator(QString& str, Die::ArithmeticOperator& op)
 {
-    bool found= false;
-    // QHash<QString,ScalarOperatorNode::ArithmeticOperator>::Iterator
 
-    for(auto i= m_arithmeticOperation.begin(); i != m_arithmeticOperation.end() && !found; ++i)
-    {
-        if(str.startsWith(i.key()))
-        {
-            op= i.value();
-            str= str.remove(0, i.key().size());
-            found= true;
-        }
-    }
-    return found;
+    auto it= std::find_if(
+        m_arithmeticOperation.begin(), m_arithmeticOperation.end(),
+        [str](const std::pair<QString, Die::ArithmeticOperator>& pair) { return str.startsWith(pair.first); });
+    if(it == m_arithmeticOperation.end())
+        return false;
+
+    op= it->second;
+    str= str.remove(0, it->first.size());
+    return true;
 }
 
 bool ParsingToolBox::readLogicOperator(QString& str, BooleanCondition::LogicOperator& op)
