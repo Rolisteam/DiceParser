@@ -184,7 +184,7 @@ Result* DiceResult::getCopy() const
     {
         auto newdie= new Die(*die);
         newdie->setDisplayed(false);
-        die->displayed();
+        // die->displayed();
         list.append(newdie);
     }
     copy->setResultList(list);

@@ -194,7 +194,7 @@ bool Die::hasBeenDisplayed() const
 }
 void Die::displayed()
 {
-    m_displayStatus= true;
+    setDisplayed(true);
 }
 void Die::setDisplayed(bool b)
 {
