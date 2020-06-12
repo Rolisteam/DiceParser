@@ -86,7 +86,7 @@ void PainterNode::run(ExecutionNode* previous)
     }
     if(nullptr != m_nextNode)
     {
-        m_nextNode->run(previous);
+        m_nextNode->run(this);
     }
 }
 Result* PainterNode::getResult()
