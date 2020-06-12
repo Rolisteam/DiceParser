@@ -38,82 +38,78 @@ void SortResultNode::run(ExecutionNode* node)
     }
     DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(node->getResult());
     m_diceResult->setPrevious(previousDiceResult);
-    if(nullptr != previousDiceResult)
+    if(nullptr == previousDiceResult)
+        return;
+
+    auto const& diceList= previousDiceResult->getResultList();
+    QList<Die*> diceList2= m_diceResult->getResultList();
+
+    /* const auto& asce = [](const Die* a,const Die* b){
+         return a->getValue() < b->getValue();
+     };
+     const auto& desc = [](const Die* a,const Die* b){
+         return a->getValue() > b->getValue();
+     };
+
+     for(auto const dice : diceList)
+     {
+         Die* tmp1 = new Die(*dice);
+         diceList2.append(tmp1);
+     }
+     if(m_ascending)
+         std::sort(diceList2.begin(), diceList2.end(), asce);
+     else
+         std::sort(diceList2.begin(), diceList2.end(), desc);*/
+
+    // half-interval search sorting
+    for(int i= 0; i < diceList.size(); ++i)
     {
-        auto const& diceList= previousDiceResult->getResultList();
-        QList<Die*> diceList2= m_diceResult->getResultList();
+        Die* tmp1= new Die(*diceList[i]);
+        qDebug() << tmp1->getColor() << diceList[i]->getColor();
+        //*tmp1=*diceList[i];
+        diceList[i]->displayed();
 
-        /* const auto& asce = [](const Die* a,const Die* b){
-             return a->getValue() < b->getValue();
-         };
-         const auto& desc = [](const Die* a,const Die* b){
-             return a->getValue() > b->getValue();
-         };
-
-         for(auto const dice : diceList)
-         {
-             Die* tmp1 = new Die(*dice);
-             diceList2.append(tmp1);
-         }
-         if(m_ascending)
-             std::sort(diceList2.begin(), diceList2.end(), asce);
-         else
-             std::sort(diceList2.begin(), diceList2.end(), desc);*/
-
-        // half-interval search sorting
-        for(int i= 0; i < diceList.size(); ++i)
+        int j= 0;
+        bool found= false;
+        int start= 0;
+        int end= diceList2.size();
+        Die* tmp2= nullptr;
+        while(!found)
         {
-            Die* tmp1= new Die(*diceList[i]);
-            //*tmp1=*diceList[i];
-            diceList[i]->displayed();
-
-            int j= 0;
-            bool found= false;
-            int start= 0;
-            int end= diceList2.size();
-            Die* tmp2= nullptr;
-            while(!found)
+            int distance= end - start;
+            j= (start + end) / 2;
+            if(distance == 0)
             {
-                int distance= end - start;
-                j= (start + end) / 2;
-                if(distance == 0)
+                j= end;
+                found= true;
+            }
+            else
+            {
+                tmp2= diceList2[j];
+                if(tmp1->getValue() < tmp2->getValue())
                 {
-                    j= end;
-                    found= true;
+                    end= j;
                 }
                 else
                 {
-                    tmp2= diceList2[j];
-                    if(tmp1->getValue() < tmp2->getValue())
-                    {
-                        end= j;
-                    }
-                    else
-                    {
-                        start= j + 1;
-                    }
+                    start= j + 1;
                 }
             }
-            diceList2.insert(j, tmp1);
         }
+        diceList2.insert(j, tmp1);
+    }
 
-        if(!m_ascending)
+    if(!m_ascending)
+    {
+        for(int i= 0; i < diceList2.size() / 2; ++i)
         {
-            for(int i= 0; i < diceList2.size() / 2; ++i)
-            {
-                diceList2.swapItemsAt(i, diceList2.size() - (1 + i));
-            }
-        }
-        m_diceResult->setResultList(diceList2);
-        if(nullptr != m_nextNode)
-        {
-            m_nextNode->run(this);
+            diceList2.swapItemsAt(i, diceList2.size() - (1 + i));
         }
     }
-    else
+    m_diceResult->setResultList(diceList2);
+    if(nullptr != m_nextNode)
     {
-        // m_result = node->getResult();
-        // m_errors.append(DIE_RESULT_EXPECTED);
+        m_nextNode->run(this);
     }
 }
 void SortResultNode::setSortAscending(bool asc)
