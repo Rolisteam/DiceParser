@@ -940,85 +940,26 @@ The k operator to keeps as many dice as you roll is pretty useless because it is
 
 # Discord Bot
 
-## Prefix management
+Documentation of the bot is now inline with the bot.
 
-### To change the prefix
-> !prefix set newprefix
+## Prefix documentation
 
-/!\ Please, don't set "newprefix" as your new prefix.
+> !help prefix
 
-### Set the prefix by default
+## Macro documentation
 
-> newprefixprefix set !
+> !help macro
 
-### Example
+## Alias documentation
 
-> !prefix set roll
+> !help alias
 
-> roll 2d6
+## Difference between Aliases and Macros
 
-> rollprefix set !
+Aliases is the feature of the bot, macro is a feature of the dice system behind the bot.
+Aliases is a way to run several commands at once.
 
-# Macro management
-
-## list active macro
-> !macro list
-
-Result:
-```
-id: 0 Pattern: (.)wod(.) Command: \1d10e10c[>=\2]-@c[=1] Regexp: True id: 1 Pattern: quicktest Command: 1d6 Regexp: False id: 2 Pattern: stress[+-]([0-9]+) Command: 1d10e[=1];\1;$1c[=1];$1c[=10];$3i:[>0]{2^$3($1-$3)}{$4i:[=1]{0}{$1}};$5+$2;$4i:[=1]{"Botch!"};"(%2=$5)+$2=$6" Regexp: True
-id: 3 Pattern: ([0-9]+)sr([0-9]+) Command: \1;\2;$1/2;$1d6s;$4c1;$4c[>=5];$6i:[>$2]{$2}{$6};$5i:[>=$3]{$6i:[=0]{"Critical Glitch!"}{"Glitch!"}};"$1d [$2] = (%2) = $7 hits";$6i:[>$2]{"($6)"} Regexp: True
-id: 4 Pattern: C Command: d10+ Regexp: False
-id: 5 Pattern: attack([0-9]+),([0-9]+),([0-9]+),([0-9]+) Command: 1d100;(50-$1)|10;\3D10;$3+\4;1d100;$1i[=1]{5d10}{0};$3c10;$7i:[>0]{(5$7)d10}{0};(\2-14)i:[<0]{0};($4-$9)i:[>0]{+$8+$6};$1i[<=\1]{"Hit:$1Dmg:$4Armor:-$9-AdditionalDmg:$6+$8-Location:$5-Success:$2-TotalDMG:$10Dice:[%2]"}{"Fail$1"} Regexp: True
-```
-
-## Adding new macro
-
-There are two kinds of macro: normal ones and regular-expression-based.
-
-The first kind the conversion it is just a replacement.
-
-> !macro k d10e10k 0
-
-The user input (8k4) becomes 8d10e10k4 (l5r system). As you can see the k has been replaced by the macro value.
-The third parameter 0 describes this macro as a simple replacement. The third parameter is mandatory.
-
-In more complexe situations, control/change some parts inside the command can be achieved by using regular-expression based macro.
-
-> !macro ([0-9]+)w([0-9]+) \1d10e10c[>=\2]-@c[=1] 1
-
-The 1 at the end means "this command has regular-expression".
-The user input (8w6) becomes 8d10e10c[>=6]-@c[=1] (old world of darkness system).
-
-## Remove macro
-
-> !macro rm 0
-
-Remove the macro which has 0 as id. It is better to list macro before removing one.
-
-## Alias management
-
-Roll several commands at once.
-
-### Add alias
-
-> !alias stats  
-> !4d6e6uk3 #STR"  
-> !4d6e6uk3 #DEX"  
-> !4d6e6uk3 #WIS"  
-> !4d6e6uk3 #INT"  
-> !4d6e6uk3 #CON"  
-> !4d6e6uk3 #CHR"  
-
-All lines must be part of the same messages, so prepare it first.
-
-### Remove alias
-
-> !alias rm stats
-
-### Run alias
-
-> !stats
+Macro is a way to run huge command by typing few letters. Macros may have parameters (such as dice number, threshold for success or whatever)
 
 # Bug report and new features
 
