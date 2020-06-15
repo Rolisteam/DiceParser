@@ -65,7 +65,8 @@ enum EXPORTFORMAT
     IMAGE,
     MARKDOWN,
     JSON,
-    BOT
+    BOT,
+    TEXT
 };
 #else
 enum EXPORTFORMAT
@@ -74,7 +75,8 @@ enum EXPORTFORMAT
     SVG,
     MARKDOWN,
     JSON,
-    BOT
+    BOT,
+    TEXT
 };
 #endif
 int returnValue= 0;
@@ -282,8 +284,14 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
     }
 
     int rt= 0;
+    bool in_markdown= true;
     for(QString cmd : cmds)
     {
+        if(cmd.startsWith('&') && format == BOT)
+        {
+            cmd= cmd.remove(0, 1);
+            in_markdown= false;
+        }
 
         if(parser.parseLine(cmd))
         {
@@ -385,7 +393,7 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
             {
                 if(allSameColor)
                 {
-                    format= MARKDOWN;
+                    format= in_markdown ? MARKDOWN : TEXT;
                 }
                 else
                 {
@@ -416,6 +424,10 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
             case MARKDOWN:
                 displayMarkdown(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
                                 allSameFaceCount, allSameColor);
+                break;
+            case TEXT:
+                displayCommandResult(scalarText, resultStr, array, false, cmdRework, error, warnings, comment,
+                                     allSameFaceCount, allSameColor);
                 break;
             case JSON:
                 displayJSon(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
@@ -566,6 +578,14 @@ int main(int argc, char* argv[])
         cmd= "help";
     }
     QStringList cmdList= optionParser.positionalArguments();
+
+    if(!cmdList.isEmpty())
+    {
+        if(cmdList[0].startsWith('&'))
+        {
+            colorb= false;
+        }
+    }
     // cmdList << "8d10;\$1c[>6];\$1c[=1];\$2-\$3i:[>0]{\"%3 Success[%2]\"}{i:[<0]{\"Critical fail %3 [%2]\"}{\"Fail %3
     // [%2]\"}}";
     QJsonArray aliases;
