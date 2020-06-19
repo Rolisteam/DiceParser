@@ -38,7 +38,7 @@
 DiceParser::DiceParser() : m_parsingToolbox(new ParsingToolBox()) {}
 DiceParser::~DiceParser() {}
 
-const QList<DiceAlias*>& DiceParser::getAliases() const
+const QList<DiceAlias*>& DiceParser::constAliases() const
 {
     return m_parsingToolbox->getAliases();
 }
@@ -103,7 +103,7 @@ void DiceParser::start()
     }
 }
 
-QList<qreal> DiceParser::getLastIntegerResults()
+/*QList<qreal> DiceParser::lastIntegerResults() const
 {
     QList<qreal> resultValues;
     QStringList alreadyVisitedNode;
@@ -128,7 +128,7 @@ QList<qreal> DiceParser::getLastIntegerResults()
     }
     return resultValues;
 }
-QStringList DiceParser::getStringResult()
+QStringList DiceParser::stringResult() const
 {
     QStringList stringListResult;
     for(auto node : m_parsingToolbox->getStartNodes())
@@ -171,7 +171,7 @@ QStringList DiceParser::allFirstResultAsString(bool& hasAlias)
     }
     return stringListResult;
 }
-QStringList DiceParser::getAllDiceResult(bool& hasAlias)
+QStringList DiceParser::allDiceResult(bool& hasAlias) const
 {
     QStringList stringListResult;
     for(auto node : m_parsingToolbox->getStartNodes())
@@ -213,9 +213,9 @@ QStringList DiceParser::getAllDiceResult(bool& hasAlias)
     }
 
     return stringListResult;
-}
+}*/
 
-void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resultList)
+void DiceParser::diceResultFromEachInstruction(QList<ExportedDiceResult>& resultList) const
 {
     for(auto start : m_parsingToolbox->getStartNodes())
     {
@@ -262,7 +262,7 @@ void DiceParser::getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resu
     // qDebug() << resultList.size();
 }
 
-void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList, bool& homogeneous)
+/*void DiceParser::lastDiceResult(QList<ExportedDiceResult>& diceValuesList, bool& homogeneous) const
 {
     QSet<QString> alreadySeenDice;
     for(auto start : m_parsingToolbox->getStartNodes())
@@ -326,13 +326,14 @@ void DiceParser::getLastDiceResult(QList<ExportedDiceResult>& diceValuesList, bo
             diceValuesList.append(diceValues);
         }
     }
-}
-QString DiceParser::getDiceCommand() const
+}*/
+
+QString DiceParser::diceCommand() const
 {
     return m_command;
 }
 
-bool DiceParser::hasIntegerResultNotInFirst()
+bool DiceParser::hasIntegerResultNotInFirst() const
 {
     bool result= false;
     for(auto node : m_parsingToolbox->getStartNodes())
@@ -343,7 +344,7 @@ bool DiceParser::hasIntegerResultNotInFirst()
     return result;
 }
 
-bool DiceParser::hasDiceResult()
+bool DiceParser::hasDiceResult() const
 {
     bool result= false;
     for(auto node : m_parsingToolbox->getStartNodes())
@@ -353,7 +354,7 @@ bool DiceParser::hasDiceResult()
     }
     return result;
 }
-bool DiceParser::hasStringResult()
+bool DiceParser::hasStringResult() const
 {
     bool result= false;
     for(auto node : m_parsingToolbox->getStartNodes())
@@ -383,7 +384,8 @@ bool DiceParser::hasResultOfType(Dice::RESULT_TYPE type, ExecutionNode* node, QV
     }
     return scalarDone;
 }
-QList<qreal> DiceParser::getSumOfDiceResult()
+
+/*QList<qreal> DiceParser::sumOfDiceResult() const
 {
     QList<qreal> resultValues;
     for(auto node : m_parsingToolbox->getStartNodes())
@@ -411,13 +413,14 @@ QList<qreal> DiceParser::getSumOfDiceResult()
         resultValues << resultValue;
     }
     return resultValues;
-}
-int DiceParser::getStartNodeCount() const
+}*/
+
+int DiceParser::startNodeCount() const
 {
     return static_cast<int>(m_parsingToolbox->getStartNodes().size());
 }
 
-QString DiceParser::getComment() const
+QString DiceParser::comment() const
 {
     return m_parsingToolbox->getComment();
 }
@@ -437,35 +440,30 @@ QMap<Dice::ERROR_CODE, QString> DiceParser::errorMap() const
         auto keys= mapTmp.keys();
         for(auto& key : keys)
         {
-            map.insertMulti(key, mapTmp[key]);
+            map.insert(key, mapTmp[key]);
         }
     }
     return map;
 }
-QString DiceParser::humanReadableError()
+QString DiceParser::humanReadableError() const
 {
-    auto errorList= m_parsingToolbox->getErrorList();
-    QMapIterator<Dice::ERROR_CODE, QString> i(errorList);
-    QString str("");
-    while(i.hasNext())
-    {
-        i.next();
-        str.append(i.value());
+    auto parsingError= m_parsingToolbox->getErrorList();
+    QString str;
+    std::for_each(parsingError.begin(), parsingError.end(), [&str](const QString& text) {
+        str.append(text);
         str.append(QStringLiteral("\n"));
-    }
+    });
 
     /// list
-    QMapIterator<Dice::ERROR_CODE, QString> j(errorMap());
-    while(j.hasNext())
-    {
-        j.next();
-        str.append(j.value());
+    auto errMap= errorMap();
+    std::for_each(errMap.begin(), errMap.end(), [&str](const QString& text) {
+        str.append(text);
         str.append(QStringLiteral("\n"));
-    }
+    });
     return str;
 }
 
-QString DiceParser::humanReadableWarning()
+QString DiceParser::humanReadableWarning() const
 {
     auto warningMap= m_parsingToolbox->getWarningList();
     QMapIterator<Dice::ERROR_CODE, QString> i(warningMap);
@@ -477,6 +475,11 @@ QString DiceParser::humanReadableWarning()
         str.append(QStringLiteral("\n"));
     }
     return str;
+}
+
+QJsonObject DiceParser::exportResult() const
+{
+    QJsonObject obj;
 }
 
 void DiceParser::writeDownDotTree(QString filepath)
