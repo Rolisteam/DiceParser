@@ -101,14 +101,14 @@ QString DiceRoller::diceToText(QList<ExportedDiceResult>& diceList)
 }
 void DiceRoller::start()
 {
-    if(m_diceparser.parseLine(m_command))
+    /*if(m_diceparser.parseLine(m_command))
     {
         m_diceparser.start();
-        if(m_diceparser.getErrorMap().isEmpty())
+        if(m_diceparser.errorMap().isEmpty())
         {
             bool homogeneous;
             QList<ExportedDiceResult> list;
-            m_diceparser.getLastDiceResult(list, homogeneous);
+            m_diceparser.lastDiceResult(list, homogeneous);
             QString diceText= diceToText(list);
             QString scalarText;
             QString str;
@@ -117,7 +117,7 @@ void DiceRoller::start()
             QString resultStr;
             if(m_diceparser.hasIntegerResultNotInFirst())
             {
-                auto values= m_diceparser.getLastIntegerResults();
+                auto values= m_diceparser.lastIntegerResults();
                 QStringList strLst;
                 for(auto& val : values)
                 {
@@ -169,7 +169,7 @@ void DiceRoller::start()
     {
         auto errors= m_diceparser.getErrorMap();
         setError(errors.first());
-    }
+    }*/
 }
 
 QString DiceRoller::getError() const
@@ -185,4 +185,3 @@ void DiceRoller::setError(const QString& error)
     m_error= error;
     emit errorOccurs();
 }
-

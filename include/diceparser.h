@@ -22,6 +22,7 @@
 #ifndef DICEPARSER_H
 #define DICEPARSER_H
 
+#include <QJsonObject>
 #include <QMap>
 #include <QString>
 #include <QVariant>
@@ -63,6 +64,7 @@ public:
      */
     virtual ~DiceParser();
 
+    // Command process methods
     /**
      * @brief parseLine, method to call for starting the dice roll. It will parse the command and run the execution
      * tree.
@@ -70,77 +72,22 @@ public:
      * @return bool every thing is fine or not
      */
     bool parseLine(QString str, bool allowAlias= true);
-    QString convertAlias(const QString& cmd) const;
-    /**
-     * @brief getStartNodeCount
-     * @return
-     */
-    int getStartNodeCount() const;
-    /**
-     * @brief Start running the execution tree
-     *
-     */
     void start();
-    /**
-     * @brief displayDotTree - Write the execution tree into file using dot format.
-     * @param filepath absolute or relative path to the tree file.
-     */
+    void cleanAll();
+
+    // debug
     void writeDownDotTree(QString filepath);
-    /**
-     * @brief getLastIntegerResults
-     * @return
-     */
-    QList<qreal> getLastIntegerResults();
-    /**
-     * @brief getSumOfDiceResult
-     * @return
-     */
-    QList<qreal> getSumOfDiceResult();
-    /**
-     * @brief getLastDiceResult
-     * @return
-     */
-    void getLastDiceResult(QList<ExportedDiceResult>& diceValues, bool& homogeneous);
-    /**
-     * @brief hasIntegerResultNotInFirst
-     * @return
-     */
-    bool hasIntegerResultNotInFirst();
-    /**
-     * @brief hasDiceResult
-     * @return
-     */
-    bool hasDiceResult();
-    /**
-     * @brief getDiceCommand
-     * @return
-     */
-    QString getDiceCommand() const;
-    /**
-     * @brief hasStringResult
-     * @return
-     */
-    bool hasStringResult();
-    /**
-     * @brief getStringResult
-     * @return
-     */
-    QStringList getStringResult();
-    /**
-     * @brief humanReadableError
-     * @return
-     */
-    QString humanReadableError();
-    /**
-     * @brief getAliases
-     * @return
-     */
-    const QList<DiceAlias*>& getAliases() const;
+
+    // control methods
+    bool hasIntegerResultNotInFirst() const;
+    bool hasDiceResult() const;
+    bool hasStringResult() const;
+    bool hasSeparator() const;
+
+    // alias management
+    const QList<DiceAlias*>& constAliases() const;
     QList<DiceAlias*>* aliases() const;
     void cleanAliases();
-    /**
-     * @brief insertAlias
-     */
     void insertAlias(DiceAlias*, int);
     /**
      * @brief getErrorList
@@ -168,19 +115,58 @@ public:
      * @return true when the command has separator, false otherwise.
      */
     bool hasSeparator() const;
-
+// beginning of strange code ||||||| parent of af8b69b... change the way diceparser is giving its result.
     /**
-     * @brief setVariableDictionary
-     * @param variables
+     * @brief getErrorList
+     * @return
      */
+    QMap<Dice::ERROR_CODE, QString> getErrorMap();
+    /**
+     * @brief setPathToHelp set the path to the documentation, this path must be adatped to the lang of application etc…
+     * @param l the path.
+     */
+    void setPathToHelp(QString l);
+    /**
+     * @brief getAllStringResult
+     * @return
+     */
+    QStringList getAllStringResult(bool& hasAlias);
+    /**
+     * @brief getAllDiceResult
+     * @param hasAlias
+     * @return
+     */
+    QStringList getAllDiceResult(bool& hasAlias);
+    /**
+     * @brief hasSeparator allows to know if the current command has separator.
+     * @return true when the command has separator, false otherwise.
+     */
+    bool hasSeparator() const;
+// END of strange code
+    QString convertAlias(const QString& cmd) const;
+
+    // Accessors
+    int startNodeCount() const;
+    QList<qreal> scalarResultsFromEachInstruction() const;
+    QStringList stringResultFromEachInstruction(bool& hasAlias) const;
+    void diceResultFromEachInstruction(QList<ExportedDiceResult>& resultList) const;
+
+    QString diceCommand() const;
+    QMap<Dice::ERROR_CODE, QString> errorMap() const;
+    QString comment() const;
+    QString humanReadableWarning() const;
+    QString humanReadableError() const;
+    QJsonObject exportResult() const;
+
+    //    QStringList stringResult() const;
+    //    QStringList allDiceResult(bool& hasAlias) const;
+    //    void lastDiceResult(QList<ExportedDiceResult>& diceValues, bool& homogeneous) const;
+    // QList<qreal> sumOfDiceResult() const;
+
+    // setters
+    void setPathToHelp(QString l);
     void setVariableDictionary(const QHash<QString, QString>& variables);
-    QString getComment() const;
     void setComment(const QString& comment);
-
-    void getDiceResultFromAllInstruction(QList<ExportedDiceResult>& resultList);
-    QString humanReadableWarning();
-
-    void cleanAll();
 
 private:
     /**
