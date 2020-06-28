@@ -870,7 +870,8 @@ bool ParsingToolBox::readComment(QString& str, QString& result, QString& comment
     return false;
 }
 
-QString ParsingToolBox::replaceVariableToValue(const QString& source, QStringList values)
+QString ParsingToolBox::replaceVariableToValue(const QString& source, QStringList values,
+                                               QMap<Dice::ERROR_CODE, QString>& errorMap)
 {
     QString result= source;
 
@@ -879,23 +880,35 @@ QString ParsingToolBox::replaceVariableToValue(const QString& source, QStringLis
     do
     {
         auto ref= readVariableFromString(source, start);
-        if(ref.isValid())
+        if(ref.resultIndex() >= values.size())
         {
-            result.remove(ref.position(), ref.length());
-            auto val= values[ref.resultIndex() - 1];
-            if(ref.digitNumber() != 0)
-            {
-                auto realVal= QString("%1").arg(val, ref.digitNumber(), QChar('0'));
-                result.insert(ref.position(), realVal);
-            }
-            else
-            {
-                result.insert(ref.position(), val);
-            }
+            auto error= QString("No valid value at index: $%1").arg(ref.resultIndex());
+            errorMap.insert(Dice::ERROR_CODE::INVALID_INDEX, error);
+            return error;
+        }
+
+        valid= ref.isValid();
+        if(!valid)
+            continue;
+
+        result.remove(ref.position(), ref.length());
+        auto val= values[ref.resultIndex() - 1];
+
+        if(ref.subIndex() >= 0)
+        {
+            auto valSplit= val.split(",");
+            if(ref.subIndex() < valSplit.size())
+                val= valSplit[ref.subIndex()];
+        }
+
+        if(ref.digitNumber() != 0)
+        {
+            auto realVal= QString("%1").arg(val, ref.digitNumber(), QChar('0'));
+            result.insert(ref.position(), realVal);
         }
         else
         {
-            valid= false;
+            result.insert(ref.position(), val);
         }
     } while(valid);
 
@@ -976,6 +989,19 @@ void ParsingToolBox::readSubtitutionParameters(SubtituteInfo& info, QString& res
             {
                 rest= rest.remove(0, 1);
                 info.setDigitNumber(static_cast<int>(number));
+            }
+        }
+    }
+    if(rest.startsWith("["))
+    {
+        rest= rest.remove(0, 1);
+        qint64 number;
+        if(readNumber(rest, number))
+        {
+            if(rest.startsWith("]"))
+            {
+                rest= rest.remove(0, 1);
+                info.setSubIndex(static_cast<int>(number));
             }
         }
     }
@@ -2029,4 +2055,14 @@ int SubtituteInfo::digitNumber() const
 void SubtituteInfo::setDigitNumber(int digitNumber)
 {
     m_digitNumber= digitNumber;
+}
+
+int SubtituteInfo::subIndex() const
+{
+    return m_subIndex;
+}
+
+void SubtituteInfo::setSubIndex(int subindex)
+{
+    m_subIndex= subindex;
 }

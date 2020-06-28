@@ -151,27 +151,22 @@ QStringList DiceParser::getStringResult()
     }
     return stringListResult;
 }
-QStringList DiceParser::getAllStringResult(bool& hasAlias)
+QStringList DiceParser::allFirstResultAsString(bool& hasAlias)
 {
     // QStringList allResult;
     QStringList stringListResult;
     for(auto node : m_parsingToolbox->getStartNodes())
     {
-        ExecutionNode* next= ParsingToolBox::getLeafNode(node);
-        Result* result= next->getResult();
-
-        while(nullptr != result)
+        QVariant var;
+        if(hasResultOfType(Dice::RESULT_TYPE::STRING, node, var))
         {
-            if(result->hasResultOfType(Dice::RESULT_TYPE::STRING))
-            {
-                StringResult* stringResult= dynamic_cast<StringResult*>(result);
-                if(nullptr != stringResult)
-                {
-                    stringListResult << stringResult->getText();
-                    hasAlias= stringResult->hasHighLight();
-                }
-            }
-            result= result->getPrevious();
+            stringListResult << var.toString();
+            hasAlias= true;
+        }
+        else if(hasResultOfType(Dice::RESULT_TYPE::SCALAR, node, var, true))
+        {
+            stringListResult << QString::number(var.toReal());
+            hasAlias= true;
         }
     }
     return stringListResult;
@@ -342,7 +337,8 @@ bool DiceParser::hasIntegerResultNotInFirst()
     bool result= false;
     for(auto node : m_parsingToolbox->getStartNodes())
     {
-        result|= hasResultOfType(Dice::RESULT_TYPE::SCALAR, node);
+        QVariant var;
+        result|= hasResultOfType(Dice::RESULT_TYPE::SCALAR, node, var, true);
     }
     return result;
 }
@@ -352,7 +348,8 @@ bool DiceParser::hasDiceResult()
     bool result= false;
     for(auto node : m_parsingToolbox->getStartNodes())
     {
-        result|= hasResultOfType(Dice::RESULT_TYPE::DICE_LIST, node);
+        QVariant var;
+        result|= hasResultOfType(Dice::RESULT_TYPE::DICE_LIST, node, var);
     }
     return result;
 }
@@ -361,11 +358,12 @@ bool DiceParser::hasStringResult()
     bool result= false;
     for(auto node : m_parsingToolbox->getStartNodes())
     {
-        result|= hasResultOfType(Dice::RESULT_TYPE::STRING, node);
+        QVariant var;
+        result|= hasResultOfType(Dice::RESULT_TYPE::STRING, node, var);
     }
     return result;
 }
-bool DiceParser::hasResultOfType(Dice::RESULT_TYPE type, ExecutionNode* node, bool notthelast)
+bool DiceParser::hasResultOfType(Dice::RESULT_TYPE type, ExecutionNode* node, QVariant& value, bool notthelast)
 {
     bool scalarDone= false;
     ExecutionNode* next= ParsingToolBox::getLeafNode(node);
@@ -374,11 +372,12 @@ bool DiceParser::hasResultOfType(Dice::RESULT_TYPE type, ExecutionNode* node, bo
     {
         bool lastResult= false;
         if(notthelast)
-            lastResult= (nullptr != result->getPrevious());
+            lastResult= (nullptr == result->getPrevious());
 
         if(result->hasResultOfType(type) && !lastResult)
         {
             scalarDone= true;
+            value= result->getResult(type);
         }
         result= result->getPrevious();
     }
@@ -428,7 +427,7 @@ void DiceParser::setComment(const QString& comment)
     m_parsingToolbox->setComment(comment);
 }
 
-QMap<Dice::ERROR_CODE, QString> DiceParser::getErrorMap()
+QMap<Dice::ERROR_CODE, QString> DiceParser::errorMap() const
 {
     QMap<Dice::ERROR_CODE, QString> map;
 
@@ -445,8 +444,8 @@ QMap<Dice::ERROR_CODE, QString> DiceParser::getErrorMap()
 }
 QString DiceParser::humanReadableError()
 {
-    auto errorMap= m_parsingToolbox->getErrorList();
-    QMapIterator<Dice::ERROR_CODE, QString> i(errorMap);
+    auto errorList= m_parsingToolbox->getErrorList();
+    QMapIterator<Dice::ERROR_CODE, QString> i(errorList);
     QString str("");
     while(i.hasNext())
     {
@@ -456,7 +455,7 @@ QString DiceParser::humanReadableError()
     }
 
     /// list
-    QMapIterator<Dice::ERROR_CODE, QString> j(getErrorMap());
+    QMapIterator<Dice::ERROR_CODE, QString> j(errorMap());
     while(j.hasNext())
     {
         j.next();

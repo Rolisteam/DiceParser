@@ -26,6 +26,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QTextStream>
 
@@ -365,18 +366,27 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
             if(parser.hasStringResult())
             {
                 bool ok;
-                QStringList allStringlist= parser.getAllStringResult(ok);
-                QString stringResult= allStringlist.join(" ; ");
+                QStringList allStringlist= parser.allFirstResultAsString(ok);
+
+                QStringList resultWithPlaceHolder;
+                std::for_each(allStringlist.begin(), allStringlist.end(), [&resultWithPlaceHolder](const QString& sub) {
+                    QRegularExpression ex("%[1-3]?|\\$[1-9]+|@[1-9]+");
+                    if(sub.contains(ex))
+                        resultWithPlaceHolder.append(sub);
+                });
+                auto stringResult
+                    = resultWithPlaceHolder.isEmpty() ? allStringlist.join(" ; ") : resultWithPlaceHolder.join(" ; ");
 
                 stringResult.replace("%1", scalarText);
                 stringResult.replace("%2", listOfDiceResult.join(",").trimmed());
                 stringResult.replace("%3", lastScalarText);
                 stringResult.replace("\\n", "\n");
 
-                // qDebug() << "before replace variable: " << lastScalarText << scalarText << listOfDiceResult
-                //        << listFull.size();
-                stringResult= ParsingToolBox::replaceVariableToValue(stringResult, strLst);
+                QMap<Dice::ERROR_CODE, QString> errorMap;
+                stringResult= ParsingToolBox::replaceVariableToValue(stringResult, allStringlist, errorMap);
                 stringResult= ParsingToolBox::replacePlaceHolderToValue(stringResult, listFull);
+
+                error= errorMap.values().join(", ");
 
                 int i= strLst.size();
                 for(auto it= strLst.rbegin(); it != strLst.rend(); ++it)

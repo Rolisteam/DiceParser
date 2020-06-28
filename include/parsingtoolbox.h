@@ -59,11 +59,15 @@ public:
     int digitNumber() const;
     void setDigitNumber(int digitNumber);
 
+    int subIndex() const;
+    void setSubIndex(int subindex);
+
 private:
     int m_length= 2;
     int m_digitNumber= 0;
     int m_resultIndex= -1;
     int m_position= -1;
+    int m_subIndex= -1;
 };
 
 /**
@@ -277,7 +281,8 @@ public:
     bool readOperand(QString& str, ExecutionNode*& node);
     static int findClosingCharacterIndexOf(QChar open, QChar closing, const QString& str, int offset);
 
-    static QString replaceVariableToValue(const QString& source, QStringList values);
+    static QString replaceVariableToValue(const QString& source, QStringList values,
+                                          QMap<Dice::ERROR_CODE, QString>& errorMap);
     static QString replacePlaceHolderToValue(const QString& source, const QList<ExportedDiceResult>& list);
 
     static SubtituteInfo readVariableFromString(const QString& source, int& start);
