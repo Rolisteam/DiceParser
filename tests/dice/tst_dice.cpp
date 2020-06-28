@@ -428,7 +428,7 @@ void TestDice::wrongCommandsTest()
     if(a)
     {
         m_diceParser->start();
-        auto map= m_diceParser->getErrorMap();
+        auto map= m_diceParser->errorMap();
         a= map.isEmpty();
     }
     QCOMPARE(a, valid);
@@ -466,7 +466,7 @@ void TestDice::wrongCommandsExecutionTimeTest()
         bool test= m_diceParser->parseLine(cmd);
         m_diceParser->start();
 
-        QVERIFY2(m_diceParser->getErrorMap().isEmpty() == false || !test, cmd.toStdString().c_str());
+        QVERIFY2(m_diceParser->errorMap().isEmpty() == false || !test, cmd.toStdString().c_str());
     }
 }
 void TestDice::scopeDF()

@@ -24,6 +24,7 @@
 
 #include <QMap>
 #include <QString>
+#include <QVariant>
 #include <memory>
 #include <vector>
 
@@ -145,17 +146,17 @@ public:
      * @brief getErrorList
      * @return
      */
-    QMap<Dice::ERROR_CODE, QString> getErrorMap();
+    QMap<Dice::ERROR_CODE, QString> errorMap() const;
     /**
      * @brief setPathToHelp set the path to the documentation, this path must be adatped to the lang of application etc…
      * @param l the path.
      */
     void setPathToHelp(QString l);
     /**
-     * @brief getAllStringResult
+     * @brief allFirstResultAsString
      * @return
      */
-    QStringList getAllStringResult(bool& hasAlias);
+    QStringList allFirstResultAsString(bool& hasAlias);
     /**
      * @brief getAllDiceResult
      * @param hasAlias
@@ -187,7 +188,7 @@ private:
      * @param notthelast
      * @return
      */
-    bool hasResultOfType(Dice::RESULT_TYPE, ExecutionNode* node, bool notthelast= false);
+    bool hasResultOfType(Dice::RESULT_TYPE, ExecutionNode* node, QVariant& value, bool notthelast= false);
     bool readBlocInstruction(QString& str, ExecutionNode*& resultnode);
 
 private:
