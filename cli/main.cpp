@@ -161,7 +161,7 @@ void displayMarkdown(QString scalarText, QString resultStr, QJsonArray array, bo
         }
         else if(!resultStr.isEmpty())
         {
-            resultStr.replace("%2", diceList.trimmed());
+            // resultStr.replace("%2", diceList.trimmed());
             str.append(QStringLiteral("%1\n").arg(resultStr));
         }
     }
@@ -374,6 +374,15 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
                     if(sub.contains(ex))
                         resultWithPlaceHolder.append(sub);
                 });
+
+                if(resultWithPlaceHolder.isEmpty())
+                    allStringlist.erase(std::remove_if(allStringlist.begin(), allStringlist.end(),
+                                                       [](const QString& result) {
+                                                           bool ok;
+                                                           result.toInt(&ok);
+                                                           return ok;
+                                                       }),
+                                        allStringlist.end());
                 auto stringResult
                     = resultWithPlaceHolder.isEmpty() ? allStringlist.join(" ; ") : resultWithPlaceHolder.join(" ; ");
 
@@ -394,9 +403,10 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
                     stringResult.replace(QStringLiteral("µ%1").arg(i), (*it));
                     --i;
                 }
+
                 bool isInt= true;
                 stringResult.toInt(&isInt);
-                if(!isInt)
+                if(!isInt || !resultWithPlaceHolder.isEmpty())
                     resultStr= stringResult;
             }
             if(format == BOT)
