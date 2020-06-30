@@ -368,11 +368,12 @@ bool DiceParser::hasResultOfType(Dice::RESULT_TYPE type, ExecutionNode* node, QV
     bool scalarDone= false;
     ExecutionNode* next= ParsingToolBox::getLeafNode(node);
     Result* result= next->getResult();
+    int i= 0;
     while((result != nullptr) && (!scalarDone))
     {
         bool lastResult= false;
         if(notthelast)
-            lastResult= (nullptr == result->getPrevious());
+            lastResult= (nullptr == result->getPrevious() && i != 0);
 
         if(result->hasResultOfType(type) && !lastResult)
         {
@@ -380,6 +381,7 @@ bool DiceParser::hasResultOfType(Dice::RESULT_TYPE type, ExecutionNode* node, QV
             value= result->getResult(type);
         }
         result= result->getPrevious();
+        ++i;
     }
     return scalarDone;
 }
