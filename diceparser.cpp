@@ -22,6 +22,7 @@
 #include "diceparser.h"
 #include <QDebug>
 #include <QFile>
+#include <QJsonArray>
 #include <QObject>
 #include <QStringList>
 #include <functional>
@@ -480,6 +481,25 @@ QString DiceParser::humanReadableWarning() const
 QJsonObject DiceParser::exportResult() const
 {
     QJsonObject obj;
+    QJsonArray instructions;
+    for(auto start : m_parsingToolbox->getStartNodes())
+    {
+        QJsonObject inst;
+
+        inst["str"]= ;
+        inst["diceval"]= ;
+        inst["scalar"]= ;
+
+        instructions.append(inst);
+    }
+    obj["instruction"]= instructions;
+    obj["comment"]= m_parsingToolbox->getComment();
+    obj["error"]= humanReadableError();
+    obj["scalar"]= scalarText;
+    obj["string"]= resultStr;
+    obj["warning"]= humanReadableWarning();
+    obj["command"]= m_command;
+    return obj;
 }
 
 void DiceParser::writeDownDotTree(QString filepath)
