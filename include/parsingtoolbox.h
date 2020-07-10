@@ -138,174 +138,45 @@ public:
      * @brief ~ParsingToolBox
      */
     virtual ~ParsingToolBox();
-
     void clearUp();
-    /**
-     * @brief addSort
-     * @param e
-     * @param b
-     * @return
-     */
+
+    // Build execution tree
+    DiceRollerNode* getDiceRollerNode(ExecutionNode* previous);
+    DiceRollerNode* addRollDiceNode(qint64 faces, ExecutionNode*);
+    ExplodeDiceNode* addExplodeDiceNode(qint64 faces, ExecutionNode* previous);
+    Dice::CONDITION_STATE isValidValidator(ExecutionNode* previous, ValidatorList* val);
     ExecutionNode* addSort(ExecutionNode* e, bool b);
-    /**
-     * @brief readAscending
-     * @param str
-     * @return
-     */
+
+    // parsing tools
     static bool readAscending(QString& str);
-    /**
-     * @brief readLogicOperator
-     * @param str
-     * @param op
-     * @return
-     */
     bool readLogicOperator(QString& str, BooleanCondition::LogicOperator& op);
-    /**
-     * @brief readValidator
-     * @param str
-     * @return
-     */
     Validator* readValidator(QString& str, bool hasSquare= false);
-    /**
-     * @brief readCompositeValidator
-     * @param str
-     * @return
-     */
     ValidatorList* readValidatorList(QString& str);
-
-    /**
-     * @brief readNumber read number in the given str and remove from the string the read character.
-     * @param str the command line
-     * @param myNumber reference to the found number
-     * @return true, succeed to read number, false otherwise.
-     */
     static bool readNumber(QString& str, qint64& myNumber);
-
-    /**
-     * @brief readString
-     * @param str
-     * @param strResult
-     * @return
-     */
     static bool readString(QString& str, QString& strresult);
-    /**
-     * @brief readVariable
-     * @param str
-     * @param myNumber
-     * @return
-     */
     static bool readVariable(QString& str, qint64& myNumber, QString& reasonFail);
-    /**
-     * @brief readOpenParentheses
-     * @param str
-     * @return
-     */
     static bool readOpenParentheses(QString& str);
-    /**
-     * @brief readCloseParentheses
-     * @param str
-     * @return
-     */
     static bool readCloseParentheses(QString& str);
 
-    /**
-     * @brief readNumber read number in the given str and remove from the string the read character.
-     * @param str the command line
-     * @param myNumber reference to the found number
-     * @return true, succeed to read number, false otherwise.
-     */
     static bool readDynamicVariable(QString& str, qint64& index);
-
-    /**
-     * @brief readList
-     * @param str
-     * @param list
-     * @return
-     */
     bool readList(QString& str, QStringList& list, QList<Range>& ranges);
-    /**
-     * @brief isValidValidator
-     * @param previous
-     * @param val
-     * @return
-     */
-    Dice::CONDITION_STATE isValidValidator(ExecutionNode* previous, ValidatorList* val);
-    /**
-     * @brief getDiceRollerNode
-     * @param previous
-     * @return
-     */
-    DiceRollerNode* getDiceRollerNode(ExecutionNode* previous);
-
-    /**
-     * @brief readDiceRange
-     * @param str
-     * @param start
-     * @param end
-     * @return
-     */
     bool readDiceRange(QString& str, qint64& start, qint64& end);
-    /**
-     * @brief readListOperator
-     * @param str
-     * @return
-     */
     static LIST_OPERATOR readListOperator(QString& str);
-
     void readProbability(QStringList& str, QList<Range>& ranges);
-
     bool readLogicOperation(QString& str, ValidatorList::LogicOperation& op);
-
     bool readDiceLogicOperator(QString& str, OperationCondition::ConditionOperator& op);
-
     bool readArithmeticOperator(QString& str, Die::ArithmeticOperator& op);
     std::vector<ExecutionNode*> readInstructionList(QString& str, bool startNode);
-
-    static bool readPainterParameter(PainterNode* painter, QString& str);
-
-    static QHash<QString, QString> getVariableHash();
-    static void setVariableHash(const QHash<QString, QString>& variableHash);
-    /**
-     * @brief readConditionType
-     * @param str
-     * @return
-     */
     static Dice::ConditionType readConditionType(QString& str);
-
     bool readComment(QString& str, QString&, QString&);
-    static ExecutionNode* getLatestNode(ExecutionNode* node);
-
-    const std::vector<ExecutionNode*>& getStartNodes();
-    static void setStartNodes(std::vector<ExecutionNode*>* startNodes);
-
     bool readOperand(QString& str, ExecutionNode*& node);
     static int findClosingCharacterIndexOf(QChar open, QChar closing, const QString& str, int offset);
-
-    static QString replaceVariableToValue(const QString& source, QStringList values,
-                                          QMap<Dice::ERROR_CODE, QString>& errorMap);
-    static QString replacePlaceHolderToValue(const QString& source, const QList<ExportedDiceResult>& list);
-
-    static SubtituteInfo readVariableFromString(const QString& source, int& start);
-    static SubtituteInfo readPlaceHolderFromString(const QString& source, int& start);
-
     static void readSubtitutionParameters(SubtituteInfo& info, QString& rest);
-
+    static bool readPainterParameter(PainterNode* painter, QString& str);
     static bool readComma(QString& str);
-
     bool readReaperArguments(RepeaterNode* node, QString& source);
-
-    DiceRollerNode* addRollDiceNode(qint64 faces, ExecutionNode*);
-
-    ExplodeDiceNode* addExplodeDiceNode(qint64 faces, ExecutionNode* previous);
-
     bool readExpression(QString& str, ExecutionNode*& node);
-
-    static ExecutionNode* getLeafNode(ExecutionNode* start);
-
-    bool hasError() const;
-
     bool readInstructionOperator(QChar c);
-
     bool readNode(QString& str, ExecutionNode*& node);
     /**
      * @brief readIfInstruction reads the current command to build if node with proper parameters.
@@ -316,67 +187,62 @@ public:
      * @return true, ifNode has been found, false otherwise
      */
     bool readIfInstruction(QString& str, ExecutionNode*& trueNode, ExecutionNode*& falseNode);
-
     bool readOptionFromNull(QString& str, ExecutionNode*& node);
     bool readOperatorFromNull(QString& str, ExecutionNode*& node);
     bool readParameterNode(QString& str, ExecutionNode*& node);
-
-    /**
-     *
-     */
     bool readFunction(QString& str, ExecutionNode*& node);
-    /**
-     * @brief readDice
-     * @param str
-     * @return
-     */
     bool readDice(QString& str, ExecutionNode*& node);
-    /**
-     * @brief readDiceOperator
-     * @return
-     */
     bool readDiceOperator(QString&, DiceOperator&);
-    /**
-     * @brief readDiceExpression
-     * @param node
-     * @return
-     */
     bool readDiceExpression(QString&, ExecutionNode*& node);
-    /**
-     * @brief readOperator
-     * @return
-     */
     bool readOperator(QString&, ExecutionNode* previous);
-    /**
-     * @brief DiceParser::readCommand
-     * @param str
-     * @param node
-     * @return
-     */
     bool readCommand(QString& str, ExecutionNode*& node);
-
-    /**
-     * @brief readOption
-     */
+    bool readBlocInstruction(QString& str, ExecutionNode*& resultnode);
     bool readOption(QString&, ExecutionNode* node); // OptionOperator& option,
-
     bool readValuesList(QString& str, ExecutionNode*& node);
 
+    // Error
+    bool hasError() const;
     void addError(Dice::ERROR_CODE code, const QString& msg);
     void addWarning(Dice::ERROR_CODE code, const QString& msg);
-
-    void setComment(const QString& comment);
-    QString getComment() const;
-
     const QMap<Dice::ERROR_CODE, QString>& getErrorList() const;
     const QMap<Dice::ERROR_CODE, QString>& getWarningList() const;
 
-    QString convertAlias(QString str);
+    // Traversal functions
+    static ExecutionNode* getLatestNode(ExecutionNode* node);
+    static ExecutionNode* getLeafNode(ExecutionNode* start);
+    const std::vector<ExecutionNode*>& getStartNodes();
+    static void setStartNodes(std::vector<ExecutionNode*>* startNodes);
+    std::pair<bool, QVariant> hasResultOfType(Dice::RESULT_TYPE, ExecutionNode* node, bool notthelast= false) const;
+    QList<qreal> scalarResultsFromEachInstruction() const;
+    std::pair<QString, QString> finalScalarResult() const;
+    QString finalStringResult() const;
+    QStringList allFirstResultAsString(bool& hasAlias) const;
+    QList<qreal> sumOfDiceResult() const;
+    QList<ExportedDiceResult> diceResultFromEachInstruction() const;
+    bool hasIntegerResultNotInFirst() const;
+    bool hasDiceResult() const;
+    bool hasStringResult() const;
 
-    bool readBlocInstruction(QString& str, ExecutionNode*& resultnode);
+    // result
+    static QString replaceVariableToValue(const QString& source, QStringList values,
+                                          QMap<Dice::ERROR_CODE, QString>& errorMap);
+    static QString replacePlaceHolderToValue(const QString& source, const QList<ExportedDiceResult>& list);
+    static SubtituteInfo readVariableFromString(const QString& source, int& start);
+    static SubtituteInfo readPlaceHolderFromString(const QString& source, int& start);
+    static ExportedDiceResult finalDiceResultFromInstruction(ExecutionNode* start);
+    static ExportedDiceResult allDiceResultFromInstruction(ExecutionNode* start);
+    void addResultInJson(QJsonObject obj, Dice::RESULT_TYPE type, const QString& key, ExecutionNode* start, bool b);
+    void addDiceResultInJson(QJsonObject obj, ExecutionNode* start);
 
+    // accessors
+    void setComment(const QString& comment);
+    QString getComment() const;
     void setHelpPath(const QString& path);
+    static QHash<QString, QString> getVariableHash();
+    static void setVariableHash(const QHash<QString, QString>& variableHash);
 
+    // Aliases
+    QString convertAlias(QString str);
     void insertAlias(DiceAlias* dice, int i);
     const QList<DiceAlias*>& getAliases() const;
     QList<DiceAlias*>* aliases();

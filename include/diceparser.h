@@ -89,61 +89,10 @@ public:
     QList<DiceAlias*>* aliases() const;
     void cleanAliases();
     void insertAlias(DiceAlias*, int);
-    /**
-     * @brief getErrorList
-     * @return
-     */
-    QMap<Dice::ERROR_CODE, QString> errorMap() const;
-    /**
-     * @brief setPathToHelp set the path to the documentation, this path must be adatped to the lang of application etc…
-     * @param l the path.
-     */
-    void setPathToHelp(QString l);
-    /**
-     * @brief allFirstResultAsString
-     * @return
-     */
-    QStringList allFirstResultAsString(bool& hasAlias);
-    /**
-     * @brief getAllDiceResult
-     * @param hasAlias
-     * @return
-     */
-    QStringList getAllDiceResult(bool& hasAlias);
-    /**
-     * @brief hasSeparator allows to know if the current command has separator.
-     * @return true when the command has separator, false otherwise.
-     */
-    bool hasSeparator() const;
-// beginning of strange code ||||||| parent of af8b69b... change the way diceparser is giving its result.
-    /**
-     * @brief getErrorList
-     * @return
-     */
-    QMap<Dice::ERROR_CODE, QString> getErrorMap();
-    /**
-     * @brief setPathToHelp set the path to the documentation, this path must be adatped to the lang of application etc…
-     * @param l the path.
-     */
-    void setPathToHelp(QString l);
-    /**
-     * @brief getAllStringResult
-     * @return
-     */
-    QStringList getAllStringResult(bool& hasAlias);
-    /**
-     * @brief getAllDiceResult
-     * @param hasAlias
-     * @return
-     */
-    QStringList getAllDiceResult(bool& hasAlias);
-    /**
-     * @brief hasSeparator allows to know if the current command has separator.
-     * @return true when the command has separator, false otherwise.
-     */
-    bool hasSeparator() const;
-// END of strange code
     QString convertAlias(const QString& cmd) const;
+
+    QStringList allFirstResultAsString(bool& hasAlias);
+    QStringList getAllDiceResult(bool& hasAlias);
 
     // Accessors
     int startNodeCount() const;
@@ -156,12 +105,11 @@ public:
     QString comment() const;
     QString humanReadableWarning() const;
     QString humanReadableError() const;
-    QJsonObject exportResult() const;
+    QString resultAsJSon() const;
 
     //    QStringList stringResult() const;
     //    QStringList allDiceResult(bool& hasAlias) const;
     //    void lastDiceResult(QList<ExportedDiceResult>& diceValues, bool& homogeneous) const;
-    // QList<qreal> sumOfDiceResult() const;
 
     // setters
     void setPathToHelp(QString l);
@@ -169,12 +117,6 @@ public:
     void setComment(const QString& comment);
 
 private:
-    /**
-     * @brief hasResultOfType
-     * @param notthelast
-     * @return
-     */
-    bool hasResultOfType(Dice::RESULT_TYPE, ExecutionNode* node, QVariant& value, bool notthelast= false);
     bool readBlocInstruction(QString& str, ExecutionNode*& resultnode);
 
 private:

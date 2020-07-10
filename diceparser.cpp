@@ -23,9 +23,12 @@
 #include <QDebug>
 #include <QFile>
 #include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QObject>
 #include <QStringList>
 #include <functional>
+#include <numeric>
 
 #include "booleancondition.h"
 #include "dicealias.h"
@@ -70,12 +73,12 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
     bool value= !instructions.empty();
     if(!value)
     {
-        m_parsingToolbox->addError(
-            Dice::ERROR_CODE::NOTHING_UNDERSTOOD,
-            QObject::tr("Nothing was understood. To roll dice: !1d6 - full documation: "
-                        "<a "
-                        "href=\"https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md\">https://github.com/"
-                        "Rolisteam/DiceParser/blob/master/HelpMe.md</a>"));
+        m_parsingToolbox->addError(Dice::ERROR_CODE::NOTHING_UNDERSTOOD,
+                                   QObject::tr("Nothing was understood. To roll dice: !1d6 - full documation: "
+                                               "<a "
+                                               "href=\"https://github.com/Rolisteam/DiceParser/blob/master/"
+                                               "HelpMe.md\">https://github.com/"
+                                               "Rolisteam/DiceParser/blob/master/HelpMe.md</a>"));
     }
     else if(value && !str.isEmpty())
     {
@@ -104,31 +107,7 @@ void DiceParser::start()
     }
 }
 
-/*QList<qreal> DiceParser::lastIntegerResults() const
-{
-    QList<qreal> resultValues;
-    QStringList alreadyVisitedNode;
-    for(auto node : m_parsingToolbox->getStartNodes())
-    {
-        ExecutionNode* next= ParsingToolBox::getLeafNode(node);
-        Result* result= next->getResult();
-        bool scalarDone= false;
-        while((result != nullptr) && (!scalarDone))
-        {
-            if(result->hasResultOfType(Dice::RESULT_TYPE::SCALAR))
-            {
-                if(!alreadyVisitedNode.contains(result->getId()))
-                {
-                    resultValues << result->getResult(Dice::RESULT_TYPE::SCALAR).toReal();
-                    alreadyVisitedNode << result->getId();
-                }
-                scalarDone= true;
-            }
-            result= result->getPrevious();
-        }
-    }
-    return resultValues;
-}
+/*
 QStringList DiceParser::stringResult() const
 {
     QStringList stringListResult;
@@ -152,26 +131,7 @@ QStringList DiceParser::stringResult() const
     }
     return stringListResult;
 }
-QStringList DiceParser::allFirstResultAsString(bool& hasAlias)
-{
-    // QStringList allResult;
-    QStringList stringListResult;
-    for(auto node : m_parsingToolbox->getStartNodes())
-    {
-        QVariant var;
-        if(hasResultOfType(Dice::RESULT_TYPE::STRING, node, var))
-        {
-            stringListResult << var.toString();
-            hasAlias= true;
-        }
-        else if(hasResultOfType(Dice::RESULT_TYPE::SCALAR, node, var, true))
-        {
-            stringListResult << QString::number(var.toReal());
-            hasAlias= true;
-        }
-    }
-    return stringListResult;
-}
+
 QStringList DiceParser::allDiceResult(bool& hasAlias) const
 {
     QStringList stringListResult;
@@ -216,54 +176,8 @@ QStringList DiceParser::allDiceResult(bool& hasAlias) const
     return stringListResult;
 }*/
 
-void DiceParser::diceResultFromEachInstruction(QList<ExportedDiceResult>& resultList) const
-{
-    for(auto start : m_parsingToolbox->getStartNodes())
-    {
-        ExecutionNode* next= ParsingToolBox::getLeafNode(start);
-        Result* result= next->getResult();
-        ExportedDiceResult nodeResult;
-        QSet<QString> alreadyAdded;
-        // qDebug() << "start";
-        while(nullptr != result)
-        {
-            if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
-            {
-                DiceResult* diceResult= dynamic_cast<DiceResult*>(result);
-                QList<HighLightDice> list;
-                quint64 faces= 0;
-                // qDebug() << "Begin of loop";
-                for(auto& die : diceResult->getResultList())
-                {
-                    faces= die->getFaces();
-                    // qDebug() << "face" << faces << die->getValue() <<
-                    // die->getListValue()
-                    //         << next->toString(true);
-                    HighLightDice hlDice(die->getListValue(), die->isHighlighted(), die->getColor(),
-                                         die->hasBeenDisplayed(), die->getFaces());
-                    // qDebug() << die->getListValue() << die->getFaces() << die->getUuid() << list.size();
-                    if(!alreadyAdded.contains(die->getUuid()))
-                    {
-                        list.append(hlDice);
-                        alreadyAdded.insert(die->getUuid());
-                    }
-                }
-                // qDebug() << "End of loop" << list.size();
-                if(!list.isEmpty())
-                    nodeResult.insert(faces, list);
-            }
-            if(nodeResult.isEmpty())
-                result= result->getPrevious();
-            else
-                result= nullptr;
-        }
-        // qDebug() << "end";
-        resultList.append(nodeResult);
-    }
-    // qDebug() << resultList.size();
-}
-
-/*void DiceParser::lastDiceResult(QList<ExportedDiceResult>& diceValuesList, bool& homogeneous) const
+/*void DiceParser::lastDiceResult(QList<ExportedDiceResult>& diceValuesList,
+bool& homogeneous) const
 {
     QSet<QString> alreadySeenDice;
     for(auto start : m_parsingToolbox->getStartNodes())
@@ -286,8 +200,8 @@ void DiceParser::diceResultFromEachInstruction(QList<ExportedDiceResult>& result
                     ListDiceResult listpair;
                     for(auto& die : diceResult->getResultList())
                     {
-                        if(die->hasBeenDisplayed() || alreadySeenDice.contains(die->getUuid()))
-                            continue;
+                        if(die->hasBeenDisplayed() ||
+alreadySeenDice.contains(die->getUuid())) continue;
 
                         QList<qint64> valuesResult;
                         valuesResult.append(die->getValue());
@@ -300,9 +214,8 @@ void DiceParser::diceResultFromEachInstruction(QList<ExportedDiceResult>& result
                                 valuesResult.append(i);
                             }
                         }
-                        HighLightDice hlDice(valuesResult, die->isHighlighted(), die->getColor(),
-                                             die->hasBeenDisplayed(), 0);
-                        listpair.append(hlDice);
+                        HighLightDice hlDice(valuesResult, die->isHighlighted(),
+die->getColor(), die->hasBeenDisplayed(), 0); listpair.append(hlDice);
                         alreadySeenDice << die->getUuid();
                     }
                     if(!listpair.isEmpty())
@@ -336,85 +249,17 @@ QString DiceParser::diceCommand() const
 
 bool DiceParser::hasIntegerResultNotInFirst() const
 {
-    bool result= false;
-    for(auto node : m_parsingToolbox->getStartNodes())
-    {
-        QVariant var;
-        result|= hasResultOfType(Dice::RESULT_TYPE::SCALAR, node, var, true);
-    }
-    return result;
+    return m_parsingToolbox->hasIntegerResultNotInFirst();
 }
 
 bool DiceParser::hasDiceResult() const
 {
-    bool result= false;
-    for(auto node : m_parsingToolbox->getStartNodes())
-    {
-        QVariant var;
-        result|= hasResultOfType(Dice::RESULT_TYPE::DICE_LIST, node, var);
-    }
-    return result;
+    return m_parsingToolbox->hasDiceResult();
 }
 bool DiceParser::hasStringResult() const
 {
-    bool result= false;
-    for(auto node : m_parsingToolbox->getStartNodes())
-    {
-        QVariant var;
-        result|= hasResultOfType(Dice::RESULT_TYPE::STRING, node, var);
-    }
-    return result;
+    return m_parsingToolbox->hasStringResult();
 }
-bool DiceParser::hasResultOfType(Dice::RESULT_TYPE type, ExecutionNode* node, QVariant& value, bool notthelast)
-{
-    bool scalarDone= false;
-    ExecutionNode* next= ParsingToolBox::getLeafNode(node);
-    Result* result= next->getResult();
-    while((result != nullptr) && (!scalarDone))
-    {
-        bool lastResult= false;
-        if(notthelast)
-            lastResult= (nullptr == result->getPrevious());
-
-        if(result->hasResultOfType(type) && !lastResult)
-        {
-            scalarDone= true;
-            value= result->getResult(type);
-        }
-        result= result->getPrevious();
-    }
-    return scalarDone;
-}
-
-/*QList<qreal> DiceParser::sumOfDiceResult() const
-{
-    QList<qreal> resultValues;
-    for(auto node : m_parsingToolbox->getStartNodes())
-    {
-        qreal resultValue= 0;
-        ExecutionNode* next= ParsingToolBox::getLeafNode(node);
-        Result* result= next->getResult();
-        bool found= false;
-        while((nullptr != result) && (!found))
-        {
-            if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
-            {
-                DiceResult* myDiceResult= dynamic_cast<DiceResult*>(result);
-                if(nullptr != myDiceResult)
-                {
-                    for(auto& die : myDiceResult->getResultList())
-                    {
-                        resultValue+= die->getValue();
-                    }
-                    found= true;
-                }
-            }
-            result= result->getPrevious();
-        }
-        resultValues << resultValue;
-    }
-    return resultValues;
-}*/
 
 int DiceParser::startNodeCount() const
 {
@@ -478,7 +323,7 @@ QString DiceParser::humanReadableWarning() const
     return str;
 }
 
-QJsonObject DiceParser::exportResult() const
+QString DiceParser::resultAsJSon() const
 {
     QJsonObject obj;
     QJsonArray instructions;
@@ -486,20 +331,23 @@ QJsonObject DiceParser::exportResult() const
     {
         QJsonObject inst;
 
-        inst["str"]= ;
-        inst["diceval"]= ;
-        inst["scalar"]= ;
+        m_parsingToolbox->addResultInJson(inst, Dice::RESULT_TYPE::SCALAR, "scalar", start, true);
+        m_parsingToolbox->addResultInJson(inst, Dice::RESULT_TYPE::STRING, "string", start, false);
+        m_parsingToolbox->addDiceResultInJson(inst, start);
 
         instructions.append(inst);
     }
-    obj["instruction"]= instructions;
+    obj["instructions"]= instructions;
     obj["comment"]= m_parsingToolbox->getComment();
     obj["error"]= humanReadableError();
-    obj["scalar"]= scalarText;
-    obj["string"]= resultStr;
+    obj["scalar"]= m_parsingToolbox->finalScalarResult().first;
+    obj["string"]= m_parsingToolbox->finalStringResult();
     obj["warning"]= humanReadableWarning();
     obj["command"]= m_command;
-    return obj;
+
+    QJsonDocument doc;
+    doc.setObject(obj);
+    return doc.toJson();
 }
 
 void DiceParser::writeDownDotTree(QString filepath)

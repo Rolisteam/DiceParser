@@ -21,6 +21,12 @@
  ***************************************************************************/
 #include "parsingtoolbox.h"
 
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QRegularExpression>
+#include <QString>
+#include <set>
+
 #include "node/allsamenode.h"
 #include "node/bind.h"
 #include "node/countexecutenode.h"
@@ -50,8 +56,6 @@
 #include "node/uniquenode.h"
 #include "node/valueslistnode.h"
 #include "node/variablenode.h"
-
-#include <QString>
 
 QHash<QString, QString> ParsingToolBox::m_variableHash;
 
@@ -490,6 +494,245 @@ const std::vector<ExecutionNode*>& ParsingToolBox::getStartNodes()
     return m_startNodes;
 }
 
+QStringList ParsingToolBox::allFirstResultAsString(bool& hasAlias) const
+{
+    // QStringList allResult;
+    QStringList stringListResult;
+    for(auto node : m_startNodes)
+    {
+        QVariant var;
+        auto stringPair= hasResultOfType(Dice::RESULT_TYPE::STRING, node);
+        auto scalarPair= hasResultOfType(Dice::RESULT_TYPE::SCALAR, node, true);
+        if(stringPair.first)
+        {
+            stringListResult << stringPair.second.toString();
+            hasAlias= true;
+        }
+        else if(scalarPair.first)
+        {
+            stringListResult << QString::number(scalarPair.second.toReal());
+            hasAlias= true;
+        }
+    }
+    return stringListResult;
+}
+std::pair<bool, QVariant> ParsingToolBox::hasResultOfType(Dice::RESULT_TYPE type, ExecutionNode* node,
+                                                          bool notthelast) const
+{
+    bool hasValidResult= false;
+    QVariant var;
+    ExecutionNode* next= ParsingToolBox::getLeafNode(node);
+    Result* result= next->getResult();
+    while((result != nullptr) && (!hasValidResult))
+    {
+        bool lastResult= false;
+        if(notthelast)
+            lastResult= (nullptr == result->getPrevious());
+
+        if(result->hasResultOfType(type) && !lastResult)
+        {
+            hasValidResult= true;
+            var= result->getResult(type);
+        }
+        result= result->getPrevious();
+    }
+    return {hasValidResult, var};
+}
+
+QList<qreal> ParsingToolBox::scalarResultsFromEachInstruction() const
+{
+    QList<qreal> resultValues;
+    std::set<QString> alreadyVisitedNode;
+    for(auto node : m_startNodes)
+    {
+        ExecutionNode* next= ParsingToolBox::getLeafNode(node);
+        Result* result= next->getResult();
+        bool scalarDone= false;
+        while((result != nullptr) && (!scalarDone))
+        {
+            if(result->hasResultOfType(Dice::RESULT_TYPE::SCALAR))
+            {
+                if(alreadyVisitedNode.find(result->getId()) == alreadyVisitedNode.end())
+                {
+                    resultValues << result->getResult(Dice::RESULT_TYPE::SCALAR).toReal();
+                    alreadyVisitedNode.insert(result->getId());
+                }
+                scalarDone= true;
+            }
+            result= result->getPrevious();
+        }
+    }
+    return resultValues;
+}
+
+QList<qreal> ParsingToolBox::sumOfDiceResult() const
+{
+    QList<qreal> resultValues;
+    for(auto node : m_startNodes)
+    {
+        qreal resultValue= 0;
+        ExecutionNode* next= ParsingToolBox::getLeafNode(node);
+        Result* result= next->getResult();
+        bool found= false;
+        while((nullptr != result) && (!found))
+        {
+            if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
+            {
+                DiceResult* myDiceResult= dynamic_cast<DiceResult*>(result);
+                if(nullptr != myDiceResult)
+                {
+                    for(auto& die : myDiceResult->getResultList())
+                    {
+                        resultValue+= die->getValue();
+                    }
+                    found= true;
+                }
+            }
+            result= result->getPrevious();
+        }
+        resultValues << resultValue;
+    }
+    return resultValues;
+}
+
+std::pair<QString, QString> ParsingToolBox::finalScalarResult() const
+{
+    QString scalarText;
+    QString lastScalarText;
+    auto listDie= diceResultFromEachInstruction();
+    if(hasIntegerResultNotInFirst())
+    {
+        QStringList strLst;
+        auto listScalar= scalarResultsFromEachInstruction();
+        for(auto val : listScalar)
+        {
+            strLst << QString::number(val);
+        }
+        scalarText= QString("%1").arg(strLst.join(','));
+        lastScalarText= strLst.last();
+    }
+    else if(!listDie.isEmpty())
+    {
+        auto values= sumOfDiceResult();
+        QStringList strLst;
+        for(auto val : values)
+        {
+            strLst << QString::number(val);
+        }
+        scalarText= QString("%1").arg(strLst.join(','));
+    }
+    return {scalarText, lastScalarText};
+}
+
+bool ParsingToolBox::hasIntegerResultNotInFirst() const
+{
+    bool result= false;
+    for(auto node : m_startNodes)
+    {
+        result|= hasResultOfType(Dice::RESULT_TYPE::SCALAR, node, true).first;
+    }
+    return result;
+}
+
+bool ParsingToolBox::hasDiceResult() const
+{
+    bool result= false;
+    for(auto node : m_startNodes)
+    {
+        result|= hasResultOfType(Dice::RESULT_TYPE::DICE_LIST, node).first;
+    }
+    return result;
+}
+bool ParsingToolBox::hasStringResult() const
+{
+    bool result= false;
+    for(auto node : m_startNodes)
+    {
+        result|= hasResultOfType(Dice::RESULT_TYPE::STRING, node).first;
+    }
+    return result;
+}
+
+QList<ExportedDiceResult> ParsingToolBox::diceResultFromEachInstruction() const
+{
+    QList<ExportedDiceResult> resultList;
+    for(auto start : m_startNodes)
+    {
+        auto result= ParsingToolBox::finalDiceResultFromInstruction(start);
+        resultList.append(result);
+    }
+    return resultList;
+}
+
+QStringList listOfDiceResult(const QList<ExportedDiceResult>& list)
+{
+    QStringList listOfDiceResult;
+    for(auto map : list)
+    {
+        for(auto key : map.keys())
+        {
+            auto listOfList= map.value(key);
+            for(auto dice : listOfList)
+            {
+                QString stringVal;
+                for(auto val : dice)
+                {
+                    qint64 total= 0;
+                    QStringList dicelist;
+                    for(auto score : val.result())
+                    {
+                        total+= score;
+                        dicelist << QString::number(score);
+                    }
+                    if(val.result().size() > 1)
+                    {
+                        stringVal= QString("%1 [%2]").arg(total).arg(dicelist.join(','));
+                        listOfDiceResult << stringVal;
+                    }
+                    else
+                    {
+                        listOfDiceResult << QString::number(total);
+                    }
+                }
+            }
+        }
+    }
+    return listOfDiceResult;
+}
+
+QString ParsingToolBox::finalStringResult() const
+{
+    bool ok;
+    QStringList allStringlist= allFirstResultAsString(ok);
+    auto listFull= diceResultFromEachInstruction();
+
+    QStringList resultWithPlaceHolder;
+    std::for_each(allStringlist.begin(), allStringlist.end(), [&resultWithPlaceHolder](const QString& sub) {
+        QRegularExpression ex("%[1-3]?|\\$[1-9]+|@[1-9]+");
+        if(sub.contains(ex))
+            resultWithPlaceHolder.append(sub);
+    });
+    auto stringResult= resultWithPlaceHolder.isEmpty() ? allStringlist.join(" ; ") : resultWithPlaceHolder.join(" ; ");
+
+    auto pairScalar= finalScalarResult();
+
+    stringResult.replace("%1", pairScalar.first);
+    stringResult.replace("%2", listOfDiceResult(diceResultFromEachInstruction()).join(",").trimmed());
+    stringResult.replace("%3", pairScalar.second);
+    stringResult.replace("\\n", "\n");
+
+    QMap<Dice::ERROR_CODE, QString> errorMap;
+    stringResult= ParsingToolBox::replaceVariableToValue(stringResult, allStringlist, errorMap);
+    stringResult= ParsingToolBox::replacePlaceHolderToValue(stringResult, listFull);
+
+    /*bool isInt= true;
+    stringResult.toInt(&isInt);
+    if(!isInt)
+        resultStr= stringResult;*/
+
+    return stringResult;
+}
+
 bool ParsingToolBox::readString(QString& str, QString& strResult)
 {
     if(str.isEmpty())
@@ -925,10 +1168,16 @@ QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const Q
             {
                 auto values= dice.values();
                 std::transform(std::begin(values), std::end(values), std::back_inserter(valuesStr),
-                               [](const ListDiceResult& dice) {
+                               [](const QList<ListDiceResult>& dice) {
                                    QStringList textList;
                                    std::transform(std::begin(dice), std::end(dice), std::back_inserter(textList),
-                                                  [](const HighLightDice& dice) { return dice.getResultString(); });
+                                                  [](const ListDiceResult& dice) {
+                                                      QStringList list;
+                                                      std::transform(
+                                                          std::begin(dice), std::end(dice), std::back_inserter(list),
+                                                          [](const HighLightDice& hl) { return hl.getResultString(); });
+                                                      return list.join(",");
+                                                  });
                                    return textList.join(",");
                                });
             }
@@ -936,11 +1185,14 @@ QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const Q
             {
                 for(auto key : dice.keys())
                 {
-                    auto values= dice[key];
-                    QStringList textVals;
-                    std::transform(std::begin(values), std::end(values), std::back_inserter(textVals),
-                                   [](const HighLightDice& dice) { return dice.getResultString(); });
-                    valuesStr.append(QString("d%1 [%2]").arg(key).arg(textVals.join(",")));
+                    auto list= dice.value(key);
+                    for(auto values : list)
+                    {
+                        QStringList textVals;
+                        std::transform(std::begin(values), std::end(values), std::back_inserter(textVals),
+                                       [](const HighLightDice& dice) { return dice.getResultString(); });
+                        valuesStr.append(QString("d%1 [%2]").arg(key).arg(textVals.join(",")));
+                    }
                 }
             }
             return valuesStr.join(",");
@@ -957,14 +1209,6 @@ QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const Q
             result.remove(ref.position(), ref.length());
             auto val= resultList[ref.resultIndex() - 1];
             result.insert(ref.position(), val);
-            /*            if(ref.digitNumber() != 0)
-                        {
-                            auto realVal= QString("%1").arg(val, ref.digitNumber(), QChar('0'));
-                            result.insert(ref.position(), realVal);
-                        }
-                        else
-                        {
-                        }*/
         }
         else
         {
@@ -973,8 +1217,6 @@ QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const Q
     } while(valid);
 
     return result;
-
-    // return source;
 }
 void ParsingToolBox::readSubtitutionParameters(SubtituteInfo& info, QString& rest)
 {
@@ -2008,6 +2250,126 @@ SubtituteInfo ParsingToolBox::readPlaceHolderFromString(const QString& source, i
     }
     start= i;
     return info;
+}
+
+ExportedDiceResult ParsingToolBox::finalDiceResultFromInstruction(ExecutionNode* start)
+{
+    ExecutionNode* next= ParsingToolBox::getLeafNode(start);
+    Result* result= next->getResult();
+    ExportedDiceResult nodeResult;
+    std::set<QString> alreadyAdded;
+    while(nullptr != result)
+    {
+        if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
+        {
+            DiceResult* diceResult= dynamic_cast<DiceResult*>(result);
+            QList<HighLightDice> list;
+            quint64 faces= 0;
+            for(auto& die : diceResult->getResultList())
+            {
+                faces= die->getFaces();
+                HighLightDice hlDice(die->getListValue(), die->isHighlighted(), die->getColor(),
+                                     die->hasBeenDisplayed(), die->getFaces(), die->getUuid());
+                if(alreadyAdded.find(die->getUuid()) == alreadyAdded.end())
+                {
+                    list.append(hlDice);
+                    alreadyAdded.insert(die->getUuid());
+                }
+            }
+            if(!list.isEmpty())
+            {
+                auto vals= nodeResult.value(faces);
+                vals.append(list);
+                nodeResult.insert(faces, vals);
+            }
+        }
+        if(nodeResult.isEmpty())
+            result= result->getPrevious();
+        else
+            result= nullptr;
+    }
+    return nodeResult;
+}
+
+ExportedDiceResult ParsingToolBox::allDiceResultFromInstruction(ExecutionNode* start)
+{
+    ExecutionNode* next= ParsingToolBox::getLeafNode(start);
+    Result* result= next->getResult();
+    ExportedDiceResult nodeResult;
+    std::set<QString> alreadyAdded;
+    while(nullptr != result)
+    {
+        if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
+        {
+            DiceResult* diceResult= dynamic_cast<DiceResult*>(result);
+            QList<HighLightDice> list;
+            quint64 faces= 0;
+            for(auto& die : diceResult->getResultList())
+            {
+                faces= die->getFaces();
+                HighLightDice hlDice(die->getListValue(), die->isHighlighted(), die->getColor(),
+                                     die->hasBeenDisplayed(), die->getFaces(), die->getUuid());
+                if(alreadyAdded.find(die->getUuid()) == alreadyAdded.end())
+                {
+                    list.append(hlDice);
+                    alreadyAdded.insert(die->getUuid());
+                }
+            }
+            if(!list.isEmpty())
+            {
+                auto vals= nodeResult.value(faces);
+                vals.append(list);
+                nodeResult.insert(faces, vals);
+            }
+        }
+        result= result->getPrevious();
+    }
+    return nodeResult;
+}
+
+void ParsingToolBox::addResultInJson(QJsonObject obj, Dice::RESULT_TYPE type, const QString& key, ExecutionNode* start,
+                                     bool b)
+{
+    auto pair= hasResultOfType(type, start, b);
+    if(pair.first)
+        obj[key]= pair.second.toReal();
+}
+
+void ParsingToolBox::addDiceResultInJson(QJsonObject obj, ExecutionNode* start)
+{
+    QJsonArray diceValues;
+    auto result= ParsingToolBox::allDiceResultFromInstruction(start);
+    for(auto listOfList : result.values())
+    {
+        for(auto listDiceResult : listOfList)
+        {
+            for(auto hlDice : listDiceResult)
+            {
+                QJsonObject diceObj;
+                diceObj["face"]= static_cast<qreal>(hlDice.faces());
+                diceObj["color"]= hlDice.color();
+                diceObj["displayed"]= hlDice.displayed();
+                diceObj["string"]= hlDice.getResultString();
+                diceObj["highlight"]= hlDice.isHighlighted();
+                diceObj["uuid"]= hlDice.uuid();
+                auto val= hlDice.result();
+                if(!val.isEmpty())
+                {
+                    diceObj["value"]= std::accumulate(val.begin(), val.end(), 0);
+                    if(val.size() > 1)
+                    {
+                        QJsonArray intValues;
+                        std::transform(val.begin(), val.end(), std::back_inserter(intValues),
+                                       [](qint64 val) { return static_cast<int>(val); });
+                        diceObj["subvalues"]= intValues;
+                    }
+                }
+                diceValues.append(diceObj);
+            }
+        }
+    }
+    if(!diceValues.isEmpty())
+        obj["diceval"]= diceValues;
 }
 
 SubtituteInfo::SubtituteInfo() {}
