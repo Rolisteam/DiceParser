@@ -60,39 +60,42 @@ QString DiceRoller::diceToText(QList<ExportedDiceResult>& diceList)
         for(auto& face : keys)
         {
             QStringList result;
-            ListDiceResult diceResult= dice.value(face);
-            for(const HighLightDice& tmp : diceResult)
+            auto list= dice.value(face);
+            for(auto diceResult : list)
             {
-                QStringList diceListStr;
-                QStringList diceListChildren;
-                int i= 0;
-                for(qint64& dievalue : tmp.getResult())
+                for(const HighLightDice& tmp : diceResult)
                 {
-                    QString prefix("%1");
-                    if(i == 0)
+                    QStringList diceListStr;
+                    QStringList diceListChildren;
+                    int i= 0;
+                    for(qint64& dievalue : tmp.result())
                     {
-                        diceListStr << prefix.arg(QString::number(dievalue));
+                        QString prefix("%1");
+                        if(i == 0)
+                        {
+                            diceListStr << prefix.arg(QString::number(dievalue));
+                        }
+                        else
+                        {
+                            diceListChildren << prefix.arg(QString::number(dievalue));
+                        }
+                        ++i;
                     }
-                    else
+                    if(!diceListChildren.isEmpty())
                     {
-                        diceListChildren << prefix.arg(QString::number(dievalue));
+                        diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
                     }
-                    ++i;
+                    result << diceListStr.join(' ');
                 }
-                if(!diceListChildren.isEmpty())
-                {
-                    diceListStr << QString("[%1]").arg(diceListChildren.join(' '));
-                }
-                result << diceListStr.join(' ');
-            }
 
-            if(keys.size() > 1)
-            {
-                resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
-            }
-            else
-            {
-                resultGlobal << result;
+                if(keys.size() > 1)
+                {
+                    resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
+                }
+                else
+                {
+                    resultGlobal << result;
+                }
             }
         }
         global << resultGlobal.join(' ');

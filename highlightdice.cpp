@@ -19,14 +19,20 @@
  ***************************************************************************/
 #include "include/highlightdice.h"
 
-HighLightDice::HighLightDice(QList<qint64> result, bool isHighlighted, QString color, bool displayed, quint64 faces)
-    : m_result(result), m_hasHighlight(isHighlighted), m_color(color), m_displayed(displayed), m_faces(faces)
+HighLightDice::HighLightDice(QList<qint64> result, bool isHighlighted, QString color, bool displayed, quint64 faces,
+                             const QString& uuid)
+    : m_result(result)
+    , m_hasHighlight(isHighlighted)
+    , m_color(color)
+    , m_displayed(displayed)
+    , m_faces(faces)
+    , m_uuid(uuid)
 {
 }
 
 HighLightDice::~HighLightDice() {}
 
-QList<qint64> HighLightDice::getResult() const
+QList<qint64> HighLightDice::result() const
 {
     return m_result;
 }
@@ -46,7 +52,7 @@ void HighLightDice::setHighlight(bool hasHighlight)
     m_hasHighlight= hasHighlight;
 }
 
-QString HighLightDice::getColor() const
+QString HighLightDice::color() const
 {
     return m_color;
 }
@@ -56,7 +62,7 @@ void HighLightDice::setColor(const QString& color)
     m_color= color;
 }
 
-bool HighLightDice::getDisplayed() const
+bool HighLightDice::displayed() const
 {
     return m_displayed;
 }
@@ -66,7 +72,7 @@ void HighLightDice::setDisplayed(bool displayed)
     m_displayed= displayed;
 }
 
-quint64 HighLightDice::getFaces() const
+quint64 HighLightDice::faces() const
 {
     return m_faces;
 }
@@ -91,4 +97,14 @@ QString HighLightDice::getResultString() const
         auto totalScore= std::accumulate(std::begin(m_result), std::end(m_result), 0);
         return QStringLiteral("%2 [%1]").arg(list.join(",")).arg(totalScore);
     }
+}
+
+QString HighLightDice::uuid() const
+{
+    return m_uuid;
+}
+
+void HighLightDice::setUuid(const QString& uuid)
+{
+    m_uuid= uuid;
 }
