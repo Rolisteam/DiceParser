@@ -87,7 +87,16 @@ void GroupNode::run(ExecutionNode* previous)
                 std::sort(allResult.begin(), allResult.end(), std::greater<qint64>());
                 if(allResult.getSum() > m_groupValue)
                 {
+                    auto copy= allResult;
                     auto const die= getGroup(allResult);
+
+                    for(auto list : die)
+                    {
+                        for(auto val : list)
+                        {
+                            copy.removeOne(val);
+                        }
+                    }
                     m_scalarResult->setValue(die.size());
                     QStringList list;
                     for(auto group : die)
@@ -97,7 +106,14 @@ void GroupNode::run(ExecutionNode* previous)
                                        [](qint64 val) { return QString::number(val); });
                         list << QStringLiteral("{%1}").arg(values.join(","));
                     }
-                    m_stringResult->addText(QStringLiteral("%1 (%2)").arg(die.size()).arg(list.join(",")));
+                    QStringList unused;
+                    std::transform(copy.begin(), copy.end(), std::back_inserter(unused),
+                                   [](qint64 val) { return QString::number(val); });
+                    if(!unused.isEmpty())
+                        m_stringResult->addText(
+                            QStringLiteral("%1 (%2 - [%3])").arg(die.size()).arg(list.join(",")).arg(unused.join(",")));
+                    else
+                        m_stringResult->addText(QStringLiteral("%1 (%2)").arg(die.size()).arg(list.join(",")));
                 }
                 else
                 {
