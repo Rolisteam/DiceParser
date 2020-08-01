@@ -1,17 +1,59 @@
-image: gcc
-
-build:
-  stage: build
+cppcheck:
+  image: ubuntu:bionic
   before_script:
-     - apt update && apt -y install make autoconf cmake qt5
+    - apt update
+    - apt install -y --no-install-recommands cppcheck=1.82-1 doxygen clang clang-tools-extra
+    - cppcheck --version
   script:
-    - cmake
-    - make
+    - cppcheck ./*.cpp --verbose --enable=all --inconclusive --
+
+
+clang-tidy:
+  image: ubuntu:bionic
+  before_script:
+    - apt update
+    - apt install -y --no-install-recommands clang clang-tools-extra
+    - clang-tidy --version
+  script:
+    - clang-tidy -warnings-as-errors="*" -checks="-*,clang-analyze"
+
+
+doxygen:
+  image: ubuntu:bionic
+  before_script:
+    - apt update
+    - apt install -y --no-install-recommands doxygen
+    - doxygen --version
+    - mkdir -p build/docs
+  script:
+    - doxygen docs/Doxyfile
   artifacts:
     paths:
-      - mybinary
+      - build/docs/html
 
-# run tests using the binary built before
-test:
-  stage: test
+
+
+
+
+
+build:
+  image: gcc
+#include:
+  #- https://invent.kde.org/sysadmin/ci-tooling/raw/master/invent/ci-before.yml
+  #- https://invent.kde.org/sysadmin/ci-tooling/raw/master/invent/ci-applications-linux.yml
+  stage: build
+  before_script:
+     - apt update && apt -y install make cmake qt5-default libqt5network5 libqt5test5 libqt5core5a
   script:
+    - mkdir -p build && cd build
+    - cmake .. -DCMAKE_BUILD_TYPE=Release
+    - cmake --build .
+  artifacts:
+    paths:
+      - build/libdiceparser.so.1.9.0
+      - build/cli/bin/dice
+  # run tests using the binary built before
+  test:
+    stage: test
+    script:
+      - make test
