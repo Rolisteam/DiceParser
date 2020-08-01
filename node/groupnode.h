@@ -24,7 +24,7 @@
 
 #include "node/executionnode.h"
 #include "result/scalarresult.h"
-// typedef QList<qint64> DieGroup;
+#include "result/stringresult.h"
 #include <QList>
 
 class DieGroup : public QList<qint64>
@@ -47,7 +47,7 @@ private:
 class GroupNode : public ExecutionNode
 {
 public:
-    GroupNode();
+    GroupNode(bool complexOutput= false);
     void run(ExecutionNode* previous);
     virtual QString toString(bool withLabel) const;
     virtual qint64 getPriority() const;
@@ -63,8 +63,10 @@ protected:
 
 private:
     ScalarResult* m_scalarResult;
+    StringResult* m_stringResult;
     qint64 m_groupValue;
     QList<DieGroup> m_groupsList;
+    bool m_complexOutput= false;
 };
 
 #endif // GROUPNODE_H
