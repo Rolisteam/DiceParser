@@ -1508,10 +1508,11 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
             break;
             case Group:
             {
+                bool stringResult= readStringResultParameter(str);
                 qint64 groupNumber= 0;
                 if(readNumber(str, groupNumber))
                 {
-                    GroupNode* groupNode= new GroupNode();
+                    GroupNode* groupNode= new GroupNode(stringResult);
                     groupNode->setGroupValue(groupNumber);
                     previous->setNextNode(groupNode);
                     node= groupNode;
@@ -1523,6 +1524,15 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
         }
     }
     return found;
+}
+bool ParsingToolBox::readStringResultParameter(QString& str)
+{
+    if(str.startsWith("s"))
+    {
+        str.remove(0, 1);
+        return true;
+    }
+    return false;
 }
 bool ParsingToolBox::readIfInstruction(QString& str, ExecutionNode*& trueNode, ExecutionNode*& falseNode)
 {

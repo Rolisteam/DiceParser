@@ -382,6 +382,8 @@ public:
     QList<DiceAlias*>* aliases();
     void cleanUpAliases();
 
+    static bool readStringResultParameter(QString& str);
+
 private:
     QMap<QString, BooleanCondition::LogicOperator> m_logicOp;
     QMap<QString, ValidatorList::LogicOperation> m_logicOperation;

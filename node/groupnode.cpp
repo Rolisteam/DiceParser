@@ -56,12 +56,18 @@ void DieGroup::setExceptedValue(qint64 exceptedValue)
 }
 
 //---------------------
-GroupNode::GroupNode() : m_scalarResult(new ScalarResult())
+GroupNode::GroupNode(bool complexOutput)
+    : m_scalarResult(new ScalarResult), m_stringResult(new StringResult), m_complexOutput(complexOutput)
 {
-    m_result= m_scalarResult;
 }
+
 void GroupNode::run(ExecutionNode* previous)
 {
+    if(m_complexOutput)
+        m_result= m_stringResult;
+    else
+        m_result= m_scalarResult;
+
     m_previousNode= previous;
     if(nullptr != previous)
     {
@@ -83,6 +89,15 @@ void GroupNode::run(ExecutionNode* previous)
                 {
                     auto const die= getGroup(allResult);
                     m_scalarResult->setValue(die.size());
+                    QStringList list;
+                    for(auto group : die)
+                    {
+                        QStringList values;
+                        std::transform(group.begin(), group.end(), std::back_inserter(values),
+                                       [](qint64 val) { return QString::number(val); });
+                        list << QStringLiteral("{%1}").arg(values.join(","));
+                    }
+                    m_stringResult->addText(QStringLiteral("%1 (%2)").arg(die.size()).arg(list.join(",")));
                 }
                 else
                 {
@@ -119,7 +134,7 @@ qint64 GroupNode::getPriority() const
 }
 ExecutionNode* GroupNode::getCopy() const
 {
-    GroupNode* node= new GroupNode();
+    GroupNode* node= new GroupNode(m_complexOutput);
     if(nullptr != m_nextNode)
     {
         node->setNextNode(m_nextNode->getCopy());
@@ -191,7 +206,7 @@ bool GroupNode::composeWithPrevious(DieGroup previous, qint64 first, qint64 curr
         }
     }
     std::sort(possibleUnion.begin(), possibleUnion.end(),
-        [=](const DieGroup& a, const DieGroup& b) { return a.getLost() > b.getLost(); });
+              [=](const DieGroup& a, const DieGroup& b) { return a.getLost() > b.getLost(); });
     bool found= false;
     for(int i= 0; (!found && i < possibleUnion.size()); ++i)
     {
