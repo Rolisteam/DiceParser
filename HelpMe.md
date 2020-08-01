@@ -532,6 +532,12 @@ Same as above, but the result of each die is displayed inside square brackets.
 
 Group dices, then count the number of group (7th sea system).
 
+#### Complex output
+
+Group operator can take a parameter to active the complex output. 
+This output will show the each group and any left aside values if any.
+To active this output, it is required to add a `s` just after the `g`. See example below:
+
 #### Example
 
 ```
@@ -542,6 +548,16 @@ This will roll 3 dices and then try to group them to make groups of 10. If you g
 
 The `g` operator is allowed to re-order dices to create groups. When rolling `4d20g10`, if you get `7 4 3 6`, the result will be `2` (`{7,3}` and `{6,4}`).
 
+```
+5d10gs10
+```
+
+Then, the final output will be:
+```
+2 ({7,3}, {6,4} - [2])
+```
+
+`{7,3}` and `{6,4}` are group, and `[2]` is left aside.
 
 ### Comment (\#)
 
