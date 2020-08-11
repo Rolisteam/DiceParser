@@ -176,3 +176,15 @@ Comment =: StartComment String
 StartComment =: #
 ```
 
+
+# Compilation
+
+```
+git clone --recursive https://invent.kde.org/rolisteam/rolisteam-diceparser.git
+cd rolisteam-diceparser
+mkdir build
+cd build
+cmake ../
+make 
+sudo make install
+```
