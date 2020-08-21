@@ -191,7 +191,7 @@ bool GroupNode::composeWithPrevious(DieGroup previous, qint64 first, qint64 curr
         }
     }
     std::sort(possibleUnion.begin(), possibleUnion.end(),
-        [=](const DieGroup& a, const DieGroup& b) { return a.getLost() > b.getLost(); });
+              [=](const DieGroup& a, const DieGroup& b) { return a.getLost() > b.getLost(); });
     bool found= false;
     for(int i= 0; (!found && i < possibleUnion.size()); ++i)
     {

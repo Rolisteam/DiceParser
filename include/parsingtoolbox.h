@@ -231,8 +231,9 @@ public:
     static SubtituteInfo readPlaceHolderFromString(const QString& source, int& start);
     static ExportedDiceResult finalDiceResultFromInstruction(ExecutionNode* start);
     static ExportedDiceResult allDiceResultFromInstruction(ExecutionNode* start);
-    void addResultInJson(QJsonObject obj, Dice::RESULT_TYPE type, const QString& key, ExecutionNode* start, bool b);
-    void addDiceResultInJson(QJsonObject obj, ExecutionNode* start);
+    void addResultInJson(QJsonObject& obj, Dice::RESULT_TYPE type, const QString& key, ExecutionNode* start, bool b);
+    void addDiceResultInJson(QJsonObject& obj, ExecutionNode* start,
+                             std::function<QString(const QString&, const QString&, bool)> colorize);
 
     // accessors
     void setComment(const QString& comment);
@@ -247,6 +248,8 @@ public:
     const QList<DiceAlias*>& getAliases() const;
     QList<DiceAlias*>* aliases();
     void cleanUpAliases();
+
+    static QString replacePlaceHolderFromJson(const QString& source, const QJsonObject& obj);
 
 private:
     QMap<QString, BooleanCondition::LogicOperator> m_logicOp;

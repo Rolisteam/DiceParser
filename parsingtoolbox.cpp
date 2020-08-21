@@ -725,11 +725,6 @@ QString ParsingToolBox::finalStringResult() const
     stringResult= ParsingToolBox::replaceVariableToValue(stringResult, allStringlist, errorMap);
     stringResult= ParsingToolBox::replacePlaceHolderToValue(stringResult, listFull);
 
-    /*bool isInt= true;
-    stringResult.toInt(&isInt);
-    if(!isInt)
-        resultStr= stringResult;*/
-
     return stringResult;
 }
 
@@ -1152,6 +1147,82 @@ QString ParsingToolBox::replaceVariableToValue(const QString& source, QStringLis
         else
         {
             result.insert(ref.position(), val);
+        }
+    } while(valid);
+
+    return result;
+}
+
+QString ParsingToolBox::replacePlaceHolderFromJson(const QString& source, const QJsonObject& obj)
+{
+    QStringList resultList;
+    auto instructions= obj["instructions"].toArray();
+    std::vector<std::vector<std::pair<int, QList<QStringList>>>> instructionResult;
+    for(auto inst : instructions)
+    {
+        std::vector<std::pair<int, QList<QStringList>>> map;
+        auto obj= inst.toObject();
+        auto vals= obj["diceval"].toArray();
+        int lastFace= -1;
+        for(auto valRef : vals)
+        {
+            auto diceObj= valRef.toObject();
+            auto face= diceObj["face"].toInt();
+            auto it= std::find_if(std::begin(map), std::end(map),
+                                  [face](const std::pair<int, QList<QStringList>>& val) { return val.first == face; });
+
+            auto realVal= diceObj["string"].toString();
+            if(lastFace == -1 || lastFace != face)
+            {
+                QList<QStringList> listOfList;
+                listOfList << (QStringList() << realVal);
+                map.push_back({face, listOfList});
+            }
+            else if(lastFace == face)
+            {
+                auto& valList= it->second.last();
+                valList.append(realVal);
+            }
+            lastFace= face;
+        }
+        instructionResult.push_back(map);
+    }
+    std::transform(std::begin(instructionResult), std::end(instructionResult), std::back_inserter(resultList),
+                   [](const std::vector<std::pair<int, QList<QStringList>>>& map) {
+                       QStringList valuesStr;
+                       auto multiKey= (map.size() > 1);
+                       for(auto item : map)
+                       {
+                           auto face= item.first;
+                           auto valueList= item.second;
+                           QStringList strs;
+                           for(auto list : valueList)
+                           {
+                               strs << list.join(",");
+                           }
+                           if(!multiKey)
+                               valuesStr << strs.join(",");
+                           else
+                               valuesStr << QString("d%1:(%2)").arg(face).arg(strs.join(","));
+                       }
+                       return valuesStr.join(" - ");
+                   });
+
+    QString result= source;
+    int start= source.size() - 1;
+    bool valid= true;
+    do
+    {
+        auto ref= readPlaceHolderFromString(source, start);
+        if(ref.isValid())
+        {
+            result.remove(ref.position(), ref.length());
+            auto val= resultList[ref.resultIndex() - 1];
+            result.insert(ref.position(), val);
+        }
+        else
+        {
+            valid= false;
         }
     } while(valid);
 
@@ -2327,15 +2398,17 @@ ExportedDiceResult ParsingToolBox::allDiceResultFromInstruction(ExecutionNode* s
     return nodeResult;
 }
 
-void ParsingToolBox::addResultInJson(QJsonObject obj, Dice::RESULT_TYPE type, const QString& key, ExecutionNode* start,
+void ParsingToolBox::addResultInJson(QJsonObject& obj, Dice::RESULT_TYPE type, const QString& key, ExecutionNode* start,
                                      bool b)
 {
     auto pair= hasResultOfType(type, start, b);
     if(pair.first)
-        obj[key]= pair.second.toReal();
+        obj[key]= QJsonValue::fromVariant(pair.second);
 }
 
-void ParsingToolBox::addDiceResultInJson(QJsonObject obj, ExecutionNode* start)
+void ParsingToolBox::addDiceResultInJson(
+    QJsonObject& obj, ExecutionNode* start,
+    std::function<QString(const QString& value, const QString& color, bool highlighted)> colorize)
 {
     QJsonArray diceValues;
     auto result= ParsingToolBox::allDiceResultFromInstruction(start);
@@ -2349,7 +2422,7 @@ void ParsingToolBox::addDiceResultInJson(QJsonObject obj, ExecutionNode* start)
                 diceObj["face"]= static_cast<qreal>(hlDice.faces());
                 diceObj["color"]= hlDice.color();
                 diceObj["displayed"]= hlDice.displayed();
-                diceObj["string"]= hlDice.getResultString();
+                diceObj["string"]= colorize(hlDice.getResultString(), hlDice.color(), hlDice.isHighlighted());
                 diceObj["highlight"]= hlDice.isHighlighted();
                 diceObj["uuid"]= hlDice.uuid();
                 auto val= hlDice.result();
