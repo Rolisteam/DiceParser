@@ -171,25 +171,27 @@ void displayMarkdown(QString scalarText, QString resultStr, QJsonArray array, bo
 QString displaySVG(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString error,
                    QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
 {
-    QString str(
-        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg version=\"1.1\"  xmlns=\"http://www.w3.org/2000/svg\" "
-        "xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
+    QString str("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg version=\"1.1\"  "
+                "xmlns=\"http://www.w3.org/2000/svg\" "
+                "xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
     if(!error.isEmpty())
     {
-        str.append(
-            QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"20\"><tspan fill=\"red\">%1</tspan></text>").arg(error));
+        str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"20\"><tspan "
+                                  "fill=\"red\">%1</tspan></text>")
+                       .arg(error));
     }
     else
     {
         if(!warning.isEmpty())
-            str.append(
-                QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"20\"><tspan fill=\"orange\">%1</tspan></text>")
-                    .arg(warning));
+            str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"20\"><tspan "
+                                      "fill=\"orange\">%1</tspan></text>")
+                           .arg(warning));
 
         int y= 20;
         if(!comment.isEmpty())
         {
-            str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%2\"><tspan fill=\"blue\">%1</tspan></text>")
+            str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%2\"><tspan "
+                                      "fill=\"blue\">%1</tspan></text>")
                            .arg(comment)
                            .arg(y));
             y+= 20;
@@ -198,7 +200,8 @@ QString displaySVG(QString scalarText, QString resultStr, QJsonArray array, bool
         if(resultStr.isEmpty())
         {
             if(withColor)
-                str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%4\"><tspan fill=\"red\">%1</tspan>\n"
+                str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%4\"><tspan "
+                                          "fill=\"red\">%1</tspan>\n"
                                           "<tspan x=\"0\" y=\"%5\">details:</tspan>[%3 (%2)]</text>")
                                .arg(scalarText)
                                .arg(diceList)
@@ -286,6 +289,7 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
 
     int rt= 0;
     bool in_markdown= true;
+
     for(QString cmd : cmds)
     {
         if(cmd.startsWith('&') && format == BOT)
@@ -527,7 +531,8 @@ int main(int argc, char* argv[])
                             "The output is formatted in json.");
     QCommandLineOption dotFile(QStringList() << "d"
                                              << "dot-file",
-                               "Instead of rolling dice, generate the execution tree and write it in <dotfile>",
+                               "Instead of rolling dice, generate the execution tree and write it in "
+                               "<dotfile>",
                                "dotfile");
     QCommandLineOption translation(QStringList() << "t"
                                                  << "translation",
@@ -599,6 +604,9 @@ int main(int argc, char* argv[])
     }
     QStringList cmdList= optionParser.positionalArguments();
 
+    cmdList.append("repeat(2d6c[<4];1d6;2d6c[<4];\"échecs: $1 [@1], succès $3 [@3], le dé "
+                   "de balance: $2\",5)");
+
     if(!cmdList.isEmpty())
     {
         if(cmdList[0].startsWith('&'))
@@ -606,7 +614,8 @@ int main(int argc, char* argv[])
             colorb= false;
         }
     }
-    // cmdList << "8d10;\$1c[>6];\$1c[=1];\$2-\$3i:[>0]{\"%3 Success[%2]\"}{i:[<0]{\"Critical fail %3 [%2]\"}{\"Fail %3
+    // cmdList << "8d10;\$1c[>6];\$1c[=1];\$2-\$3i:[>0]{\"%3
+    // Success[%2]\"}{i:[<0]{\"Critical fail %3 [%2]\"}{\"Fail %3
     // [%2]\"}}";
     QJsonArray aliases;
     if(optionParser.isSet(alias))

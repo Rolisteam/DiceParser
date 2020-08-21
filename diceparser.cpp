@@ -258,36 +258,7 @@ bool DiceParser::hasDiceResult() const
 }
 bool DiceParser::hasStringResult() const
 {
-    bool result= false;
-    for(auto node : m_parsingToolbox->getStartNodes())
-    {
-        QVariant var;
-        result|= hasResultOfType(Dice::RESULT_TYPE::STRING, node, var);
-    }
-    return result;
-}
-bool DiceParser::hasResultOfType(Dice::RESULT_TYPE type, ExecutionNode* node, QVariant& value, bool notthelast)
-{
-    bool scalarDone= false;
-    ExecutionNode* next= ParsingToolBox::getLeafNode(node);
-    Result* result= next->getResult();
-    while((result != nullptr) && (!scalarDone))
-    {
-        bool lastResult= false;
-        if(notthelast)
-            lastResult= (nullptr == result->getPrevious());
-
-        if(result->hasResultOfType(type) && !lastResult)
-        {
-            scalarDone= true;
-            value= result->getResult(type);
-        }
-        result= result->getPrevious();
-    }
-    return scalarDone;
-=======
     return m_parsingToolbox->hasStringResult();
->>>>>>> Rework exporting
 }
 
 int DiceParser::startNodeCount() const

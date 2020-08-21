@@ -1323,29 +1323,30 @@ void ParsingToolBox::readSubtitutionParameters(SubtituteInfo& info, QString& res
 
 bool ParsingToolBox::readReaperArguments(RepeaterNode* node, QString& source)
 {
-    if(readOpenParentheses(source))
+    if(!readOpenParentheses(source))
+        return false;
+
+    auto instructions= readInstructionList(source, false);
+    if(instructions.empty())
+        return false;
+
+    readComma(source);
+    ExecutionNode* tmp;
+    if(readOperand(source, tmp))
     {
-        auto instructions= readInstructionList(source, false);
-        if(!instructions.empty())
+        if(source.startsWith("+"))
         {
-            readComma(source);
-            ExecutionNode* tmp;
-            if(readOperand(source, tmp))
-            {
-                if(source.startsWith("+"))
-                {
-                    node->setSumAll(true);
-                    source= source.remove(0, 1);
-                }
-                if(readCloseParentheses(source))
-                {
-                    node->setCommand(instructions);
-                    node->setTimeNode(tmp);
-                    return true;
-                }
-            }
+            node->setSumAll(true);
+            source= source.remove(0, 1);
+        }
+        if(readCloseParentheses(source))
+        {
+            node->setCommand(instructions);
+            node->setTimeNode(tmp);
+            return true;
         }
     }
+
     return false;
 }
 bool ParsingToolBox::readExpression(QString& str, ExecutionNode*& node)

@@ -26,6 +26,29 @@
 #include "parsingtoolbox.h"
 #include "result/stringresult.h"
 
+using InstructionSet= std::vector<ExecutionNode*>;
+
+QStringList allFirstResultAsString(std::vector<InstructionSet> startingNodes, bool& hasAlias)
+{
+    // QStringList allResult;
+    QStringList stringListResult;
+    for(auto node : startingNodes)
+    {
+        QVariant var;
+        if(ParsingToolBox::hasResultOfType(Dice::RESULT_TYPE::STRING, node, var))
+        {
+            stringListResult << var.toString();
+            hasAlias= true;
+        }
+        else if(hasResultOfType(Dice::RESULT_TYPE::SCALAR, node, var, true))
+        {
+            stringListResult << QString::number(var.toReal());
+            hasAlias= true;
+        }
+    }
+    return stringListResult;
+}
+
 std::vector<ExecutionNode*> makeCopy(std::vector<ExecutionNode*> cmds)
 {
     std::vector<ExecutionNode*> copy;
@@ -46,11 +69,16 @@ void RepeaterNode::run(ExecutionNode* previousNode)
     m_times->run(this);
     m_times= ParsingToolBox::getLeafNode(m_times);
     auto times= m_times->getResult();
+    if(!times)
+        return;
+
+    std::vector<InstructionSet> m_startingNodes;
     auto timeCount= times->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
     auto cmd= makeCopy(m_cmd);
     std::vector<Result*> resultVec;
     for(int i= 0; i < timeCount; ++i)
     {
+        m_startingNodes.push_back(cmd);
         std::for_each(cmd.begin(), cmd.end(), [this, &resultVec](ExecutionNode* node) {
             node->run(this);
             auto end= ParsingToolBox::getLeafNode(node);
@@ -74,9 +102,10 @@ void RepeaterNode::run(ExecutionNode* previousNode)
     }
     else
     {
-        auto string= new StringResult();
-        QStringList list;
-        std::for_each(resultVec.begin(), resultVec.end(), [&list](Result* result) {
+        auto list= allFirstResultAsString(m_startingNodes, true);
+        // auto string= new StringResult();
+        // QStringList list;
+        /*std::for_each(resultVec.begin(), resultVec.end(), [&list](Result* result) {
             auto value= result->getResult(Dice::RESULT_TYPE::SCALAR).toDouble();
             auto diceList= result->getResult(Dice::RESULT_TYPE::DICE_LIST).value<QList<Die*>>();
             auto string= result->getResult(Dice::RESULT_TYPE::STRING).toString();
@@ -103,7 +132,7 @@ void RepeaterNode::run(ExecutionNode* previousNode)
         });
         string->addText(list.join('\n'));
         string->finished();
-        m_result= string;
+        m_result= string;*/
     }
 
     if(nullptr != m_nextNode)
