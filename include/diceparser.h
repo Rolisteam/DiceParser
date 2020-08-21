@@ -105,7 +105,7 @@ public:
     QString comment() const;
     QString humanReadableWarning() const;
     QString humanReadableError() const;
-    QString resultAsJSon() const;
+    QString resultAsJSon(std::function<QString(const QString&, const QString&, bool)> colorize) const;
 
     //    QStringList stringResult() const;
     //    QStringList allDiceResult(bool& hasAlias) const;

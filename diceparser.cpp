@@ -352,7 +352,7 @@ QString DiceParser::humanReadableWarning() const
     return str;
 }
 
-QString DiceParser::resultAsJSon() const
+QString DiceParser::resultAsJSon(std::function<QString(const QString&, const QString&, bool)> colorize) const
 {
     QJsonObject obj;
     QJsonArray instructions;
@@ -362,7 +362,7 @@ QString DiceParser::resultAsJSon() const
 
         m_parsingToolbox->addResultInJson(inst, Dice::RESULT_TYPE::SCALAR, "scalar", start, true);
         m_parsingToolbox->addResultInJson(inst, Dice::RESULT_TYPE::STRING, "string", start, false);
-        m_parsingToolbox->addDiceResultInJson(inst, start);
+        m_parsingToolbox->addDiceResultInJson(inst, start, colorize);
 
         instructions.append(inst);
     }
