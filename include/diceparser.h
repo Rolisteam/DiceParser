@@ -99,6 +99,7 @@ public:
     QList<qreal> scalarResultsFromEachInstruction() const;
     QStringList stringResultFromEachInstruction(bool& hasAlias) const;
     void diceResultFromEachInstruction(QList<ExportedDiceResult>& resultList) const;
+    QString finalStringResult() const;
 
     QString diceCommand() const;
     QMap<Dice::ERROR_CODE, QString> errorMap() const;

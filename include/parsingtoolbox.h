@@ -86,9 +86,6 @@ public:
     {
         REPEAT
     };
-    /**
-     * @brief The OptionOperator enum gathering all options  availables for result.
-     */
     enum OptionOperator
     {
         KeepAndExplode,
@@ -110,33 +107,17 @@ public:
         Bind,
         AllSameExplode
     };
-    /**
-     * @brief The DiceOperator enum gathering all dice operators
-     */
     enum DiceOperator
     {
         D,
         L
     };
-    /**
-     * @brief The DiceSymbol enum
-     */
     enum NodeAction
     {
         JumpBackward
     };
-    /**
-     * @brief ParsingToolBox
-     */
     ParsingToolBox();
-    /**
-     * @brief ParsingToolBox
-     * @param data
-     */
     ParsingToolBox(const ParsingToolBox& data);
-    /**
-     * @brief ~ParsingToolBox
-     */
     virtual ~ParsingToolBox();
     void clearUp();
 
@@ -241,6 +222,7 @@ public:
     void setHelpPath(const QString& path);
     static QHash<QString, QString> getVariableHash();
     static void setVariableHash(const QHash<QString, QString>& variableHash);
+    void setStartNodes(std::vector<ExecutionNode*> nodes);
 
     // Aliases
     QString convertAlias(QString str);

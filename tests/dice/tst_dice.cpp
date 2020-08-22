@@ -240,7 +240,7 @@ void TestDice::validatorListTest()
     QVERIFY2(m_diceParser->humanReadableError().isEmpty(), "no error");
     QVERIFY2(m_diceParser->humanReadableWarning().isEmpty(), "no warning");
 
-    auto resultCmd= m_diceParser->getLastIntegerResults();
+    auto resultCmd= m_diceParser->scalarResultsFromEachInstruction();
 
     QCOMPARE(resultCmd.size(), 1);
 
@@ -393,7 +393,7 @@ void TestDice::rangedCommandsTest()
     QVERIFY2(a, "parsing");
 
     m_diceParser->start();
-    auto results= m_diceParser->getLastIntegerResults();
+    auto results= m_diceParser->scalarResultsFromEachInstruction();
 
     QVERIFY(results.size() == 1);
 
@@ -479,7 +479,7 @@ void TestDice::scopeDF()
     bool test= m_diceParser->parseLine(cmd);
     QVERIFY2(test == valid, cmd.toStdString().c_str());
     m_diceParser->start();
-    auto results= m_diceParser->getLastIntegerResults();
+    auto results= m_diceParser->scalarResultsFromEachInstruction();
 
     for(auto result : results)
         QVERIFY(result >= min && result <= max);
@@ -549,7 +549,7 @@ void TestDice::severalInstruction()
     {
         auto test= m_diceParser->parseLine(cmd);
         QVERIFY2(test, cmd.toStdString().c_str());
-        QVERIFY2(m_diceParser->getStartNodeCount() == results[i], "Wrong number of instruction");
+        QVERIFY2(m_diceParser->startNodeCount() == results[i], "Wrong number of instruction");
     }
 }
 void TestDice::mathPriority()
@@ -560,7 +560,7 @@ void TestDice::mathPriority()
     bool test= m_diceParser->parseLine(cmd);
     QVERIFY(test);
     m_diceParser->start();
-    auto resultList= m_diceParser->getLastIntegerResults();
+    auto resultList= m_diceParser->scalarResultsFromEachInstruction();
     QCOMPARE(resultList.size(), 1);
 
     auto value= resultList.first();
@@ -1006,7 +1006,7 @@ void TestDice::filterTest()
     QVERIFY2(m_diceParser->humanReadableError().isEmpty(), "no error");
     QVERIFY2(m_diceParser->humanReadableWarning().isEmpty(), "no warning");
 
-    auto resultCmd= m_diceParser->getLastIntegerResults();
+    auto resultCmd= m_diceParser->scalarResultsFromEachInstruction();
 
     QCOMPARE(resultCmd.size(), 1);
 
@@ -1135,11 +1135,11 @@ void TestDice::ifCommandTest()
     bool test= m_diceParser->parseLine(cmd);
     QVERIFY2(test, cmd.toStdString().c_str());
     m_diceParser->start();
-    auto results= m_diceParser->getLastIntegerResults();
-    auto strResult= m_diceParser->getStringResult();
+    auto results= m_diceParser->scalarResultsFromEachInstruction();
+    auto strResult= m_diceParser->finalStringResult();
+    qDebug() << strResult;
 
     QCOMPARE(results.size(), 1);
-    QCOMPARE(strResult.size(), 1);
 
     auto result= results.first();
     auto it= std::find_if(level.begin(), level.end(), [compare, result](int level) {
@@ -1160,7 +1160,7 @@ void TestDice::ifCommandTest()
     auto index= std::distance(level.begin(), it);
 
     auto strResultExpected= startExperted[index];
-    auto resultText= strResult.first();
+    auto resultText= strResult;
 
     QVERIFY2(resultText.startsWith(strResultExpected), "string result does not fit the expectation");
 }

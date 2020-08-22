@@ -266,6 +266,16 @@ int DiceParser::startNodeCount() const
     return static_cast<int>(m_parsingToolbox->getStartNodes().size());
 }
 
+QList<qreal> DiceParser::scalarResultsFromEachInstruction() const
+{
+    return m_parsingToolbox->scalarResultsFromEachInstruction();
+}
+
+QStringList DiceParser::stringResultFromEachInstruction(bool& hasAlias) const
+{
+    return m_parsingToolbox->allFirstResultAsString(hasAlias);
+}
+
 QString DiceParser::comment() const
 {
     return m_parsingToolbox->getComment();
@@ -321,6 +331,11 @@ QString DiceParser::humanReadableWarning() const
         str.append(QStringLiteral("\n"));
     }
     return str;
+}
+
+QString DiceParser::finalStringResult() const
+{
+    return m_parsingToolbox->finalStringResult();
 }
 
 QString DiceParser::resultAsJSon(std::function<QString(const QString&, const QString&, bool)> colorize) const

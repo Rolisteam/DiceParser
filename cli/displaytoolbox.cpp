@@ -122,54 +122,7 @@ QString DisplayToolBox::diceToSvg(QJsonArray array, bool withColor, bool allSame
     }
 }
 #include <QVariantList>
-QJsonArray DisplayToolBox::diceToJson(QList<ExportedDiceResult>& diceList, bool& allSameFaceCount, bool& allSameColor)
-{
-    allSameFaceCount= true;
 
-    QJsonArray array;
-    QStringList colorList;
-    for(auto dice : diceList)
-    {
-        if(dice.size() > 1)
-        {
-            allSameFaceCount= false;
-        }
-        for(quint64 face : dice.keys())
-        {
-            ListDiceResult diceResults= dice.value(face);
-            QJsonObject object;
-            QVariantList listVariant;
-            object["face"]= static_cast<int>(face);
-            listVariant.reserve(diceResults.size());
-            for(auto const& dice : diceResults)
-            {
-                QJsonObject diceObj;
-                auto listValues= dice.getResult();
-                if(!listValues.isEmpty())
-                {
-                    diceObj["total"]= static_cast<qint64>(listValues.takeFirst());
-                    diceObj["face"]= static_cast<int>(face);
-                    auto color= dice.getColor();
-                    diceObj["color"]= color;
-                    if(!colorList.contains(color))
-                        colorList.append(color);
-                    QJsonArray subValues;
-                    for(auto result : listValues)
-                    {
-                        subValues.push_back(static_cast<qint64>(result));
-                    }
-                    diceObj["subvalues"]= subValues;
-                }
-                listVariant.append(QVariant::fromValue(diceObj));
-            }
-            object["values"]= QJsonArray::fromVariantList(listVariant);
-            array.push_back(object);
-        }
-    }
-    if(colorList.size() > 1)
-        allSameColor= false;
-    return array;
-}
 QString DisplayToolBox::diceResultToString(QJsonObject val, Output type, bool hasColor)
 {
     auto total= QString::number(val["total"].toDouble());
@@ -203,47 +156,4 @@ QString DisplayToolBox::diceResultToString(QJsonObject val, Output type, bool ha
         }
     }
     return total;
-}
-QString DisplayToolBox::diceToText(QJsonArray array, bool withColor, bool allSameFaceCount, bool allSameColor)
-{
-    Q_UNUSED(allSameColor)
-    QStringList result;
-    for(auto item : array)
-    {
-        QString subResult("");
-        auto obj= item.toObject();
-        auto values= obj["values"].toArray();
-
-        QStringList diceResult;
-        for(auto valRef : values)
-        {
-            diceResult+= diceResultToString(valRef.toObject(), Output::Terminal, withColor);
-        }
-        if(!diceResult.isEmpty())
-        {
-            if(!allSameFaceCount)
-            {
-                subResult+= QStringLiteral("d%1:(").arg(obj["face"].toInt());
-            }
-            if(withColor)
-            {
-                subResult+= DisplayToolBox::colorToTermCode(obj["color"].toString());
-            }
-            subResult+= diceResult.join(" ");
-            if(withColor)
-            {
-                subResult+= DisplayToolBox::colorToTermCode(QStringLiteral("reset"));
-            }
-            if(!allSameFaceCount)
-            {
-                subResult+= QStringLiteral(")");
-            }
-        }
-
-        if(!subResult.isEmpty())
-        {
-            result+= subResult;
-        }
-    }
-    return result.join(" - ");
 }

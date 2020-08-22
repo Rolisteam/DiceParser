@@ -25,24 +25,27 @@
 #include "executionnode.h"
 #include "parsingtoolbox.h"
 #include "result/stringresult.h"
+#include <QDebug>
 
 using InstructionSet= std::vector<ExecutionNode*>;
 
-QStringList allFirstResultAsString(std::vector<InstructionSet> startingNodes, bool& hasAlias)
+QStringList allFirstResultAsString(const InstructionSet& startingNodes, bool& hasAlias)
 {
+    ParsingToolBox parsingBox;
     // QStringList allResult;
     QStringList stringListResult;
     for(auto node : startingNodes)
     {
-        QVariant var;
-        if(ParsingToolBox::hasResultOfType(Dice::RESULT_TYPE::STRING, node, var))
+        auto pair= parsingBox.hasResultOfType(Dice::RESULT_TYPE::STRING, node);
+        auto pairStr= parsingBox.hasResultOfType(Dice::RESULT_TYPE::SCALAR, node, true);
+        if(pair.first)
         {
-            stringListResult << var.toString();
+            stringListResult << pair.second.toString();
             hasAlias= true;
         }
-        else if(hasResultOfType(Dice::RESULT_TYPE::SCALAR, node, var, true))
+        else if(pairStr.first)
         {
-            stringListResult << QString::number(var.toReal());
+            stringListResult << QString::number(pairStr.second.toReal());
             hasAlias= true;
         }
     }
@@ -102,37 +105,22 @@ void RepeaterNode::run(ExecutionNode* previousNode)
     }
     else
     {
-        auto list= allFirstResultAsString(m_startingNodes, true);
-        // auto string= new StringResult();
-        // QStringList list;
-        /*std::for_each(resultVec.begin(), resultVec.end(), [&list](Result* result) {
-            auto value= result->getResult(Dice::RESULT_TYPE::SCALAR).toDouble();
-            auto diceList= result->getResult(Dice::RESULT_TYPE::DICE_LIST).value<QList<Die*>>();
-            auto string= result->getResult(Dice::RESULT_TYPE::STRING).toString();
+        auto string= new StringResult();
 
-            if(!string.isEmpty())
-                list.append(string);
-            else
-            {
-                QStringList diceStr;
-                std::transform(diceList.begin(), diceList.end(), std::back_inserter(diceStr), [](Die* die) {
-                    auto values= die->getListValue();
+        QStringList listOfStrResult;
+        for(auto instructions : m_startingNodes)
+        {
+            ParsingToolBox parsingBox;
+            parsingBox.setStartNodes(instructions);
+            auto finalString= parsingBox.finalStringResult();
+            listOfStrResult << finalString;
+        }
+        if(!listOfStrResult.isEmpty())
+            string->addText(listOfStrResult.join('\n'));
 
-                    QStringList valuesStr;
-                    std::transform(values.begin(), values.end(), std::back_inserter(valuesStr),
-                                   [](qint64 val) { return QString::number(val); });
+        m_result= string;
 
-                    if(valuesStr.size() == 1)
-                        return QStringLiteral("%1").arg(die->getValue());
-                    else
-                        return QStringLiteral("%1 [%2]").arg(die->getValue()).arg(valuesStr.join(","));
-                });
-                list.append(QStringLiteral("%1 - Details [%2]").arg(value).arg(diceStr.join(",")));
-            }
-        });
-        string->addText(list.join('\n'));
-        string->finished();
-        m_result= string;*/
+        qDebug().noquote() << listOfStrResult.join('\n');
     }
 
     if(nullptr != m_nextNode)

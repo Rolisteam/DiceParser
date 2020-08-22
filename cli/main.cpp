@@ -118,28 +118,35 @@ QString diceToMarkdown(QJsonArray array, bool withColor, bool allSameColor, bool
     }
 }
 
-void displayJSon(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString error,
-                 QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
+void displayJSon(QString json)
 {
-    Q_UNUSED(withColor);
-    QJsonDocument doc;
-    QJsonObject obj;
-    obj["values"]= array;
-    obj["comment"]= comment;
-    obj["error"]= error;
-    obj["scalar"]= scalarText;
-    obj["string"]= resultStr;
-    obj["allSameFace"]= allSameFaceCount;
-    obj["allSameColor"]= allSameColor;
-    obj["warning"]= warning;
-    obj["command"]= cmd;
-    doc.setObject(obj);
-    out << doc.toJson() << "\n";
+    out << json << "\n";
 }
-void displayMarkdown(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd,
-                     QString error, QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
+void displayMarkdown(QString json)
 {
-    Q_UNUSED(withColor);
+    QJsonDocument doc= QJsonDocument::fromJson(json.toUtf8());
+    auto obj= doc.object();
+    auto error= obj["error"].toString();
+    auto warning= obj["warning"].toString();
+    auto comment= obj["warning"].toString();
+    auto arrayInst= obj["instructions"].toArray();
+    QStringList diceResults;
+    for(auto inst : arrayInst)
+    {
+        auto obj= inst.toObject();
+        auto diceVals= obj["diceval"].toArray();
+        for(auto diceval : diceVals)
+        {
+            auto objval= diceval.toObject();
+            auto resultStr= QString::number(objval["value"].toDouble());
+            diceResults << resultStr;
+        }
+    }
+    auto diceList= diceResults.join(",");
+    auto resultStr= obj["string"].toString();
+    auto scalarText= obj["scalar"].toString();
+    auto cmd= obj["command"].toString();
+
     QString str("```Markdown\n");
     if(!error.isEmpty())
     {
@@ -154,23 +161,44 @@ void displayMarkdown(QString scalarText, QString resultStr, QJsonArray array, bo
         {
             str.prepend(QStringLiteral("%1\n").arg(comment));
         }
-        auto diceList= DisplayToolBox::diceToText(array, false, allSameFaceCount, allSameColor);
-        if(resultStr.isEmpty())
-        {
-            str.append(QStringLiteral("# %1\nDetails:[%3 (%2)]\n").arg(scalarText).arg(diceList).arg(cmd));
-        }
-        else if(!resultStr.isEmpty())
+        if(!resultStr.isEmpty() && resultStr != scalarText)
         {
             // resultStr.replace("%2", diceList.trimmed());
             str.append(QStringLiteral("%1\n").arg(resultStr));
+        }
+        else
+        {
+            str.append(QStringLiteral("# %1\nDetails:[%3 (%2)]\n").arg(scalarText).arg(diceList).arg(cmd));
         }
     }
     str.append(QStringLiteral("```"));
     out << str;
 }
-QString displaySVG(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString error,
-                   QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
+QString displaySVG(QString json, QJsonArray array, bool withColor, bool allSameColor)
 {
+    QJsonDocument doc= QJsonDocument::fromJson(json.toUtf8());
+    auto obj= doc.object();
+    auto error= obj["error"].toString();
+    auto warning= obj["warning"].toString();
+    auto comment= obj["warning"].toString();
+    auto arrayInst= obj["instructions"].toArray();
+    QStringList diceResults;
+    for(auto inst : arrayInst)
+    {
+        auto obj= inst.toObject();
+        auto diceVals= obj["diceval"].toArray();
+        for(auto diceval : diceVals)
+        {
+            auto objval= diceval.toObject();
+            auto resultStr= objval["string"].toString();
+            diceResults << resultStr;
+        }
+    }
+    auto diceList= diceResults.join(",");
+    auto resultStr= obj["string"].toString();
+    auto scalarText= obj["scalar"].toString();
+    auto cmd= obj["command"].toString();
+
     QString str("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg version=\"1.1\"  "
                 "xmlns=\"http://www.w3.org/2000/svg\" "
                 "xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n");
@@ -196,8 +224,13 @@ QString displaySVG(QString scalarText, QString resultStr, QJsonArray array, bool
                            .arg(y));
             y+= 20;
         }
-        auto diceList= DisplayToolBox::diceToSvg(array, withColor, allSameColor, allSameFaceCount);
-        if(resultStr.isEmpty())
+        // auto diceList= DisplayToolBox::diceToSvg(array, withColor, allSameColor, allSameFaceCount);
+        if(!resultStr.isEmpty() && resultStr != scalarText)
+        {
+            resultStr.replace("%2", diceList.trimmed());
+            str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%2\">%1</text>").arg(resultStr).arg(y));
+        }
+        else
         {
             if(withColor)
                 str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%4\"><tspan "
@@ -217,30 +250,44 @@ QString displaySVG(QString scalarText, QString resultStr, QJsonArray array, bool
                                .arg(y)
                                .arg(y * 2));
         }
-        else if(!resultStr.isEmpty())
-        {
-            resultStr.replace("%2", diceList.trimmed());
-            str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%2\">%1</text>").arg(resultStr).arg(y));
-        }
     }
     str.append(QStringLiteral("</svg>\n"));
     return str;
 }
 
 #ifdef PAINTER_OP
-void displayImage(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd, QString error,
-                  QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
+void displayImage(QString json, QJsonArray array, bool withColor, bool allSameColor)
 {
-    auto svg= displaySVG(scalarText, resultStr, array, withColor, cmd, error, warning, comment, allSameFaceCount,
-                         allSameColor);
+    auto svg= displaySVG(json, array, withColor, allSameColor);
     out << DisplayToolBox::makeImage(svg.toUtf8());
 }
 #endif
 
-void displayCommandResult(QString scalarText, QString resultStr, QJsonArray array, bool withColor, QString cmd,
-                          QString error, QString warning, QString comment, bool allSameFaceCount, bool allSameColor)
+void displayCommandResult(QString json, QJsonArray array, bool withColor, bool allSameColor)
 {
-    // TODO display warning
+    QJsonDocument doc= QJsonDocument::fromJson(json.toUtf8());
+    auto obj= doc.object();
+    auto error= obj["error"].toString();
+    auto warning= obj["warning"].toString();
+    auto comment= obj["comment"].toString();
+    auto arrayInst= obj["instructions"].toArray();
+    QStringList diceResults;
+    for(auto inst : arrayInst)
+    {
+        auto obj= inst.toObject();
+        auto diceVals= obj["diceval"].toArray();
+        for(auto diceval : diceVals)
+        {
+            auto objval= diceval.toObject();
+            auto resultStr= objval["string"].toString();
+            diceResults << resultStr;
+        }
+    }
+    auto diceList= diceResults.join(",");
+    auto scalarText= obj["scalar"].toString();
+    auto cmd= obj["command"].toString();
+    auto resultStr= obj["string"].toString();
+
     if(!error.isEmpty())
     {
         err << "Error" << error << "\n";
@@ -252,14 +299,12 @@ void displayCommandResult(QString scalarText, QString resultStr, QJsonArray arra
 
     QString str;
 
-    auto diceList= DisplayToolBox::diceToText(array, withColor, allSameFaceCount, allSameColor);
-
     if(withColor)
         str= QString("Result: \e[0;31m%1\e[0m - details:[%3 (%2)]").arg(scalarText).arg(diceList).arg(cmd);
     else
         str= QString("Result: %1 - details:[%3 (%2)]").arg(scalarText).arg(diceList).arg(cmd);
 
-    if(!resultStr.isEmpty())
+    if(!resultStr.isEmpty() && resultStr != scalarText)
     {
         resultStr.replace("%2", diceList.trimmed());
         str= resultStr;
@@ -271,7 +316,7 @@ void displayCommandResult(QString scalarText, QString resultStr, QJsonArray arra
     }
     out << str << "\n";
 }
-
+#include <QDebug>
 int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPORTFORMAT format, QJsonArray array)
 {
     DiceParser parser;
@@ -301,118 +346,62 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
         if(parser.parseLine(cmd))
         {
             parser.start();
-            QList<ExportedDiceResult> list;
-            QList<ExportedDiceResult> listFull;
-            bool homogeneous= true;
-            parser.getLastDiceResult(list, homogeneous);
-            parser.getDiceResultFromAllInstruction(listFull);
-            bool allSameFaceCount= true;
+
+            std::set<EXPORTFORMAT> svgFormat({SVG, IMAGE, BOT});
+            QString json;
             bool allSameColor= true;
-            auto array= DisplayToolBox::diceToJson(list, allSameFaceCount, allSameColor);
-            QString resultStr;
-            QString scalarText;
-            QString lastScalarText;
-            QString comment= parser.getComment();
-            QString error= parser.humanReadableError();
-            QString warnings= parser.humanReadableWarning();
-            QStringList strLst;
-            QStringList listOfDiceResult;
-            QString cmdRework= parser.getDiceCommand();
+            if(svgFormat.find(format) != svgFormat.end())
+            {
+                allSameColor= true;
+                QString colorP;
+                json= parser.resultAsJSon(
+                    [&colorP, &allSameColor](const QString& value, const QString& color, bool highlight) {
+                        if(colorP.isNull())
+                            colorP= color;
+                        else if(colorP != color)
+                            allSameColor= false;
 
-            if(parser.hasIntegerResultNotInFirst())
-            {
-                auto values= parser.getLastIntegerResults();
-                for(auto val : values)
-                {
-                    strLst << QString::number(val);
-                }
-                scalarText= QString("%1").arg(strLst.join(','));
-                lastScalarText= strLst.last();
-            }
-            else if(!list.isEmpty())
-            {
-                auto values= parser.getSumOfDiceResult();
-                for(auto val : values)
-                {
-                    strLst << QString::number(val);
-                }
-                scalarText= QString("%1").arg(strLst.join(','));
-            }
-
-            for(auto map : list)
-            {
-                for(auto key : map.keys())
-                {
-                    auto dice= map[key];
-                    QString stringVal;
-                    for(auto val : dice)
-                    {
-                        qint64 total= 0;
-                        QStringList dicelist;
-                        for(auto score : val.getResult())
+                        QString result= value;
+                        bool hasColor= !color.isEmpty();
+                        QString style;
+                        if(hasColor)
                         {
-                            total+= score;
-                            dicelist << QString::number(score);
+                            style+= QStringLiteral("fill=\"%1\" ").arg(color);
                         }
-                        if(val.getResult().size() > 1)
+                        if(highlight)
                         {
-                            stringVal= QString("%1 [%2]").arg(total).arg(dicelist.join(','));
-                            listOfDiceResult << stringVal;
+                            if(style.isEmpty())
+                                style+= QStringLiteral("fill=\"%1\" ")
+                                            .arg("red"); // default color must get the value from the setting object
+                            style+= QStringLiteral("font-weight=\"bold\" ");
                         }
-                        else
-                        {
-                            listOfDiceResult << QString::number(total);
-                        }
-                    }
-                }
+                        if(!style.isEmpty())
+                            result= QString("<tspan %2>%1</tspan>").arg(value).arg(style);
+                        return result;
+                    });
             }
-
-            if(parser.hasStringResult())
+            else if(TERMINAL == format)
             {
-                bool ok;
-                QStringList allStringlist= parser.allFirstResultAsString(ok);
+                allSameColor= true;
+                QString colorP;
+                json= parser.resultAsJSon(
+                    [&colorP, &allSameColor](const QString& result, const QString& color, bool highlight) {
+                        if(colorP.isNull())
+                            colorP= color;
+                        else if(colorP != color)
+                            allSameColor= false;
 
-                QStringList resultWithPlaceHolder;
-                std::for_each(allStringlist.begin(), allStringlist.end(), [&resultWithPlaceHolder](const QString& sub) {
-                    QRegularExpression ex("%[1-3]?|\\$[1-9]+|@[1-9]+");
-                    if(sub.contains(ex))
-                        resultWithPlaceHolder.append(sub);
-                });
-
-                if(resultWithPlaceHolder.isEmpty())
-                    allStringlist.erase(std::remove_if(allStringlist.begin(), allStringlist.end(),
-                                                       [](const QString& result) {
-                                                           bool ok;
-                                                           result.toInt(&ok);
-                                                           return ok;
-                                                       }),
-                                        allStringlist.end());
-                auto stringResult
-                    = resultWithPlaceHolder.isEmpty() ? allStringlist.join(" ; ") : resultWithPlaceHolder.join(" ; ");
-
-                stringResult.replace("%1", scalarText);
-                stringResult.replace("%2", listOfDiceResult.join(",").trimmed());
-                stringResult.replace("%3", lastScalarText);
-                stringResult.replace("\\n", "\n");
-
-                QMap<Dice::ERROR_CODE, QString> errorMap;
-                stringResult= ParsingToolBox::replaceVariableToValue(stringResult, allStringlist, errorMap);
-                stringResult= ParsingToolBox::replacePlaceHolderToValue(stringResult, listFull);
-
-                error= errorMap.values().join(", ");
-
-                int i= strLst.size();
-                for(auto it= strLst.rbegin(); it != strLst.rend(); ++it)
-                {
-                    stringResult.replace(QStringLiteral("µ%1").arg(i), (*it));
-                    --i;
-                }
-
-                bool isInt= true;
-                stringResult.toInt(&isInt);
-                if(!isInt || !resultWithPlaceHolder.isEmpty())
-                    resultStr= stringResult;
+                        auto front= DisplayToolBox::colorToTermCode(color);
+                        auto end= front.isEmpty() ? "" : DisplayToolBox::colorToTermCode("reset");
+                        return result;
+                    });
             }
+            else
+            {
+                allSameColor= true;
+                json= parser.resultAsJSon([](const QString& result, const QString&, bool) { return result; });
+            }
+
             if(format == BOT)
             {
                 if(allSameColor)
@@ -427,58 +416,40 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
                     format= MARKDOWN;
 #endif
                 }
-                if(!error.isEmpty())
+                if(!parser.humanReadableError().isEmpty())
                 {
                     format= MARKDOWN;
                 }
             }
+            if(!withColor && format == TERMINAL)
+                format= TEXT;
+
+            // qDebug().noquote() << json << format;
 
             switch(format)
             {
             case TERMINAL:
-                displayCommandResult(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
-                                     allSameFaceCount, allSameColor);
+                displayCommandResult(json, array, true, allSameColor);
                 break;
             case SVG:
-                out << displaySVG(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
-                                  allSameFaceCount, allSameColor)
-                    << "\n";
+                out << displaySVG(json, array, withColor, allSameColor) << "\n";
                 break;
             case BOT:
             case MARKDOWN:
-                displayMarkdown(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
-                                allSameFaceCount, allSameColor);
+                displayMarkdown(json);
                 break;
             case TEXT:
-                displayCommandResult(scalarText, resultStr, array, false, cmdRework, error, warnings, comment,
-                                     allSameFaceCount, allSameColor);
+                displayCommandResult(json, array, false, allSameColor);
                 break;
             case JSON:
-                displayJSon(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
-                            allSameFaceCount, allSameColor);
+                displayJSon(json);
                 break;
 #ifdef PAINTER_OP
             case IMAGE:
-                displayImage(scalarText, resultStr, array, withColor, cmdRework, error, warnings, comment,
-                             allSameFaceCount, allSameColor);
+                displayImage(json, array, withColor, allSameColor);
                 break;
 #endif
             }
-            if(!treeFile.isEmpty())
-            {
-                parser.writeDownDotTree(treeFile);
-            }
-
-            if(!error.isEmpty())
-            {
-                rt= 1;
-            }
-        }
-        else
-        {
-            QString error= parser.humanReadableError();
-            err << "Error: " << error << "\n";
-            rt= 1;
         }
     }
     return rt;
@@ -604,9 +575,6 @@ int main(int argc, char* argv[])
     }
     QStringList cmdList= optionParser.positionalArguments();
 
-    cmdList.append("repeat(2d6c[<4];1d6;2d6c[<4];\"échecs: $1 [@1], succès $3 [@3], le dé "
-                   "de balance: $2\",5)");
-
     if(!cmdList.isEmpty())
     {
         if(cmdList[0].startsWith('&'))
@@ -614,9 +582,7 @@ int main(int argc, char* argv[])
             colorb= false;
         }
     }
-    // cmdList << "8d10;\$1c[>6];\$1c[=1];\$2-\$3i:[>0]{\"%3
-    // Success[%2]\"}{i:[<0]{\"Critical fail %3 [%2]\"}{\"Fail %3
-    // [%2]\"}}";
+
     QJsonArray aliases;
     if(optionParser.isSet(alias))
     {

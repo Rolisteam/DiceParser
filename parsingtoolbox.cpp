@@ -712,7 +712,7 @@ QString ParsingToolBox::finalStringResult() const
         if(sub.contains(ex))
             resultWithPlaceHolder.append(sub);
     });
-    auto stringResult= resultWithPlaceHolder.isEmpty() ? allStringlist.join(" ; ") : resultWithPlaceHolder.join(" ; ");
+    auto stringResult= resultWithPlaceHolder.isEmpty() ? allStringlist.join(",") : resultWithPlaceHolder.join(",");
 
     auto pairScalar= finalScalarResult();
 
@@ -998,6 +998,11 @@ QHash<QString, QString> ParsingToolBox::getVariableHash()
 void ParsingToolBox::setVariableHash(const QHash<QString, QString>& variableHash)
 {
     m_variableHash= variableHash;
+}
+
+void ParsingToolBox::setStartNodes(std::vector<ExecutionNode*> nodes)
+{
+    m_startNodes= nodes;
 }
 
 void ParsingToolBox::readProbability(QStringList& str, QList<Range>& ranges)
