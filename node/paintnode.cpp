@@ -83,15 +83,13 @@ void PainterNode::run(ExecutionNode* previous)
                 ++pastDice;
             }
         }
+        m_diceResult->setPrevious(previousResult);
+        m_result= m_diceResult;
     }
     if(nullptr != m_nextNode)
     {
         m_nextNode->run(this);
     }
-}
-Result* PainterNode::getResult()
-{
-    return m_diceResult;
 }
 
 QString PainterNode::toString(bool wl) const
