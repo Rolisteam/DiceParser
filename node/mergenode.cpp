@@ -21,6 +21,8 @@
  ***************************************************************************/
 #include "mergenode.h"
 
+#include "parsingtoolbox.h"
+
 MergeNode::MergeNode() : m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
@@ -41,7 +43,10 @@ void MergeNode::run(ExecutionNode* previous)
     {
         ExecutionNode* last= getLatestNode(start);
         if(nullptr == last || nullptr == previousLast)
+        {
+            previousLast= last;
             continue;
+        }
 
         auto startResult= start->getResult();
         if(nullptr == startResult)
@@ -55,7 +60,7 @@ void MergeNode::run(ExecutionNode* previous)
         while(nullptr != tmpResult)
         {
             DiceResult* dice= dynamic_cast<DiceResult*>(tmpResult);
-            if(nullptr == dice)
+            if(nullptr != dice)
             {
                 ///@todo TODO improve here to set homogeneous while is really
                 m_diceResult->setHomogeneous(false);
@@ -93,11 +98,13 @@ void MergeNode::run(ExecutionNode* previous)
         m_nextNode->run(this);
     }
 }
+#include <QDebug>
 ExecutionNode* MergeNode::getLatestNode(ExecutionNode* node)
 {
     ExecutionNode* next= node;
     while(nullptr != next->getNextNode() && (next->getNextNode() != this))
     {
+        qDebug() << "find latest node" << next->toString(true) << next->getNextNode()->toString(true);
         next= next->getNextNode();
     }
     return next;

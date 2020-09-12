@@ -1123,7 +1123,7 @@ QString ParsingToolBox::replaceVariableToValue(const QString& source, QStringLis
     do
     {
         auto ref= readVariableFromString(source, start);
-        if(ref.resultIndex() >= values.size())
+        if(ref.resultIndex() > values.size())
         {
             auto error= QString("No valid value at index: $%1").arg(ref.resultIndex());
             errorMap.insert(Dice::ERROR_CODE::INVALID_INDEX, error);
@@ -2357,7 +2357,7 @@ ExportedDiceResult ParsingToolBox::finalDiceResultFromInstruction(ExecutionNode*
                 faces= die->getFaces();
                 HighLightDice hlDice(die->getListValue(), die->isHighlighted(), die->getColor(),
                                      die->hasBeenDisplayed(), die->getFaces(), die->getUuid());
-                if(alreadyAdded.find(die->getUuid()) == alreadyAdded.end())
+                if(alreadyAdded.find(die->getUuid()) == alreadyAdded.end() && !hlDice.displayed())
                 {
                     list.append(hlDice);
                     alreadyAdded.insert(die->getUuid());
@@ -2370,10 +2370,10 @@ ExportedDiceResult ParsingToolBox::finalDiceResultFromInstruction(ExecutionNode*
                 nodeResult.insert(faces, vals);
             }
         }
-        if(nodeResult.isEmpty())
+        /*if(nodeResult.isEmpty())
             result= result->getPrevious();
-        else
-            result= nullptr;
+        else*/
+        result= result->getPrevious();
     }
     return nodeResult;
 }

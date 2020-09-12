@@ -276,6 +276,11 @@ QStringList DiceParser::stringResultFromEachInstruction(bool& hasAlias) const
     return m_parsingToolbox->allFirstResultAsString(hasAlias);
 }
 
+void DiceParser::diceResultFromEachInstruction(QList<ExportedDiceResult>& resultList) const
+{
+    resultList= m_parsingToolbox->diceResultFromEachInstruction();
+}
+
 QString DiceParser::comment() const
 {
     return m_parsingToolbox->getComment();

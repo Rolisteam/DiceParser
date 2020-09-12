@@ -40,7 +40,7 @@ public:
     virtual ExecutionNode* getCopy() const;
 
 private:
-    qint64 m_numberOfDice;
+    qint64 m_numberOfDice= 0;
     DiceResult* m_diceResult;
 };
 

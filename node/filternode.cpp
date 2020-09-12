@@ -47,6 +47,7 @@ void FilterNode::run(ExecutionNode* previous)
         for(Die* tmp : diceList)
         {
             tmp->setHighlighted(false);
+            tmp->setDisplayed(true);
         }
 
         m_diceResult->setResultList(diceList2);
