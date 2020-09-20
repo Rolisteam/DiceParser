@@ -510,7 +510,7 @@ QStringList ParsingToolBox::allFirstResultAsString(bool& hasAlias) const
         }
         else if(scalarPair.first)
         {
-            stringListResult << QString::number(scalarPair.second.toReal());
+            stringListResult << number(scalarPair.second.toReal());
             hasAlias= true;
         }
     }
@@ -606,7 +606,7 @@ std::pair<QString, QString> ParsingToolBox::finalScalarResult() const
         auto listScalar= scalarResultsFromEachInstruction();
         for(auto val : listScalar)
         {
-            strLst << QString::number(val);
+            strLst << number(val);
         }
         scalarText= QString("%1").arg(strLst.join(','));
         lastScalarText= strLst.last();
@@ -617,7 +617,7 @@ std::pair<QString, QString> ParsingToolBox::finalScalarResult() const
         QStringList strLst;
         for(auto val : values)
         {
-            strLst << QString::number(val);
+            strLst << number(val);
         }
         scalarText= QString("%1").arg(strLst.join(','));
     }
@@ -2337,6 +2337,11 @@ SubtituteInfo ParsingToolBox::readPlaceHolderFromString(const QString& source, i
     }
     start= i;
     return info;
+}
+
+QString ParsingToolBox::number(qreal value)
+{
+    return QString::number(value, 'g', 20);
 }
 
 ExportedDiceResult ParsingToolBox::finalDiceResultFromInstruction(ExecutionNode* start)
