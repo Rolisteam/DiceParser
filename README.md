@@ -184,7 +184,7 @@ git clone --recursive https://invent.kde.org/rolisteam/rolisteam-diceparser.git
 cd rolisteam-diceparser
 mkdir build
 cd build
-cmake ../
+cmake ../ -DBUILD_CLI=ON
 make 
 sudo make install
 ```
