@@ -67,6 +67,7 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
     {
         str= m_parsingToolbox->convertAlias(str);
     }
+    m_parsingToolbox->clearUp();
     m_command= str;
     auto instructions= m_parsingToolbox->readInstructionList(str, true);
     m_command.remove(m_parsingToolbox->getComment());
@@ -106,141 +107,6 @@ void DiceParser::start()
         start->run();
     }
 }
-
-/*
-QStringList DiceParser::stringResult() const
-{
-    QStringList stringListResult;
-    for(auto node : m_parsingToolbox->getStartNodes())
-    {
-        ExecutionNode* next= ParsingToolBox::getLeafNode(node);
-        QString str;
-        Result* result= next->getResult();
-        bool found= false;
-        while((nullptr != result) && (!found))
-        {
-            if(result->hasResultOfType(Dice::RESULT_TYPE::STRING))
-            {
-                str= result->getResult(Dice::RESULT_TYPE::STRING).toString();
-                found= true;
-            }
-            result= result->getPrevious();
-        }
-        if(!str.isEmpty())
-            stringListResult << str;
-    }
-    return stringListResult;
-}
-
-QStringList DiceParser::allDiceResult(bool& hasAlias) const
-{
-    QStringList stringListResult;
-    for(auto node : m_parsingToolbox->getStartNodes())
-    {
-        ExecutionNode* next= ParsingToolBox::getLeafNode(node);
-        Result* result= next->getResult();
-        QList<Die*> dieListResult;
-
-        while(nullptr != result)
-        {
-            if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
-            {
-                DiceResult* stringResult= dynamic_cast<DiceResult*>(result);
-                if(nullptr != stringResult)
-                {
-                    for(auto& die : stringResult->getResultList())
-                    {
-                        if(!dieListResult.contains(die))
-                        {
-                            dieListResult.removeAll(die);
-                            dieListResult << die;
-                        }
-                    }
-                    hasAlias= true;
-                }
-            }
-            result= result->getPrevious();
-        }
-        for(auto& die : dieListResult)
-        {
-            if(die->isHighlighted())
-            {
-                for(qint64& value : die->getListValue())
-                {
-                    stringListResult << QString::number(value);
-                }
-            }
-        }
-    }
-
-    return stringListResult;
-}*/
-
-/*void DiceParser::lastDiceResult(QList<ExportedDiceResult>& diceValuesList,
-bool& homogeneous) const
-{
-    QSet<QString> alreadySeenDice;
-    for(auto start : m_parsingToolbox->getStartNodes())
-    {
-        ExportedDiceResult diceValues;
-        ExecutionNode* next= ParsingToolBox::getLeafNode(start);
-        Result* result= next->getResult();
-        while(nullptr != result)
-        {
-            if(result->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
-            {
-                DiceResult* diceResult= dynamic_cast<DiceResult*>(result);
-                if(nullptr != diceResult)
-                {
-                    if(homogeneous)
-                    {
-                        homogeneous= diceResult->isHomogeneous();
-                    }
-                    quint64 face= 0;
-                    ListDiceResult listpair;
-                    for(auto& die : diceResult->getResultList())
-                    {
-                        if(die->hasBeenDisplayed() ||
-alreadySeenDice.contains(die->getUuid())) continue;
-
-                        QList<qint64> valuesResult;
-                        valuesResult.append(die->getValue());
-                        die->displayed();
-                        face= die->getFaces();
-                        if(die->hasChildrenValue())
-                        {
-                            for(qint64& i : die->getListValue())
-                            {
-                                valuesResult.append(i);
-                            }
-                        }
-                        HighLightDice hlDice(valuesResult, die->isHighlighted(),
-die->getColor(), die->hasBeenDisplayed(), 0); listpair.append(hlDice);
-                        alreadySeenDice << die->getUuid();
-                    }
-                    if(!listpair.isEmpty())
-                    {
-                        if(!diceValues.contains(face))
-                        {
-                            diceValues.insert(face, listpair);
-                        }
-                        else
-                        {
-                            ListDiceResult tmp= diceValues.value(face);
-                            tmp.append(listpair);
-                            diceValues.insert(face, tmp);
-                        }
-                    }
-                }
-            }
-            result= result->getPrevious();
-        }
-        if(!diceValues.isEmpty())
-        {
-            diceValuesList.append(diceValues);
-        }
-    }
-}*/
 
 QString DiceParser::diceCommand() const
 {

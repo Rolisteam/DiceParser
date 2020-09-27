@@ -21,6 +21,8 @@
  ***************************************************************************/
 #include "compositevalidator.h"
 
+#include <map>
+
 CompositeValidator::CompositeValidator() {}
 
 CompositeValidator::~CompositeValidator()
@@ -73,27 +75,29 @@ qint64 CompositeValidator::hasValid(Die* b, bool recursive, bool unhighlight) co
 
 QString CompositeValidator::toString()
 {
-    QString str= "";
-    /*switch (m_operator)
+    // m_validatorList
+    QStringList validatorsTextList;
+    std::transform(m_validatorList.begin(), m_validatorList.end(), std::back_inserter(validatorsTextList),
+                   [](Validator* validator) { return validator->toString(); });
+    QStringList operatorTextList;
+    std::transform(
+        m_operators.begin(), m_operators.end(), std::back_inserter(operatorTextList), [](LogicOperation validator) {
+            static std::map<LogicOperation, QString> map({{OR, "|"}, {EXCLUSIVE_OR, "^"}, {AND, "&"}, {NONE, ""}});
+            return map[validator];
+        });
+
+    if(validatorsTextList.size() - 1 != operatorTextList.size())
+        return QString("Error - operator and validator count don't fit");
+
+    QStringList result;
+    int i= 0;
+    for(auto text : validatorsTextList)
     {
-    case Equal:
-        str.append("=");
-        break;
-    case GreaterThan:
-        str.append(">");
-        break;
-    case LesserThan:
-        str.append("<");
-        break;
-    case GreaterOrEqual:
-        str.append(">=");
-        break;
-    case LesserOrEqual:
-        str.append("<=");
-        break;
+        result << text << operatorTextList[i];
+
+        ++i;
     }
-    return QString("[%1%2]").arg(str).arg(m_value);*/
-    return str;
+    return result.join(" ");
 }
 
 Dice::CONDITION_STATE testAND(Dice::CONDITION_STATE before, Dice::CONDITION_STATE current)
@@ -144,7 +148,7 @@ Dice::CONDITION_STATE CompositeValidator::isValidRangeSize(const std::pair<qint6
     }
 
     std::size_t i= 0;
-    Dice::CONDITION_STATE val = Dice::CONDITION_STATE::ERROR_STATE;
+    Dice::CONDITION_STATE val= Dice::CONDITION_STATE::ERROR_STATE;
     for(const auto& op : m_operators)
     {
         auto currentState= vec[i + 1];

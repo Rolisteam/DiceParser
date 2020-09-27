@@ -8,6 +8,8 @@ find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Test Gui
 enable_testing(true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} result node)
 
+option(BUILD_CLI OFF)
+
 SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/diceparser.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/range.cpp
@@ -35,7 +37,6 @@ SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/node/listsetrollnode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/numbernode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/parenthesesnode.cpp
-  # ${CMAKE_CURRENT_SOURCE_DIR}/ node/forloopnode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/paintnode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/rerolldicenode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/scalaroperatornode.cpp
@@ -79,12 +80,11 @@ set_target_properties(diceparser_shared PROPERTIES SOVERSION 1)
 
 set_target_properties(diceparser_shared PROPERTIES PUBLIC_HEADER "include/diceparser.h;include/highlightdice.h;include/parsingtoolbox.h;include/dicealias.h;include/diceparserhelper.h")
 
-add_subdirectory(cli)
-add_subdirectory( tests )
-#add_subdirectory(irc)
-#add_subdirectory(mobile)
-#add_subdirectory(webserver)
+IF(BUILD_CLI)
+    add_subdirectory(cli)
+ENDIF()
 
+add_subdirectory( tests )
 
 include(GNUInstallDirs)
 

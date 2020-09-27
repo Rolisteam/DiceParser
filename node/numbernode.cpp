@@ -27,7 +27,6 @@ NumberNode::NumberNode() : m_scalarResult(new ScalarResult())
 }
 NumberNode::~NumberNode()
 {
-    /// @todo make sure there is no copy of the internal result.
     /*if( nullptr != m_scalarResult)
     {
         delete m_scalarResult;
