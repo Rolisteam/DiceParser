@@ -2360,8 +2360,14 @@ ExportedDiceResult ParsingToolBox::finalDiceResultFromInstruction(ExecutionNode*
             for(auto& die : diceResult->getResultList())
             {
                 faces= die->getFaces();
-                HighLightDice hlDice(die->getListValue(), die->isHighlighted(), die->getColor(),
-                                     die->hasBeenDisplayed(), die->getFaces(), die->getUuid());
+                QList<qint64> listValues;
+                auto listOfValues= die->getListValue();
+                if(listOfValues.size() > 1)
+                    listValues << die->getValue() << listOfValues;
+                else
+                    listValues << listOfValues;
+                HighLightDice hlDice(listValues, die->isHighlighted(), die->getColor(), die->hasBeenDisplayed(),
+                                     die->getFaces(), die->getUuid());
                 if(alreadyAdded.find(die->getUuid()) == alreadyAdded.end() && !hlDice.displayed())
                 {
                     list.append(hlDice);
