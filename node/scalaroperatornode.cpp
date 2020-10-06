@@ -198,6 +198,10 @@ qint64 ScalarOperatorNode::getPriority() const
     {
         return 1;
     }
+    else if(m_arithmeticOperator == Die::POW)
+    {
+        return 3;
+    }
     else
     {
         return 2;
