@@ -128,7 +128,7 @@ void displayMarkdown(QString json)
     auto obj= doc.object();
     auto error= obj["error"].toString();
     auto warning= obj["warning"].toString();
-    auto comment= obj["warning"].toString();
+    auto comment= obj["comment"].toString();
     auto arrayInst= obj["instructions"].toArray();
     QStringList diceResults;
     for(auto inst : arrayInst)
