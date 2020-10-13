@@ -451,6 +451,8 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
 #endif
             }
         }
+        else
+            rt = 1;
     }
     return rt;
 }

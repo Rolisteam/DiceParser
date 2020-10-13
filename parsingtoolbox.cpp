@@ -502,7 +502,7 @@ QStringList ParsingToolBox::allFirstResultAsString(bool& hasAlias) const
     {
         QVariant var;
         auto stringPair= hasResultOfType(Dice::RESULT_TYPE::STRING, node);
-        auto scalarPair= hasResultOfType(Dice::RESULT_TYPE::SCALAR, node, true);
+        auto scalarPair= hasResultOfType(Dice::RESULT_TYPE::SCALAR, node);
         if(stringPair.first)
         {
             stringListResult << stringPair.second.toString();
@@ -2341,7 +2341,10 @@ SubtituteInfo ParsingToolBox::readPlaceHolderFromString(const QString& source, i
 
 QString ParsingToolBox::number(qreal value)
 {
-    return QString::number(value, 'g', 20);
+    if(value > 1000000)
+        return QString::number(value, 'f', 20);
+    else 
+        return QString::number(value);
 }
 
 ExportedDiceResult ParsingToolBox::finalDiceResultFromInstruction(ExecutionNode* start)
