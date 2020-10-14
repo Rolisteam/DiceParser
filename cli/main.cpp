@@ -82,42 +82,6 @@ enum EXPORTFORMAT
 #endif
 int returnValue= 0;
 
-QString diceToMarkdown(QJsonArray array, bool withColor, bool allSameColor, bool allSameFaceCount)
-{
-    if(allSameFaceCount)
-    {
-        QStringList result;
-        for(auto item : array)
-        {
-            auto obj= item.toObject();
-            auto values= obj["values"].toArray();
-            for(auto val : values)
-            {
-                result.append(val.toString());
-            }
-        }
-        return result.join(',');
-    }
-    else
-    {
-        QStringList result;
-        for(auto item : array)
-        {
-            QStringList subResult;
-            auto obj= item.toObject();
-            auto values= obj["values"].toArray();
-            for(auto val : values)
-            {
-                subResult.append(val.toString());
-            }
-            result.append(QStringLiteral("d%1:(").arg(obj["face"].toString()));
-            result.append(subResult.join(','));
-            result.append(QStringLiteral(")"));
-        }
-        return result.join(' ');
-    }
-}
-
 void displayJSon(QString json)
 {
     out << json << "\n";
@@ -142,7 +106,7 @@ void displayMarkdown(QString json)
             diceResults << resultStr;
         }
     }
-    auto diceList= diceResults.join(",");
+    auto diceList= diceResults.join(" ");
     auto resultStr= obj["string"].toString();
     auto scalarText= obj["scalar"].toString();
     auto cmd= obj["command"].toString();
@@ -174,7 +138,7 @@ void displayMarkdown(QString json)
     str.append(QStringLiteral("```"));
     out << str;
 }
-QString displaySVG(QString json, QJsonArray array, bool withColor, bool allSameColor)
+QString displaySVG(QString json, bool withColor)
 {
     QJsonDocument doc= QJsonDocument::fromJson(json.toUtf8());
     auto obj= doc.object();
@@ -256,14 +220,14 @@ QString displaySVG(QString json, QJsonArray array, bool withColor, bool allSameC
 }
 
 #ifdef PAINTER_OP
-void displayImage(QString json, QJsonArray array, bool withColor, bool allSameColor)
+void displayImage(QString json, bool withColor)
 {
-    auto svg= displaySVG(json, array, withColor, allSameColor);
+    auto svg= displaySVG(json, withColor);
     out << DisplayToolBox::makeImage(svg.toUtf8());
 }
 #endif
 
-void displayCommandResult(QString json, QJsonArray array, bool withColor, bool allSameColor)
+void displayCommandResult(QString json, bool withColor)
 {
     QJsonDocument doc= QJsonDocument::fromJson(json.toUtf8());
     auto obj= doc.object();
@@ -317,7 +281,7 @@ void displayCommandResult(QString json, QJsonArray array, bool withColor, bool a
     out << str << "\n";
 }
 #include <QDebug>
-int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPORTFORMAT format, QJsonArray array)
+int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJsonArray array)
 {
     DiceParser parser;
     parser.insertAlias(new DiceAlias("L5R5R", QStringLiteral("L[-,⨀,⨀⬢,❂⬢,❁,❁⬢]")), 0);
@@ -384,17 +348,16 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
             {
                 allSameColor= true;
                 QString colorP;
-                json= parser.resultAsJSon(
-                    [&colorP, &allSameColor](const QString& result, const QString& color, bool highlight) {
-                        if(colorP.isNull())
-                            colorP= color;
-                        else if(colorP != color)
-                            allSameColor= false;
+                json= parser.resultAsJSon([&colorP, &allSameColor](const QString& result, const QString& color, bool) {
+                    if(colorP.isNull())
+                        colorP= color;
+                    else if(colorP != color)
+                        allSameColor= false;
 
-                        auto front= DisplayToolBox::colorToTermCode(color);
-                        auto end= front.isEmpty() ? "" : DisplayToolBox::colorToTermCode("reset");
-                        return result;
-                    });
+                    auto front= DisplayToolBox::colorToTermCode(color);
+                    auto end= front.isEmpty() ? "" : DisplayToolBox::colorToTermCode("reset");
+                    return result;
+                });
             }
             else
             {
@@ -429,30 +392,30 @@ int startDiceParsing(QStringList& cmds, QString& treeFile, bool withColor, EXPOR
             switch(format)
             {
             case TERMINAL:
-                displayCommandResult(json, array, true, allSameColor);
+                displayCommandResult(json, true);
                 break;
             case SVG:
-                out << displaySVG(json, array, withColor, allSameColor) << "\n";
+                out << displaySVG(json, withColor) << "\n";
                 break;
             case BOT:
             case MARKDOWN:
                 displayMarkdown(json);
                 break;
             case TEXT:
-                displayCommandResult(json, array, false, allSameColor);
+                displayCommandResult(json, false);
                 break;
             case JSON:
                 displayJSon(json);
                 break;
 #ifdef PAINTER_OP
             case IMAGE:
-                displayImage(json, array, withColor, allSameColor);
+                displayImage(json, withColor);
                 break;
 #endif
             }
         }
         else
-            rt = 1;
+            rt= 1;
     }
     return rt;
 }
@@ -605,7 +568,7 @@ int main(int argc, char* argv[])
         aliases= doc.array();
     }
 
-    returnValue= startDiceParsing(cmdList, dotFileStr, colorb, format, aliases);
+    returnValue= startDiceParsing(cmdList, colorb, format, aliases);
     if(optionParser.isSet(help))
     {
         out << optionParser.helpText();
