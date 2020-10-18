@@ -103,7 +103,16 @@ void displayMarkdown(QString json)
         {
             auto objval= diceval.toObject();
             auto resultStr= QString::number(objval["value"].toDouble());
+
+            auto subvalues= objval["subvalues"].toArray();
+            QStringList subValueStr;
+            for(auto sub : subvalues)
+            {
+                subValueStr << QString::number(sub.toDouble());
+            }
             diceResults << resultStr;
+            if(!subValueStr.isEmpty())
+                diceResults << QString("[%1]").arg(subValueStr.join(" "));
         }
     }
     auto diceList= diceResults.join(" ");

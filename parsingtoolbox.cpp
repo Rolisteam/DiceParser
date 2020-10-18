@@ -664,9 +664,10 @@ QList<ExportedDiceResult> ParsingToolBox::diceResultFromEachInstruction() const
     return resultList;
 }
 
-QStringList listOfDiceResult(const QList<ExportedDiceResult>& list)
+QStringList listOfDiceResult(const QList<ExportedDiceResult>& list, bool removeDouble= false)
 {
     QStringList listOfDiceResult;
+    std::set<QString> alreadyAdded;
     for(auto map : list)
     {
         for(auto key : map.keys())
@@ -677,6 +678,11 @@ QStringList listOfDiceResult(const QList<ExportedDiceResult>& list)
                 QString stringVal;
                 for(auto val : dice)
                 {
+                    if(removeDouble && (alreadyAdded.end() != alreadyAdded.find(val.uuid())))
+                        continue;
+
+                    alreadyAdded.insert(val.uuid());
+
                     qint64 total= 0;
                     QStringList dicelist;
                     for(auto score : val.result())
@@ -717,7 +723,7 @@ QString ParsingToolBox::finalStringResult() const
     auto pairScalar= finalScalarResult();
 
     stringResult.replace("%1", pairScalar.first);
-    stringResult.replace("%2", listOfDiceResult(diceResultFromEachInstruction()).join(",").trimmed());
+    stringResult.replace("%2", listOfDiceResult(diceResultFromEachInstruction(), true).join(",").trimmed());
     stringResult.replace("%3", pairScalar.second);
     stringResult.replace("\\n", "\n");
 
@@ -2343,7 +2349,7 @@ QString ParsingToolBox::number(qreal value)
 {
     if(value > 1000000)
         return QString::number(value, 'f', 20);
-    else 
+    else
         return QString::number(value);
 }
 
