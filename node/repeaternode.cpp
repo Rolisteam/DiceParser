@@ -112,7 +112,8 @@ void RepeaterNode::run(ExecutionNode* previousNode)
         {
             ParsingToolBox parsingBox;
             parsingBox.setStartNodes(instructions);
-            auto finalString= parsingBox.finalStringResult();
+            auto finalString
+                = parsingBox.finalStringResult([](const QString& result, const QString&, bool) { return result; });
             listOfStrResult << finalString;
         }
         if(!listOfStrResult.isEmpty())

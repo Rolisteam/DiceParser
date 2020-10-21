@@ -21,6 +21,7 @@
  ***************************************************************************/
 #include "parsingtoolbox.h"
 
+#include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QRegularExpression>
@@ -658,8 +659,7 @@ QList<ExportedDiceResult> ParsingToolBox::diceResultFromEachInstruction() const
     QList<ExportedDiceResult> resultList;
     for(auto start : m_startNodes)
     {
-        auto result= ParsingToolBox::finalDiceResultFromInstruction(start);
-        resultList.append(result);
+        resultList.append(ParsingToolBox::finalDiceResultFromInstruction(start));
     }
     return resultList;
 }
@@ -706,7 +706,8 @@ QStringList listOfDiceResult(const QList<ExportedDiceResult>& list, bool removeD
     return listOfDiceResult;
 }
 
-QString ParsingToolBox::finalStringResult() const
+QString ParsingToolBox::finalStringResult(std::function<QString(const QString&, const QString&, bool)> colorize,
+                                          bool removeUnhighlighted) const
 {
     bool ok;
     QStringList allStringlist= allFirstResultAsString(ok);
@@ -729,7 +730,7 @@ QString ParsingToolBox::finalStringResult() const
 
     QMap<Dice::ERROR_CODE, QString> errorMap;
     stringResult= ParsingToolBox::replaceVariableToValue(stringResult, allStringlist, errorMap);
-    stringResult= ParsingToolBox::replacePlaceHolderToValue(stringResult, listFull);
+    stringResult= ParsingToolBox::replacePlaceHolderToValue(stringResult, listFull, removeUnhighlighted, colorize);
 
     return stringResult;
 }
@@ -1240,28 +1241,43 @@ QString ParsingToolBox::replacePlaceHolderFromJson(const QString& source, const 
     return result;
 }
 
-QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const QList<ExportedDiceResult>& list)
+QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const QList<ExportedDiceResult>& list,
+                                                  bool removeUnhighlighted,
+                                                  std::function<QString(const QString&, const QString&, bool)> colorize)
 {
     QStringList resultList;
     std::transform(
-        std::begin(list), std::end(list), std::back_inserter(resultList), [](const ExportedDiceResult& dice) {
+        std::begin(list), std::end(list), std::back_inserter(resultList),
+        [removeUnhighlighted, colorize](const ExportedDiceResult& dice) {
             QStringList valuesStr;
             if(dice.size() == 1)
             {
                 auto values= dice.values();
-                std::transform(std::begin(values), std::end(values), std::back_inserter(valuesStr),
-                               [](const QList<ListDiceResult>& dice) {
-                                   QStringList textList;
-                                   std::transform(std::begin(dice), std::end(dice), std::back_inserter(textList),
-                                                  [](const ListDiceResult& dice) {
-                                                      QStringList list;
-                                                      std::transform(
-                                                          std::begin(dice), std::end(dice), std::back_inserter(list),
-                                                          [](const HighLightDice& hl) { return hl.getResultString(); });
-                                                      return list.join(",");
-                                                  });
-                                   return textList.join(",");
-                               });
+                std::transform(
+                    std::begin(values), std::end(values), std::back_inserter(valuesStr),
+                    [removeUnhighlighted, colorize](const QList<ListDiceResult>& dice) {
+                        QStringList textList;
+                        std::transform(
+                            std::begin(dice), std::end(dice), std::back_inserter(textList),
+                            [removeUnhighlighted, colorize](const ListDiceResult& dice) {
+                                QStringList list;
+                                ListDiceResult values= dice;
+                                if(removeUnhighlighted)
+                                {
+                                    values.clear();
+                                    std::copy_if(std::begin(dice), std::end(dice), std::back_inserter(values),
+                                                 [](const HighLightDice& hl) { return hl.isHighlighted(); });
+                                }
+
+                                std::transform(std::begin(values), std::end(values), std::back_inserter(list),
+                                               [colorize](const HighLightDice& hl) {
+                                                   return colorize(hl.getResultString(), {}, hl.isHighlighted());
+                                               });
+                                return list.join(",");
+                            });
+                        textList.removeAll(QString());
+                        return textList.join(",");
+                    });
             }
             else if(dice.size() > 1)
             {

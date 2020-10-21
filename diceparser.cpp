@@ -204,12 +204,13 @@ QString DiceParser::humanReadableWarning() const
     return str;
 }
 
-QString DiceParser::finalStringResult() const
+QString DiceParser::finalStringResult(std::function<QString(const QString&, const QString&, bool)> colorize) const
 {
-    return m_parsingToolbox->finalStringResult();
+    return m_parsingToolbox->finalStringResult(colorize);
 }
 
-QString DiceParser::resultAsJSon(std::function<QString(const QString&, const QString&, bool)> colorize) const
+QString DiceParser::resultAsJSon(std::function<QString(const QString&, const QString&, bool)> colorize,
+                                 bool removeUnhighligthed) const
 {
     QJsonObject obj;
     QJsonArray instructions;
@@ -227,7 +228,7 @@ QString DiceParser::resultAsJSon(std::function<QString(const QString&, const QSt
     obj["comment"]= m_parsingToolbox->getComment();
     obj["error"]= humanReadableError();
     obj["scalar"]= m_parsingToolbox->finalScalarResult().first;
-    obj["string"]= m_parsingToolbox->finalStringResult();
+    obj["string"]= m_parsingToolbox->finalStringResult(colorize, removeUnhighligthed);
     obj["warning"]= humanReadableWarning();
     obj["command"]= m_command;
 

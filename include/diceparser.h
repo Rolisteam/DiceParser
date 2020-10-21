@@ -99,14 +99,15 @@ public:
     QList<qreal> scalarResultsFromEachInstruction() const;
     QStringList stringResultFromEachInstruction(bool& hasAlias) const;
     void diceResultFromEachInstruction(QList<ExportedDiceResult>& resultList) const;
-    QString finalStringResult() const;
+    QString finalStringResult(std::function<QString(const QString&, const QString&, bool)> colorize) const;
 
     QString diceCommand() const;
     QMap<Dice::ERROR_CODE, QString> errorMap() const;
     QString comment() const;
     QString humanReadableWarning() const;
     QString humanReadableError() const;
-    QString resultAsJSon(std::function<QString(const QString&, const QString&, bool)> colorize) const;
+    QString resultAsJSon(std::function<QString(const QString&, const QString&, bool)> colorize,
+                         bool removeUnhighligthed= false) const;
 
     //    QStringList stringResult() const;
     //    QStringList allDiceResult(bool& hasAlias) const;

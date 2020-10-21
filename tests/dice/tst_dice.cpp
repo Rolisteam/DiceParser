@@ -1136,8 +1136,7 @@ void TestDice::ifCommandTest()
     QVERIFY2(test, cmd.toStdString().c_str());
     m_diceParser->start();
     auto results= m_diceParser->scalarResultsFromEachInstruction();
-    auto strResult= m_diceParser->finalStringResult();
-    qDebug() << strResult;
+    auto strResult= m_diceParser->finalStringResult([](const QString& result, const QString&, bool) { return result; });
 
     QCOMPARE(results.size(), 1);
 

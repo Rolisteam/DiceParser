@@ -328,12 +328,19 @@ int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJs
                 allSameColor= true;
                 QString colorP;
                 json= parser.resultAsJSon(
-                    [&colorP, &allSameColor](const QString& value, const QString& color, bool highlight) {
+                    [&colorP, &allSameColor](const QString& value, const QString& color, bool) {
                         if(colorP.isNull())
                             colorP= color;
                         else if(colorP != color)
                             allSameColor= false;
 
+                        return value;
+                    },
+                    true);
+
+                if(!allSameColor)
+                {
+                    json= parser.resultAsJSon([](const QString& value, const QString& color, bool highlight) {
                         QString result= value;
                         bool hasColor= !color.isEmpty();
                         QString style;
@@ -352,21 +359,27 @@ int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJs
                             result= QString("<tspan %2>%1</tspan>").arg(value).arg(style);
                         return result;
                     });
+                }
             }
             else if(TERMINAL == format)
             {
                 allSameColor= true;
                 QString colorP;
-                json= parser.resultAsJSon([&colorP, &allSameColor](const QString& result, const QString& color, bool) {
-                    if(colorP.isNull())
-                        colorP= color;
-                    else if(colorP != color)
-                        allSameColor= false;
+                json= parser.resultAsJSon(
+                    [&colorP, &allSameColor](const QString& result, const QString& color, bool hightlight) {
+                        auto trueColor= color;
+                        if(color.isEmpty())
+                            trueColor= "red";
 
-                    auto front= DisplayToolBox::colorToTermCode(color);
-                    auto end= front.isEmpty() ? "" : DisplayToolBox::colorToTermCode("reset");
-                    return result;
-                });
+                        if(colorP.isEmpty())
+                            colorP= trueColor;
+                        else if(colorP != trueColor)
+                            allSameColor= false;
+
+                        auto front= DisplayToolBox::colorToTermCode(trueColor);
+                        auto end= front.isEmpty() ? "" : DisplayToolBox::colorToTermCode("reset");
+                        return hightlight ? QString("%1%2%3").arg(front).arg(result).arg(end) : result;
+                    });
             }
             else
             {

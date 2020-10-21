@@ -23,6 +23,7 @@
 #define PARSINGTOOLBOX_H
 
 #include <QMap>
+#include <functional>
 #include <vector>
 
 #include "booleancondition.h"
@@ -197,7 +198,8 @@ public:
     std::pair<bool, QVariant> hasResultOfType(Dice::RESULT_TYPE, ExecutionNode* node, bool notthelast= false) const;
     QList<qreal> scalarResultsFromEachInstruction() const;
     std::pair<QString, QString> finalScalarResult() const;
-    QString finalStringResult() const;
+    QString finalStringResult(std::function<QString(const QString&, const QString&, bool)> colorize,
+                              bool removeUnhighlighted= false) const;
     QStringList allFirstResultAsString(bool& hasAlias) const;
     QList<qreal> sumOfDiceResult() const;
     QList<ExportedDiceResult> diceResultFromEachInstruction() const;
@@ -208,7 +210,9 @@ public:
     // result
     static QString replaceVariableToValue(const QString& source, QStringList values,
                                           QMap<Dice::ERROR_CODE, QString>& errorMap);
-    static QString replacePlaceHolderToValue(const QString& source, const QList<ExportedDiceResult>& list);
+    static QString replacePlaceHolderToValue(const QString& source, const QList<ExportedDiceResult>& list,
+                                             bool removeUnhighlighted,
+                                             std::function<QString(const QString&, const QString&, bool)> colorize);
     static SubtituteInfo readVariableFromString(const QString& source, int& start);
     static SubtituteInfo readPlaceHolderFromString(const QString& source, int& start);
     static ExportedDiceResult finalDiceResultFromInstruction(ExecutionNode* start);
