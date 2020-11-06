@@ -103,7 +103,7 @@ void SortResultNode::run(ExecutionNode* node)
     {
         for(int i= 0; i < diceList2.size() / 2; ++i)
         {
-            diceList2.swapItemsAt(i, diceList2.size() - (1 + i));
+            diceList2.swap(i, diceList2.size() - (1 + i));
         }
     }
     m_diceResult->setResultList(diceList2);
