@@ -21,7 +21,7 @@ public slots:
     void rollDice(QString cmd);
 
 private:
-    CommandModel* m_model;
+    // CommandModel* m_model;
     DiceParser* m_diceParser;
     QQmlApplicationEngine* m_engine;
 };

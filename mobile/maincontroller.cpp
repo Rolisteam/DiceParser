@@ -1,14 +1,23 @@
 #include "maincontroler.h"
 
-#include <QDebug>
-#include <QQmlContext>
+#include <QJSValue>
+#include <QQmlEngine>
 
 MainControler::MainControler(QObject* parent) : QObject(parent)
 {
-    m_model= new CommandModel();
-    m_model->insertCmd("L5R", "8D10e10k4");
 
     m_diceParser= new DiceParser();
+    qmlRegisterSingletonType("DiceParser", 1, 0, "Model", [](QQmlEngine* engine, QJSEngine* scriptEngine) -> QObject* {
+        Q_UNUSED(engine)
+        static CommandModel model;
+        static bool initialized= false;
+        if(!initialized)
+        {
+            model.insertCmd("L5R", "8D10e10k4");
+            initialized= true;
+        }
+        return &model;
+    });
 }
 void MainControler::initEngine(QQmlApplicationEngine* engine)
 {

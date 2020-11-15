@@ -95,7 +95,7 @@ SET( diceGui_sources
    ../node/variablenode.cpp
    ../node/bind.cpp
     main.cpp
-    maincontroler.cpp
+    maincontroller.cpp
     commandmodel.cpp
     ../highlightdice.cpp
 )
