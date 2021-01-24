@@ -49,7 +49,7 @@ public:
 
     void setOperator(LogicOperator m);
     void setValueNode(ExecutionNode*);
-    QString toString();
+    QString toString() override;
 
     virtual Dice::CONDITION_STATE isValidRangeSize(const std::pair<qint64, qint64>& range) const override;
     /**

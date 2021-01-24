@@ -707,8 +707,9 @@ void TestDice::countTest()
     QVector<ValidatorList::LogicOperation> vector;
 
     bool first= true;
-    for(auto i : condition)
+    for(const auto& i : condition)
     {
+        Q_UNUSED(i)
         if(!first)
         {
             first= !first;
@@ -989,6 +990,8 @@ void TestDice::ifTest_data()
 
     QTest::addRow("cmd9") << QVector<int>({25, 8, 14}) << onScalar << 1 << "False";
     QTest::addRow("cmd10") << QVector<int>({25, 8, 14}) << onScalar << 47 << "True";
+
+    QTest::addRow("cmd11") << QVector<int>({25, 8, 14}) << onEachValue << 47 << "True";
 }
 
 void TestDice::paintTest() {}

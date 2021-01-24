@@ -22,7 +22,7 @@ public:
     void finished();
     QString getText() const;
     virtual QVariant getResult(Dice::RESULT_TYPE) override;
-    virtual QString toString(bool);
+    virtual QString toString(bool) override;
 
     virtual void setHighLight(bool);
     virtual bool hasHighLight() const;
