@@ -2,10 +2,10 @@
 
 # DiceParser
 
-Rolisteam Dice Parser run dice commands. It is available on several platforms. 
+Rolisteam Dice Parser run dice commands. It is available on several platforms.
 The syntax is simple and powerful.
 
-[Full documentation here](https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md)
+[Full documentation here](https://invent.kde.org/rolisteam/rolisteam-diceparser/-/blob/master/HelpMe.md)
 
 
 ## [Invite to Your Discord Server](https://discordapp.com/oauth2/authorize?&client_id=279722369260453888&scope=bot&permissions=0)
@@ -37,7 +37,7 @@ roll 100291 dice with 66666666666 faces and sort result
 roll 15 dice with 10 faces and it counts number of dice which are above 7
 
 ### 1D8+2D6+7
-roll 1 die with 8 faces and add the result to 2 dice with 6 faces and add 7. 
+roll 1 die with 8 faces and add the result to 2 dice with 6 faces and add 7.
 
 ### D25
 roll 1 die with 25 faces
@@ -53,7 +53,7 @@ compute: 100/28 = 3
 3*3 = 9
 
 
-More examples at : https://github.com/Rolisteam/DiceParser/blob/master/HelpMe.md
+More examples at : https://invent.kde.org/rolisteam/rolisteam-diceparser/-/blob/master/HelpMe.md
 
 ## Grammar
 The grammar is something like this:
@@ -185,6 +185,6 @@ cd rolisteam-diceparser
 mkdir build
 cd build
 cmake ../ -DBUILD_CLI=ON
-make 
+make
 sudo make install
 ```
