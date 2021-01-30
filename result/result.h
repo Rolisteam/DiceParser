@@ -71,7 +71,7 @@ public:
      * @brief getStringResult
      * @return
      */
-    QString getStringResult();
+    virtual QString getStringResult() const;
     /**
      * @brief generateDotTree
      */

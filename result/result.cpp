@@ -79,3 +79,8 @@ QString Result::getId() const
 {
     return m_id;
 }
+
+QString Result::getStringResult() const
+{
+    return {};
+}
