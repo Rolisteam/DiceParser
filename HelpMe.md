@@ -534,7 +534,7 @@ Group dices, then count the number of group (7th sea system).
 
 #### Complex output
 
-Group operator can take a parameter to active the complex output. 
+Group operator can take a parameter to active the complex output.
 This output will show the each group and any left aside values if any.
 To active this output, it is required to add a `s` just after the `g`. See example below:
 
@@ -1229,6 +1229,8 @@ Documentation of the bot is now inline with the bot.
 ## Macro documentation
 
 > !help macro
+
+[Examples and More information](https://invent.kde.org/rolisteam/rolisteam-diceparser/-/blob/master/community_macro.md)
 
 ## Alias documentation
 
