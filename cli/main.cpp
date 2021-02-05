@@ -245,11 +245,11 @@ void displayCommandResult(QString json, bool withColor)
     auto comment= obj["comment"].toString();
     auto arrayInst= obj["instructions"].toArray();
     QStringList diceResults;
-    for(auto inst : arrayInst)
+    for(const auto &inst : qAsConst(arrayInst))
     {
         auto obj= inst.toObject();
         auto diceVals= obj["diceval"].toArray();
-        for(auto diceval : diceVals)
+        for(const auto & diceval : qAsConst(diceVals))
         {
             auto objval= diceval.toObject();
             auto resultStr= objval["string"].toString();
@@ -273,9 +273,9 @@ void displayCommandResult(QString json, bool withColor)
     QString str;
 
     if(withColor)
-        str= QString("Result: \e[0;31m%1\e[0m - details:[%3 (%2)]").arg(scalarText).arg(diceList).arg(cmd);
+        str= QString("Result: \e[0;31m%1\e[0m - details:[%3 (%2)]").arg(scalarText, diceList, cmd);
     else
-        str= QString("Result: %1 - details:[%3 (%2)]").arg(scalarText).arg(diceList).arg(cmd);
+        str= QString("Result: %1 - details:[%3 (%2)]").arg(scalarText, diceList, cmd);
 
     if(!resultStr.isEmpty() && resultStr != scalarText)
     {
@@ -414,7 +414,7 @@ int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJs
             switch(format)
             {
             case TERMINAL:
-                displayCommandResult(json, true);
+                displayCommandResult(json, withColor);
                 break;
             case SVG:
                 out << displaySVG(json, withColor) << "\n";
@@ -487,6 +487,9 @@ int main(int argc, char* argv[])
     QCommandLineOption json(QStringList() << "j"
                                           << "json",
                             "The output is formatted in json.");
+    QCommandLineOption line(QStringList() << "l"
+                                          << "line",
+                            "The output is in one line [default].");
     QCommandLineOption dotFile(QStringList() << "d"
                                              << "dot-file",
                                "Instead of rolling dice, generate the execution tree and write it in "
@@ -506,6 +509,7 @@ int main(int argc, char* argv[])
     optionParser.addOption(alias);
     optionParser.addOption(aliasData);
     optionParser.addOption(character);
+    optionParser.addOption(line);
     optionParser.addOption(markdown);
     optionParser.addOption(bot);
     optionParser.addOption(svg);
@@ -556,19 +560,16 @@ int main(int argc, char* argv[])
     {
         format= JSON;
     }
+    else if(optionParser.isSet(line))
+    {
+        format = TEXT;
+    }
+
     if(optionParser.isSet(help))
     {
         cmd= "help";
     }
     QStringList cmdList= optionParser.positionalArguments();
-
-    if(!cmdList.isEmpty())
-    {
-        if(cmdList[0].startsWith('&'))
-        {
-            colorb= false;
-        }
-    }
 
     QJsonArray aliases;
     if(optionParser.isSet(alias))
