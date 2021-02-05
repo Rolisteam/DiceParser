@@ -285,7 +285,10 @@ void displayCommandResult(QString json, bool withColor)
 
     if(!comment.isEmpty())
     {
-        out << "\033[1m" << comment << "\033[0m\n";
+        if(withColor)
+          out << "\033[1m" << comment << "\033[0m\n";
+        else
+          out << comment << " ";
     }
     out << str << "\n";
 }
