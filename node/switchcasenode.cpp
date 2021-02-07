@@ -39,7 +39,7 @@ void SwitchCaseNode::run(ExecutionNode* previous)
     if(nullptr == previous)
     {
         m_errors.insert(Dice::ERROR_CODE::NO_PREVIOUS_ERROR,
-                        QStringLiteral("No previous node before Swith/Case operator"));
+                        QStringLiteral("No previous node before Switch/Case operator"));
         return;
     }
     auto previousResult= previous->getResult();
