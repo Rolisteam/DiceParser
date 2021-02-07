@@ -54,6 +54,7 @@ SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/node/variablenode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/valueslistnode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/node/repeaternode.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/node/switchcasenode.cpp
 )
 
 IF(STATIC_BUILD)
@@ -65,7 +66,7 @@ IF(STATIC_BUILD)
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
-set(documentation README.md HelpMe.md)
+set(documentation README.md HelpMe.md CHANGELOG)
 
 add_library(diceparser_shared SHARED ${dice_sources} ${documentation})
 

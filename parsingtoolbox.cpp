@@ -54,6 +54,7 @@
 #include "node/splitnode.h"
 #include "node/startingnode.h"
 #include "node/stringnode.h"
+#include "node/switchcasenode.h"
 #include "node/uniquenode.h"
 #include "node/valueslistnode.h"
 #include "node/variablenode.h"
@@ -109,6 +110,7 @@ ParsingToolBox::ParsingToolBox()
     m_OptionOp.insert(QStringLiteral("g"), Group);
     m_OptionOp.insert(QStringLiteral("b"), Bind);
     m_OptionOp.insert(QStringLiteral("o"), Occurences);
+    m_OptionOp.insert(QStringLiteral("S"), SwitchCaseOption);
 
     m_functionMap.insert({QStringLiteral("repeat"), REPEAT});
 
@@ -901,6 +903,19 @@ bool ParsingToolBox::readAscending(QString& str)
     }
     return false;
 }
+
+bool ParsingToolBox::readStopAtFirst(QString& str)
+{
+    if(str.isEmpty())
+        return false;
+    else if(str.at(0) == '^')
+    {
+        str= str.remove(0, 1);
+        return true;
+    }
+    return false;
+}
+
 Dice::CONDITION_STATE ParsingToolBox::isValidValidator(ExecutionNode* previous, ValidatorList* val)
 {
     DiceRollerNode* node= getDiceRollerNode(previous);
@@ -1744,6 +1759,15 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                 found= true;
             }
             break;
+            case SwitchCaseOption:
+            {
+                auto scNode= new SwitchCaseNode();
+                found= readSwitchCaseNode(str, scNode);
+                previous->setNextNode(scNode);
+                if(found)
+                    node= scNode;
+            }
+            break;
             case Bind:
             {
                 BindNode* bindNode= new BindNode();
@@ -1916,6 +1940,27 @@ bool ParsingToolBox::readParameterNode(QString& str, ExecutionNode*& node)
         }
     }
     return false;
+}
+
+bool ParsingToolBox::readSwitchCaseNode(QString& str, SwitchCaseNode* node)
+{
+    bool res= false;
+    node->setStopAtFirt(ParsingToolBox::readStopAtFirst(str));
+    bool hasInstructionBloc= false;
+    do
+    {
+        auto validator= readValidatorList(str);
+        ExecutionNode* exeNode= nullptr;
+        hasInstructionBloc= readBlocInstruction(str, exeNode);
+        if(hasInstructionBloc)
+        {
+            node->insertCase(exeNode, validator);
+            res= true;
+        }
+
+    } while(hasInstructionBloc);
+
+    return res;
 }
 
 bool ParsingToolBox::readBlocInstruction(QString& str, ExecutionNode*& resultnode)

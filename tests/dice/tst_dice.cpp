@@ -42,6 +42,7 @@
 #include "node/sortresult.h"
 #include "node/splitnode.h"
 #include "node/stringnode.h"
+#include "node/switchcasenode.h"
 #include "node/uniquenode.h"
 #include "operationcondition.h"
 #include "parsingtoolbox.h"
@@ -197,6 +198,9 @@ private slots:
     void occurenceTest_data();
 
     void operatoionConditionValidatorTest();
+
+    void switchCaseTest();
+    void switchCaseTest_data();
 
 private:
     std::unique_ptr<Die> m_die;
@@ -991,7 +995,7 @@ void TestDice::ifTest_data()
     QTest::addRow("cmd9") << QVector<int>({25, 8, 14}) << onScalar << 1 << "False";
     QTest::addRow("cmd10") << QVector<int>({25, 8, 14}) << onScalar << 47 << "True";
 
-    QTest::addRow("cmd11") << QVector<int>({25, 8, 14}) << onEachValue << 47 << "True";
+    // QTest::addRow("cmd11") << QVector<int>({25, 8, 14}) << onEachValue << 47 << "True";
 }
 
 void TestDice::paintTest() {}
@@ -1208,6 +1212,86 @@ void TestDice::operatoionConditionValidatorTest()
     validator.setBoolean(nullptr);
 
     QCOMPARE(value, data);
+}
+
+void TestDice::switchCaseTest()
+{
+    using BC= BooleanCondition;
+    QFETCH(int, value);
+    QFETCH(QList<BC::LogicOperator>, operatorList);
+    QFETCH(QList<int>, threshold);
+    QFETCH(QStringList, values);
+    QFETCH(QString, expected);
+    QFETCH(bool, stopatfirt);
+
+    NumberNode* node1= new NumberNode();
+    node1->setNumber(value);
+
+    SwitchCaseNode* node2= new SwitchCaseNode();
+    node2->setStopAtFirt(stopatfirt);
+
+    int i= 0;
+    for(const auto& val : values)
+    {
+        ValidatorList* validatorList= nullptr;
+        if(i < threshold.size())
+        {
+            validatorList= makeValidator(QVector<int>{threshold[i]}, operatorList[i]);
+        }
+        auto stringNode= new StringNode();
+        stringNode->setString(val);
+        node2->insertCase(stringNode, validatorList);
+        ++i;
+    }
+
+    node1->setNextNode(node2);
+
+    node1->run(nullptr);
+
+    auto result= node2->getResult();
+    auto stringResult= result->getStringResult();
+
+    QCOMPARE(stringResult, expected);
+}
+
+void TestDice::switchCaseTest_data()
+{
+    using BC= BooleanCondition;
+    QTest::addColumn<int>("value");
+    QTest::addColumn<QList<BC::LogicOperator>>("operatorList");
+    QTest::addColumn<QList<int>>("threshold");
+    QTest::addColumn<QStringList>("values");
+    QTest::addColumn<QString>("expected");
+    QTest::addColumn<bool>("stopatfirt");
+
+    QTest::addRow("cmd1") << 75 << QList<BC::LogicOperator>{BC::Equal, BC::Equal} << QList<int>{75, 1}
+                          << QStringList{"a", "b"} << QStringLiteral("a") << false;
+
+    QTest::addRow("cmd2") << 1 << QList<BC::LogicOperator>{BC::Equal, BC::Equal} << QList<int>{75, 1}
+                          << QStringList{"a", "b"} << QStringLiteral("b") << true;
+
+    QTest::addRow("cmd3") << 7
+                          << QList<BC::LogicOperator>{BC::GreaterThan, BC::GreaterThan, BC::GreaterThan,
+                                                      BC::GreaterThan, BC::GreaterThan}
+                          << QList<int>{8, 29, 99, 54, 1} << QStringList{"a", "b", "c", "d", "e"} << QStringLiteral("e")
+                          << false;
+
+    QTest::addRow("cmd4") << 75 << QList<BC::LogicOperator>{BC::LesserThan, BC::LesserThan, BC::LesserThan}
+                          << QList<int>{8, 7} << QStringList{"a", "b", "c"} << QStringLiteral("c") << false;
+
+    QTest::addRow("cmd5") << 2 << QList<BC::LogicOperator>{BC::Different, BC::Different} << QList<int>{1, 2}
+                          << QStringList{"a", "b"} << QStringLiteral("a") << false;
+
+    QTest::addRow("cmd6") << 3
+                          << QList<BC::LogicOperator>{BC::GreaterOrEqual, BC::GreaterOrEqual, BC::GreaterOrEqual,
+                                                      BC::GreaterOrEqual}
+                          << QList<int>{1, 2, 3, 4} << QStringList{"a", "b", "c", "d"} << QStringLiteral("a,b,c")
+                          << false;
+
+    QTest::addRow("cmd6") << 3
+                          << QList<BC::LogicOperator>{BC::LesserOrEqual, BC::LesserOrEqual, BC::LesserOrEqual,
+                                                      BC::LesserOrEqual}
+                          << QList<int>{1, 2, 3, 4} << QStringList{"a", "b", "c", "d"} << QStringLiteral("c") << true;
 }
 
 void TestDice::cleanupTestCase() {}
