@@ -103,3 +103,8 @@ Result* StringResult::getCopy() const
     std::for_each(m_value.begin(), m_value.end(), [copy](const QString& str) { copy->addText(str); });
     return copy;
 }
+
+QString StringResult::getStringResult() const
+{
+    return getText();
+}

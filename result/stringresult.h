@@ -32,6 +32,7 @@ public:
     bool isDigitOnly() const;
 
     void setStringCount(int count);
+    QString getStringResult() const override;
 
 private:
     QStringList m_value;
