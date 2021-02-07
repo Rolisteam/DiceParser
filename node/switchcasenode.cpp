@@ -21,6 +21,7 @@
 
 #include "parsingtoolbox.h"
 #include "stringresult.h"
+#include <QDebug>
 
 SwitchCaseNode::SwitchCaseNode() : m_stringResult(new StringResult)
 {
@@ -49,27 +50,28 @@ void SwitchCaseNode::run(ExecutionNode* previous)
            && !previousResult->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST)))
     {
         m_errors.insert(Dice::ERROR_CODE::NO_VALID_RESULT,
-                        QStringLiteral("No scalar or dice result before Swith/Case operator"));
+                        QStringLiteral("No scalar or dice result before Switch/Case operator"));
         return;
     }
 
     QList<Die*> dieList;
-    if(previousResult->hasResultOfType(Dice::RESULT_TYPE::SCALAR))
+    if(previousResult->hasResultOfType(Dice::RESULT_TYPE::DICE_LIST))
+    {
+        auto diceResult= dynamic_cast<DiceResult*>(previousResult);
+        if(diceResult)
+            dieList.append(diceResult->getResultList());
+    }
+    else if(previousResult->hasResultOfType(Dice::RESULT_TYPE::SCALAR))
     {
         auto resultScalar= previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal();
         auto d= new Die();
         d->insertRollValue(resultScalar);
         dieList.append(d);
     }
-    else
-    {
-        auto diceResult= dynamic_cast<DiceResult*>(previousResult);
-        if(diceResult)
-            dieList.append(diceResult->getResultList());
-    }
 
     for(auto die : dieList)
     {
+        QStringList resultList;
         for(auto const& info : qAsConst(m_branchList))
         {
             if(info->validatorList)
@@ -78,27 +80,27 @@ void SwitchCaseNode::run(ExecutionNode* previous)
                 if(!res)
                     continue;
             }
-            else if(!m_stringResult->getText().isEmpty())
-            {
+            else if(!resultList.isEmpty())
                 break;
-            }
 
             info->node->run(m_previousNode);
             auto lastNode= ParsingToolBox::getLeafNode(info->node);
             if(lastNode && lastNode->getResult())
             {
-                m_stringResult->addText(lastNode->getResult()->getStringResult());
+                resultList << lastNode->getResult()->getStringResult();
             }
             else
-                m_stringResult->addText(QString());
+                resultList << QString();
 
             if(m_stopAtFirst)
                 break;
         }
+        for(auto const& str : qAsConst(resultList))
+            m_stringResult->addText(str);
     }
 
     if(m_stringResult->getText().isEmpty())
-        m_errors.insert(Dice::ERROR_CODE::NO_VALID_RESULT, QStringLiteral("No value fits the Swith/Case operator"));
+        m_errors.insert(Dice::ERROR_CODE::NO_VALID_RESULT, QStringLiteral("No value fits the Switch/Case operator"));
 
     if(nullptr != m_nextNode)
     {
