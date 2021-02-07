@@ -1,5 +1,13 @@
 # Changelog
 
+## 2021-02-07
+
+* Add support of SwitchCaseNode
+* New error codes
+* remove getLatestNode function - only use getLeafNode
+* Implement getStringResult in StringResult
+* Add Unit test for SwitchCaseNode
+
 ## [1.9.3] - 2021-02-03
 ### Added
 This Changelog.
