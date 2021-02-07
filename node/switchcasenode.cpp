@@ -78,6 +78,10 @@ void SwitchCaseNode::run(ExecutionNode* previous)
                 if(!res)
                     continue;
             }
+            else if(!m_stringResult->getText().isEmpty())
+            {
+                break;
+            }
 
             info->node->run(m_previousNode);
             auto lastNode= ParsingToolBox::getLeafNode(info->node);
