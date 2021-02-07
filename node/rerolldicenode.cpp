@@ -56,7 +56,7 @@ void RerollDiceNode::run(ExecutionNode* previous)
                     if(m_instruction != nullptr)
                     {
                         m_instruction->run(this);
-                        auto lastNode= ParsingToolBox::getLatestNode(m_instruction);
+                        auto lastNode= ParsingToolBox::getLeafNode(m_instruction);
                         if(lastNode != nullptr)
                         {
                             auto lastResult= dynamic_cast<DiceResult*>(lastNode->getResult());

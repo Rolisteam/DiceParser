@@ -139,15 +139,7 @@ ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e, bool b)
     e->setNextNode(nodeSort);
     return nodeSort;
 }
-ExecutionNode* ParsingToolBox::getLeafNode(ExecutionNode* start)
-{
-    ExecutionNode* next= start;
-    while(nullptr != next->getNextNode())
-    {
-        next= next->getNextNode();
-    }
-    return next;
-}
+
 void ParsingToolBox::addError(Dice::ERROR_CODE code, const QString& msg)
 {
     m_errorMap.insert(code, msg);
@@ -477,12 +469,12 @@ bool ParsingToolBox::readDynamicVariable(QString& str, qint64& index)
     return false;
 }
 
-ExecutionNode* ParsingToolBox::getLatestNode(ExecutionNode* node)
+ExecutionNode* ParsingToolBox::getLeafNode(ExecutionNode* start)
 {
-    if(nullptr == node)
+    if(nullptr == start)
         return nullptr;
 
-    ExecutionNode* next= node;
+    ExecutionNode* next= start;
     while(nullptr != next->getNextNode())
     {
         next= next->getNextNode();
@@ -1432,12 +1424,12 @@ bool ParsingToolBox::readExpression(QString& str, ExecutionNode*& node)
         }
         node= operandNode;
 
-        operandNode= ParsingToolBox::getLatestNode(operandNode);
+        operandNode= ParsingToolBox::getLeafNode(operandNode);
         // ExecutionNode* operatorNode=nullptr;
         while(readOperator(str, operandNode))
         {
             // operandNode->setNextNode(operatorNode);
-            operandNode= ParsingToolBox::getLatestNode(operandNode);
+            operandNode= ParsingToolBox::getLeafNode(operandNode);
         }
         return true;
     }
@@ -1992,7 +1984,7 @@ bool ParsingToolBox::readDice(QString& str, ExecutionNode*& node)
                 ExecutionNode* current= drNode;
                 while(readOption(str, current))
                 {
-                    current= ParsingToolBox::getLatestNode(current);
+                    current= ParsingToolBox::getLeafNode(current);
                 }
                 return true;
             }
@@ -2008,7 +2000,7 @@ bool ParsingToolBox::readDice(QString& str, ExecutionNode*& node)
                 ExecutionNode* current= drNode;
                 while(readOption(str, current))
                 {
-                    current= ParsingToolBox::getLatestNode(current);
+                    current= ParsingToolBox::getLeafNode(current);
                 }
                 return true;
             }
@@ -2177,7 +2169,7 @@ bool ParsingToolBox::readOperator(QString& str, ExecutionNode* previous)
     {
         while(readOption(str, previous))
         {
-            previous= ParsingToolBox::getLatestNode(previous);
+            previous= ParsingToolBox::getLeafNode(previous);
         }
     }
     return false;
@@ -2272,14 +2264,14 @@ std::vector<ExecutionNode*> ParsingToolBox::readInstructionList(QString& str, bo
             auto latest= startNode;
             if(keepParsing)
             {
-                latest= ParsingToolBox::getLatestNode(latest);
+                latest= ParsingToolBox::getLeafNode(latest);
                 keepParsing= !str.isEmpty();
                 while(keepParsing)
                 {
                     auto before= str;
                     if(readOperator(str, latest))
                     {
-                        latest= ParsingToolBox::getLatestNode(latest);
+                        latest= ParsingToolBox::getLeafNode(latest);
                     }
                     keepParsing= (!str.isEmpty() && (before != str));
                 }

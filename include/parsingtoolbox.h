@@ -191,7 +191,6 @@ public:
 
     // Traversal functions
     static QString number(qreal value);
-    static ExecutionNode* getLatestNode(ExecutionNode* node);
     static ExecutionNode* getLeafNode(ExecutionNode* start);
     const std::vector<ExecutionNode*>& getStartNodes();
     static void setStartNodes(std::vector<ExecutionNode*>* startNodes);
