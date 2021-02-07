@@ -23,6 +23,7 @@ void CountExecuteNode::run(ExecutionNode* previous)
     m_previousNode= previous;
     if(nullptr == previous)
     {
+        m_errors.insert(Dice::ERROR_CODE::NO_PREVIOUS_ERROR, QStringLiteral("No scalar result before Swith/Case operator"));
         return;
     }
     DiceResult* previousResult= dynamic_cast<DiceResult*>(previous->getResult());
