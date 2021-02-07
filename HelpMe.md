@@ -25,6 +25,7 @@
     * [Unique](#unique)
     * [All The same](#allsame)
     * [Value list](#Value-list)
+    * [Switch/Case](#Switch-case)
     * [Comment (\#)](#comment-)
 * [Functions](#Functions)
 * [Managing the output](#the-output)
@@ -558,6 +559,27 @@ Then, the final output will be:
 ```
 
 `{7,3}` and `{6,4}` are group, and `[2]` is left aside.
+
+### Switch case (S)
+
+Switch case operator allows you to transform number value into text.
+Its goal is to make that easier than using several if. As you may expect, its syntax is close to if.
+
+```
+1d100S[<50]{"Low"}[>=50]{"Low"}
+```
+
+You may also add a default option
+
+```
+1d4S[=1]{"Low"}[=2]{"small"}[=3]{"medium"}{"big"}
+```
+
+Exclusive mode:
+This mode is enabled when a `^` is following the `S`.
+```
+1d100S^[<25]{"Low"}[<50]{"small"}[<75]{"medium"}[>=75]{"big"}
+```
 
 ### Comment (\#)
 
