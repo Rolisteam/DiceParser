@@ -41,6 +41,7 @@ class RepeaterNode;
 class DiceAlias;
 class ExplodeDiceNode;
 class SwitchCaseNode;
+class ReplaceValueNode;
 
 class SubtituteInfo
 {
@@ -90,25 +91,26 @@ public:
     };
     enum OptionOperator
     {
-        KeepAndExplode,  // K
-        Keep,            // k
-        Reroll,          // r
-        RerollUntil,     // R
-        Explode,         // e
-        Sort,            // s
-        Count,           // c
-        RerollAndAdd,    // a
-        Merge,           // m
-        ifOperator,      // i
-        Painter,         // p
-        Filter,          // f
-        Split,           // y
-        Group,           // g
-        Occurences,      // o
-        Unique,          // u
-        Bind,            // b
-        AllSameExplode,  // t
-        SwitchCaseOption // S
+        KeepAndExplode,   // K
+        Keep,             // k
+        Reroll,           // r
+        RerollUntil,      // R
+        Explode,          // e
+        Sort,             // s
+        Count,            // c
+        RerollAndAdd,     // a
+        Merge,            // m
+        ifOperator,       // i
+        Painter,          // p
+        Filter,           // f
+        Split,            // y
+        Group,            // g
+        Occurences,       // o
+        Unique,           // u
+        Bind,             // b
+        AllSameExplode,   // t
+        SwitchCaseOption, // S
+        TransformOption   // T
     };
     enum DiceOperator
     {
@@ -185,6 +187,7 @@ public:
     bool readOption(QString&, ExecutionNode* node); // OptionOperator& option,
     bool readValuesList(QString& str, ExecutionNode*& node);
     bool readSwitchCaseNode(QString& str, SwitchCaseNode* node);
+    bool readReplaceValueNode(QString& str, ReplaceValueNode* node);
 
     // Error
     bool hasError() const;

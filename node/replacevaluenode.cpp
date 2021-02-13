@@ -17,23 +17,23 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "switchcasenode.h"
+#include "replacevaluenode.h"
 
+#include "diceresult.h"
 #include "parsingtoolbox.h"
-#include "stringresult.h"
 #include <QDebug>
 
-SwitchCaseNode::SwitchCaseNode() : m_stringResult(new StringResult)
+ReplaceValueNode::ReplaceValueNode() : m_diceResult(new DiceResult)
 {
-    m_result= m_stringResult;
+    m_result= m_diceResult;
 }
 
-void SwitchCaseNode::setStopAtFirt(bool b)
+void ReplaceValueNode::setStopAtFirt(bool b)
 {
     m_stopAtFirst= b;
 }
 
-void SwitchCaseNode::run(ExecutionNode* previous)
+void ReplaceValueNode::run(ExecutionNode* previous)
 {
     m_previousNode= previous;
     if(nullptr == previous)
@@ -61,13 +61,6 @@ void SwitchCaseNode::run(ExecutionNode* previous)
         if(diceResult)
             dieList.append(diceResult->getResultList());
     }
-    else if(previousResult->hasResultOfType(Dice::RESULT_TYPE::SCALAR))
-    {
-        auto resultScalar= previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal();
-        auto d= new Die();
-        d->insertRollValue(resultScalar);
-        dieList.append(d);
-    }
 
     for(auto die : dieList)
     {
@@ -76,31 +69,20 @@ void SwitchCaseNode::run(ExecutionNode* previous)
         {
             if(info->validatorList)
             {
-                auto res= info->validatorList->hasValid(die, true, true);
+                auto res= info->validatorList->hasValid(die, false);
                 if(!res)
                     continue;
             }
             else if(!resultList.isEmpty())
                 break;
 
-            info->node->run(m_previousNode);
-            auto lastNode= ParsingToolBox::getLeafNode(info->node);
-            if(lastNode && lastNode->getResult())
-            {
-                resultList << lastNode->getResult()->getStringResult();
-            }
-            else
-                resultList << QString();
-
-            if(m_stopAtFirst)
-                break;
+            auto replaceValresult= info->node->getResult();
+            if(replaceValresult)
+                die->replaceLastValue(replaceValresult->getResult(Dice::RESULT_TYPE::SCALAR).toInt());
+            break;
         }
-        for(auto const& str : qAsConst(resultList))
-            m_stringResult->addText(str);
+        m_diceResult->insertResult(die);
     }
-
-    if(m_stringResult->getText().isEmpty())
-        m_errors.insert(Dice::ERROR_CODE::NO_VALID_RESULT, QStringLiteral("No value fits the Switch/Case operator"));
 
     if(nullptr != m_nextNode)
     {
@@ -108,11 +90,11 @@ void SwitchCaseNode::run(ExecutionNode* previous)
     }
 }
 
-QString SwitchCaseNode::toString(bool withLabel) const
+QString ReplaceValueNode::toString(bool withLabel) const
 {
     if(withLabel)
     {
-        return QString("%1 [label=\"SwitchCaseNode\"]").arg(m_id);
+        return QString("%1 [label=\"ReplaceValueNode\"]").arg(m_id);
     }
     else
     {
@@ -120,7 +102,7 @@ QString SwitchCaseNode::toString(bool withLabel) const
     }
 }
 
-qint64 SwitchCaseNode::getPriority() const
+qint64 ReplaceValueNode::getPriority() const
 {
     qint64 priority= 0;
     if(nullptr != m_previousNode)
@@ -130,9 +112,9 @@ qint64 SwitchCaseNode::getPriority() const
     return priority;
 }
 
-ExecutionNode* SwitchCaseNode::getCopy() const
+ExecutionNode* ReplaceValueNode::getCopy() const
 {
-    SwitchCaseNode* node= new SwitchCaseNode();
+    ReplaceValueNode* node= new ReplaceValueNode();
     for(auto const& info : qAsConst(m_branchList))
     {
         node->insertCase(info->node, info->validatorList);
@@ -145,7 +127,7 @@ ExecutionNode* SwitchCaseNode::getCopy() const
     return node;
 }
 
-void SwitchCaseNode::insertCase(ExecutionNode* node, ValidatorList* validator)
+void ReplaceValueNode::insertCase(ExecutionNode* node, ValidatorList* validator)
 {
     std::unique_ptr<Dice::CaseInfo> info(new Dice::CaseInfo{validator, node});
     m_branchList.push_back(std::move(info));

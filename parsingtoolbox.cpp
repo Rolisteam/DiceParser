@@ -48,6 +48,7 @@
 #include "node/paintnode.h"
 #include "node/parenthesesnode.h"
 #include "node/repeaternode.h"
+#include "node/replacevaluenode.h"
 #include "node/rerolldicenode.h"
 #include "node/scalaroperatornode.h"
 #include "node/sortresult.h"
@@ -111,6 +112,7 @@ ParsingToolBox::ParsingToolBox()
     m_OptionOp.insert(QStringLiteral("b"), Bind);
     m_OptionOp.insert(QStringLiteral("o"), Occurences);
     m_OptionOp.insert(QStringLiteral("S"), SwitchCaseOption);
+    m_OptionOp.insert(QStringLiteral("T"), TransformOption);
 
     m_functionMap.insert({QStringLiteral("repeat"), REPEAT});
 
@@ -1768,6 +1770,15 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                     node= scNode;
             }
             break;
+            case TransformOption:
+            {
+                auto scNode= new ReplaceValueNode();
+                found= readReplaceValueNode(str, scNode);
+                previous->setNextNode(scNode);
+                if(found)
+                    node= scNode;
+            }
+            break;
             case Bind:
             {
                 BindNode* bindNode= new BindNode();
@@ -1946,6 +1957,26 @@ bool ParsingToolBox::readSwitchCaseNode(QString& str, SwitchCaseNode* node)
 {
     bool res= false;
     node->setStopAtFirt(ParsingToolBox::readStopAtFirst(str));
+    bool hasInstructionBloc= false;
+    do
+    {
+        auto validator= readValidatorList(str);
+        ExecutionNode* exeNode= nullptr;
+        hasInstructionBloc= readBlocInstruction(str, exeNode);
+        if(hasInstructionBloc)
+        {
+            node->insertCase(exeNode, validator);
+            res= true;
+        }
+
+    } while(hasInstructionBloc);
+
+    return res;
+}
+
+bool ParsingToolBox::readReplaceValueNode(QString& str, ReplaceValueNode* node)
+{
+    bool res= false;
     bool hasInstructionBloc= false;
     do
     {

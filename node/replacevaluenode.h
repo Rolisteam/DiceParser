@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef SWITCHCASENODE_H
-#define SWITCHCASENODE_H
+#ifndef REPLACEVALUENODE_H
+#define REPLACEVALUENODE_H
 
 #include <memory>
 #include <vector>
@@ -26,11 +26,11 @@
 #include "executionnode.h"
 #include "validatorlist.h"
 
-class StringResult;
-class SwitchCaseNode : public ExecutionNode
+class DiceResult;
+class ReplaceValueNode : public ExecutionNode
 {
 public:
-    SwitchCaseNode();
+    ReplaceValueNode();
     void setStopAtFirt(bool b);
 
     void run(ExecutionNode* previous= nullptr) override;
@@ -43,8 +43,8 @@ public:
 
 private:
     std::vector<std::unique_ptr<Dice::CaseInfo>> m_branchList;
-    StringResult* m_stringResult;
+    DiceResult* m_diceResult= nullptr;
     bool m_stopAtFirst= false;
 };
 
-#endif // SWITCHCASENODE_H
+#endif // REPLACEVALUENODE_H

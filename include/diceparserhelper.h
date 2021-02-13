@@ -1,9 +1,11 @@
 #ifndef DICEPARSERHELPER_H
 #define DICEPARSERHELPER_H
 
+class ValidatorList;
+class ExecutionNode;
+
 namespace Dice
 {
-
 enum class CONDITION_STATE : int
 {
     ERROR_STATE,
@@ -50,6 +52,12 @@ enum ConditionType
     OneOfThem,
     AllOfThem,
     OnScalar
+};
+
+struct CaseInfo
+{
+    ValidatorList* validatorList;
+    ExecutionNode* node;
 };
 } // namespace Dice
 #endif // DICEPARSERHELPER_H
