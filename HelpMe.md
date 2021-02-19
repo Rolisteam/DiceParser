@@ -910,11 +910,15 @@ As the `if` operator, you can specify the compare method.
 
 ##### Examples:
 
+###### Scalar comprehension failure
 ```
 1L[7,8,9]c[>6]
 ```
 
 This command will return 0 because, no die has been rolled, so the result of `1L[7,8,9]` is a final value.
+
+
+###### Counting scalars
 
 ```
 1L[7,8,9]c[?>6]
@@ -922,6 +926,9 @@ This command will return 0 because, no die has been rolled, so the result of `1L
 
 Output: 1
 
+###### Counting exploding dice
+
+**Incorrectly**
 ```
 5d6e6sc[>=8]
 ```
@@ -930,7 +937,7 @@ Output:
 > 0
 details: [8 [6,2] 2 1 1 1]
 
-
+**With a filter on the final sum**
 ```
 5d6e6f[?>=16]
 ```
@@ -941,13 +948,12 @@ As the final sum is equal to 11. It's less than 16 so the filter is filtering ev
 > 0
 details: [2 4 1 3 1]
 
-
 The final sum is higher than 16 so the whole result is accepted by the filter operator.
 
 > 23
 details: [3 6 3 5 6]
 
-
+**With a count on each roll**
 ```
 5d6e6sc[:>=8]
 ```
@@ -955,6 +961,15 @@ details: [3 6 3 5 6]
 Output:
 > 1
 details: [8 [6,2] 2 1 1 1]
+
+**Getting the minimum of two rolls**
+```
+1d100;1d100;$1i:[>$2]{$2}{$1};"Final value: $3 details [$1 - $2]"
+```
+
+Output:
+> Final value: 9 details [24 - 9]
+
 
 ### Operation Condition
 
