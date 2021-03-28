@@ -1,85 +1,37 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
-SET(CMAKE_AUTOUIC ON)
 
 project(irc)
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-
-# Find the QtWidgets library
-find_package(Qt5Core)
-#fsind_package(Qt5Gui)
-#find_package(Qt5Widgets)
-find_package(Qt5Network)
-
-#SET(mainwindow_SOURCES mainwindow.cpp)
-#SET(mainwindow_HEADERS mainwindow.h)
-#SET(mainwindow_FORMS mainwindow.ui)
-
+SET(CMAKE_AUTOUIC ON)
 set(EXECUTABLE_OUTPUT_PATH bin/)
 
+# Find the QtWidgets library
+set(QT_REQUIRED_VERSION "5.12.0")
 
-include_directories(${Qt5Core_INCLUDES} ${Qt5Network_INCLUDES} ../)
-add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Network_DEFINITIONS})
+set(irc_SOURCES botircdiceparser.cpp main.cpp)
+set(irc_HEADERS botircdiceparser.h)
 
 
-#qt5_wrap_ui(UI_HEADERS mainwindow.ui)
+
+find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Widgets Gui Svg LinguistTools Network)
+
+
 set(MODE "cli")
 
-
 ADD_DEFINITIONS(
-    -std=c++11 # Or -std=c++0x
-    # Other flags
+    -std=c++11
 )
 
-add_executable(
-    irc
-    ../diceparser.cpp
-    ../range.cpp
-    ../highlightdice.cpp
-    ../booleancondition.cpp
-    ../validator.cpp
-    ../compositevalidator.cpp
-    ../operationcondition.cpp
-    ../die.cpp
-    ../parsingtoolbox.cpp
-    ../dicealias.cpp
-    ../result/result.cpp
-    ../result/scalarresult.cpp
-    ../result/stringresult.cpp
-    ../result/diceresult.cpp
-    ../node/countexecutenode.cpp
-    ../node/dicerollernode.cpp
-    ../node/executionnode.cpp
-    ../node/explodedicenode.cpp
-    ../node/helpnode.cpp
-    ../node/mergenode.cpp
-    ../node/jumpbackwardnode.cpp
-    ../node/keepdiceexecnode.cpp
-    ../node/listaliasnode.cpp
-    ../node/listsetrollnode.cpp
-    ../node/numbernode.cpp
-    ../node/parenthesesnode.cpp
-    ../node/paintnode.cpp
-    ../node/rerolldicenode.cpp
-    ../node/scalaroperatornode.cpp
-    ../node/sortresult.cpp
-    ../node/startingnode.cpp
-    ../node/ifnode.cpp
-    ../node/stringnode.cpp
-    ../node/filternode.cpp
-    ../node/splitnode.cpp
-    ../node/groupnode.cpp
-    ../node/uniquenode.cpp
-    ../node/bind.cpp
-    botircdiceparser.cpp
-    ../node/variablenode.cpp
-    main.cpp)
+add_executable(dirc ${irc_SOURCES} ${irc_HEADERS} ${irc_FORMS})
+set(diceparser_shared_INCLUDE_DIRS "../diceparser")
+target_include_directories(dirc PRIVATE ../include ../ ../result ../node)
+link_directories(BEFORE ${CMAKE_BINARY_DIR})
 
 
-target_link_libraries(irc ${Qt5Core_LIBRARIES} ${Qt5Network_LIBRARIES})
-INSTALL_TARGETS(/bin irc)
-#qt5_use_modules()
 
+target_link_libraries(dirc PUBLIC Qt5::Core Qt5::Gui Qt5::Svg Qt5::Widgets Qt5::Network PRIVATE diceparser_shared)
+INSTALL_TARGETS(/bin dirc)

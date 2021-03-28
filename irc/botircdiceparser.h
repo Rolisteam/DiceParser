@@ -26,9 +26,17 @@
 
 #include <QTcpSocket>
 
+struct ConnectionInfo {
+  QString m_host;
+  QString m_channel;
+  QString m_nickname;
+  int m_port;
+};
+
 class BotIrcDiceParser : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(ConnectionInfo info READ info WRITE setInfo NOTIFY infoChanged)
 
 public:
     explicit BotIrcDiceParser(QObject* parent= 0);
@@ -36,14 +44,13 @@ public:
 
     QString diceToText(QList<ExportedDiceResult>& dice, bool highlight, bool homogeneous);
     QString startDiceParsing(QString& cmd, bool highlight);
+    ConnectionInfo info() const;
+
 public slots:
     void errorOccurs(QAbstractSocket::SocketError);
     void connectToServer();
+    void setInfo(const ConnectionInfo & info);
 
-private:
-    // Ui::BotIrcDiceParser *ui;
-    QTcpSocket* m_socket;
-    DiceParser* m_parser;
 
 private slots:
     void readData();
@@ -51,6 +58,15 @@ private slots:
     void authentificationProcess();
     void joinChannel();
     void setRegisterName();
+
+
+signals:
+    void infoChanged();
+
+private:
+    QTcpSocket* m_socket;
+    DiceParser* m_parser;
+    ConnectionInfo m_info;
 };
 
 #endif // MAINWINDOW_H

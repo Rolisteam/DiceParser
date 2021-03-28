@@ -9,6 +9,7 @@ enable_testing(true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} result node)
 
 option(BUILD_CLI OFF)
+option(BUILD_IRC OFF)
 
 SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/diceparser.cpp
@@ -84,6 +85,10 @@ set_target_properties(diceparser_shared PROPERTIES PUBLIC_HEADER "include/dicepa
 
 IF(BUILD_CLI)
     add_subdirectory(cli)
+ENDIF()
+
+IF(BUILD_IRC)
+    add_subdirectory(irc)
 ENDIF()
 
 add_subdirectory( tests )

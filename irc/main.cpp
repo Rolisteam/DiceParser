@@ -38,6 +38,7 @@ int main(int argc, char* argv[])
 {
     QCoreApplication app(argc, argv);
     BotIrcDiceParser bot;
+    bot.setInfo({"host", "#channel", "dice", 8001});
     bot.connectToServer();
     return app.exec();
 }

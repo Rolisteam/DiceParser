@@ -24,6 +24,18 @@
 #include <QDebug>
 #include <QString>
 #include <math.h>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+
+QString colorToIrcCode(QString str)
+{
+  if(str == QStringLiteral("reset"))
+  {
+    return {};
+  }
+  return str;
+}
 
 BotIrcDiceParser::BotIrcDiceParser(QObject* parent) : QObject(parent)
 {
@@ -34,7 +46,7 @@ BotIrcDiceParser::BotIrcDiceParser(QObject* parent) : QObject(parent)
 
     // Connect signals and slots!
     connect(m_socket, SIGNAL(readyRead()), this, SLOT(readData()));
-    connect(m_socket, SIGNAL(connected()), this, SLOT(authentificationProcess()));
+    //connect(m_socket, SIGNAL(connected()), this, SLOT(authentificationProcess()));
     connect(m_socket, SIGNAL(disconnected()), this, SLOT(connectToServer()));
     connect(
         m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorOccurs(QAbstractSocket::SocketError)));
@@ -47,7 +59,15 @@ BotIrcDiceParser::~BotIrcDiceParser()
 void BotIrcDiceParser::connectToServer()
 {
     qDebug() << "start connection";
-    m_socket->connectToHost(QString("irc.freenode.net"), 8001);
+    m_socket->connectToHost(m_info.m_host, m_info.m_port);
+}
+
+void BotIrcDiceParser::setInfo(const ConnectionInfo &info)
+{
+  if(info.m_host == m_info.m_host && info.m_channel == m_info.m_channel)
+    return;
+  m_info = info;
+  emit infoChanged();
 }
 void BotIrcDiceParser::errorOccurs(QAbstractSocket::SocketError)
 {
@@ -56,7 +76,6 @@ void BotIrcDiceParser::errorOccurs(QAbstractSocket::SocketError)
 
 void BotIrcDiceParser::readData()
 {
-    qDebug() << "Reply";
     QString readLine= m_socket->readLine();
 
     if(readLine.startsWith("!"))
@@ -80,8 +99,8 @@ void BotIrcDiceParser::readData()
                 QString result= startDiceParsing(cmd, true);
                 if(!result.isEmpty())
                 {
-                    QString msg("PRIVMSG #RolisteamOfficial :%1 \r\n");
-                    m_socket->write(msg.arg(result).toLatin1());
+                    QString msg("PRIVMSG %2 :%1 \r\n");
+                    m_socket->write(msg.arg(result, m_info.m_channel).toLatin1());
                 }
             }
         }
@@ -121,28 +140,97 @@ void BotIrcDiceParser::readData()
 }
 void BotIrcDiceParser::setRegisterName()
 {
+    qDebug() << "IRC BOT register name";
     m_socket->write(QLatin1String("msg NickServ identify  \r\n").data());
     joinChannel();
 }
 
 void BotIrcDiceParser::disconnectFromServer()
 {
-    // Disconnect from IRC server
+    qDebug() << "IRC BOT disconnect";
     m_socket->write("QUIT Good bye \r\n"); // Good bye is optional message
     m_socket->flush();
     m_socket->disconnect(); // Now we can try it :-)
 }
 void BotIrcDiceParser::authentificationProcess()
 {
-    qDebug() << "authentification";
-    m_socket->write(QLatin1String("NICK rolisteamDice \r\n").data());
-    m_socket->write(QLatin1String("USER rolisteamDice rolisteamDice rolisteamDice :rolisteamDice BOT \r\n").data());
+    qDebug() << "IRC BOT authentification";
+    auto nick = QStringLiteral("NICK %1 \r\n").arg(m_info.m_nickname);
+    auto user = QStringLiteral("USER %1 %1 %1 :%1 BOT \r\n").arg(m_info.m_nickname);
+    m_socket->write(nick.toLocal8Bit().data());
+    m_socket->write(user.toLocal8Bit().data());
+    joinChannel();
 }
 void BotIrcDiceParser::joinChannel()
 {
-    m_socket->write(QLatin1String("JOIN #RolisteamOfficial \r\n").data());
+  qDebug() << "IRC BOT Join channel";
+  auto text = QStringLiteral("JOIN %1 \r\n").arg(m_info.m_channel);
+  m_socket->write(text.toLocal8Bit().data());
 }
-QString BotIrcDiceParser::diceToText(QList<ExportedDiceResult>& diceList, bool highlight, bool homogeneous)
+
+QString displayCommandResult(QString json, bool withColor)
+{
+  QString result;
+  QTextStream out(&result);
+  QJsonDocument doc= QJsonDocument::fromJson(json.toUtf8());
+  auto obj= doc.object();
+  auto error= obj["error"].toString();
+  auto warning= obj["warning"].toString();
+  auto comment= obj["comment"].toString();
+  auto arrayInst= obj["instructions"].toArray();
+  QStringList diceResults;
+  for(const auto &inst : qAsConst(arrayInst))
+  {
+    auto obj= inst.toObject();
+    auto diceVals= obj["diceval"].toArray();
+    for(const auto & diceval : qAsConst(diceVals))
+    {
+      auto objval= diceval.toObject();
+      auto resultStr= objval["string"].toString();
+      diceResults << resultStr;
+    }
+  }
+  auto diceList= diceResults.join(",");
+  auto scalarText= obj["scalar"].toString();
+  auto cmd= obj["command"].toString();
+  auto resultStr= obj["string"].toString();
+
+  if(!error.isEmpty())
+  {
+    out << "Error" << error << "\n";
+    out.flush();
+    return result;
+  }
+
+  if(!warning.isEmpty())
+    out << "Warning: " << warning << "\n";
+
+  QString str;
+
+  if(withColor)
+    str= QString("Result: %1 - details:[%3 (%2)]").arg(scalarText, diceList, cmd);
+  else
+    str= QString("Result: %1 - details:[%3 (%2)]").arg(scalarText, diceList, cmd);
+
+  if(!resultStr.isEmpty() && resultStr != scalarText)
+  {
+    resultStr.replace("%2", diceList.trimmed());
+    str= resultStr;
+  }
+
+  if(!comment.isEmpty())
+  {
+      out << comment << " ";
+  }
+  out << str << "\n";
+
+  out.flush();
+  return result;
+}
+
+
+
+/*QString BotIrcDiceParser::diceToText(QList<ExportedDiceResult>& diceList, bool highlight, bool homogeneous)
 {
     QStringList global;
     for(auto dice : diceList)
@@ -153,7 +241,7 @@ QString BotIrcDiceParser::diceToText(QList<ExportedDiceResult>& diceList, bool h
             QStringList result;
             ListDiceResult diceResult= dice.value(face);
             // patternColor = patternColorarg();
-            foreach(HighLightDice tmp, diceResult)
+            for(HighLightDice tmp: qAsConst(diceResult))
             {
                 QStringList diceListStr;
                 QStringList diceListChildren;
@@ -213,7 +301,7 @@ QString BotIrcDiceParser::diceToText(QList<ExportedDiceResult>& diceList, bool h
         global << resultGlobal.join(' ');
     }
     return global.join(' ');
-}
+}*/
 
 QString BotIrcDiceParser::startDiceParsing(QString& cmd, bool highlight)
 {
@@ -222,55 +310,41 @@ QString BotIrcDiceParser::startDiceParsing(QString& cmd, bool highlight)
     if(m_parser->parseLine(cmd))
     {
         m_parser->start();
-        if(!m_parser->getErrorMap().isEmpty())
+
+        if(!m_parser->humanReadableError().isEmpty())
         {
             out << "Error" << m_parser->humanReadableError() << "\n";
             return QString();
         }
+        auto allSameColor= true;
+        QString colorP;
+        auto json= m_parser->resultAsJSon(
+          [&colorP, &allSameColor](const QString& result, const QString& color, bool hightlight) {
+            auto trueColor= color;
+            if(color.isEmpty())
+              trueColor= "red";
 
-        QList<ExportedDiceResult> list;
-        bool homogeneous= true;
-        m_parser->getLastDiceResult(list, homogeneous);
-        QString diceText= diceToText(list, highlight, homogeneous);
-        QString scalarText;
-        QString str;
+            if(colorP.isEmpty())
+              colorP= trueColor;
+            else if(colorP != trueColor)
+              allSameColor= false;
 
-        if(m_parser->hasIntegerResultNotInFirst())
-        {
-            auto values= m_parser->getLastIntegerResults();
-            QStringList strLst;
-            for(auto val : values)
-            {
-                strLst << QString::number(val);
-            }
-            scalarText= QString("%1").arg(strLst.join(','));
-        }
-        else if(!list.isEmpty())
-        {
-            auto values= m_parser->getSumOfDiceResult();
-            QStringList strLst;
-            for(auto val : values)
-            {
-                strLst << QString::number(val);
-            }
-            scalarText= QString("%1").arg(strLst.join(','));
-        }
-        if(highlight)
-            str= QString("Result: %1, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(m_parser->getDiceCommand());
-        else
-            str= QString("Result: %1, details:[%3 (%2)]").arg(scalarText).arg(diceText).arg(m_parser->getDiceCommand());
+            auto front= colorToIrcCode(trueColor);
+            auto end= front.isEmpty() ? "" : colorToIrcCode("reset");
+            return hightlight ? QString("%1%2%3").arg(front).arg(result).arg(end) : result;
+          });
 
-        if(m_parser->hasStringResult())
-        {
-            str= m_parser->getStringResult().join(",");
-        }
-        out << str << "\n";
+        out << displayCommandResult(json, allSameColor);
     }
     else
     {
         out << m_parser->humanReadableError() << "\n";
-        ;
     }
 
     return result;
+}
+
+ConnectionInfo BotIrcDiceParser::info() const
+{
+  return m_info;
 }
