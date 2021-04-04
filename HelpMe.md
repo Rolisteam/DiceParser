@@ -1258,6 +1258,10 @@ Documentation of the bot is now inline with the bot.
 
 > !help alias
 
+## Conf documentation
+
+> !help conf
+
 ## Difference between Aliases and Macros
 
 Aliases is the feature of the bot, macro is a feature of the dice system behind the bot.
