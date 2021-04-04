@@ -29,3 +29,52 @@ Author: Obi
 ```
 
 Author: GreaterGerardon
+
+
+# Earthdawn, 3th and 4th editions
+
+* Niveau 1: `!macro add n01 ((d4e4)-2) False`
+* Niveau 2: `!macro add n02 ((d4e4)-1) False`
+* Niveau 3: `!macro add n03 (d4e4) False`
+* Niveau 4: `!macro add n04 (d6e6) False`
+* Niveau 5: `!macro add n05 (d8e8) False`
+* Niveau 6: `!macro add n06 (d10e10) False`
+* Niveau 7: `!macro add n07 (d12e12) False`
+* Niveau 8: `!macro add n08 (2d6e6) False`
+* Niveau 9: `!macro add n09 (d8e8)+(d6e6) False`
+* Niveau 10: `!macro add n10 (d10e10)+(d6e6) False`
+* Niveau 11: `!macro add n11 (d10e10)+(d8e8) False`
+* Niveau 12: `!macro add n12 (2d10e10) False`
+* Niveau 13: `!macro add n13 (d12e12)+(d10e10) False`
+* Niveau 14: `!macro add n14 (d20e20)+(d4e4) False`
+* Niveau 15: `!macro add n15 (d20e20)+(d6e6) False`
+* Niveau 16: `!macro add n16 (d20e20)+(d8e8) False`
+* Niveau 17: `!macro add n17 (d20e20)+(d10e10) False`
+* Niveau 18: `!macro add n18 (d20e20)+(d12e12) False`
+* Niveau 19: `!macro add n19 (d20e20)+(2d6e6) False`
+* Niveau 20: `!macro add n20 (d20e20)+(d8e8)+(d6e6) False`
+* Niveau 21: `!macro add n21 (d20e20)+(d10e10)+(d6e6) False`
+* Niveau 22: `!macro add n22 (d20e20)+(d10e10)+(d8e8) False`
+* Niveau 23: `!macro add n23 (d20e20)+(2d10e10) False`
+* Niveau 24: `!macro add n24 (d20e20)+(d12e12)+(d10e10) False`
+* Niveau 25: `!macro add n25 (d20e20)+(d10e10)+(d8e8)+(d4e4) False`
+* Niveau 26: `!macro add n26 (d20e20)+(d10e10)+(d8e8)+(d6e6) False`
+* Niveau 27: `!macro add n27 (d20e20)+(d10e10)+(2d8e8) False`
+* Niveau 28: `!macro add n28 (d20e20)+(2d10e10)+(d8e8) False`
+* Niveau 29: `!macro add n29 (d20e20)+(d12e12)+(d10e10)+(d8e8) False`
+* Niveau 30: `!macro add n30 (d20e20)+(d10e10)+(d8e8)+(2d6e6) False`
+* Niveau 31: `!macro add n31 (d20e20)+(d10e10)+(2d8e8)+(d6e6) False`
+* Niveau 32: `!macro add n32 (d20e20)+(2d10e10)+(d8e8)+(d6e6) False`
+* Niveau 33: `!macro add n33 (d20e20)+(2d10e10)+(2d8e8) False`
+* Niveau 34: `!macro add n34 (d20e20)+(3d10e10)+(d8e8) False`
+* Niveau 35: `!macro add n35 (d20e20)+(d12e12)+(2d10e10)+(d8e8) False`
+* Niveau 36: `!macro add n36 (2d20e20)+(d10e10)+(d8e8)+(d4e4) False`
+* Niveau 37: `!macro add n37 (2d20e20)+(d10e10)+(d8e8)+(d6e6) False`
+* Niveau 38: `!macro add n38 (2d20e20)+(d10e10)+(2d8e8) False`
+* Niveau 39: `!macro add n39 (2d20e20)+(2d10e10)+(d8e8) False`
+* Niveau 40: `!macro add n40 (2d20e20)+(d12e12)+(d10e10)+(d8e8) False`
+
+Author: DorDeDor
+
+
+
