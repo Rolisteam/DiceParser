@@ -29,6 +29,7 @@
 #include <QRegularExpression>
 #include <QStringList>
 #include <QTextStream>
+#include <QDebug>
 
 #ifdef PAINTER_OP
 #include <QGuiApplication>
@@ -292,7 +293,7 @@ void displayCommandResult(QString json, bool withColor)
     }
     out << str << "\n";
 }
-#include <QDebug>
+
 int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJsonArray array)
 {
     DiceParser parser;
