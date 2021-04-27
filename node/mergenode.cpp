@@ -104,7 +104,7 @@ ExecutionNode* MergeNode::getLatestNode(ExecutionNode* node)
     ExecutionNode* next= node;
     while(nullptr != next->getNextNode() && (next->getNextNode() != this))
     {
-        qDebug() << "find latest node" << next->toString(true) << next->getNextNode()->toString(true);
+        // qDebug() << "find latest node" << next->toString(true) << next->getNextNode()->toString(true);
         next= next->getNextNode();
     }
     return next;

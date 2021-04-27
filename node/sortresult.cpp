@@ -65,7 +65,7 @@ void SortResultNode::run(ExecutionNode* node)
     for(int i= 0; i < diceList.size(); ++i)
     {
         Die* tmp1= new Die(*diceList[i]);
-        qDebug() << tmp1->getColor() << diceList[i]->getColor();
+        //qDebug() << tmp1->getColor() << diceList[i]->getColor();
         //*tmp1=*diceList[i];
         diceList[i]->displayed();
 

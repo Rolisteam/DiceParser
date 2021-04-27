@@ -121,7 +121,7 @@ void RepeaterNode::run(ExecutionNode* previousNode)
 
         m_result= string;
 
-        qDebug().noquote() << listOfStrResult.join('\n');
+        //qDebug().noquote() << listOfStrResult.join('\n');
     }
 
     if(nullptr != m_nextNode)
