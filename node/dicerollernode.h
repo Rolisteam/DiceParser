@@ -57,7 +57,7 @@ private:
     DiceResult* m_diceResult;
     qint64 m_min;
     Die::ArithmeticOperator m_operator;
-    bool m_unique;
+    bool m_unique = false;
 };
 
 #endif // DICEROLLERNODE_H
