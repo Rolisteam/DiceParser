@@ -23,7 +23,8 @@
 #include "keepdiceexecnode.h"
 #include "parsingtoolbox.h"
 
-KeepDiceExecNode::KeepDiceExecNode() : m_diceResult(new DiceResult())
+KeepDiceExecNode::KeepDiceExecNode()
+ : m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
 }
@@ -36,16 +37,16 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
         return;
     }
     m_numberOfDiceNode->run(previous);
-    auto lastnode = ParsingToolBox::getLatestNode(m_numberOfDiceNode);
+    auto lastnode = ParsingToolBox::getLeafNode(m_numberOfDiceNode);
     if(nullptr == lastnode)
         return;
     auto result = lastnode->getResult();
     if(nullptr == result)
         return;
-    if(!result->hasResultOfType(Result::SCALAR))
+    if(!result->hasResultOfType(Dice::RESULT_TYPE::SCALAR))
         return;
 
-    auto numberOfDice = result->getResult(Result::SCALAR).toInt();
+    auto numberOfDice = result->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
 
     DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previous->getResult());
     m_result->setPrevious(previousDiceResult);
@@ -61,15 +62,15 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
         QList<Die*> diceList3= diceList.mid(0, static_cast<int>(numberOfDice));
         QList<Die*> diceList2;
 
-        for(Die* die : diceList3)
+        for(Die* die : qAsConst(diceList3))
         {
             Die* tmpdie= new Die(*die);
-            //*tmpdie= *die;
             diceList2.append(tmpdie);
             die->displayed();
+            die->setSelected(false);
         }
 
-        if(numberOfDice > static_cast<quint64>(diceList.size()))
+        if(numberOfDice > static_cast<qint64>(diceList.size()))
         {
             m_errors.insert(Dice::ERROR_CODE::TOO_MANY_DICE,
                             QObject::tr(" You ask to keep %1 dice but the result only has %2")
@@ -99,7 +100,7 @@ QString KeepDiceExecNode::toString(bool wl) const
 	if(wl)
 	{
         auto param = m_numberOfDiceNode->toString(wl);
-        return QString("%1 [label=\"KeepDiceExecNode %2\"]").arg(m_id).arg(param);
+        return QString("%1 [label=\"KeepDiceExecNode %2\"]").arg(m_id, param);
 	}
 	else
 	{

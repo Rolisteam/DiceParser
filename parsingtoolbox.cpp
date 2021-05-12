@@ -1559,7 +1559,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
         return false;
     }
 
-    ExecutionNode* node= nullptr;
     bool found= false;
     auto keys= m_OptionOp.keys();
     for(int i= 0; ((i < keys.size()) && (!found)); ++i)
@@ -1574,40 +1573,35 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
             {
             case Keep:
             {
-                qint64 myNumber= 0;
+                ExecutionNode* value=nullptr;
                 bool ascending= readAscending(str);
 
-                if(readNumber(str, myNumber))
+                 if(readOperand(str,value))
                 {
-                    node= addSort(previous, ascending);
+                    auto node= addSort(previous, ascending);
                     KeepDiceExecNode* nodeK= new KeepDiceExecNode();
-                    nodeK->setDiceKeepNumber(myNumber);
+                    nodeK->setDiceKeepNumber(value);
                     node->setNextNode(nodeK);
-                    node= nodeK;
                     found= true;
                 }
             }
             break;
             case KeepAndExplode:
             {
-                qint64 myNumber= 0;
                 bool ascending= readAscending(str);
-                if(readNumber(str, myNumber))
+                ExecutionNode* value=nullptr;
+                if(readOperand(str,value))
                 {
-                    /* if(!hasDice)
-                        {
-                            previous = addRollDiceNode(DEFAULT_FACES_NUMBER,previous);
-                        }*/
                     DiceRollerNode* nodeTmp= dynamic_cast<DiceRollerNode*>(previous);
                     if(nullptr != nodeTmp)
                     {
                         previous= addExplodeDiceNode(static_cast<qint64>(nodeTmp->getFaces()), previous);
                     }
 
-                    node= addSort(previous, ascending);
+                    auto node= addSort(previous, ascending);
 
                     KeepDiceExecNode* nodeK= new KeepDiceExecNode();
-                    nodeK->setDiceKeepNumber(myNumber);
+                    nodeK->setDiceKeepNumber(value);
 
                     node->setNextNode(nodeK);
                     node= nodeK;
@@ -1626,7 +1620,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                     filterNode->setValidatorList(validatorList);
 
                     previous->setNextNode(filterNode);
-                    node= filterNode;
                     found= true;
                 }
             }
@@ -1634,7 +1627,7 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
             case Sort:
             {
                 bool ascending= readAscending(str);
-                node= addSort(previous, ascending);
+                addSort(previous, ascending);
                 /*if(!hasDice)
                     {
                         m_errorMap.insert(ExecutionNode::BAD_SYNTAXE,QObject::tr("Sort Operator does not support default
@@ -1654,7 +1647,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                     countNode->setValidatorList(validatorList);
 
                     previous->setNextNode(countNode);
-                    node= countNode;
                     found= true;
                 }
                 else
@@ -1709,7 +1701,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                         }
                         rerollNode->setValidatorList(validatorList);
                         previous->setNextNode(rerollNode);
-                        node= rerollNode;
                         found= true;
                     }
                     else
@@ -1734,7 +1725,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                     ExplodeDiceNode* explodedNode= new ExplodeDiceNode();
                     explodedNode->setValidatorList(validatorList);
                     previous->setNextNode(explodedNode);
-                    node= explodedNode;
                     found= true;
                 }
                 else
@@ -1749,7 +1739,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                 MergeNode* mergeNode= new MergeNode();
                 mergeNode->setStartList(&m_startNodes);
                 previous->setNextNode(mergeNode);
-                node= mergeNode;
                 found= true;
             }
             break;
@@ -1757,7 +1746,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
             {
                 AllSameNode* allSame= new AllSameNode();
                 previous->setNextNode(allSame);
-                node= allSame;
                 found= true;
             }
             break;
@@ -1766,8 +1754,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                 auto scNode= new SwitchCaseNode();
                 found= readSwitchCaseNode(str, scNode);
                 previous->setNextNode(scNode);
-                if(found)
-                    node= scNode;
             }
             break;
             case TransformOption:
@@ -1775,8 +1761,7 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                 auto scNode= new ReplaceValueNode();
                 found= readReplaceValueNode(str, scNode);
                 previous->setNextNode(scNode);
-                if(found)
-                    node= scNode;
+
             }
             break;
             case Bind:
@@ -1784,7 +1769,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                 BindNode* bindNode= new BindNode();
                 bindNode->setStartList(&m_startNodes);
                 previous->setNextNode(bindNode);
-                node= bindNode;
                 found= true;
             }
             break;
@@ -1809,13 +1793,12 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                     }
                 }
                 previous->setNextNode(occNode);
-                node= occNode;
                 found= true;
             }
             break;
             case Unique:
             {
-                node= new UniqueNode();
+                auto node= new UniqueNode();
                 previous->setNextNode(node);
                 found= true;
             }
@@ -1832,7 +1815,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                 else
                 {
                     previous->setNextNode(painter);
-                    node= painter;
                     found= true;
                 }
             }
@@ -1852,7 +1834,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                         nodeif->setInstructionFalse(falseNode);
                         nodeif->setValidatorList(validatorList);
                         previous->setNextNode(nodeif);
-                        node= nodeif;
                         found= true;
                     }
                     else
@@ -1870,7 +1851,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
             {
                 SplitNode* splitnode= new SplitNode();
                 previous->setNextNode(splitnode);
-                node= splitnode;
                 found= true;
             }
             break;
@@ -1883,7 +1863,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                     GroupNode* groupNode= new GroupNode(stringResult);
                     groupNode->setGroupValue(groupNumber);
                     previous->setNextNode(groupNode);
-                    node= groupNode;
                     found= true;
                 }
             }

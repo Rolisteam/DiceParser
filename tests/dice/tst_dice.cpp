@@ -614,7 +614,9 @@ void TestDice::keepTest()
 
     TestNode node;
     KeepDiceExecNode keepN;
-    keepN.setDiceKeepNumber(keep);
+    NumberNode* numberNode = new NumberNode();
+    numberNode->setNumber(keep);
+    keepN.setDiceKeepNumber(numberNode);
 
     DiceResult result;
 
