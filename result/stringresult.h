@@ -33,11 +33,13 @@ public:
 
     void setStringCount(int count);
     QString getStringResult() const override;
+    void setNoComma(bool b);
 
 private:
     QStringList m_value;
-    bool m_highlight;
+    bool m_highlight= true;
     int m_stringCount= 0;
+    bool m_commaSeparator= true;
 };
 
 #endif // STRINGRESULT_H

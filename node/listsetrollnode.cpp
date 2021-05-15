@@ -81,7 +81,7 @@ void ListSetRollNode::run(ExecutionNode* previous)
                     die->roll();
                     m_diceResult->insertResult(die);
                     getValueFromDie(die, rollResult);
-                    for(auto str : rollResult)
+                    for(auto const& str : qAsConst(rollResult))
                     {
                         m_stringResult->addText(str);
                     }
@@ -102,6 +102,11 @@ void ListSetRollNode::setListValue(QStringList lirs)
 void ListSetRollNode::setUnique(bool u)
 {
     m_unique= u;
+}
+void ListSetRollNode::setNoComma(bool b)
+{
+    if(m_stringResult)
+        m_stringResult->setNoComma(b);
 }
 void ListSetRollNode::setRangeList(QList<Range>& ranges)
 {

@@ -31,10 +31,17 @@ bool StringResult::hasResultOfType(Dice::RESULT_TYPE resultType) const
     }
     return val;
 }
+
+void StringResult::setNoComma(bool b)
+{
+    m_commaSeparator= !b;
+}
+
 QString StringResult::getText() const
 {
-    return m_value.join(",");
+    return m_commaSeparator ? m_value.join(",") : m_value.join(QString());
 }
+
 QVariant StringResult::getResult(Dice::RESULT_TYPE type)
 {
     switch(type)

@@ -42,6 +42,7 @@ public:
 
     void setListValue(QStringList);
     void setUnique(bool);
+    void setNoComma(bool);
     void setRangeList(QList<Range>&);
     virtual ExecutionNode* getCopy() const;
 

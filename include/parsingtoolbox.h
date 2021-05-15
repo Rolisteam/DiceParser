@@ -82,9 +82,12 @@ class ParsingToolBox
 public:
     enum LIST_OPERATOR
     {
-        NONE,
-        UNIQUE
+        NONE= 0x00,
+        UNIQUE= 0x01,
+        NOCOMMA= 0x02,
+        UniqueAndNoComma= 0x03
     };
+
     enum Function
     {
         REPEAT

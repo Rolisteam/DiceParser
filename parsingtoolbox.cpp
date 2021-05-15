@@ -140,7 +140,8 @@ ExecutionNode* ParsingToolBox::addSort(ExecutionNode* e, bool b)
 {
     SortResultNode* nodeSort= new SortResultNode();
     nodeSort->setSortAscending(b);
-    e->setNextNode(nodeSort);
+    if(nullptr != e)
+        e->setNextNode(nodeSort);
     return nodeSort;
 }
 
@@ -970,12 +971,29 @@ bool ParsingToolBox::readDiceRange(QString& str, qint64& start, qint64& end)
 }
 ParsingToolBox::LIST_OPERATOR ParsingToolBox::readListOperator(QString& str)
 {
-    if(str.startsWith('u'))
+    QHash<QChar, ParsingToolBox::LIST_OPERATOR> hash;
+    hash.insert('u', UNIQUE);
+    hash.insert('n', NOCOMMA);
+    bool findOne= false;
+    ParsingToolBox::LIST_OPERATOR op= NONE;
+    int i= 0;
+    do
     {
-        str= str.remove(0, 1);
-        return UNIQUE;
-    }
-    return NONE;
+        auto keys= hash.keys();
+        findOne= false;
+        for(auto const& key : qAsConst(keys))
+        {
+            if(str.startsWith(key))
+            {
+                str= str.remove(0, 1);
+                op= hash[key];
+                findOne= true;
+                ++i;
+            }
+        }
+    } while(findOne);
+
+    return i > 1 ? UniqueAndNoComma : op;
 }
 
 bool ParsingToolBox::readPainterParameter(PainterNode* painter, QString& str)
@@ -1179,7 +1197,7 @@ QString ParsingToolBox::replacePlaceHolderFromJson(const QString& source, const 
     QStringList resultList;
     auto instructions= obj["instructions"].toArray();
     std::vector<std::vector<std::pair<int, QList<QStringList>>>> instructionResult;
-    for(auto inst : instructions)
+    for(auto inst : qAsConst(instructions))
     {
         std::vector<std::pair<int, QList<QStringList>>> map;
         auto obj= inst.toObject();
@@ -1573,10 +1591,10 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
             {
             case Keep:
             {
-                ExecutionNode* value=nullptr;
+                ExecutionNode* value= nullptr;
                 bool ascending= readAscending(str);
 
-                 if(readOperand(str,value))
+                if(readOperand(str, value))
                 {
                     auto node= addSort(previous, ascending);
                     KeepDiceExecNode* nodeK= new KeepDiceExecNode();
@@ -1589,8 +1607,8 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
             case KeepAndExplode:
             {
                 bool ascending= readAscending(str);
-                ExecutionNode* value=nullptr;
-                if(readOperand(str,value))
+                ExecutionNode* value= nullptr;
+                if(readOperand(str, value))
                 {
                     DiceRollerNode* nodeTmp= dynamic_cast<DiceRollerNode*>(previous);
                     if(nullptr != nodeTmp)
@@ -1761,7 +1779,6 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                 auto scNode= new ReplaceValueNode();
                 found= readReplaceValueNode(str, scNode);
                 previous->setNextNode(scNode);
-
             }
             break;
             case Bind:
@@ -2069,9 +2086,13 @@ bool ParsingToolBox::readDice(QString& str, ExecutionNode*& node)
             {
                 ListSetRollNode* lsrNode= new ListSetRollNode();
                 lsrNode->setRangeList(listRange);
-                if(op == ParsingToolBox::UNIQUE)
+                if(op == ParsingToolBox::UNIQUE || op == ParsingToolBox::UniqueAndNoComma)
                 {
                     lsrNode->setUnique(true);
+                }
+                if(op == ParsingToolBox::NOCOMMA || op == ParsingToolBox::UniqueAndNoComma)
+                {
+                    lsrNode->setNoComma(true);
                 }
                 lsrNode->setListValue(list);
                 node= lsrNode;
@@ -2092,7 +2113,7 @@ bool ParsingToolBox::readDice(QString& str, ExecutionNode*& node)
 bool ParsingToolBox::readDiceOperator(QString& str, DiceOperator& op)
 {
     QStringList listKey= m_mapDiceOp.keys();
-    for(const QString& key : listKey)
+    for(const QString& key : qAsConst(listKey))
     {
         if(str.startsWith(key, Qt::CaseInsensitive))
         {
