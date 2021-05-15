@@ -173,7 +173,7 @@ the number of instruction is not limited.
 * The fourth instruction subtracts the result of the third instruction to the result of seconde one.
 
 
-## List of operator
+## List of operators
 
 * k: Keep
 * K: Explode and keep
@@ -224,6 +224,24 @@ Another way to write this command is:
 ```
 This way allows you to change the explode threshold.
 
+
+In order to compute the number you want to keep, the k operator manages variable. You can't directly put the computation behind the k but you can refer to a previous computation.
+
+```
+# Good
+5-3;10d10k$1 
+```
+
+```
+# BAD
+10d10k5-3
+```
+
+```
+# BAD
+10d10k(5-3)
+```
+
 ### Keep Lower dice
 
 ```
@@ -231,6 +249,7 @@ klX
 ```
 
 The option sorts the resulting die list, the it selects the X lowest dice.
+
 
 ### Sort
 
@@ -1021,13 +1040,12 @@ Composite Validator accepts as many validator as you need:
 
 ## List operator
 
-
 * [Number](#number-values)
 * [Change the odd](#change-the-odd)
 
 ### Text values
 
-The L operator (meaning list) provides a way to pick up value from list.
+The L (or l) operator (meaning list) provides a way to pick up value from list.
 
 ```
 1L[sword,bow,knife,gun,shotgun]
@@ -1042,6 +1060,39 @@ With comment
 > Am I evil ?
 yes
 
+### Getting unique values
+
+The `u` parameter asks for unique values.
+
+```
+2Lu[yes,no]
+```
+
+This command can return `yes,no` or `no,yes`. The u make it impossible to return `yes,yes` or `no,no`
+
+### Remove comma between values
+
+By default, results are displayed with a comma between each values. You can remove the comma with the parameter `n`
+
+```
+2Ln[to,kyo]
+```
+
+This command can return `toto`, `kyokyo`, `tokyo`, `kyoto`.
+
+### Unique with no comma
+
+```
+2Lun[to,kyo]
+```
+
+or 
+
+```
+2Lnu[to,kyo]
+```
+
+Those commands can return `tokyo` or `kyoto`.
 
 ### Number values
 
