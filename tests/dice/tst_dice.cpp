@@ -202,6 +202,9 @@ private slots:
     void switchCaseTest();
     void switchCaseTest_data();
 
+    void deterministTest();
+    void deterministTest_data();
+
 private:
     std::unique_ptr<Die> m_die;
     std::unique_ptr<DiceParser> m_diceParser;
@@ -344,7 +347,8 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd48") << "10D10c[<2|>7]";
     QTest::addRow("cmd49") << "10D6c[=2|=4|=6]";
     QTest::addRow("cmd50") << "10D10e[=1|=10]k4";
-    QTest::addRow("cmd51") << "1L[tete,bras droit,bras gauche,jambe droite,jambe gauche,ventre[6..7],buste[8..10]]";
+    QTest::addRow("cmd51") << "1L[tete,bras droit,bras gauche,jambe droite,jambe "
+                              "gauche,ventre[6..7],buste[8..10]]";
     QTest::addRow("cmd52") << "10+10s";
     QTest::addRow("cmd53") << "1d6e6;1d4e4mk1";
     QTest::addRow("cmd54") << "1d6e6;1d4e4mk1";
@@ -360,7 +364,8 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd64") << "4d6e6i[=4]{-4}+2";
     QTest::addRow("cmd65") << "4d6e6f[!=4]+2";
     QTest::addRow("cmd66") << "5d10g10";
-    QTest::addRow("cmd67") << "4d6p[4:blue]c[>=4];1d6p[1:#FFFFFF]c6-@c1;1d6p[1:#FF0000]c[>=4]+@c6-@c1";
+    QTest::addRow("cmd67") << "4d6p[4:blue]c[>=4];1d6p[1:#FFFFFF]c6-@c1;1d6p[1:#"
+                              "FF0000]c[>=4]+@c6-@c1";
     QTest::addRow("cmd68") << "10d[0..9]";
     QTest::addRow("cmd69") << "1d8e8;1d6e6mk1+2";
     QTest::addRow("cmd70") << "3d100g50";
@@ -614,7 +619,7 @@ void TestDice::keepTest()
 
     TestNode node;
     KeepDiceExecNode keepN;
-    NumberNode* numberNode = new NumberNode();
+    NumberNode* numberNode= new NumberNode();
     numberNode->setNumber(keep);
     keepN.setDiceKeepNumber(numberNode);
 
@@ -997,7 +1002,8 @@ void TestDice::ifTest_data()
     QTest::addRow("cmd9") << QVector<int>({25, 8, 14}) << onScalar << 1 << "False";
     QTest::addRow("cmd10") << QVector<int>({25, 8, 14}) << onScalar << 47 << "True";
 
-    // QTest::addRow("cmd11") << QVector<int>({25, 8, 14}) << onEachValue << 47 << "True";
+    // QTest::addRow("cmd11") << QVector<int>({25, 8, 14}) << onEachValue << 47 <<
+    // "True";
 }
 
 void TestDice::paintTest() {}
@@ -1180,15 +1186,16 @@ void TestDice::ifCommandTest_data()
     QTest::addColumn<QList<int>>("level");
     QTest::addColumn<QStringList>("startExperted");
 
-    QTest::addRow("cmd1") << "2d10i:[>=15]{\"Complete Success: %1 [%2]\"}{i:[>=10]{\"Success with Complications: %1 "
+    QTest::addRow("cmd1") << "2d10i:[>=15]{\"Complete Success: %1 "
+                             "[%2]\"}{i:[>=10]{\"Success with Complications: %1 "
                              "[%2]\"}{\"Failure: %1 [%2]\"}}"
                           << BooleanCondition::GreaterOrEqual << QList<int>({15, 10, 1})
                           << QStringList({"Complete Success:", "Success with Complications:", "Failure:"});
-    QTest::addRow("cmd2")
-        << "2d10;$1i:[>=15]{\"Complete Success: %1 [%2]\"}{$1i:[>=10]{\"Success with Complications: %1 "
-           "[%2]\"}{\"Failure: %1 [%2]\"}}"
-        << BooleanCondition::GreaterOrEqual << QList<int>({15, 10, 1})
-        << QStringList({"Complete Success:", "Success with Complications:", "Failure:"});
+    QTest::addRow("cmd2") << "2d10;$1i:[>=15]{\"Complete Success: %1 [%2]\"}{$1i:[>=10]{\"Success "
+                             "with Complications: %1 "
+                             "[%2]\"}{\"Failure: %1 [%2]\"}}"
+                          << BooleanCondition::GreaterOrEqual << QList<int>({15, 10, 1})
+                          << QStringList({"Complete Success:", "Success with Complications:", "Failure:"});
 }
 
 void TestDice::operatoionConditionValidatorTest()
@@ -1294,6 +1301,32 @@ void TestDice::switchCaseTest_data()
                           << QList<BC::LogicOperator>{BC::LesserOrEqual, BC::LesserOrEqual, BC::LesserOrEqual,
                                                       BC::LesserOrEqual}
                           << QList<int>{1, 2, 3, 4} << QStringList{"a", "b", "c", "d"} << QStringLiteral("c") << true;
+}
+
+void TestDice::deterministTest()
+{
+    QFETCH(QString, command);
+    QFETCH(QList<qreal>, results);
+
+    auto parsing= m_diceParser->parseLine(command);
+    QVERIFY2(parsing, "parsing");
+    m_diceParser->start();
+    QVERIFY2(m_diceParser->humanReadableError().isEmpty(), "no error");
+    QVERIFY2(m_diceParser->humanReadableWarning().isEmpty(), "no warning");
+
+    auto resultCmd= m_diceParser->scalarResultsFromEachInstruction();
+    QCOMPARE(results, resultCmd);
+}
+
+void TestDice::deterministTest_data()
+{
+    QTest::addColumn<QString>("command");
+    QTest::addColumn<QList<qreal>>("results");
+
+    QTest::addRow("cmd1") << "10;20;10+20;5-3;[$1,$2,$3]k$4" << QList<qreal>{10, 20, 30, 2, 50};
+    QTest::addRow("cmd2") << "6;[10,7,8,4,4,3,2,2,1]k$1" << QList<qreal>{6, 36};
+
+    // 1d6;10d10e10k\$1
 }
 
 void TestDice::cleanupTestCase() {}
