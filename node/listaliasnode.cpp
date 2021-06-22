@@ -48,7 +48,7 @@ QString ListAliasNode::buildList() const
     QString result(QObject::tr("List of Alias:\n"));
     for(auto& key : m_aliasList)
     {
-        result+= QString("%1 : %2  # %3\n").arg(key->getCommand(), key->getValue(), key->getComment());
+        result+= QString("%1 : %2  # %3\n").arg(key->pattern(), key->command(), key->comment());
     }
     return result;
 }
@@ -57,7 +57,7 @@ QString ListAliasNode::toString(bool wl) const
     QStringList resultList;
     for(auto& key : m_aliasList)
     {
-        resultList << "{" << key->getCommand() << key->getValue() << "}";
+        resultList << "{" << key->pattern() << key->command() << "}";
     }
 
     if(wl)

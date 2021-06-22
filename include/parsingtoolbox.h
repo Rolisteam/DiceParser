@@ -243,6 +243,7 @@ public:
     void insertAlias(DiceAlias* dice, int i);
     const QList<DiceAlias*>& getAliases() const;
     QList<DiceAlias*>* aliases();
+    void setAliases(const QList<DiceAlias*> list);
     void cleanUpAliases();
 
     static bool readStringResultParameter(QString& str);

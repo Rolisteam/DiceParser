@@ -24,7 +24,7 @@
 
 #include <QDebug>
 
-QString makeReplament(const QString& pattern, const QString& replacement, QString cmd)
+QString makeReplament(const QString& pattern, const QString& command, QString cmd)
 {
     auto hasPattern= cmd.contains(pattern);
     if(hasPattern)
@@ -60,7 +60,7 @@ QString makeReplament(const QString& pattern, const QString& replacement, QStrin
 
         if(!hasQuote && !hasVariable)
         {
-            cmd.replace(pattern, replacement);
+            cmd.replace(pattern, command);
         }
         else
         {
@@ -120,15 +120,15 @@ QString makeReplament(const QString& pattern, const QString& replacement, QStrin
             // TODO to be replace by C++14 when it is ready
             for(auto i= patternPosList.rbegin(); i != patternPosList.rend(); ++i)
             {
-                cmd.replace(*i, 1, replacement);
+                cmd.replace(*i, 1, command);
             }
         }
     }
     return cmd;
 }
 
-DiceAlias::DiceAlias(QString cmd, QString key, bool isReplace, bool isEnable)
-    : m_command(cmd), m_value(key), m_isEnable(isEnable)
+DiceAlias::DiceAlias(QString pattern, QString command, QString comment, bool isReplace, bool isEnable)
+    : m_pattern(pattern), m_command(command), m_comment(comment), m_isEnable(isEnable)
 {
     if(isReplace)
     {
@@ -140,13 +140,16 @@ DiceAlias::DiceAlias(QString cmd, QString key, bool isReplace, bool isEnable)
     }
 }
 
-DiceAlias::~DiceAlias() {}
+DiceAlias::~DiceAlias()
+{
+    qDebug() << "destructeur of alias!" << this;
+}
 
 DiceAlias::DiceAlias(const DiceAlias& alias)
 {
-    m_command= alias.getCommand();
-    m_comment= alias.getComment();
-    m_value= alias.getValue();
+    m_command= alias.command();
+    m_comment= alias.comment();
+    m_pattern= alias.pattern();
     m_isEnable= alias.isEnable();
     m_type= alias.isReplace() ? REPLACE : REGEXP;
 }
@@ -158,41 +161,41 @@ bool DiceAlias::resolved(QString& str)
 
     if((m_type == REPLACE) && (str.contains(m_command)))
     {
-        str= makeReplament(m_command, m_value, str);
+        str= makeReplament(m_pattern, m_command, str);
         // str.replace(m_command,m_value);
         return true;
     }
     else if(m_type == REGEXP)
     {
         QRegularExpression exp(m_command);
-        str.replace(exp, m_value);
+        str.replace(exp, m_pattern);
         return true;
     }
     return false;
 }
 
-void DiceAlias::setCommand(QString key)
+void DiceAlias::setCommand(QString command)
 {
-    m_command= key;
+    m_command= command;
 }
 
-void DiceAlias::setValue(QString value)
+void DiceAlias::setPattern(const QString& pattern)
 {
-    m_value= value;
+    m_pattern= pattern;
 }
 
 void DiceAlias::setType(RESOLUTION_TYPE type)
 {
     m_type= type;
 }
-QString DiceAlias::getCommand() const
+QString DiceAlias::command() const
 {
     return m_command;
 }
 
-QString DiceAlias::getValue() const
+QString DiceAlias::pattern() const
 {
-    return m_value;
+    return m_pattern;
 }
 
 bool DiceAlias::isReplace() const
@@ -222,7 +225,7 @@ void DiceAlias::setEnable(bool b)
     m_isEnable= b;
 }
 
-QString DiceAlias::getComment() const
+QString DiceAlias::comment() const
 {
     return m_comment;
 }

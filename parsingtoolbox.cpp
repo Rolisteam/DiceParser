@@ -2329,6 +2329,13 @@ QList<DiceAlias*>* ParsingToolBox::aliases()
     return &m_aliasList;
 }
 
+void ParsingToolBox::setAliases(const QList<DiceAlias*> list)
+{
+    qDeleteAll(m_aliasList);
+    m_aliasList.clear();
+    m_aliasList= list;
+}
+
 std::vector<ExecutionNode*> ParsingToolBox::readInstructionList(QString& str, bool global)
 {
     if(str.isEmpty())

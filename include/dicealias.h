@@ -41,7 +41,7 @@ public:
      * @param key
      * @param isReplace
      */
-    DiceAlias(QString pattern, QString remplacement, bool isReplace= true, bool isEnable= true);
+    DiceAlias(QString pattern, QString command, QString comment= QString{}, bool isReplace= true, bool isEnable= true);
     DiceAlias(const DiceAlias& alias);
     /**
      * @brief ~DiceAlias
@@ -57,12 +57,12 @@ public:
      * @brief setCommand
      * @param key
      */
-    void setCommand(QString key);
+    void setPattern(const QString& pattern);
     /**
      * @brief setValue
      * @param value
      */
-    void setValue(QString value);
+    void setCommand(QString command);
     /**
      * @brief setType
      */
@@ -72,12 +72,12 @@ public:
      * @brief getCommand
      * @return
      */
-    QString getCommand() const;
+    QString pattern() const;
     /**
      * @brief getValue
      * @return
      */
-    QString getValue() const;
+    QString command() const;
     /**
      * @brief isReplace
      * @return
@@ -102,7 +102,7 @@ public:
      * @brief getComment
      * @return
      */
-    QString getComment() const;
+    QString comment() const;
     /**
      * @brief setComment
      * @param comment
@@ -110,8 +110,8 @@ public:
     void setComment(const QString& comment);
 
 private:
+    QString m_pattern;
     QString m_command;
-    QString m_value;
     QString m_comment;
     RESOLUTION_TYPE m_type;
     bool m_isEnable;

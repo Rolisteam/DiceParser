@@ -22,14 +22,17 @@
 #include <QQmlEngine>
 
 #include "diceroller.h"
-#ifndef UNIT_TEST
+#if !defined(UNIT_TEST) && defined(RCSE)
 #include "field.h"
 #endif
 
 void registerQmlTypes()
 {
+    auto p= new DiceRoller;
+    // Q_UNUSED(p)
     qmlRegisterType<DiceRoller>("Rolisteam", 1, 0, "DiceRoller");
-#ifndef UNIT_TEST
+#if !defined(UNIT_TEST) && defined(RCSE)
     qmlRegisterType<FieldController>("Rolisteam", 1, 0, "Field");
 #endif
+    delete p;
 }

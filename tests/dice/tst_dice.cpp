@@ -520,7 +520,7 @@ void TestDice::testAlias()
 {
     m_parsingToolBox->insertAlias(new DiceAlias("!", "3d6c"), 0);
     m_parsingToolBox->insertAlias(new DiceAlias("g", "d10k"), 1);
-    m_parsingToolBox->insertAlias(new DiceAlias("(.*)C(.*)", QStringLiteral("\\1d10e10c[>=\\2]"), false), 2);
+    m_parsingToolBox->insertAlias(new DiceAlias("(.*)C(.*)", QStringLiteral("\\1d10e10c[>=\\2]"), QString(), false), 2);
 
     QFETCH(QString, cmd);
     QFETCH(QString, expected);

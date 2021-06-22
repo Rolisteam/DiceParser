@@ -4,6 +4,7 @@ project(diceparser VERSION 1.9.0 DESCRIPTION "Parser of dice command")
 
 set(QT_REQUIRED_VERSION "5.12.0")
 find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Test Gui Svg)
+find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG COMPONENTS Qml)
 
 enable_testing(true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} result node)
@@ -62,7 +63,6 @@ SET( dice_sources
 IF(STATIC_BUILD)
     add_library(diceparser_static STATIC ${dice_sources} )
     target_include_directories(diceparser_static PRIVATE include)
-    SET_TARGET_PROPERTIES(diceparser_static PROPERTIES OUTPUT_NAME diceparser CLEAN_DIRECT_OUTPUT 1)
     target_link_libraries(diceparser_static PUBLIC Qt5::Core Qt5::Gui Qt5::Svg)
     install(TARGETS diceparser_static
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
@@ -72,7 +72,7 @@ set(documentation README.md HelpMe.md CHANGELOG)
 
 add_library(diceparser_shared SHARED ${dice_sources} ${documentation})
 
-target_include_directories(diceparser_shared PRIVATE include)
+target_include_directories(diceparser_shared PRIVATE include ./)
 
 
 SET_TARGET_PROPERTIES(diceparser_shared PROPERTIES OUTPUT_NAME diceparser CLEAN_DIRECT_OUTPUT 1)
@@ -104,5 +104,15 @@ configure_file(diceparser.pc.in diceparser.pc @ONLY)
 
 install(FILES ${CMAKE_BINARY_DIR}/diceparser.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
-
-
+if(Qt5Qml_FOUND)
+set(dice_header_qobject qmltypesregister.h diceroller.h)
+set(dice_source_qobject qmltypesregister.cpp diceroller.cpp)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+add_library(diceparser_qobject SHARED ${dice_header_qobject} ${dice_source_qobject})
+target_link_libraries(diceparser_qobject PUBLIC Qt5::Core Qt5::Gui Qt5::Svg Qt5::Qml PRIVATE diceparser_shared)
+message("Messages diceparser ${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(diceparser_qobject PRIVATE include ./ ${CMAKE_CURRENT_SOURCE_DIR}/include)
+endif()
