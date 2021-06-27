@@ -77,4 +77,12 @@ Author: GreaterGerardon
 Author: DorDeDor
 
 
+# Prowlers and Paragons
+Once you set up this macro just input !Xpp where X is the number of dice you are rolling. These will count one success on a 2 and 4, and count two successes on a 6. If roll in just one die it will only count a success on a roll of a six. 
 
+```
+!macro add ([0-9]+)pp \1D6;$1c[=2|=4];$1c6;\1;$4i:[>1]{$2+$3*2}{$3*2};"$5 successes [@1]" True
+```
+
+
+Author:darthgaul
