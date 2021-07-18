@@ -44,6 +44,7 @@
 #include "node/stringnode.h"
 #include "node/switchcasenode.h"
 #include "node/uniquenode.h"
+#include "node/valueslistnode.h"
 #include "operationcondition.h"
 #include "parsingtoolbox.h"
 #include "result/stringresult.h"
@@ -1233,8 +1234,10 @@ void TestDice::switchCaseTest()
     QFETCH(QString, expected);
     QFETCH(bool, stopatfirt);
 
-    NumberNode* node1= new NumberNode();
-    node1->setNumber(value);
+    NumberNode* valNode= new NumberNode();
+    ValuesListNode* node1= new ValuesListNode();
+    valNode->setNumber(value);
+    node1->insertValue(valNode);
 
     SwitchCaseNode* node2= new SwitchCaseNode();
     node2->setStopAtFirt(stopatfirt);
@@ -1297,7 +1300,7 @@ void TestDice::switchCaseTest_data()
                           << QList<int>{1, 2, 3, 4} << QStringList{"a", "b", "c", "d"} << QStringLiteral("a,b,c")
                           << false;
 
-    QTest::addRow("cmd6") << 3
+    QTest::addRow("cmd7") << 3
                           << QList<BC::LogicOperator>{BC::LesserOrEqual, BC::LesserOrEqual, BC::LesserOrEqual,
                                                       BC::LesserOrEqual}
                           << QList<int>{1, 2, 3, 4} << QStringList{"a", "b", "c", "d"} << QStringLiteral("c") << true;

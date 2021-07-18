@@ -56,7 +56,12 @@ DiceResult* getDiceResult(Result* result)
     auto dice= dynamic_cast<DiceResult*>(result);
     if(nullptr == dice)
     {
-        qFatal("Error, no dice result");
+        auto value= result->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
+        dice= new DiceResult();
+        auto die= new Die();
+        die->setValue(value);
+        dice->insertResult(die);
+        qWarning("Error, no dice result");
         // TODO: manage error here.
     }
     return dice;
@@ -297,9 +302,17 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
                 DiceResult* diceResult= getDiceResult(result);
                 if(nullptr == diceResult)
                     break;
-                for(auto die : diceResult->getResultList())
+
+                if(m_validatorList.size() > 1)
                 {
-                    validResult.appendValidDice(die, die->getValue());
+                    for(auto const& die : qAsConst(diceResult->getResultList()))
+                    {
+                        validResult.appendValidDice(die, die->getValue());
+                    }
+                }
+                else
+                {
+                    validResult.appendValidDice(new Die(die), die.getValue());
                 }
             }
         }
@@ -309,7 +322,7 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
             DiceResult* diceResult= getDiceResult(result);
             if(nullptr == diceResult)
                 break;
-            for(auto die : diceResult->getResultList())
+            for(auto const& die : qAsConst(diceResult->getResultList()))
             {
                 auto score= validator->hasValid(die, recursive, unlight);
                 if(score)
@@ -324,7 +337,7 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
             DiceResult* diceResult= getDiceResult(result);
             if(nullptr == diceResult)
                 break;
-            for(auto die : diceResult->getResultList())
+            for(auto const& die : qAsConst(diceResult->getResultList()))
             {
                 auto score= validator->hasValid(die, recursive, unlight);
                 if(score)
@@ -346,7 +359,7 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
             if(all)
             {
                 validResult.setAllTrue(true);
-                for(auto die : diceResult->getResultList())
+                for(auto die : qAsConst(diceResult->getResultList()))
                 {
                     validResult.appendValidDice(die, die->getValue());
                 }
@@ -365,7 +378,7 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
             if(any)
             {
                 validResult.setAllTrue(true);
-                for(auto die : diceResult->getResultList())
+                for(auto die : qAsConst(diceResult->getResultList()))
                 {
                     validResult.appendValidDice(die, die->getValue());
                 }
@@ -380,7 +393,7 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
     int i= 0;
     ValidatorResult finalResult;
 
-    for(auto vec : validityData)
+    for(const auto& vec : validityData)
     {
         auto diceList= vec.validDice();
         if(i == 0)
