@@ -294,7 +294,7 @@ void displayCommandResult(QString json, bool withColor)
     out << str << "\n";
 }
 
-int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJsonArray array)
+int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJsonArray array, const QString& filePath)
 {
     DiceParser parser;
     parser.insertAlias(new DiceAlias("L5R5R", QStringLiteral("L[-,⨀,⨀⬢,❂⬢,❁,❁⬢]")), 0);
@@ -438,6 +438,10 @@ int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJs
                 displayImage(json, withColor);
                 break;
 #endif
+            }
+            if(!filePath.isEmpty())
+            {
+                parser.writeDownDotTree(filePath);
             }
         }
         else
@@ -595,7 +599,7 @@ int main(int argc, char* argv[])
         aliases= doc.array();
     }
 
-    returnValue= startDiceParsing(cmdList, colorb, format, aliases);
+    returnValue= startDiceParsing(cmdList, colorb, format, aliases, dotFileStr);
     if(optionParser.isSet(help))
     {
         out << optionParser.helpText();
