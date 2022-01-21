@@ -25,6 +25,8 @@ public:
     std::vector<ExecutionNode*>* getData() const;
     void setData(std::vector<ExecutionNode*>* data);
 
+    void setDisplayed();
+
 private:
     quint64 m_index;
     std::vector<ExecutionNode*>* m_data= nullptr;

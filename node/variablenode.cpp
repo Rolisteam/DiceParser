@@ -9,31 +9,46 @@ void VariableNode::run(ExecutionNode* previous)
     {
         auto value= (*m_data)[m_index];
         value= ParsingToolBox::getLeafNode(value);
-        if(nullptr != value)
+        if(nullptr == value)
+            return;
+
+        auto result= value->getResult();
+        if(!result)
+            return;
+
+        auto copy= result->getCopy();
+        auto diceResult= dynamic_cast<DiceResult*>(result);
+        if(nullptr == diceResult)
+            return;
+
+        for(auto& die : diceResult->getResultList())
         {
-            auto result= value->getResult();
-            if(result)
-            {
-                auto copy= result->getCopy();
-                auto diceResult= dynamic_cast<DiceResult*>(result);
-                if(nullptr != diceResult)
-                {
-                    for(auto& die : diceResult->getResultList())
-                    {
-                        die->setDisplayed(false);
-                    }
-                }
-                m_result= copy;
-                if(nullptr != m_nextNode)
-                {
-                    m_nextNode->run(this);
-                }
-            }
+            die->setDisplayed(false);
+        }
+
+        m_result= copy;
+        if(nullptr != m_nextNode)
+        {
+            m_nextNode->run(this);
         }
     }
     else
     {
         m_errors.insert(Dice::ERROR_CODE::NO_VARIBALE, QObject::tr("No variable at index:%1").arg(m_index + 1));
+    }
+}
+
+void VariableNode::setDisplayed()
+{
+    if(!m_result)
+        return;
+    auto diceResult= dynamic_cast<DiceResult*>(m_result);
+    if(nullptr == diceResult)
+        return;
+
+    for(auto& die : diceResult->getResultList())
+    {
+        die->setDisplayed(true);
     }
 }
 

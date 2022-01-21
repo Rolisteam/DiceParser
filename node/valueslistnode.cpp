@@ -20,7 +20,7 @@ void ValuesListNode::run(ExecutionNode* previous)
         Die* die= new Die();
         auto dyna= dynamic_cast<VariableNode*>(node);
         if(nullptr != dyna)
-            die->displayed();
+            dyna->setDisplayed();
         die->insertRollValue(val);
         m_diceResult->insertResult(die);
     }
