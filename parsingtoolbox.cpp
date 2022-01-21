@@ -1203,7 +1203,7 @@ QString ParsingToolBox::replacePlaceHolderFromJson(const QString& source, const 
         auto obj= inst.toObject();
         auto vals= obj["diceval"].toArray();
         int lastFace= -1;
-        for(auto valRef : vals)
+        for(auto const& valRef : qAsConst(vals))
         {
             auto diceObj= valRef.toObject();
             auto face= diceObj["face"].toInt();

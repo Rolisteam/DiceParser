@@ -22,6 +22,7 @@
 
 #include <QCommandLineOption>
 #include <QCommandLineParser>
+#include <QDebug>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -29,7 +30,6 @@
 #include <QRegularExpression>
 #include <QStringList>
 #include <QTextStream>
-#include <QDebug>
 
 #ifdef PAINTER_OP
 #include <QGuiApplication>
@@ -246,11 +246,11 @@ void displayCommandResult(QString json, bool withColor)
     auto comment= obj["comment"].toString();
     auto arrayInst= obj["instructions"].toArray();
     QStringList diceResults;
-    for(const auto &inst : qAsConst(arrayInst))
+    for(const auto& inst : qAsConst(arrayInst))
     {
         auto obj= inst.toObject();
         auto diceVals= obj["diceval"].toArray();
-        for(const auto & diceval : qAsConst(diceVals))
+        for(const auto& diceval : qAsConst(diceVals))
         {
             auto objval= diceval.toObject();
             auto resultStr= objval["string"].toString();
@@ -287,9 +287,9 @@ void displayCommandResult(QString json, bool withColor)
     if(!comment.isEmpty())
     {
         if(withColor)
-          out << "\033[1m" << comment << "\033[0m\n";
+            out << "\033[1m" << comment << "\033[0m\n";
         else
-          out << comment << " ";
+            out << comment << " ";
     }
     out << str << "\n";
 }
@@ -570,7 +570,7 @@ int main(int argc, char* argv[])
     }
     else if(optionParser.isSet(line))
     {
-        format = TEXT;
+        format= TEXT;
     }
 
     if(optionParser.isSet(help))
