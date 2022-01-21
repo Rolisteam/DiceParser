@@ -1504,40 +1504,38 @@ bool ParsingToolBox::readExpression(QString& str, ExecutionNode*& node)
 
 bool ParsingToolBox::readValuesList(QString& str, ExecutionNode*& node)
 {
-    if(str.startsWith("["))
+    if(!str.startsWith("["))
+        return false;
+
+    str= str.remove(0, 1);
+    int pos= ParsingToolBox::findClosingCharacterIndexOf('[', ']', str, 1); // str.indexOf("]");
+    if(-1 == pos)
+        return false;
+
+    QString liststr= str.left(pos);
+    auto list= liststr.split(",");
+    str= str.remove(0, pos + 1);
+    auto values= new ValuesListNode();
+    for(auto var : qAsConst(list))
     {
-        str= str.remove(0, 1);
-        int pos= ParsingToolBox::findClosingCharacterIndexOf('[', ']', str, 1); // str.indexOf("]");
-        if(-1 != pos)
+        qint64 number= 1;
+        var= var.trimmed();
+        if(ParsingToolBox::readDynamicVariable(var, number))
         {
-            QString liststr= str.left(pos);
-            auto list= liststr.split(",");
-            str= str.remove(0, pos + 1);
-            auto values= new ValuesListNode();
-            for(auto var : list)
-            {
-                qint64 number= 1;
-                QString error;
-                var= var.trimmed();
-                if(ParsingToolBox::readDynamicVariable(var, number))
-                {
-                    VariableNode* variableNode= new VariableNode();
-                    variableNode->setIndex(static_cast<quint64>(number - 1));
-                    variableNode->setData(&m_startNodes);
-                    values->insertValue(variableNode);
-                }
-                else if(ParsingToolBox::readNumber(var, number))
-                {
-                    NumberNode* numberNode= new NumberNode();
-                    numberNode->setNumber(number);
-                    values->insertValue(numberNode);
-                }
-            }
-            node= values;
-            return true;
+            VariableNode* variableNode= new VariableNode();
+            variableNode->setIndex(static_cast<quint64>(number - 1));
+            variableNode->setData(&m_startNodes);
+            values->insertValue(variableNode);
+        }
+        else if(ParsingToolBox::readNumber(var, number))
+        {
+            NumberNode* numberNode= new NumberNode();
+            numberNode->setNumber(number);
+            values->insertValue(numberNode);
         }
     }
-    return false;
+    node= values;
+    return true;
 }
 bool ParsingToolBox::readOptionFromNull(QString& str, ExecutionNode*& node)
 {
@@ -2188,9 +2186,10 @@ bool ParsingToolBox::readDiceExpression(QString& str, ExecutionNode*& node)
 
 bool ParsingToolBox::readOperator(QString& str, ExecutionNode* previous)
 {
+    bool result= false;
     if(str.isEmpty() || nullptr == previous)
     {
-        return false;
+        return result;
     }
 
     Die::ArithmeticOperator op;
@@ -2205,7 +2204,7 @@ bool ParsingToolBox::readOperator(QString& str, ExecutionNode* previous)
             if(nullptr == nodeExec)
             {
                 delete node;
-                return false;
+                return result;
             }
             ExecutionNode* nodeExecOrChild= nodeExec;
             ExecutionNode* parent= nullptr;
@@ -2234,7 +2233,7 @@ bool ParsingToolBox::readOperator(QString& str, ExecutionNode* previous)
             // nodeResult = node;
             previous->setNextNode(node);
 
-            return true;
+            result= true;
         }
         else
         {
@@ -2246,9 +2245,10 @@ bool ParsingToolBox::readOperator(QString& str, ExecutionNode* previous)
         while(readOption(str, previous))
         {
             previous= ParsingToolBox::getLeafNode(previous);
+            result= true;
         }
     }
-    return false;
+    return result;
 }
 bool ParsingToolBox::readFunction(QString& str, ExecutionNode*& node)
 {
