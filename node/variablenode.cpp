@@ -1,5 +1,6 @@
 #include "variablenode.h"
 #include "parsingtoolbox.h"
+
 VariableNode::VariableNode() {}
 
 void VariableNode::run(ExecutionNode* previous)
@@ -16,7 +17,7 @@ void VariableNode::run(ExecutionNode* previous)
         if(!result)
             return;
 
-        auto copy= result->getCopy();
+        m_result= result->getCopy();
         auto diceResult= dynamic_cast<DiceResult*>(result);
         if(nullptr == diceResult)
             return;
@@ -26,7 +27,6 @@ void VariableNode::run(ExecutionNode* previous)
             die->setDisplayed(false);
         }
 
-        m_result= copy;
         if(nullptr != m_nextNode)
         {
             m_nextNode->run(this);

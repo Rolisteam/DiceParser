@@ -93,19 +93,19 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
 
 void KeepDiceExecNode::setDiceKeepNumber(ExecutionNode* n)
 {
-    m_numberOfDiceNode = n;
+    m_numberOfDiceNode= n;
 }
 QString KeepDiceExecNode::toString(bool wl) const
 {
-	if(wl)
-	{
-        auto param = m_numberOfDiceNode->toString(wl);
-        return QString("%1 [label=\"KeepDiceExecNode %2\"]").arg(m_id, param);
-	}
-	else
-	{
-		return m_id;
-	}
+    if(wl)
+    {
+        // auto param= m_numberOfDiceNode->toString(wl);
+        return QString("%1 [label=\"KeepDiceExecNode\"]").arg(m_id);
+    }
+    else
+    {
+        return m_id;
+    }
 }
 qint64 KeepDiceExecNode::getPriority() const
 {

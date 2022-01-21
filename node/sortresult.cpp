@@ -22,21 +22,20 @@
 #include "sortresult.h"
 
 #include "die.h"
-#include <QDebug>
 
 SortResultNode::SortResultNode() : m_diceResult(new DiceResult)
 {
     m_ascending= true;
     m_result= m_diceResult;
 }
-void SortResultNode::run(ExecutionNode* node)
+void SortResultNode::run(ExecutionNode* previous)
 {
-    m_previousNode= node;
-    if(nullptr == node)
+    m_previousNode= previous;
+    if(nullptr == previous)
     {
         return;
     }
-    DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(node->getResult());
+    DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(previous->getResult());
     m_diceResult->setPrevious(previousDiceResult);
     if(nullptr == previousDiceResult)
         return;

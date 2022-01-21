@@ -391,6 +391,7 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd89") << "1L[-3,-2,2,3]+10";
     QTest::addRow("cmd90") << "1L[-3,-2,2,3]+10;1L[-3,-2,2,3]";
     QTest::addRow("cmd91") << "1d20|3i:[>1]{\"Success\"}{\"Failure\"}";
+    QTest::addRow("cmd92") << "4d10k3;4d10k3;4d10k3;[$1,$2,$3]s;\"Score @4\"";
 }
 
 void TestDice::rangedCommandsTest()
