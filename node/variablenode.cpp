@@ -19,12 +19,12 @@ void VariableNode::run(ExecutionNode* previous)
 
         m_result= result->getCopy();
         auto diceResult= dynamic_cast<DiceResult*>(result);
-        if(nullptr == diceResult)
-            return;
-
-        for(auto& die : diceResult->getResultList())
+        if(nullptr != diceResult)
         {
-            die->setDisplayed(false);
+            for(auto& die : diceResult->getResultList())
+            {
+                die->setDisplayed(false);
+            }
         }
 
         if(nullptr != m_nextNode)
