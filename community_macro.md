@@ -86,3 +86,19 @@ Once you set up this macro just input !Xpp where X is the number of dice you are
 
 
 Author:darthgaul
+
+
+# Nephilim, 5th edition
+Once you set up this macro just input !nX where X is your skill level. It will count your success margin and let you know if it's a critical hit or miss. 
+
+## English version
+```
+!macro add n([0-9]+) "1d100;$1|10;$1-$2*10;\1*10;$4i:[>=100]{99}{$4};$4i:[>100]{($4-100)|10}{0};$2+$6;$1i:[=100]{\"Critical failure ! ($1)\"}{$1i:[>$5]{$2i:[=$3]{\"Critical failure ! ($1)\"}{\"Failure ($1)\"}}{$2i:[=$3]{\"Critical hit ! ($1)\"}{\"Success - margin $7 ($1)\"}}} # $user: " True
+```
+
+## French version
+```
+!macro add n([0-9]+) "1d100;$1|10;$1-$2*10;\1*10;$4i:[>=100]{99}{$4};$4i:[>100]{($4-100)|10}{0};$2+$6;$1i:[=100]{\"Maladresse ! ($1)\"}{$1i:[>$5]{$2i:[=$3]{\"Maladresse ! ($1)\"}{\"Échec ($1)\"}}{$2i:[=$3]{\"Réussite critique ! ($1)\"}{\"Réussite - marge $7 ($1)\"}}} # $user: " True
+```
+
+Author: DuaelFr
