@@ -54,37 +54,46 @@ void SwitchCaseNode::run(ExecutionNode* previous)
         return;
     }
 
-    QStringList resultList;
-    for(auto const& info : qAsConst(m_branchList))
+    auto diceResult= dynamic_cast<DiceResult*>(previousResult);
+
+    QSet<QString> alreadyValidDice;
+    QStringList finalResultList;
+    if(diceResult)
     {
-        if(m_stopAtFirst && !resultList.isEmpty())
-            break;
-        if(info->validatorList)
+        for(auto die : diceResult->getResultList())
         {
-            info->validatorList->validResult(previousResult, true, false, [&info, this, &resultList](Die*, qint64) {
-                info->node->run(m_previousNode);
-                auto lastNode= ParsingToolBox::getLeafNode(info->node);
-                if(lastNode && lastNode->getResult())
-                {
-                    resultList << lastNode->getResult()->getStringResult();
-                }
-                else
-                    resultList << QString();
-            });
-        }
-        else if(resultList.isEmpty())
-        {
-            info->node->run(m_previousNode);
-            auto lastNode= ParsingToolBox::getLeafNode(info->node);
-            if(lastNode && lastNode->getResult())
+            QStringList resultList;
+            for(auto const& info : qAsConst(m_branchList))
             {
-                resultList << lastNode->getResult()->getStringResult();
+                if(m_stopAtFirst && !resultList.isEmpty())
+                    break;
+                if(info->validatorList)
+                {
+                    if(info->validatorList->hasValid(die, true))
+                    {
+                        auto lastNode= ParsingToolBox::getLeafNode(info->node);
+                        if(lastNode && lastNode->getResult())
+                        {
+                            resultList << lastNode->getResult()->getStringResult();
+                        }
+                    }
+                }
+                else if(resultList.isEmpty())
+                {
+                    info->node->run(m_previousNode);
+                    auto lastNode= ParsingToolBox::getLeafNode(info->node);
+                    if(lastNode && lastNode->getResult())
+                    {
+                        resultList << lastNode->getResult()->getStringResult();
+                    }
+                    else
+                        resultList << QString();
+                }
             }
-            else
-                resultList << QString();
+            finalResultList << resultList;
         }
     }
-    for(auto const& str : qAsConst(resultList))
+    for(auto const& str : qAsConst(finalResultList))
         m_stringResult->addText(str);
 
     if(m_stringResult->getText().isEmpty())
