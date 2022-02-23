@@ -966,6 +966,15 @@ bool ParsingToolBox::readDiceRange(QString& str, qint64& start, qint64& end)
                 }
             }
         }
+        else if(expectSquareBrasket)
+        {
+            if(str.startsWith("]"))
+            {
+                str= str.remove(0, 1);
+                end= start;
+                return true;
+            }
+        }
     }
     return false;
 }
