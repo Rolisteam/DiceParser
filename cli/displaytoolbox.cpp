@@ -34,41 +34,50 @@ QString DisplayToolBox::makeImage(QByteArray svgCode)
 }
 #endif
 
-QString DisplayToolBox::colorToTermCode(QString str)
+QString DisplayToolBox::colorToIntCode(QString str)
 {
     if(str.isEmpty() || str == QStringLiteral("black"))
     {
-        return QStringLiteral("\e[0;31m");
+        return QStringLiteral("0;31");
     }
     else if(str == QStringLiteral("white"))
     {
-        return QStringLiteral("\e[97m");
+        return QStringLiteral("97");
     }
     else if(str == QStringLiteral("blue"))
     {
-        return QStringLiteral("\e[34m");
+        return QStringLiteral("34");
     }
     else if(str == QStringLiteral("red"))
     {
-        return QStringLiteral("\e[31m");
+        return QStringLiteral("31");
     }
     else if(str == QStringLiteral("black"))
     {
-        return QStringLiteral("\e[30m");
+        return QStringLiteral("30");
     }
     else if(str == QStringLiteral("green"))
     {
-        return QStringLiteral("\e[32m");
+        return QStringLiteral("32");
     }
     else if(str == QStringLiteral("yellow"))
     {
-        return QStringLiteral("\e[33m");
+        return QStringLiteral("33");
+    }
+    else if(str == QStringLiteral("cyan"))
+    {
+        return QStringLiteral("36");
     }
     else if(str == QStringLiteral("reset"))
     {
-        return QStringLiteral("\e[0m");
+        return QStringLiteral("0");
     }
     return {};
+}
+
+QString DisplayToolBox::colorToTermCode(QString str)
+{
+    return QStringLiteral("\e[").append(DisplayToolBox::colorToIntCode(str)).append("m");
 }
 
 QString DisplayToolBox::diceToSvg(QJsonArray array, bool withColor, bool allSameColor, bool allSameFaceCount)

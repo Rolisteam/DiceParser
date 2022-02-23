@@ -1,6 +1,6 @@
 /***************************************************************************
  * Copyright (C) 2014 by Renaud Guezennec                                   *
- * http://www.rolisteam.org/contact                      *
+ * http://www.rolisteam.org/contact                                         *
  *                                                                          *
  *  This file is part of DiceParser                                         *
  *                                                                          *
@@ -28,7 +28,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QRegularExpression>
+#include <QSettings>
 #include <QStringList>
+#include <QTextCodec>
 #include <QTextStream>
 
 #ifdef PAINTER_OP
@@ -59,6 +61,7 @@
 QTextStream out(stdout, QIODevice::WriteOnly);
 QTextStream err(stderr, QIODevice::WriteOnly);
 bool markdown= false;
+constexpr char const* colorkey= {"dicecolor"};
 #ifdef PAINTER_OP
 enum EXPORTFORMAT
 {
@@ -237,7 +240,7 @@ void displayImage(QString json, bool withColor)
 }
 #endif
 
-void displayCommandResult(QString json, bool withColor)
+void displayCommandResult(QString json, bool withColor, QString color)
 {
     QJsonDocument doc= QJsonDocument::fromJson(json.toUtf8());
     auto obj= doc.object();
@@ -274,7 +277,8 @@ void displayCommandResult(QString json, bool withColor)
     QString str;
 
     if(withColor)
-        str= QString("Result: \e[0;31m%1\e[0m - details:[%3 (%2)]").arg(scalarText, diceList, cmd);
+        str= QString("Result: \e[0;%4;1m%1\e[0m - details:[%3 (%2)]")
+                 .arg(scalarText, diceList, cmd, DisplayToolBox::colorToIntCode(color));
     else
         str= QString("Result: %1 - details:[%3 (%2)]").arg(scalarText, diceList, cmd);
 
@@ -294,7 +298,8 @@ void displayCommandResult(QString json, bool withColor)
     out << str << "\n";
 }
 
-int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJsonArray array, const QString& filePath)
+int startDiceParsing(QStringList& cmds, bool withColor, QString baseColor, EXPORTFORMAT format, QJsonArray array,
+                     const QString& filePath)
 {
     DiceParser parser;
     parser.insertAlias(new DiceAlias("L5R5R", QStringLiteral("L[-,⨀,⨀⬢,❂⬢,❁,❁⬢]")), 0);
@@ -370,10 +375,10 @@ int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJs
                 allSameColor= true;
                 QString colorP;
                 json= parser.resultAsJSon(
-                    [&colorP, &allSameColor](const QString& result, const QString& color, bool hightlight) {
+                    [&colorP, &allSameColor, &baseColor](const QString& result, const QString& color, bool hightlight) {
                         auto trueColor= color;
                         if(color.isEmpty())
-                            trueColor= "red";
+                            trueColor= baseColor;
 
                         if(colorP.isEmpty())
                             colorP= trueColor;
@@ -418,7 +423,7 @@ int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJs
             switch(format)
             {
             case TERMINAL:
-                displayCommandResult(json, withColor);
+                displayCommandResult(json, withColor, baseColor);
                 break;
             case SVG:
                 out << displaySVG(json, withColor) << "\n";
@@ -428,7 +433,7 @@ int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJs
                 displayMarkdown(json);
                 break;
             case TEXT:
-                displayCommandResult(json, false);
+                displayCommandResult(json, false, baseColor);
                 break;
             case JSON:
                 displayJSon(json);
@@ -449,7 +454,7 @@ int startDiceParsing(QStringList& cmds, bool withColor, EXPORTFORMAT format, QJs
     }
     return rt;
 }
-#include <QTextCodec>
+
 int main(int argc, char* argv[])
 {
 #ifdef PAINTER_OP
@@ -463,6 +468,8 @@ int main(int argc, char* argv[])
     QString dotFileStr;
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     bool colorb= true;
+    QSettings settings("rolisteam", "diceparser");
+    QString formatColor;
     out.setCodec("UTF-8");
     EXPORTFORMAT format= TERMINAL;
 
@@ -492,6 +499,9 @@ int main(int argc, char* argv[])
     QCommandLineOption svg(QStringList() << "g"
                                          << "svg",
                            "The output is formatted in svg.");
+    QCommandLineOption outColor(QStringList() << "C"
+                                              << "color",
+                                "Use color for result: <color>", "color");
     QCommandLineOption json(QStringList() << "j"
                                           << "json",
                             "The output is formatted in json.");
@@ -521,6 +531,7 @@ int main(int argc, char* argv[])
     optionParser.addOption(markdown);
     optionParser.addOption(bot);
     optionParser.addOption(svg);
+    optionParser.addOption(outColor);
     optionParser.addOption(json);
     optionParser.addOption(translation);
     optionParser.addOption(help);
@@ -572,6 +583,10 @@ int main(int argc, char* argv[])
     {
         format= TEXT;
     }
+    if(optionParser.isSet(outColor))
+    {
+        settings.setValue(colorkey, optionParser.value(outColor));
+    }
 
     if(optionParser.isSet(help))
     {
@@ -599,7 +614,8 @@ int main(int argc, char* argv[])
         aliases= doc.array();
     }
 
-    returnValue= startDiceParsing(cmdList, colorb, format, aliases, dotFileStr);
+    formatColor= settings.value(colorkey, "red").value<QString>();
+    returnValue= startDiceParsing(cmdList, colorb, formatColor, format, aliases, dotFileStr);
     if(optionParser.isSet(help))
     {
         out << optionParser.helpText();
