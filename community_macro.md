@@ -76,6 +76,14 @@ Author: GreaterGerardon
 
 Author: DorDeDor
 
+# Pathfinder 1e / D&D3.5e
+```
+!macro add ([0-9]+)th([0-9]+)d([0-9]+)\+([0-9])crit([0-9]+) d20;$1+\1;$1i:[>=\5]{+1d20-$1};$3+\1;\2d\3+\4;\2d\3+\4;$1i:[>=\5]{+$6+$5-$1};$1i:[>=\5]{"Critical Hit: $1+\1=$2\nConfirm Hit: $3+\1=$4 \nIf confirms Damage: [@5]+\4+[@6]+\4=$7 \nIf doesn't confirm Damage: [@5]+\4=$5"}{"To Hit: [$1]+\1=$2 \nDamage: [@5]+\4=$5"} True
+```
+
+Usage: [To hit modifier]th[# of damage dice]d[size of damage dice]+[size of static modifier]crit[lowest value for weapon's crit range]
+
+Author:tyjo99
 
 # Prowlers and Paragons
 Once you set up this macro just input !Xpp where X is the number of dice you are rolling. These will count one success on a 2 and 4, and count two successes on a 6. If roll in just one die it will only count a success on a roll of a six. 
