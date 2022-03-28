@@ -492,7 +492,7 @@ void TestDice::scopeDF()
     m_diceParser->start();
     auto results= m_diceParser->scalarResultsFromEachInstruction();
 
-    for(auto result : results)
+    for(auto const& result : qAsConst(results))
         QVERIFY(result >= min && result <= max);
 }
 
@@ -556,7 +556,7 @@ void TestDice::severalInstruction()
     results << 3;
 
     int i= 0;
-    for(auto cmd : commands)
+    for(auto const& cmd : qAsConst(commands))
     {
         auto test= m_diceParser->parseLine(cmd);
         QVERIFY2(test, cmd.toStdString().c_str());

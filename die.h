@@ -151,14 +151,15 @@ public:
 
 private:
     QString m_uuid;
-    qint64 m_value= 0;
+    qint64 m_value{0};
     QList<qint64> m_rollResult;
-    bool m_selected= false;
-    bool m_hasValue= false;
-    bool m_displayStatus= false;
-    bool m_highlighted= true;
-    qint64 m_maxValue= 0;
-    qint64 m_base= 0;
+    bool m_selected{false};
+    bool m_hasValue{false};
+    bool m_displayStatus{false};
+    bool m_highlighted{true};
+    qint64 m_maxValue{0};
+    qint64 m_base{0};
+    qint64 m_occurence{1};
     QString m_color;
 
     Die::ArithmeticOperator m_op;

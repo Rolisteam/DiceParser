@@ -26,23 +26,23 @@
 class DiceRoller : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(qreal result READ getResult NOTIFY resultChanged)
-    Q_PROPERTY(QString dicelist READ getDiceList NOTIFY diceListChanged)
-    Q_PROPERTY(QString resultStr READ getResultStr NOTIFY resultStrChanged)
-    Q_PROPERTY(QString command READ getCommand WRITE setCommand NOTIFY commandChanged)
-    Q_PROPERTY(QString error READ getError WRITE setError NOTIFY errorOccurs)
+    Q_PROPERTY(qreal result READ result NOTIFY resultChanged)
+    Q_PROPERTY(QString dicelist READ diceList NOTIFY diceListChanged)
+    Q_PROPERTY(QString resultStr READ resultStr NOTIFY resultStrChanged)
+    Q_PROPERTY(QString command READ command WRITE setCommand NOTIFY commandChanged)
+    Q_PROPERTY(QString error READ error WRITE setError NOTIFY errorOccurs)
 
 public:
-    DiceRoller();
+    DiceRoller(QObject* parent= nullptr);
 
-    QString getDiceList() const;
-    QString getResultStr() const;
-    QString getCommand() const;
-    qreal getResult() const;
-    void setCommand(const QString& cmd);
+    QString diceList() const;
+    QString resultStr() const;
+    QString command() const;
+    qreal result() const;
+    QString error() const;
+    QList<DiceAlias*>* aliases() const;
 
-    QString getError() const;
-    void setError(const QString& error);
+    DiceParser* parser();
 
 signals:
     void resultChanged();
@@ -53,9 +53,12 @@ signals:
 
 public slots:
     void start();
+    void readErrorAndWarning();
+    void setCommand(const QString& cmd);
+    void setError(const QString& error);
 
-protected:
-    QString diceToText(QList<ExportedDiceResult>& diceList);
+    /*protected:
+        QString diceToText(QList<ExportedDiceResult>& diceList);*/
 
 private:
     DiceParser m_diceparser;

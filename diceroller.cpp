@@ -19,24 +19,27 @@
  ***************************************************************************/
 #include "diceroller.h"
 
-DiceRoller::DiceRoller() {}
+#include <QJsonObject>
+#include <QtConcurrent>
 
-QString DiceRoller::getDiceList() const
+DiceRoller::DiceRoller(QObject* parent) : QObject(parent) {}
+
+QString DiceRoller::diceList() const
 {
     return m_diceList;
 }
 
-QString DiceRoller::getResultStr() const
+QString DiceRoller::resultStr() const
 {
     return m_resultStr;
 }
 
-QString DiceRoller::getCommand() const
+QString DiceRoller::command() const
 {
     return m_command;
 }
 
-qreal DiceRoller::getResult() const
+qreal DiceRoller::result() const
 {
     return m_result;
 }
@@ -50,7 +53,53 @@ void DiceRoller::setCommand(const QString& cmd)
     }
 }
 
-QString DiceRoller::diceToText(QList<ExportedDiceResult>& diceList)
+void DiceRoller::readErrorAndWarning()
+{
+    setError(
+        tr("Error:\n%1\nWarnings:\n%2").arg(m_diceparser.humanReadableError(), m_diceparser.humanReadableWarning()));
+}
+
+void DiceRoller::start()
+{
+    auto future= QtConcurrent::run([this]() {
+        if(m_diceparser.parseLine(m_command))
+        {
+            m_diceparser.start();
+            readErrorAndWarning();
+            auto jsonstr= m_diceparser.resultAsJSon([](const QString& value, const QString&, bool) { return value; });
+            QJsonDocument doc= QJsonDocument::fromJson(jsonstr.toLocal8Bit());
+            auto json= doc.object();
+            m_result= json["scalar"].toString().toDouble();
+            emit resultChanged();
+        }
+    });
+}
+
+QString DiceRoller::error() const
+{
+    return m_error;
+}
+
+QList<DiceAlias*>* DiceRoller::aliases() const
+{
+    return m_diceparser.aliases();
+}
+
+DiceParser* DiceRoller::parser()
+{
+    return &m_diceparser;
+}
+
+void DiceRoller::setError(const QString& error)
+{
+    if(m_error == error)
+        return;
+
+    m_error= error;
+    emit errorOccurs();
+}
+
+/*QString DiceRoller::diceToText(QList<ExportedDiceResult>& diceList)
 {
     QStringList global;
     for(auto& dice : diceList)
@@ -88,23 +137,22 @@ QString DiceRoller::diceToText(QList<ExportedDiceResult>& diceList)
                     result << diceListStr.join(' ');
                 }
 
-                if(keys.size() > 1)
-                {
-                    resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
-                }
-                else
-                {
-                    resultGlobal << result;
-                }
-            }
-        }
-        global << resultGlobal.join(' ');
-    }
-    return global.join(" ; ");
-}
-void DiceRoller::start()
+if(keys.size() > 1)
 {
-    /*if(m_diceparser.parseLine(m_command))
+    resultGlobal << QString(" d%2:(%1)").arg(result.join(',')).arg(face);
+}
+else
+{
+    resultGlobal << result;
+}
+}
+}
+global << resultGlobal.join(' ');
+}
+return global.join(" ; ");
+}*/
+
+/*if(m_diceparser.parseLine(m_command))
     {
         m_diceparser.start();
         if(m_diceparser.errorMap().isEmpty())
@@ -116,75 +164,61 @@ void DiceRoller::start()
             QString scalarText;
             QString str;
 
-            qreal result= 0;
-            QString resultStr;
-            if(m_diceparser.hasIntegerResultNotInFirst())
-            {
-                auto values= m_diceparser.lastIntegerResults();
-                QStringList strLst;
-                for(auto& val : values)
-                {
-                    result+= val;
-                    strLst << QString::number(val);
-                }
-                scalarText= QString("%1").arg(strLst.join(','));
-            }
-            else if(!list.isEmpty())
-            {
-                auto values= m_diceparser.getSumOfDiceResult();
-                QStringList strLst;
-                for(auto val : values)
-                {
-                    result+= val;
-                    strLst << QString::number(val);
-                }
-                scalarText= QString("%1").arg(strLst.join(','));
-            }
-
-            if(m_diceparser.hasStringResult())
-            {
-                bool ok;
-                QStringList allStringlist= m_diceparser.getAllStringResult(ok);
-                QString stringResult= allStringlist.join(" ; ");
-                stringResult.replace("%1", scalarText);
-                stringResult.replace("%2", diceText.trimmed());
-                str= stringResult;
-            }
-            else
-            {
-                resultStr= scalarText;
-            }
-            if(!m_diceparser.getComment().isEmpty())
-            {
-                resultStr+= m_diceparser.getComment() + "\n";
-            }
-            resultStr+= str + "\n";
-            m_resultStr= resultStr;
-            m_result= result;
-            m_diceList= diceText.trimmed();
-            emit resultStrChanged();
-            emit resultChanged();
-            emit diceListChanged();
-        }
-    }
-
-    if(!m_diceparser.getErrorMap().isEmpty())
+qreal result= 0;
+QString resultStr;
+if(m_diceparser.hasIntegerResultNotInFirst())
+{
+    auto values= m_diceparser.lastIntegerResults();
+    QStringList strLst;
+    for(auto& val : values)
     {
-        auto errors= m_diceparser.getErrorMap();
-        setError(errors.first());
-    }*/
+        result+= val;
+        strLst << QString::number(val);
+    }
+    scalarText= QString("%1").arg(strLst.join(','));
 }
-
-QString DiceRoller::getError() const
+else if(!list.isEmpty())
 {
-    return m_error;
+    auto values= m_diceparser.getSumOfDiceResult();
+    QStringList strLst;
+    for(auto val : values)
+    {
+        result+= val;
+        strLst << QString::number(val);
+    }
+    scalarText= QString("%1").arg(strLst.join(','));
 }
 
-void DiceRoller::setError(const QString& error)
+if(m_diceparser.hasStringResult())
 {
-    if(m_error == error)
-        return;
-
-    m_error= error;
-    emit errorOccurs();
+    bool ok;
+    QStringList allStringlist= m_diceparser.getAllStringResult(ok);
+    QString stringResult= allStringlist.join(" ; ");
+    stringResult.replace("%1", scalarText);
+    stringResult.replace("%2", diceText.trimmed());
+    str= stringResult;
 }
+else
+{
+    resultStr= scalarText;
+}
+if(!m_diceparser.getComment().isEmpty())
+{
+    resultStr+= m_diceparser.getComment() + "\n";
+}
+resultStr+= str + "\n";
+m_resultStr= resultStr;
+m_result= result;
+m_diceList= diceText.trimmed();
+emit resultStrChanged();
+emit resultChanged();
+emit diceListChanged();
+}
+}
+
+if(!m_diceparser.getErrorMap().isEmpty())
+{
+    auto errors= m_diceparser.getErrorMap();
+    setError(errors.first());
+}
+*/

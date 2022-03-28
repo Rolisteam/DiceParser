@@ -1,16 +1,20 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 
 project(diceparser VERSION 1.9.0 DESCRIPTION "Parser of dice command")
 
 set(QT_REQUIRED_VERSION "5.12.0")
 find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Test Gui Svg)
-find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG COMPONENTS Qml)
+find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG COMPONENTS Qml Concurrent)
 
 enable_testing(true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} result node)
 
 option(BUILD_CLI OFF)
 option(BUILD_IRC OFF)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 
 SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/diceparser.cpp
@@ -112,7 +116,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_library(diceparser_qobject SHARED ${dice_header_qobject} ${dice_source_qobject})
-target_link_libraries(diceparser_qobject PUBLIC Qt5::Core Qt5::Gui Qt5::Svg Qt5::Qml PRIVATE diceparser_shared)
+target_link_libraries(diceparser_qobject PUBLIC Qt5::Core Qt5::Gui Qt5::Svg Qt5::Qml Qt5::Concurrent PRIVATE diceparser_shared)
 message("Messages diceparser ${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_include_directories(diceparser_qobject PRIVATE include ./ ${CMAKE_CURRENT_SOURCE_DIR}/include)
 endif()

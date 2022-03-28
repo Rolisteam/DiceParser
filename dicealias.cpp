@@ -128,21 +128,17 @@ QString makeReplament(const QString& pattern, const QString& command, QString cm
 }
 
 DiceAlias::DiceAlias(QString pattern, QString command, QString comment, bool isReplace, bool isEnable)
-    : m_pattern(pattern), m_command(command), m_comment(comment), m_isEnable(isEnable)
+    : m_pattern(pattern)
+    , m_command(command)
+    , m_comment(comment)
+    , m_type(isReplace ? REPLACE : REGEXP)
+    , m_isEnable(isEnable)
 {
-    if(isReplace)
-    {
-        m_type= REPLACE;
-    }
-    else
-    {
-        m_type= REGEXP;
-    }
 }
 
 DiceAlias::~DiceAlias()
 {
-    qDebug() << "destructeur of alias!" << this;
+    // qDebug() << "destructeur of alias!" << this;
 }
 
 DiceAlias::DiceAlias(const DiceAlias& alias)
@@ -159,10 +155,9 @@ bool DiceAlias::resolved(QString& str)
     if(!m_isEnable)
         return false;
 
-    if((m_type == REPLACE) && (str.contains(m_command)))
+    if((m_type == REPLACE) && (str.contains(m_pattern)))
     {
         str= makeReplament(m_pattern, m_command, str);
-        // str.replace(m_command,m_value);
         return true;
     }
     else if(m_type == REGEXP)
