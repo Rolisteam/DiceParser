@@ -22,5 +22,5 @@ set(fdsource testcase.cpp)
 add_executable(fuzzTestCase ${fdsource} )
 
 
-target_link_libraries(fuzzTestCase libdiceparser.a Qt5::Core Qt5::Gui Qt5::Svg Qt5::Concurrent)
+target_link_libraries(fuzzTestCase libdiceparser.a Qt6::Core Qt6::Gui Qt6::Svg Qt6::Concurrent)
 #target_link_libraries(fuzzTestCase )

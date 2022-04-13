@@ -33,5 +33,5 @@ link_directories(BEFORE ${CMAKE_BINARY_DIR})
 
 
 
-target_link_libraries(dirc PUBLIC Qt5::Core Qt5::Gui Qt5::Svg Qt5::Widgets Qt5::Network PRIVATE diceparser_shared)
+target_link_libraries(dirc PUBLIC Qt6::Core Qt6::Gui Qt6::Svg Qt6::Widgets Qt6::Network PRIVATE diceparser_shared)
 INSTALL_TARGETS(/bin dirc)
