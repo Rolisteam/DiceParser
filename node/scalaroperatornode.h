@@ -81,12 +81,12 @@ public:
      * @brief getArithmeticOperator
      * @return
      */
-    Die::ArithmeticOperator getArithmeticOperator() const;
+    Dice::ArithmeticOperator getArithmeticOperator() const;
     /**
      * @brief setArithmeticOperator
      * @param arithmeticOperator
      */
-    void setArithmeticOperator(const Die::ArithmeticOperator& arithmeticOperator);
+    void setArithmeticOperator(const Dice::ArithmeticOperator& arithmeticOperator);
 
     /**
      * @brief getCopy
@@ -121,7 +121,7 @@ private:
 private:
     ExecutionNode* m_internalNode;
     ScalarResult* m_scalarResult;
-    Die::ArithmeticOperator m_arithmeticOperator;
+    Dice::ArithmeticOperator m_arithmeticOperator;
 };
 
 #endif // SCALAROPERATORNODE_H

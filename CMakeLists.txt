@@ -16,6 +16,16 @@ option(BUILD_IRC OFF)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(dice_header_path include/diceparser)
+
+set(dice_public_headers ${dice_header_path}/diceparser_global.h
+${dice_header_path}/dicealias.h
+${dice_header_path}/diceparser.h
+${dice_header_path}/diceparserhelper.h
+${dice_header_path}/highlightdice.h
+${dice_header_path}/parsingtoolbox.h # should no be public…
+)
+
 
 SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/diceparser.cpp
@@ -75,18 +85,20 @@ endif()
 
 set(documentation README.md HelpMe.md CHANGELOG)
 
-add_library(diceparser_shared SHARED ${dice_sources} ${documentation})
+add_library(diceparser_shared SHARED ${dice_sources} ${documentation} ${dice_public_headers})
+set_target_properties(diceparser_shared PROPERTIES PUBLIC_HEADER "${public_header_widget}")
+target_compile_definitions(diceparser_shared PRIVATE DICEPARSER_LIBRARY)
 
-target_include_directories(diceparser_shared PRIVATE include ./)
-
+target_include_directories(diceparser_shared PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 SET_TARGET_PROPERTIES(diceparser_shared PROPERTIES OUTPUT_NAME diceparser CLEAN_DIRECT_OUTPUT 1)
 target_link_libraries(diceparser_shared PUBLIC Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Svg)
 
 set_target_properties(diceparser_shared PROPERTIES VERSION ${PROJECT_VERSION})
 set_target_properties(diceparser_shared PROPERTIES SOVERSION 1)
-
-set_target_properties(diceparser_shared PROPERTIES PUBLIC_HEADER "include/diceparser.h;include/highlightdice.h;include/parsingtoolbox.h;include/dicealias.h;include/diceparserhelper.h")
 
 IF(BUILD_CLI)
     add_subdirectory(cli)
@@ -96,7 +108,9 @@ IF(BUILD_IRC)
     add_subdirectory(irc)
 ENDIF()
 
+if(TESTS)
 add_subdirectory( tests )
+endif()
 
 include(GNUInstallDirs)
 
@@ -109,15 +123,21 @@ configure_file(diceparser.pc.in diceparser.pc @ONLY)
 
 install(FILES ${CMAKE_BINARY_DIR}/diceparser.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
-if(Qt6Qml_FOUND)
-set(dice_header_qobject qmltypesregister.h diceroller.h)
-set(dice_source_qobject qmltypesregister.cpp diceroller.cpp)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-add_library(diceparser_qobject SHARED ${dice_header_qobject} ${dice_source_qobject})
-target_link_libraries(diceparser_qobject PUBLIC Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Concurrent PRIVATE diceparser_shared)
-message("Messages diceparser ${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_include_directories(diceparser_qobject PRIVATE include ./ ${CMAKE_CURRENT_SOURCE_DIR}/include)
+if(Qt${QT_VERSION_MAJOR}Qml_FOUND)
+    set(dice_header_qobject include/diceparser_qobject/diceparser_qobject_global.h include/diceparser_qobject/qmltypesregister.h include/diceparser_qobject/diceroller.h)
+    set(dice_source_qobject qmltypesregister.cpp diceroller.cpp)
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTOUIC ON)
+    set(CMAKE_AUTORCC ON)
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+    add_library(diceparser_qobject SHARED ${dice_header_qobject} ${dice_source_qobject})
+    set_target_properties(diceparser_qobject PROPERTIES PUBLIC_HEADER "${dice_header_qobject}")
+    target_compile_definitions(diceparser_qobject PRIVATE DICEPARSER_QOBJECT_LIBRARY)
+    target_link_libraries(diceparser_qobject PUBLIC Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Concurrent PRIVATE diceparser_shared)
+    message("Messages diceparser ${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+    target_include_directories(diceparser_qobject PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 endif()

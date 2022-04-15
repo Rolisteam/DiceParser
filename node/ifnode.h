@@ -20,9 +20,9 @@
 #ifndef IFNODE_H
 #define IFNODE_H
 
-#include "diceparserhelper.h"
 #include "executionnode.h"
 #include "result/diceresult.h"
+#include <diceparser/diceparserhelper.h>
 
 class ValidatorList;
 class PartialDiceRollNode : public ExecutionNode

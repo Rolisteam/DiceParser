@@ -24,6 +24,7 @@
 #include <QList>
 #include <functional>
 
+#include "diceparser/diceparserhelper.h"
 #include "die.h"
 #include "result.h"
 /**
@@ -76,8 +77,8 @@ public:
      */
     virtual void setHomogeneous(bool);
 
-    Die::ArithmeticOperator getOperator() const;
-    void setOperator(const Die::ArithmeticOperator& dieOperator);
+    Dice::ArithmeticOperator getOperator() const;
+    void setOperator(const Dice::ArithmeticOperator& dieOperator);
     bool contains(Die* die, const std::function<bool(const Die*, const Die*)> equal);
 
     void clear() override;
@@ -90,7 +91,7 @@ protected:
 protected:
     QList<Die*> m_diceValues;
     bool m_homogeneous;
-    Die::ArithmeticOperator m_operator= Die::ArithmeticOperator::PLUS;
+    Dice::ArithmeticOperator m_operator{Dice::ArithmeticOperator::PLUS};
 };
 Q_DECLARE_METATYPE(QList<Die*>)
 #endif // DICERESULT_H

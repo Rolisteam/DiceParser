@@ -20,8 +20,8 @@
 #include "replacevaluenode.h"
 
 #include "diceresult.h"
-#include "parsingtoolbox.h"
 #include <QDebug>
+#include <diceparser/parsingtoolbox.h>
 
 ReplaceValueNode::ReplaceValueNode() : m_diceResult(new DiceResult)
 {

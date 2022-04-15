@@ -22,6 +22,7 @@
 #ifndef BOOLEANCONDITION_H
 #define BOOLEANCONDITION_H
 
+#include "diceparser/diceparserhelper.h"
 #include "node/executionnode.h"
 #include "validator.h"
 #include <Qt>
@@ -32,22 +33,12 @@
 class BooleanCondition : public Validator
 {
 public:
-    enum LogicOperator
-    {
-        Equal,
-        GreaterThan,
-        LesserThan,
-        GreaterOrEqual,
-        LesserOrEqual,
-        Different
-    };
-
     BooleanCondition();
     virtual ~BooleanCondition() override;
 
     virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const override;
 
-    void setOperator(LogicOperator m);
+    void setOperator(Dice::CompareOperator m);
     void setValueNode(ExecutionNode*);
     QString toString() override;
 
@@ -62,9 +53,9 @@ private:
     qint64 valueToScalar() const;
 
 private:
-    LogicOperator m_operator;
+    Dice::CompareOperator m_operator;
     ExecutionNode* m_value= nullptr;
 };
 
-Q_DECLARE_METATYPE(BooleanCondition::LogicOperator)
+// Q_DECLARE_METATYPE(BooleanCondition::LogicOperator)
 #endif // BOOLEANCONDITION_H

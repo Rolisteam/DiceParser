@@ -19,7 +19,7 @@
  * Free Software Foundation, Inc.,                                          *
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
  ***************************************************************************/
-#include "parsingtoolbox.h"
+#include "diceparser/parsingtoolbox.h"
 
 #include <QDebug>
 #include <QJsonArray>
@@ -59,36 +59,39 @@
 #include "node/uniquenode.h"
 #include "node/valueslistnode.h"
 #include "node/variablenode.h"
+#include "operationcondition.h"
+#include "range.h"
+#include "validatorlist.h"
 
 QHash<QString, QString> ParsingToolBox::m_variableHash;
 
 ParsingToolBox::ParsingToolBox()
 {
     // m_logicOp = ;
-    m_logicOp.insert(">=", BooleanCondition::GreaterOrEqual);
-    m_logicOp.insert("<=", BooleanCondition::LesserOrEqual);
-    m_logicOp.insert("<", BooleanCondition::LesserThan);
-    m_logicOp.insert("=", BooleanCondition::Equal);
-    m_logicOp.insert(">", BooleanCondition::GreaterThan);
-    m_logicOp.insert("!=", BooleanCondition::Different);
+    m_logicOp.insert(">=", Dice::CompareOperator::GreaterOrEqual);
+    m_logicOp.insert("<=", Dice::CompareOperator::LesserOrEqual);
+    m_logicOp.insert("<", Dice::CompareOperator::LesserThan);
+    m_logicOp.insert("=", Dice::CompareOperator::Equal);
+    m_logicOp.insert(">", Dice::CompareOperator::GreaterThan);
+    m_logicOp.insert("!=", Dice::CompareOperator::Different);
 
     // m_logicOperation = ;
-    m_logicOperation.insert("|", ValidatorList::OR);
-    m_logicOperation.insert("^", ValidatorList::EXCLUSIVE_OR);
-    m_logicOperation.insert("&", ValidatorList::AND);
+    m_logicOperation.insert("|", Dice::LogicOperation::OR);
+    m_logicOperation.insert("^", Dice::LogicOperation::EXCLUSIVE_OR);
+    m_logicOperation.insert("&", Dice::LogicOperation::AND);
 
     // m_conditionOperation = ;
-    m_conditionOperation.insert("%", OperationCondition::Modulo);
+    m_conditionOperation.insert("%", Dice::ConditionOperator::Modulo);
 
     // m_arithmeticOperation = new QHash<QString,ScalarOperatorNode::ArithmeticOperator>();
-    m_arithmeticOperation.push_back({QStringLiteral("**"), Die::POW});
-    m_arithmeticOperation.push_back({QStringLiteral("+"), Die::PLUS});
-    m_arithmeticOperation.push_back({QStringLiteral("-"), Die::MINUS});
-    m_arithmeticOperation.push_back({QStringLiteral("*"), Die::MULTIPLICATION});
-    m_arithmeticOperation.push_back({QStringLiteral("x"), Die::MULTIPLICATION});
-    m_arithmeticOperation.push_back({QStringLiteral("|"), Die::INTEGER_DIVIDE});
-    m_arithmeticOperation.push_back({QStringLiteral("/"), Die::DIVIDE});
-    m_arithmeticOperation.push_back({QStringLiteral("÷"), Die::DIVIDE});
+    m_arithmeticOperation.push_back({QStringLiteral("**"), Dice::ArithmeticOperator::POW});
+    m_arithmeticOperation.push_back({QStringLiteral("+"), Dice::ArithmeticOperator::PLUS});
+    m_arithmeticOperation.push_back({QStringLiteral("-"), Dice::ArithmeticOperator::MINUS});
+    m_arithmeticOperation.push_back({QStringLiteral("*"), Dice::ArithmeticOperator::MULTIPLICATION});
+    m_arithmeticOperation.push_back({QStringLiteral("x"), Dice::ArithmeticOperator::MULTIPLICATION});
+    m_arithmeticOperation.push_back({QStringLiteral("|"), Dice::ArithmeticOperator::INTEGER_DIVIDE});
+    m_arithmeticOperation.push_back({QStringLiteral("/"), Dice::ArithmeticOperator::DIVIDE});
+    m_arithmeticOperation.push_back({QStringLiteral("÷"), Dice::ArithmeticOperator::DIVIDE});
 
     m_mapDiceOp.insert(QStringLiteral("D"), D);
     m_mapDiceOp.insert(QStringLiteral("L"), L);
@@ -153,7 +156,7 @@ void ParsingToolBox::addWarning(Dice::ERROR_CODE code, const QString& msg)
 {
     m_warningMap.insert(code, msg);
 }
-bool ParsingToolBox::readDiceLogicOperator(QString& str, OperationCondition::ConditionOperator& op)
+bool ParsingToolBox::readDiceLogicOperator(QString& str, Dice::ConditionOperator& op)
 {
     QString longKey;
     auto const& keys= m_conditionOperation.keys();
@@ -177,12 +180,12 @@ bool ParsingToolBox::readDiceLogicOperator(QString& str, OperationCondition::Con
     return false;
 }
 
-bool ParsingToolBox::readArithmeticOperator(QString& str, Die::ArithmeticOperator& op)
+bool ParsingToolBox::readArithmeticOperator(QString& str, Dice::ArithmeticOperator& op)
 {
 
-    auto it= std::find_if(
-        m_arithmeticOperation.begin(), m_arithmeticOperation.end(),
-        [str](const std::pair<QString, Die::ArithmeticOperator>& pair) { return str.startsWith(pair.first); });
+    auto it= std::find_if(m_arithmeticOperation.begin(), m_arithmeticOperation.end(),
+                          [str](const std::pair<QString, Dice::ArithmeticOperator>& pair)
+                          { return str.startsWith(pair.first); });
     if(it == m_arithmeticOperation.end())
         return false;
 
@@ -191,7 +194,7 @@ bool ParsingToolBox::readArithmeticOperator(QString& str, Die::ArithmeticOperato
     return true;
 }
 
-bool ParsingToolBox::readLogicOperator(QString& str, BooleanCondition::LogicOperator& op)
+bool ParsingToolBox::readLogicOperator(QString& str, Dice::CompareOperator& op)
 {
     QString longKey;
     auto const& keys= m_logicOp.keys();
@@ -264,10 +267,10 @@ Validator* ParsingToolBox::readValidator(QString& str, bool hasSquare)
 {
     Validator* returnVal= nullptr;
     auto opCompare= readConditionType(str);
-    BooleanCondition::LogicOperator myLogicOp= BooleanCondition::Equal;
+    Dice::CompareOperator myLogicOp{Dice::CompareOperator::Equal};
     readLogicOperator(str, myLogicOp);
 
-    OperationCondition::ConditionOperator condiOp= OperationCondition::Modulo;
+    Dice::ConditionOperator condiOp{Dice::ConditionOperator::Modulo};
     bool hasDiceLogicOperator= readDiceLogicOperator(str, condiOp);
     ExecutionNode* operandNode= nullptr;
     if(hasDiceLogicOperator)
@@ -359,9 +362,9 @@ ValidatorList* ParsingToolBox::readValidatorList(QString& str)
         expectSquareBrasket= true;
     }
     Validator* tmp= readValidator(str, expectSquareBrasket);
-    ValidatorList::LogicOperation opLogic;
+    Dice::LogicOperation opLogic;
 
-    QVector<ValidatorList::LogicOperation> operators;
+    QVector<Dice::LogicOperation> operators;
     QList<Validator*> validatorList;
 
     while(nullptr != tmp)
@@ -396,7 +399,7 @@ ValidatorList* ParsingToolBox::readValidatorList(QString& str)
         return nullptr;
     }
 }
-bool ParsingToolBox::readLogicOperation(QString& str, ValidatorList::LogicOperation& op)
+bool ParsingToolBox::readLogicOperation(QString& str, Dice::LogicOperation& op)
 {
     QString longKey;
     auto const& keys= m_logicOperation.keys();
@@ -711,11 +714,13 @@ QString ParsingToolBox::finalStringResult(std::function<QString(const QString&, 
     auto listFull= diceResultFromEachInstruction();
 
     QStringList resultWithPlaceHolder;
-    std::for_each(allStringlist.begin(), allStringlist.end(), [&resultWithPlaceHolder](const QString& sub) {
-        QRegularExpression ex("%[1-3]?|\\$[1-9]+|@[1-9]+");
-        if(sub.contains(ex))
-            resultWithPlaceHolder.append(sub);
-    });
+    std::for_each(allStringlist.begin(), allStringlist.end(),
+                  [&resultWithPlaceHolder](const QString& sub)
+                  {
+                      QRegularExpression ex("%[1-3]?|\\$[1-9]+|@[1-9]+");
+                      if(sub.contains(ex))
+                          resultWithPlaceHolder.append(sub);
+                  });
     auto stringResult= resultWithPlaceHolder.isEmpty() ? allStringlist.join(",") : resultWithPlaceHolder.join(",");
 
     auto pairScalar= finalScalarResult();
@@ -1236,7 +1241,8 @@ QString ParsingToolBox::replacePlaceHolderFromJson(const QString& source, const 
         instructionResult.push_back(map);
     }
     std::transform(std::begin(instructionResult), std::end(instructionResult), std::back_inserter(resultList),
-                   [](const std::vector<std::pair<int, QList<QStringList>>>& map) {
+                   [](const std::vector<std::pair<int, QList<QStringList>>>& map)
+                   {
                        QStringList valuesStr;
                        auto multiKey= (map.size() > 1);
                        for(auto item : map)
@@ -1284,18 +1290,21 @@ QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const Q
     QStringList resultList;
     std::transform(
         std::begin(list), std::end(list), std::back_inserter(resultList),
-        [removeUnhighlighted, colorize](const ExportedDiceResult& dice) {
+        [removeUnhighlighted, colorize](const ExportedDiceResult& dice)
+        {
             QStringList valuesStr;
             if(dice.size() == 1)
             {
                 auto values= dice.values();
                 std::transform(
                     std::begin(values), std::end(values), std::back_inserter(valuesStr),
-                    [removeUnhighlighted, colorize](const QList<ListDiceResult>& dice) {
+                    [removeUnhighlighted, colorize](const QList<ListDiceResult>& dice)
+                    {
                         QStringList textList;
                         std::transform(
                             std::begin(dice), std::end(dice), std::back_inserter(textList),
-                            [removeUnhighlighted, colorize](const ListDiceResult& dice) {
+                            [removeUnhighlighted, colorize](const ListDiceResult& dice)
+                            {
                                 QStringList list;
                                 ListDiceResult values= dice;
                                 if(removeUnhighlighted)
@@ -1306,9 +1315,8 @@ QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const Q
                                 }
 
                                 std::transform(std::begin(values), std::end(values), std::back_inserter(list),
-                                               [colorize](const HighLightDice& hl) {
-                                                   return colorize(hl.getResultString(), {}, hl.isHighlighted());
-                                               });
+                                               [colorize](const HighLightDice& hl)
+                                               { return colorize(hl.getResultString(), {}, hl.isHighlighted()); });
                                 return list.join(",");
                             });
                         textList.removeAll(QString());
@@ -1931,7 +1939,7 @@ ExplodeDiceNode* ParsingToolBox::addExplodeDiceNode(qint64 value, ExecutionNode*
     BooleanCondition* condition= new BooleanCondition();
     condition->setConditionType(Dice::OnEach);
     condition->setValueNode(node);
-    condition->setOperator(BooleanCondition::Equal);
+    condition->setOperator(Dice::CompareOperator::Equal);
     auto valList= new ValidatorList();
     valList->setValidators(QList<Validator*>() << condition);
     auto validity= isValidValidator(previous, valList);
@@ -2003,7 +2011,7 @@ bool ParsingToolBox::readBlocInstruction(QString& str, ExecutionNode*& resultnod
     {
         str= str.remove(0, 1);
         ExecutionNode* node= nullptr;
-        Die::ArithmeticOperator op;
+        Dice::ArithmeticOperator op;
         ScalarOperatorNode* scalarNode= nullptr;
         if(readArithmeticOperator(str, op))
         {
@@ -2041,7 +2049,7 @@ bool ParsingToolBox::readDice(QString& str, ExecutionNode*& node)
             qint64 max;
             qint64 min;
             bool unique= (ParsingToolBox::UNIQUE == readListOperator(str)) ? true : false;
-            Die::ArithmeticOperator op;
+            Dice::ArithmeticOperator op;
 
             bool hasOp= readArithmeticOperator(str, op);
             if(readNumber(str, max))
@@ -2201,7 +2209,7 @@ bool ParsingToolBox::readOperator(QString& str, ExecutionNode* previous)
         return result;
     }
 
-    Die::ArithmeticOperator op;
+    Dice::ArithmeticOperator op;
     if(readArithmeticOperator(str, op))
     {
         ScalarOperatorNode* node= new ScalarOperatorNode();

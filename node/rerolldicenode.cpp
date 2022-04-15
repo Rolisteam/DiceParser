@@ -1,5 +1,7 @@
+#include <diceparser/parsingtoolbox.h>
+
 #include "rerolldicenode.h"
-#include "parsingtoolbox.h"
+#include "validatorlist.h"
 #include <utility>
 
 RerollDiceNode::RerollDiceNode(bool reroll, bool addingMode)

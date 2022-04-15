@@ -81,7 +81,7 @@ Dice::CONDITION_STATE testDifferent(bool inside, const std::pair<qint64, qint64>
         return Dice::CONDITION_STATE::REACHABLE;
 }
 
-BooleanCondition::BooleanCondition() : m_operator(Equal) {}
+BooleanCondition::BooleanCondition() : m_operator(Dice::CompareOperator::Equal) {}
 
 BooleanCondition::~BooleanCondition()
 {
@@ -113,22 +113,22 @@ qint64 BooleanCondition::hasValid(Die* b, bool recursive, bool unhighlight) cons
     {
         switch(m_operator)
         {
-        case Equal:
+        case Dice::CompareOperator::Equal:
             sum+= (value == valueScalar) ? 1 : 0;
             break;
-        case GreaterThan:
+        case Dice::CompareOperator::GreaterThan:
             sum+= (value > valueScalar) ? 1 : 0;
             break;
-        case LesserThan:
+        case Dice::CompareOperator::LesserThan:
             sum+= (value < valueScalar) ? 1 : 0;
             break;
-        case GreaterOrEqual:
+        case Dice::CompareOperator::GreaterOrEqual:
             sum+= (value >= valueScalar) ? 1 : 0;
             break;
-        case LesserOrEqual:
+        case Dice::CompareOperator::LesserOrEqual:
             sum+= (value <= valueScalar) ? 1 : 0;
             break;
-        case Different:
+        case Dice::CompareOperator::Different:
             sum+= (value != valueScalar) ? 1 : 0;
             break;
         }
@@ -145,7 +145,7 @@ qint64 BooleanCondition::hasValid(Die* b, bool recursive, bool unhighlight) cons
     return sum;
 }
 
-void BooleanCondition::setOperator(LogicOperator m)
+void BooleanCondition::setOperator(Dice::CompareOperator m)
 {
     m_operator= m;
 }
@@ -159,22 +159,22 @@ QString BooleanCondition::toString()
     QString str("");
     switch(m_operator)
     {
-    case Equal:
+    case Dice::CompareOperator::Equal:
         str.append(QStringLiteral("="));
         break;
-    case GreaterThan:
+    case Dice::CompareOperator::GreaterThan:
         str.append(QStringLiteral(">"));
         break;
-    case LesserThan:
+    case Dice::CompareOperator::LesserThan:
         str.append(QStringLiteral("<"));
         break;
-    case GreaterOrEqual:
+    case Dice::CompareOperator::GreaterOrEqual:
         str.append(QStringLiteral(">="));
         break;
-    case LesserOrEqual:
+    case Dice::CompareOperator::LesserOrEqual:
         str.append(QStringLiteral("<="));
         break;
-    case Different:
+    case Dice::CompareOperator::Different:
         str.append(QStringLiteral("!="));
         break;
     }
@@ -189,22 +189,22 @@ Dice::CONDITION_STATE BooleanCondition::isValidRangeSize(const std::pair<qint64,
     bool isInsideRange= (boundValue == valueScalar);
     switch(m_operator)
     {
-    case Equal:
+    case Dice::CompareOperator::Equal:
         state= testEqual(isInsideRange, range); //(isInsideRange && (range.first != range.second)) ? ;
         break;
-    case GreaterThan:
+    case Dice::CompareOperator::GreaterThan:
         state= testGreatherThan(valueScalar, range);
         break;
-    case LesserThan:
+    case Dice::CompareOperator::LesserThan:
         state= testLesserThan(valueScalar, range);
         break;
-    case GreaterOrEqual:
+    case Dice::CompareOperator::GreaterOrEqual:
         state= testGreaterOrEqual(valueScalar, range);
         break;
-    case LesserOrEqual:
+    case Dice::CompareOperator::LesserOrEqual:
         state= testLesserOrEqual(valueScalar, range);
         break;
-    case Different:
+    case Dice::CompareOperator::Different:
         state= testDifferent(isInsideRange, range);
         break;
     }

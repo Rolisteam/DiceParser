@@ -21,7 +21,7 @@
  ***************************************************************************/
 #include "mergenode.h"
 
-#include "parsingtoolbox.h"
+#include <diceparser/parsingtoolbox.h>
 
 MergeNode::MergeNode() : m_diceResult(new DiceResult())
 {

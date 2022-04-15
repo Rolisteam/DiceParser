@@ -51,7 +51,7 @@ Die::Die()
     , m_highlighted(true)
     , m_base(1)
     , m_color("")
-    , m_op(Die::PLUS) //,m_mt(m_randomDevice)
+    , m_op(Dice::ArithmeticOperator::PLUS) //,m_mt(m_randomDevice)
 {
     buildSeed();
 }
@@ -109,17 +109,17 @@ qint64 Die::getValue() const
             {
                 switch(m_op)
                 {
-                case PLUS:
+                case Dice::ArithmeticOperator::PLUS:
                     value+= tmp;
                     break;
-                case MULTIPLICATION:
+                case Dice::ArithmeticOperator::MULTIPLICATION:
                     value*= tmp;
                     break;
-                case MINUS:
+                case Dice::ArithmeticOperator::MINUS:
                     value-= tmp;
                     break;
-                case INTEGER_DIVIDE:
-                case DIVIDE:
+                case Dice::ArithmeticOperator::INTEGER_DIVIDE:
+                case Dice::ArithmeticOperator::DIVIDE:
                     if(tmp != 0)
                     {
                         value/= tmp;
@@ -129,7 +129,7 @@ qint64 Die::getValue() const
                         // error();
                     }
                     break;
-                case POW:
+                case Dice::ArithmeticOperator::POW:
                     value= static_cast<qint64>(std::pow(value, tmp));
                     break;
                 }
@@ -237,12 +237,12 @@ void Die::setMaxValue(const qint64& maxValue)
     m_maxValue= maxValue;
 }
 
-Die::ArithmeticOperator Die::getOp() const
+Dice::ArithmeticOperator Die::getOp() const
 {
     return m_op;
 }
 
-void Die::setOp(const Die::ArithmeticOperator& op)
+void Die::setOp(const Dice::ArithmeticOperator& op)
 {
     m_op= op;
 }

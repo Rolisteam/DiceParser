@@ -1,8 +1,8 @@
 #ifndef EXECUTIONNODE_H
 #define EXECUTIONNODE_H
 
-#include "diceparserhelper.h"
 #include "result/result.h"
+#include <diceparser/diceparserhelper.h>
 
 /**
  * @brief The ExecutionNode class

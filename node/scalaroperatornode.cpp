@@ -25,7 +25,7 @@
 #include <QDebug>
 
 ScalarOperatorNode::ScalarOperatorNode()
-    : m_internalNode(nullptr), m_scalarResult(new ScalarResult()), m_arithmeticOperator(Die::PLUS)
+    : m_internalNode(nullptr), m_scalarResult(new ScalarResult()), m_arithmeticOperator(Dice::ArithmeticOperator::PLUS)
 {
     m_result= m_scalarResult;
 }
@@ -75,28 +75,28 @@ void ScalarOperatorNode::run(ExecutionNode* previous)
 
                 switch(m_arithmeticOperator)
                 {
-                case Die::PLUS:
+                case Dice::ArithmeticOperator::PLUS:
                     m_scalarResult->setValue(add(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
                                                  internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal()));
                     break;
-                case Die::MINUS:
+                case Dice::ArithmeticOperator::MINUS:
                     m_scalarResult->setValue(substract(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
                                                        internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal()));
                     break;
-                case Die::MULTIPLICATION:
+                case Dice::ArithmeticOperator::MULTIPLICATION:
                     m_scalarResult->setValue(multiple(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
                                                       internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal()));
                     break;
-                case Die::DIVIDE:
+                case Dice::ArithmeticOperator::DIVIDE:
                     m_scalarResult->setValue(divide(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
                                                     internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal()));
                     break;
-                case Die::INTEGER_DIVIDE:
+                case Dice::ArithmeticOperator::INTEGER_DIVIDE:
                     m_scalarResult->setValue(
                         static_cast<int>(divide(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
                                                 internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal())));
                     break;
-                case Die::POW:
+                case Dice::ArithmeticOperator::POW:
                     m_scalarResult->setValue(pow(previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal(),
                                                  internalResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal()));
                     break;
@@ -149,12 +149,12 @@ qint64 ScalarOperatorNode::pow(qreal a, qreal b)
 {
     return static_cast<qint64>(std::pow(a, b));
 }
-Die::ArithmeticOperator ScalarOperatorNode::getArithmeticOperator() const
+Dice::ArithmeticOperator ScalarOperatorNode::getArithmeticOperator() const
 {
     return m_arithmeticOperator;
 }
 
-void ScalarOperatorNode::setArithmeticOperator(const Die::ArithmeticOperator& arithmeticOperator)
+void ScalarOperatorNode::setArithmeticOperator(const Dice::ArithmeticOperator& arithmeticOperator)
 {
     m_arithmeticOperator= arithmeticOperator;
 }
@@ -164,22 +164,22 @@ QString ScalarOperatorNode::toString(bool wl) const
     QString op= "";
     switch(m_arithmeticOperator)
     {
-    case Die::PLUS:
+    case Dice::ArithmeticOperator::PLUS:
         op= "+";
         break;
-    case Die::MINUS:
+    case Dice::ArithmeticOperator::MINUS:
         op= "-";
         break;
-    case Die::MULTIPLICATION:
+    case Dice::ArithmeticOperator::MULTIPLICATION:
         op= "*";
         break;
-    case Die::DIVIDE:
+    case Dice::ArithmeticOperator::DIVIDE:
         op= "/";
         break;
-    case Die::INTEGER_DIVIDE:
+    case Dice::ArithmeticOperator::INTEGER_DIVIDE:
         op= "|";
         break;
-    case Die::POW:
+    case Dice::ArithmeticOperator::POW:
         op= "^";
         break;
     }
@@ -194,11 +194,12 @@ QString ScalarOperatorNode::toString(bool wl) const
 }
 qint64 ScalarOperatorNode::getPriority() const
 {
-    if((m_arithmeticOperator == Die::PLUS) || (m_arithmeticOperator == Die::MINUS))
+    if((m_arithmeticOperator == Dice::ArithmeticOperator::PLUS)
+       || (m_arithmeticOperator == Dice::ArithmeticOperator::MINUS))
     {
         return 1;
     }
-    else if(m_arithmeticOperator == Die::POW)
+    else if(m_arithmeticOperator == Dice::ArithmeticOperator::POW)
     {
         return 3;
     }

@@ -29,16 +29,12 @@
 class OperationCondition : public Validator
 {
 public:
-    enum ConditionOperator
-    {
-        Modulo
-    };
     OperationCondition();
     virtual ~OperationCondition() override;
 
     virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const override;
 
-    void setOperator(ConditionOperator m);
+    void setOperator(Dice::ConditionOperator m);
     // void setValue(qint64);
     void setValueNode(ExecutionNode* node);
     QString toString() override;
@@ -56,7 +52,7 @@ private:
     qint64 valueToScalar() const;
 
 private:
-    ConditionOperator m_operator= Modulo;
+    Dice::ConditionOperator m_operator{Dice::ConditionOperator::Modulo};
     BooleanCondition* m_boolean= nullptr;
     // qint64 m_value;
     ExecutionNode* m_value= nullptr;

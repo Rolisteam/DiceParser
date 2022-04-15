@@ -22,9 +22,9 @@
 #ifndef RESULT_H
 #define RESULT_H
 
-#include "diceparserhelper.h"
 #include <QString>
 #include <QVariant>
+#include <diceparser/diceparserhelper.h>
 /**
  * @brief The Result class
  */

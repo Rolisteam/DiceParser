@@ -22,28 +22,38 @@
 #ifndef PARSINGTOOLBOX_H
 #define PARSINGTOOLBOX_H
 
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMap>
+#include <QVariant>
 #include <functional>
 #include <vector>
 
-#include "booleancondition.h"
+#include "diceparserhelper.h"
 #include "highlightdice.h"
-#include "node/dicerollernode.h"
-#include "node/executionnode.h"
-#include "node/ifnode.h"
-#include "node/paintnode.h"
-#include "node/scalaroperatornode.h"
-#include "operationcondition.h"
-#include "range.h"
-#include "validatorlist.h"
+//#include "dicerollernode.h"
+//#include "executionnode.h"
+//#include "node/ifnode.h"
+//#include "node/paintnode.h"
+//#include "node/scalaroperatornode.h"
+//#include "operationcondition.h"
+//#include "range.h"
+//#include "validatorlist.h"
 
+#include <diceparser/diceparser_global.h>
+class Range;
 class RepeaterNode;
 class DiceAlias;
 class ExplodeDiceNode;
 class SwitchCaseNode;
 class ReplaceValueNode;
-
-class SubtituteInfo
+class PainterNode;
+class ValidatorList;
+class Validator;
+class DiceRollerNode;
+class ExecutionNode;
+class DICEPARSER_EXPORT SubtituteInfo
 {
 public:
     SubtituteInfo();
@@ -77,7 +87,7 @@ private:
  * @brief The ParsingToolBox is gathering many useful methods for dice parsing.
  * Its goal is to make the diceparser a bit lighter.
  */
-class ParsingToolBox
+class DICEPARSER_EXPORT ParsingToolBox
 {
 public:
     enum LIST_OPERATOR
@@ -139,7 +149,7 @@ public:
     // parsing tools
     static bool readAscending(QString& str);
     static bool readStopAtFirst(QString& str);
-    bool readLogicOperator(QString& str, BooleanCondition::LogicOperator& op);
+    bool readLogicOperator(QString& str, Dice::CompareOperator& op);
     Validator* readValidator(QString& str, bool hasSquare= false);
     ValidatorList* readValidatorList(QString& str);
     static bool readNumber(QString& str, qint64& myNumber);
@@ -153,9 +163,9 @@ public:
     bool readDiceRange(QString& str, qint64& start, qint64& end);
     static LIST_OPERATOR readListOperator(QString& str);
     void readProbability(QStringList& str, QList<Range>& ranges);
-    bool readLogicOperation(QString& str, ValidatorList::LogicOperation& op);
-    bool readDiceLogicOperator(QString& str, OperationCondition::ConditionOperator& op);
-    bool readArithmeticOperator(QString& str, Die::ArithmeticOperator& op);
+    bool readLogicOperation(QString& str, Dice::LogicOperation& op);
+    bool readDiceLogicOperator(QString& str, Dice::ConditionOperator& op);
+    bool readArithmeticOperator(QString& str, Dice::ArithmeticOperator& op);
     std::vector<ExecutionNode*> readInstructionList(QString& str, bool startNode);
     static Dice::ConditionType readConditionType(QString& str);
     bool readComment(QString& str, QString&, QString&);
@@ -250,10 +260,10 @@ public:
     static QString replacePlaceHolderFromJson(const QString& source, const QJsonObject& obj);
 
 private:
-    QMap<QString, BooleanCondition::LogicOperator> m_logicOp;
-    QMap<QString, ValidatorList::LogicOperation> m_logicOperation;
-    QMap<QString, OperationCondition::ConditionOperator> m_conditionOperation;
-    std::vector<std::pair<QString, Die::ArithmeticOperator>> m_arithmeticOperation;
+    QMap<QString, Dice::CompareOperator> m_logicOp;
+    QMap<QString, Dice::LogicOperation> m_logicOperation;
+    QMap<QString, Dice::ConditionOperator> m_conditionOperation;
+    std::vector<std::pair<QString, Dice::ArithmeticOperator>> m_arithmeticOperation;
     QMap<QString, DiceOperator> m_mapDiceOp;
     QMap<QString, OptionOperator> m_OptionOp;
     QMap<QString, NodeAction> m_nodeActionMap;

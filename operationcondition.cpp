@@ -20,7 +20,10 @@
 
 #include "operationcondition.h"
 
-OperationCondition::OperationCondition() : m_operator(Modulo), m_boolean(nullptr), m_value(nullptr) {}
+OperationCondition::OperationCondition()
+    : m_operator(Dice::ConditionOperator::Modulo), m_boolean(nullptr), m_value(nullptr)
+{
+}
 OperationCondition::~OperationCondition()
 {
     if(m_value != nullptr)
@@ -60,7 +63,7 @@ qint64 OperationCondition::hasValid(Die* b, bool recursive, bool unhighlight) co
     {
         switch(m_operator)
         {
-        case Modulo:
+        case Dice::ConditionOperator::Modulo:
         {
             Die die;
             die.setMaxValue(b->getMaxValue());
@@ -85,7 +88,7 @@ qint64 OperationCondition::hasValid(Die* b, bool recursive, bool unhighlight) co
     return sum;
 }
 
-void OperationCondition::setOperator(ConditionOperator m)
+void OperationCondition::setOperator(Dice::ConditionOperator m)
 {
     m_operator= m;
 }
@@ -100,7 +103,7 @@ QString OperationCondition::toString()
     QString str("");
     switch(m_operator)
     {
-    case Modulo:
+    case Dice::ConditionOperator::Modulo:
         str.append(QStringLiteral("\\%"));
         break;
     }

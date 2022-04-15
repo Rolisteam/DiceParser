@@ -140,7 +140,7 @@ qint64 ValidatorList::hasValid(Die* b, bool recursive, bool unhighlight) const
         {
             switch(m_operators.at(i - 1))
             {
-            case OR:
+            case Dice::LogicOperation::OR:
                 sum|= val;
 
                 if(highLight)
@@ -148,10 +148,10 @@ qint64 ValidatorList::hasValid(Die* b, bool recursive, bool unhighlight) const
                     b->setHighlighted(highLight);
                 }
                 break;
-            case EXCLUSIVE_OR:
+            case Dice::LogicOperation::EXCLUSIVE_OR:
                 sum^= val; /// @todo may required to be done by hand
                 break;
-            case AND:
+            case Dice::LogicOperation::AND:
                 sum&= val;
                 break;
             default:
@@ -227,9 +227,9 @@ Dice::CONDITION_STATE testXOR(Dice::CONDITION_STATE before, Dice::CONDITION_STAT
 Dice::CONDITION_STATE ValidatorList::isValidRangeSize(const std::pair<qint64, qint64>& range) const
 {
     std::vector<Dice::CONDITION_STATE> vec;
-    std::transform(
-        m_validatorList.begin(), m_validatorList.end(), std::back_inserter(vec),
-        [range](Validator* validator) -> Dice::CONDITION_STATE { return validator->isValidRangeSize(range); });
+    std::transform(m_validatorList.begin(), m_validatorList.end(), std::back_inserter(vec),
+                   [range](Validator* validator) -> Dice::CONDITION_STATE
+                   { return validator->isValidRangeSize(range); });
 
     auto itError= std::find(vec.begin(), vec.end(), Dice::CONDITION_STATE::ERROR_STATE);
 
@@ -252,16 +252,16 @@ Dice::CONDITION_STATE ValidatorList::isValidRangeSize(const std::pair<qint64, qi
         }
         switch(op)
         {
-        case OR:
+        case Dice::LogicOperation::OR:
             val= testAND(val, currentState);
             break;
-        case EXCLUSIVE_OR:
+        case Dice::LogicOperation::EXCLUSIVE_OR:
             val= testOR(val, currentState);
             break;
-        case AND:
+        case Dice::LogicOperation::AND:
             val= testXOR(val, currentState);
             break;
-        case NONE:
+        case Dice::LogicOperation::NONE:
             val= Dice::CONDITION_STATE::ERROR_STATE;
             break;
         }
@@ -271,7 +271,7 @@ Dice::CONDITION_STATE ValidatorList::isValidRangeSize(const std::pair<qint64, qi
     return val;
 }
 
-void ValidatorList::setOperationList(const QVector<LogicOperation>& m)
+void ValidatorList::setOperationList(const QVector<Dice::LogicOperation>& m)
 {
     m_operators= m;
 }
@@ -353,9 +353,9 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
             if(nullptr == diceResult)
                 break;
             auto diceList= diceResult->getResultList();
-            auto all= std::all_of(diceList.begin(), diceList.end(), [validator, recursive, unlight](Die* die) {
-                return validator->hasValid(die, recursive, unlight);
-            });
+            auto all= std::all_of(diceList.begin(), diceList.end(),
+                                  [validator, recursive, unlight](Die* die)
+                                  { return validator->hasValid(die, recursive, unlight); });
             if(all)
             {
                 validResult.setAllTrue(true);
@@ -372,9 +372,9 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
             if(nullptr == diceResult)
                 break;
             auto diceList= diceResult->getResultList();
-            auto any= std::any_of(diceList.begin(), diceList.end(), [validator, recursive, unlight](Die* die) {
-                return validator->hasValid(die, recursive, unlight);
-            });
+            auto any= std::any_of(diceList.begin(), diceList.end(),
+                                  [validator, recursive, unlight](Die* die)
+                                  { return validator->hasValid(die, recursive, unlight); });
             if(any)
             {
                 validResult.setAllTrue(true);
@@ -409,16 +409,16 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
             auto op= m_operators.at(id);
             switch(op)
             {
-            case OR:
+            case Dice::LogicOperation::OR:
                 std::copy(diceList.begin(), diceList.end(), std::back_inserter(finalResult.validDiceRef()));
                 break;
-            case AND:
+            case Dice::LogicOperation::AND:
                 mergeResultsAsAND(vec, finalResult);
                 break;
-            case EXCLUSIVE_OR:
+            case Dice::LogicOperation::EXCLUSIVE_OR:
                 mergeResultsAsExeclusiveOR(vec, finalResult);
                 break;
-            case NONE:
+            case Dice::LogicOperation::NONE:
                 break;
             }
         }
@@ -432,9 +432,10 @@ void ValidatorList::validResult(Result* result, bool recursive, bool unlight,
         if(nullptr == diceResult)
             return;
         auto diceList= diceResult->getResultList();
-        std::transform(diceList.begin(), diceList.end(), std::back_inserter(finalResult.validDiceRef()), [](Die* die) {
-            return std::pair<Die*, qint64>({die, 0});
-        });
+        std::transform(diceList.begin(), diceList.end(), std::back_inserter(finalResult.validDiceRef()),
+                       [](Die* die) {
+                           return std::pair<Die*, qint64>({die, 0});
+                       });
     }
 
     for(auto die : finalResult.validDice())

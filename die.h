@@ -25,6 +25,8 @@
 #include <QList>
 #include <QString>
 #include <random>
+
+#include "diceparser/diceparserhelper.h"
 /**
  * @brief The Die class implements all methods required from a die. You must set the Faces first, then you can roll it
  * and roll it again, to add or replace the previous result.
@@ -32,18 +34,6 @@
 class Die
 {
 public:
-    /**
-     * @brief The ArithmeticOperator enum
-     */
-    enum ArithmeticOperator
-    {
-        PLUS,
-        MINUS,
-        DIVIDE,
-        MULTIPLICATION,
-        INTEGER_DIVIDE,
-        POW
-    };
     /**
      * @brief Die
      */
@@ -140,8 +130,8 @@ public:
     qint64 getMaxValue() const;
     void setMaxValue(const qint64& maxValue);
 
-    Die::ArithmeticOperator getOp() const;
-    void setOp(const Die::ArithmeticOperator& op);
+    Dice::ArithmeticOperator getOp() const;
+    void setOp(const Dice::ArithmeticOperator& op);
     void setDisplayed(bool b);
 
     QString getUuid() const;
@@ -162,7 +152,7 @@ private:
     qint64 m_occurence{1};
     QString m_color;
 
-    Die::ArithmeticOperator m_op;
+    Dice::ArithmeticOperator m_op;
 
     static std::mt19937 s_rng;
 };

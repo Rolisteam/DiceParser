@@ -24,7 +24,9 @@
 #include <QMap>
 #include <QString>
 
-class HighLightDice
+#include <diceparser/diceparser_global.h>
+
+class DICEPARSER_EXPORT HighLightDice
 {
 public:
     HighLightDice(QList<qint64> result, bool isHighlighted, QString color, bool displayed, quint64 faces,

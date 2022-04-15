@@ -23,7 +23,7 @@
 #include "diceresult.h"
 #include <QDebug>
 
-DiceResult::DiceResult() : m_operator(Die::PLUS)
+DiceResult::DiceResult()
 {
     m_resultTypes= (static_cast<int>(Dice::RESULT_TYPE::DICE_LIST) | static_cast<int>(Dice::RESULT_TYPE::SCALAR));
     m_homogeneous= true;
@@ -107,20 +107,20 @@ qreal DiceResult::getScalarResult()
             {
                 switch(m_operator)
                 {
-                case Die::PLUS:
+                case Dice::ArithmeticOperator::PLUS:
                     scalar+= tmp->getValue();
                     break;
-                case Die::MULTIPLICATION:
+                case Dice::ArithmeticOperator::MULTIPLICATION:
                     scalar*= tmp->getValue();
                     break;
-                case Die::MINUS:
+                case Dice::ArithmeticOperator::MINUS:
                     scalar-= tmp->getValue();
                     break;
-                case Die::POW:
+                case Dice::ArithmeticOperator::POW:
                     scalar= static_cast<int>(pow(static_cast<double>(scalar), static_cast<double>(tmp->getValue())));
                     break;
-                case Die::DIVIDE:
-                case Die::INTEGER_DIVIDE:
+                case Dice::ArithmeticOperator::DIVIDE:
+                case Dice::ArithmeticOperator::INTEGER_DIVIDE:
                     if(tmp->getValue() != 0)
                     {
                         scalar/= tmp->getValue();
@@ -142,7 +142,7 @@ qreal DiceResult::getScalarResult()
     }
 }
 
-Die::ArithmeticOperator DiceResult::getOperator() const
+Dice::ArithmeticOperator DiceResult::getOperator() const
 {
     return m_operator;
 }
@@ -152,7 +152,7 @@ void DiceResult::clear()
     m_diceValues.clear();
 }
 
-void DiceResult::setOperator(const Die::ArithmeticOperator& dieOperator)
+void DiceResult::setOperator(const Dice::ArithmeticOperator& dieOperator)
 {
     m_operator= dieOperator;
 }

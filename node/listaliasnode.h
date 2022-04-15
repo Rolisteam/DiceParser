@@ -21,7 +21,8 @@
 #ifndef LISTALIASNODE_H
 #define LISTALIASNODE_H
 
-#include "dicealias.h"
+#include <diceparser/dicealias.h>
+
 #include "executionnode.h"
 #include "result/stringresult.h"
 

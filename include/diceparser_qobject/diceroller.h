@@ -20,10 +20,12 @@
 #ifndef DICEROLLER_H
 #define DICEROLLER_H
 
-#include "diceparser.h"
 #include <QObject>
+#include <diceparser/diceparser.h>
 
-class DiceRoller : public QObject
+#include <diceparser_qobject/diceparser_qobject_global.h>
+
+class DICEPARSER_QOBJECT_EXPORT DiceRoller : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(qreal result READ result NOTIFY resultChanged)

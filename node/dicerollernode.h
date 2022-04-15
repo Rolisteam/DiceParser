@@ -45,8 +45,8 @@ public:
     virtual ExecutionNode* getCopy() const;
 
     // private members
-    Die::ArithmeticOperator getOperator() const;
-    void setOperator(const Die::ArithmeticOperator& dieOperator);
+    Dice::ArithmeticOperator getOperator() const;
+    void setOperator(const Dice::ArithmeticOperator& dieOperator);
 
     bool getUnique() const;
     void setUnique(bool unique);
@@ -54,10 +54,10 @@ public:
 private:
     quint64 m_diceCount;
     qint64 m_max; /// faces
-    DiceResult* m_diceResult;
+    DiceResult* m_diceResult{nullptr};
     qint64 m_min;
-    Die::ArithmeticOperator m_operator;
-    bool m_unique = false;
+    Dice::ArithmeticOperator m_operator;
+    bool m_unique{false};
 };
 
 #endif // DICEROLLERNODE_H

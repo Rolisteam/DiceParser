@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "switchcasenode.h"
 
-#include "parsingtoolbox.h"
 #include "stringresult.h"
 #include <QDebug>
+#include <diceparser/parsingtoolbox.h>
 
 SwitchCaseNode::SwitchCaseNode() : m_stringResult(new StringResult)
 {

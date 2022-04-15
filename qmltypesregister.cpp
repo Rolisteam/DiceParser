@@ -17,11 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "qmltypesregister.h"
+#include <diceparser_qobject/qmltypesregister.h>
 
 #include <QQmlEngine>
 
-#include "diceroller.h"
+#include <diceparser_qobject/diceroller.h>
 #if !defined(UNIT_TEST) && defined(RCSE)
 #include "field.h"
 #endif

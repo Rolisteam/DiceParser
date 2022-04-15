@@ -22,7 +22,8 @@
 #ifndef VALIDATOR_H
 #define VALIDATOR_H
 
-#include "diceparserhelper.h"
+#include <diceparser/diceparserhelper.h>
+
 #include "die.h"
 #include <QString>
 #include <Qt>

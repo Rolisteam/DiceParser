@@ -29,9 +29,10 @@
 #include <memory>
 #include <vector>
 
-#include "diceparserhelper.h"
-#include "highlightdice.h"
-//#include "node/executionnode.h"
+#include <diceparser/diceparser_global.h>
+
+#include <diceparser/diceparserhelper.h>
+#include <diceparser/highlightdice.h>
 
 class ExplodeDiceNode;
 class ParsingToolBox;
@@ -52,7 +53,7 @@ class ExecutionNode;
 /**
  * @brief The DiceParser class facade class, it receives a command and return a DiceResult class (not yet implemented).
  */
-class DiceParser
+class DICEPARSER_EXPORT DiceParser
 {
 public:
     /**

@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "include/highlightdice.h"
+#include <diceparser/highlightdice.h>
 
 HighLightDice::HighLightDice(QList<qint64> result, bool isHighlighted, QString color, bool displayed, quint64 faces,
                              const QString& uuid)

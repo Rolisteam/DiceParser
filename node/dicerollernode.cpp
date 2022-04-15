@@ -7,7 +7,7 @@
 #include <QTime>
 
 DiceRollerNode::DiceRollerNode(qint64 max, qint64 min)
-    : m_max(max), m_diceResult(new DiceResult()), m_min(min), m_operator(Die::PLUS)
+    : m_max(max), m_diceResult(new DiceResult()), m_min(min), m_operator(Dice::ArithmeticOperator::PLUS)
 {
     m_result= m_diceResult;
 }
@@ -99,12 +99,12 @@ ExecutionNode* DiceRollerNode::getCopy() const
     return node;
 }
 
-Die::ArithmeticOperator DiceRollerNode::getOperator() const
+Dice::ArithmeticOperator DiceRollerNode::getOperator() const
 {
     return m_operator;
 }
 
-void DiceRollerNode::setOperator(const Die::ArithmeticOperator& dieOperator)
+void DiceRollerNode::setOperator(const Dice::ArithmeticOperator& dieOperator)
 {
     m_operator= dieOperator;
     m_diceResult->setOperator(dieOperator);

@@ -1,5 +1,7 @@
 #include "variablenode.h"
-#include "parsingtoolbox.h"
+
+#include "diceresult.h"
+#include <diceparser/parsingtoolbox.h>
 
 VariableNode::VariableNode() {}
 

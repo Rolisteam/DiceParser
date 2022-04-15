@@ -4,6 +4,8 @@
 class ValidatorList;
 class ExecutionNode;
 
+#include <diceparser/diceparser_global.h>
+
 namespace Dice
 {
 enum class CONDITION_STATE : int
@@ -54,7 +56,38 @@ enum ConditionType
     OnScalar
 };
 
-struct CaseInfo
+enum class CompareOperator
+{
+    Equal,
+    GreaterThan,
+    LesserThan,
+    GreaterOrEqual,
+    LesserOrEqual,
+    Different
+};
+enum class ArithmeticOperator
+{
+    PLUS,
+    MINUS,
+    DIVIDE,
+    MULTIPLICATION,
+    INTEGER_DIVIDE,
+    POW
+};
+enum class LogicOperation
+{
+    OR,
+    EXCLUSIVE_OR,
+    AND,
+    NONE
+};
+
+enum class ConditionOperator
+{
+    Modulo
+};
+
+struct DICEPARSER_EXPORT CaseInfo
 {
     ValidatorList* validatorList;
     ExecutionNode* node;

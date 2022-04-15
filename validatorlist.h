@@ -27,7 +27,7 @@
 #include <QVector>
 #include <Qt>
 
-#include "diceparserhelper.h"
+#include <diceparser/diceparserhelper.h>
 #include <functional>
 
 class Validator;
@@ -75,20 +75,12 @@ private:
 class ValidatorList
 {
 public:
-    enum LogicOperation
-    {
-        OR,
-        EXCLUSIVE_OR,
-        AND,
-        NONE
-    };
-
     ValidatorList();
     virtual ~ValidatorList();
 
     virtual qint64 hasValid(Die* b, bool recursive, bool unhighlight= false) const;
 
-    void setOperationList(const QVector<LogicOperation>& m);
+    void setOperationList(const QVector<Dice::LogicOperation>& m);
     void setValidators(const QList<Validator*>& valids);
 
     QString toString();
@@ -100,7 +92,7 @@ public:
     void validResult(Result* result, bool recursive, bool unlight, std::function<void(Die*, qint64)> functor) const;
 
 private:
-    QVector<LogicOperation> m_operators;
+    QVector<Dice::LogicOperation> m_operators;
     QList<Validator*> m_validatorList;
 };
 

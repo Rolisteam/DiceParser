@@ -23,11 +23,13 @@
 #define DICEALIAS_H
 
 #include <QString>
+
+#include <diceparser/diceparser_global.h>
 /**
  * @brief The DiceAlias class is dedicated to store aliases, alias is mainly two QString. The Alias and its replacement.
  * The replacement can be a simple QString or a RegExp.
  */
-class DiceAlias
+class DICEPARSER_EXPORT DiceAlias
 {
 public:
     enum RESOLUTION_TYPE

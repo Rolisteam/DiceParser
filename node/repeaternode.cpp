@@ -21,11 +21,12 @@
  ***************************************************************************/
 #include "node/repeaternode.h"
 
-#include "diceparserhelper.h"
 #include "executionnode.h"
-#include "parsingtoolbox.h"
+#include "result/scalarresult.h"
 #include "result/stringresult.h"
 #include <QDebug>
+#include <diceparser/diceparserhelper.h>
+#include <diceparser/parsingtoolbox.h>
 
 using InstructionSet= std::vector<ExecutionNode*>;
 
@@ -82,16 +83,18 @@ void RepeaterNode::run(ExecutionNode* previousNode)
     for(int i= 0; i < timeCount; ++i)
     {
         m_startingNodes.push_back(cmd);
-        std::for_each(cmd.begin(), cmd.end(), [this, &resultVec](ExecutionNode* node) {
-            node->run(this);
-            auto end= ParsingToolBox::getLeafNode(node);
-            auto leafResult= end->getResult();
+        std::for_each(cmd.begin(), cmd.end(),
+                      [this, &resultVec](ExecutionNode* node)
+                      {
+                          node->run(this);
+                          auto end= ParsingToolBox::getLeafNode(node);
+                          auto leafResult= end->getResult();
 
-            if(nullptr == leafResult)
-                return;
+                          if(nullptr == leafResult)
+                              return;
 
-            resultVec.push_back(leafResult);
-        });
+                          resultVec.push_back(leafResult);
+                      });
         cmd= makeCopy(m_cmd);
     }
     if(m_sumAll)
@@ -121,7 +124,7 @@ void RepeaterNode::run(ExecutionNode* previousNode)
 
         m_result= string;
 
-        //qDebug().noquote() << listOfStrResult.join('\n');
+        // qDebug().noquote() << listOfStrResult.join('\n');
     }
 
     if(nullptr != m_nextNode)

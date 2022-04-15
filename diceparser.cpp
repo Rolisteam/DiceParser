@@ -19,7 +19,8 @@
  * Free Software Foundation, Inc.,                                          *
  * 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.                 *
  ***************************************************************************/
-#include "diceparser.h"
+#include <diceparser/diceparser.h>
+
 #include <QDebug>
 #include <QFile>
 #include <QJsonArray>
@@ -31,11 +32,11 @@
 #include <numeric>
 
 #include "booleancondition.h"
-#include "dicealias.h"
-#include "parsingtoolbox.h"
 #include "range.h"
 #include "result/stringresult.h"
 #include "validator.h"
+#include <diceparser/dicealias.h>
+#include <diceparser/parsingtoolbox.h>
 
 #define DEFAULT_FACES_NUMBER 10
 
@@ -176,17 +177,21 @@ QString DiceParser::humanReadableError() const
 {
     auto parsingError= m_parsingToolbox->getErrorList();
     QString str;
-    std::for_each(parsingError.begin(), parsingError.end(), [&str](const QString& text) {
-        str.append(text);
-        str.append(QStringLiteral("\n"));
-    });
+    std::for_each(parsingError.begin(), parsingError.end(),
+                  [&str](const QString& text)
+                  {
+                      str.append(text);
+                      str.append(QStringLiteral("\n"));
+                  });
 
     /// list
     auto errMap= errorMap();
-    std::for_each(errMap.begin(), errMap.end(), [&str](const QString& text) {
-        str.append(text);
-        str.append(QStringLiteral("\n"));
-    });
+    std::for_each(errMap.begin(), errMap.end(),
+                  [&str](const QString& text)
+                  {
+                      str.append(text);
+                      str.append(QStringLiteral("\n"));
+                  });
     return str;
 }
 
