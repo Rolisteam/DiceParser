@@ -20,11 +20,10 @@
  *************************************************************************/
 #include <QList>
 
+#include "diceparser/parsingtoolbox.h"
 #include "keepdiceexecnode.h"
-#include "parsingtoolbox.h"
 
-KeepDiceExecNode::KeepDiceExecNode()
- : m_diceResult(new DiceResult())
+KeepDiceExecNode::KeepDiceExecNode() : m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
 }
@@ -37,18 +36,18 @@ void KeepDiceExecNode::run(ExecutionNode* previous)
         return;
     }
     m_numberOfDiceNode->run(previous);
-    auto lastnode = ParsingToolBox::getLeafNode(m_numberOfDiceNode);
+    auto lastnode= ParsingToolBox::getLeafNode(m_numberOfDiceNode);
     if(nullptr == lastnode)
         return;
-    auto result = lastnode->getResult();
+    auto result= lastnode->getResult();
     if(nullptr == result)
         return;
     if(!result->hasResultOfType(Dice::RESULT_TYPE::SCALAR))
         return;
 
-    auto numberOfDice = result->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
+    auto numberOfDice= result->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
 
-    DiceResult* previousDiceResult = dynamic_cast<DiceResult*>(previous->getResult());
+    DiceResult* previousDiceResult= dynamic_cast<DiceResult*>(previous->getResult());
     m_result->setPrevious(previousDiceResult);
     if(nullptr != previousDiceResult)
     {
@@ -119,7 +118,7 @@ qint64 KeepDiceExecNode::getPriority() const
 
 ExecutionNode* KeepDiceExecNode::getCopy() const
 {
-    KeepDiceExecNode* node = new KeepDiceExecNode();
+    KeepDiceExecNode* node= new KeepDiceExecNode();
     if(nullptr != m_numberOfDiceNode)
     {
         node->setDiceKeepNumber(m_numberOfDiceNode->getCopy());

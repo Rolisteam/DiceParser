@@ -162,8 +162,8 @@ bool DiceAlias::resolved(QString& str)
     }
     else if(m_type == REGEXP)
     {
-        QRegularExpression exp(m_command);
-        str.replace(exp, m_pattern);
+        QRegularExpression exp(m_pattern);
+        str.replace(exp, m_command);
         return true;
     }
     return false;

@@ -10,14 +10,14 @@ SET(CMAKE_AUTOUIC ON)
 set(EXECUTABLE_OUTPUT_PATH bin/)
 
 # Find the QtWidgets library
-set(QT_REQUIRED_VERSION "5.12.0")
+set(QT_REQUIRED_VERSION "6.3.0")
 
 set(irc_SOURCES botircdiceparser.cpp main.cpp)
 set(irc_HEADERS botircdiceparser.h)
 
 
 
-find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Widgets Gui Svg LinguistTools Network)
+find_package(Qt6 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Widgets Gui Svg LinguistTools Network)
 
 
 set(MODE "cli")

@@ -13,15 +13,15 @@ set(CMAKE_AUTOMOC ON)
 set(EXECUTABLE_OUTPUT_PATH bin/)
 
 # Find the QtWidgets library
-set(QT_REQUIRED_VERSION "5.12.0")
+set(QT_REQUIRED_VERSION "6.3.0")
 
 
 
 IF(NO_PAINTER_OPERATOR)
-    find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Svg LinguistTools)
+    find_package(Qt6 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Svg LinguistTools)
 else()
     MESSAGE(STATUS "Compilation of operator Paint")
-    find_package(Qt5 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Gui Svg LinguistTools)
+    find_package(Qt6 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Gui Svg LinguistTools)
     add_definitions(-DPAINTER_OP)
 endif()
 
@@ -33,8 +33,8 @@ ADD_DEFINITIONS(
 )
 
 set(dice_RESOURCES diceparser.qrc)
-find_package(Qt5LinguistTools)
-find_package(Qt5Svg)
+find_package(Qt6LinguistTools)
+find_package(Qt6Svg)
 
 IF(UPDATE_TRANSLATIONS)
 	MESSAGE( update Translation )

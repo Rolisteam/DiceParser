@@ -22,12 +22,13 @@
 #include <QtCore/QString>
 #include <QtTest/QtTest>
 
-#include "dicealias.h"
-#include "diceparser.h"
+#include "diceparser/dicealias.h"
+#include "diceparser/diceparser.h"
 #include "die.h"
 
 // node
 #include "booleancondition.h"
+#include "diceparser/parsingtoolbox.h"
 #include "node/bind.h"
 #include "node/countexecutenode.h"
 #include "node/explodedicenode.h"
@@ -46,7 +47,6 @@
 #include "node/uniquenode.h"
 #include "node/valueslistnode.h"
 #include "operationcondition.h"
-#include "parsingtoolbox.h"
 #include "result/stringresult.h"
 #include "testnode.h"
 #include "validatorlist.h"
@@ -85,8 +85,8 @@ void makeResultExplode(DiceResult& result, const QVector<int>& values)
     result.insertResult(die);
 }
 
-ValidatorList* makeValidator(QVector<int> number, BooleanCondition::LogicOperator op,
-                             QVector<ValidatorList::LogicOperation> vector= QVector<ValidatorList::LogicOperation>())
+ValidatorList* makeValidator(QVector<int> number, Dice::CompareOperator op,
+                             QVector<Dice::LogicOperation> vector= QVector<Dice::LogicOperation>())
 {
     ValidatorList* list= new ValidatorList();
     QList<Validator*> validList;
@@ -717,7 +717,7 @@ void TestDice::countTest()
     TestNode node;
     CountExecuteNode countN;
 
-    QVector<ValidatorList::LogicOperation> vector;
+    QVector<Dice::LogicOperation> vector;
 
     bool first= true;
     for(const auto& i : condition)
@@ -729,10 +729,10 @@ void TestDice::countTest()
             continue;
         }
 
-        vector.push_back(ValidatorList::OR);
+        vector.push_back(Dice::LogicOperation::OR);
     }
 
-    auto validator= makeValidator(condition, static_cast<BooleanCondition::LogicOperator>(boolOp), vector);
+    auto validator= makeValidator(condition, static_cast<Dice::CompareOperator>(boolOp), vector);
 
     countN.setValidatorList(validator);
     DiceResult result;
@@ -757,10 +757,10 @@ void TestDice::countTest_data()
     QTest::addColumn<int>("boolOp");
 
     // clang-format off
-    QTest::addRow("cmd1") << QVector<int>({10, 9, 2}) << QVector<int>({3}) << 2 << QVector<int>() << static_cast<int>(BooleanCondition::GreaterThan);
-    QTest::addRow("cmd2") << QVector<int>({1, 2, 3})  << QVector<int>({3}) << 0 << QVector<int>() << static_cast<int>(BooleanCondition::GreaterThan);
-    QTest::addRow("cmd3") << QVector<int>({10, 7, 4}) << QVector<int>({7}) << 3 << QVector<int>({10, 10, 2}) << static_cast<int>(BooleanCondition::GreaterThan);
-    QTest::addRow("cmd4") << QVector<int>({1, 1, 6}) << QVector<int>({1,6}) << 3 << QVector<int>() << static_cast<int>(BooleanCondition::Equal);
+    QTest::addRow("cmd1") << QVector<int>({10, 9, 2}) << QVector<int>({3}) << 2 << QVector<int>() << static_cast<int>(Dice::CompareOperator::GreaterThan);
+    QTest::addRow("cmd2") << QVector<int>({1, 2, 3})  << QVector<int>({3}) << 0 << QVector<int>() << static_cast<int>(Dice::CompareOperator::GreaterThan);
+    QTest::addRow("cmd3") << QVector<int>({10, 7, 4}) << QVector<int>({7}) << 3 << QVector<int>({10, 10, 2}) << static_cast<int>(Dice::CompareOperator::GreaterThan);
+    QTest::addRow("cmd4") << QVector<int>({1, 1, 6}) << QVector<int>({1,6}) << 3 << QVector<int>() << static_cast<int>(Dice::CompareOperator::Equal);
     // clang-format on
 }
 
@@ -777,7 +777,7 @@ void TestDice::rerollTest()
     makeResult(result, values);
     node.setResult(&result);
 
-    auto validator= makeValidator(QVector<int>() << condition, BooleanCondition::GreaterThan);
+    auto validator= makeValidator(QVector<int>() << condition, Dice::CompareOperator::GreaterThan);
     reroll.setValidatorList(validator);
     node.setNextNode(&reroll);
 
@@ -821,7 +821,7 @@ void TestDice::explodeTest()
     makeResult(result, values);
     node.setResult(&result);
 
-    auto validator= makeValidator(QVector<int>() << condition, BooleanCondition::Equal);
+    auto validator= makeValidator(QVector<int>() << condition, Dice::CompareOperator::Equal);
     explode.setValidatorList(validator);
     node.setNextNode(&explode);
 
@@ -865,7 +865,7 @@ void TestDice::rerollUntilTest()
     makeResult(result, values, QVector<int>(), 0);
     node.setResult(&result);
 
-    auto validator= makeValidator(QVector<int>() << condition, BooleanCondition::Equal);
+    auto validator= makeValidator(QVector<int>() << condition, Dice::CompareOperator::Equal);
     reroll.setValidatorList(validator);
     node.setNextNode(&reroll);
 
@@ -907,7 +907,7 @@ void TestDice::rerollAddTest()
     makeResult(result, values);
     node.setResult(&result);
 
-    auto validator= makeValidator(QVector<int>() << condition, BooleanCondition::Equal);
+    auto validator= makeValidator(QVector<int>() << condition, Dice::CompareOperator::Equal);
     reroll.setValidatorList(validator);
     node.setNextNode(&reroll);
 
@@ -965,7 +965,7 @@ void TestDice::ifTest()
     ifNode.setInstructionTrue(&trueNode);
     ifNode.setInstructionFalse(&falseNode);
 
-    auto validator= makeValidator(QVector<int>() << valCondition, BooleanCondition::Equal);
+    auto validator= makeValidator(QVector<int>() << valCondition, Dice::CompareOperator::Equal);
     ifNode.setValidatorList(validator);
     node.setNextNode(&ifNode);
 
@@ -1122,7 +1122,7 @@ void TestDice::occurenceTest()
     makeResult(result, values);
     node.setResult(&result);
 
-    auto validator= makeValidator(QVector<int>() << condition, BooleanCondition::GreaterThan);
+    auto validator= makeValidator(QVector<int>() << condition, Dice::CompareOperator::GreaterThan);
     count.setValidatorList(validator);
     node.setNextNode(&count);
 
@@ -1145,7 +1145,7 @@ void TestDice::occurenceTest_data()
 void TestDice::ifCommandTest()
 {
     QFETCH(QString, cmd);
-    QFETCH(BooleanCondition::LogicOperator, compare);
+    QFETCH(Dice::CompareOperator, compare);
     QFETCH(QList<int>, level);
     QFETCH(QStringList, startExperted);
 
@@ -1159,15 +1159,15 @@ void TestDice::ifCommandTest()
 
     auto result= results.first();
     auto it= std::find_if(level.begin(), level.end(), [compare, result](int level) {
-        if(compare == BooleanCondition::GreaterOrEqual)
+        if(compare == Dice::CompareOperator::GreaterOrEqual)
             return result >= level;
-        else if(compare == BooleanCondition::GreaterThan)
+        else if(compare == Dice::CompareOperator::GreaterThan)
             return result > level;
-        else if(compare == BooleanCondition::LesserThan)
+        else if(compare == Dice::CompareOperator::LesserThan)
             return result < level;
-        else if(compare == BooleanCondition::LesserOrEqual)
+        else if(compare == Dice::CompareOperator::LesserOrEqual)
             return result <= level;
-        else if(compare == BooleanCondition::Equal)
+        else if(compare == Dice::CompareOperator::Equal)
             return qFuzzyCompare(result, level);
         else // if(compare == BooleanCondition::Different)
             return !qFuzzyCompare(result, level);
@@ -1184,19 +1184,19 @@ void TestDice::ifCommandTest()
 void TestDice::ifCommandTest_data()
 {
     QTest::addColumn<QString>("cmd");
-    QTest::addColumn<BooleanCondition::LogicOperator>("compare");
+    QTest::addColumn<Dice::CompareOperator>("compare");
     QTest::addColumn<QList<int>>("level");
     QTest::addColumn<QStringList>("startExperted");
 
     QTest::addRow("cmd1") << "2d10i:[>=15]{\"Complete Success: %1 "
                              "[%2]\"}{i:[>=10]{\"Success with Complications: %1 "
                              "[%2]\"}{\"Failure: %1 [%2]\"}}"
-                          << BooleanCondition::GreaterOrEqual << QList<int>({15, 10, 1})
+                          << Dice::CompareOperator::GreaterOrEqual << QList<int>({15, 10, 1})
                           << QStringList({"Complete Success:", "Success with Complications:", "Failure:"});
     QTest::addRow("cmd2") << "2d10;$1i:[>=15]{\"Complete Success: %1 [%2]\"}{$1i:[>=10]{\"Success "
                              "with Complications: %1 "
                              "[%2]\"}{\"Failure: %1 [%2]\"}}"
-                          << BooleanCondition::GreaterOrEqual << QList<int>({15, 10, 1})
+                          << Dice::CompareOperator::GreaterOrEqual << QList<int>({15, 10, 1})
                           << QStringList({"Complete Success:", "Success with Complications:", "Failure:"});
 }
 
@@ -1208,7 +1208,7 @@ void TestDice::operatoionConditionValidatorTest()
     validator.setValueNode(&number);
 
     BooleanCondition subValidator;
-    subValidator.setOperator(BooleanCondition::Equal);
+    subValidator.setOperator(Dice::CompareOperator::Equal);
     NumberNode subnumber;
     subnumber.setNumber(0);
     subValidator.setValueNode(&subnumber);
@@ -1227,9 +1227,8 @@ void TestDice::operatoionConditionValidatorTest()
 
 void TestDice::switchCaseTest()
 {
-    using BC= BooleanCondition;
     QFETCH(int, value);
-    QFETCH(QList<BC::LogicOperator>, operatorList);
+    QFETCH(QList<Dice::CompareOperator>, operatorList);
     QFETCH(QList<int>, threshold);
     QFETCH(QStringList, values);
     QFETCH(QString, expected);
@@ -1269,41 +1268,38 @@ void TestDice::switchCaseTest()
 
 void TestDice::switchCaseTest_data()
 {
-    using BC= BooleanCondition;
+    using BC= Dice::CompareOperator;
     QTest::addColumn<int>("value");
-    QTest::addColumn<QList<BC::LogicOperator>>("operatorList");
+    QTest::addColumn<QList<Dice::CompareOperator>>("operatorList");
     QTest::addColumn<QList<int>>("threshold");
     QTest::addColumn<QStringList>("values");
     QTest::addColumn<QString>("expected");
     QTest::addColumn<bool>("stopatfirt");
 
-    QTest::addRow("cmd1") << 75 << QList<BC::LogicOperator>{BC::Equal, BC::Equal} << QList<int>{75, 1}
-                          << QStringList{"a", "b"} << QStringLiteral("a") << false;
+    QTest::addRow("cmd1") << 75 << QList<BC>{BC::Equal, BC::Equal} << QList<int>{75, 1} << QStringList{"a", "b"}
+                          << QStringLiteral("a") << false;
 
-    QTest::addRow("cmd2") << 1 << QList<BC::LogicOperator>{BC::Equal, BC::Equal} << QList<int>{75, 1}
-                          << QStringList{"a", "b"} << QStringLiteral("b") << true;
+    QTest::addRow("cmd2") << 1 << QList<BC>{BC::Equal, BC::Equal} << QList<int>{75, 1} << QStringList{"a", "b"}
+                          << QStringLiteral("b") << true;
 
     QTest::addRow("cmd3") << 7
-                          << QList<BC::LogicOperator>{BC::GreaterThan, BC::GreaterThan, BC::GreaterThan,
-                                                      BC::GreaterThan, BC::GreaterThan}
+                          << QList<BC>{BC::GreaterThan, BC::GreaterThan, BC::GreaterThan, BC::GreaterThan,
+                                       BC::GreaterThan}
                           << QList<int>{8, 29, 99, 54, 1} << QStringList{"a", "b", "c", "d", "e"} << QStringLiteral("e")
                           << false;
 
-    QTest::addRow("cmd4") << 75 << QList<BC::LogicOperator>{BC::LesserThan, BC::LesserThan, BC::LesserThan}
-                          << QList<int>{8, 7} << QStringList{"a", "b", "c"} << QStringLiteral("c") << false;
+    QTest::addRow("cmd4") << 75 << QList<BC>{BC::LesserThan, BC::LesserThan, BC::LesserThan} << QList<int>{8, 7}
+                          << QStringList{"a", "b", "c"} << QStringLiteral("c") << false;
 
-    QTest::addRow("cmd5") << 2 << QList<BC::LogicOperator>{BC::Different, BC::Different} << QList<int>{1, 2}
-                          << QStringList{"a", "b"} << QStringLiteral("a") << false;
+    QTest::addRow("cmd5") << 2 << QList<BC>{BC::Different, BC::Different} << QList<int>{1, 2} << QStringList{"a", "b"}
+                          << QStringLiteral("a") << false;
 
     QTest::addRow("cmd6") << 3
-                          << QList<BC::LogicOperator>{BC::GreaterOrEqual, BC::GreaterOrEqual, BC::GreaterOrEqual,
-                                                      BC::GreaterOrEqual}
+                          << QList<BC>{BC::GreaterOrEqual, BC::GreaterOrEqual, BC::GreaterOrEqual, BC::GreaterOrEqual}
                           << QList<int>{1, 2, 3, 4} << QStringList{"a", "b", "c", "d"} << QStringLiteral("a,b,c")
                           << false;
 
-    QTest::addRow("cmd7") << 3
-                          << QList<BC::LogicOperator>{BC::LesserOrEqual, BC::LesserOrEqual, BC::LesserOrEqual,
-                                                      BC::LesserOrEqual}
+    QTest::addRow("cmd7") << 3 << QList<BC>{BC::LesserOrEqual, BC::LesserOrEqual, BC::LesserOrEqual, BC::LesserOrEqual}
                           << QList<int>{1, 2, 3, 4} << QStringList{"a", "b", "c", "d"} << QStringLiteral("c") << true;
 }
 

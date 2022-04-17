@@ -13,8 +13,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 # Find the QtWidgets library
-find_package(Qt5 COMPONENTS Core Network)
-#find_package(Qt5QuickCompiler)
+find_package(Qt6 COMPONENTS Core Network)
+#find_package(Qt6QuickCompiler)
 
 set(EXECUTABLE_OUTPUT_PATH bin/)
 
@@ -26,7 +26,7 @@ ADD_DEFINITIONS(
 )
 
 #set(diceserver_RESOURCES diceparser.qrc)
-FIND_PACKAGE(Qt5LinguistTools)
+FIND_PACKAGE(Qt6LinguistTools)
 
 
 
