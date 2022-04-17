@@ -114,14 +114,14 @@ endif()
 
 include(GNUInstallDirs)
 
+
+configure_file(diceparser.pc.in diceparser.pc @ONLY)
+
 install(TARGETS diceparser_shared
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-
-configure_file(diceparser.pc.in diceparser.pc @ONLY)
-
-install(FILES ${CMAKE_BINARY_DIR}/diceparser.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/diceparser.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
 if(Qt${QT_VERSION_MAJOR}Qml_FOUND)
     set(dice_header_qobject include/diceparser_qobject/diceparser_qobject_global.h include/diceparser_qobject/qmltypesregister.h include/diceparser_qobject/diceroller.h)
@@ -140,4 +140,12 @@ if(Qt${QT_VERSION_MAJOR}Qml_FOUND)
         PUBLIC
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+
+    install(TARGETS   diceparser_qobject
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 endif()
+
+
+
