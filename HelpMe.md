@@ -54,7 +54,7 @@
 ## DiceParser: What is it ?
 
 DiceParser is a software component dedicated to roll dice through simple commands. This software component is available on different platform.  
-Such as: Irc bot, discord bot, included in Rolisteam, web server, on twitter etc.
+Such as: discord bot, included in Rolisteam, on twitter etc.
 
 ## About examples in this documentation
 
@@ -1275,8 +1275,6 @@ The k operator to keeps as many dice as you roll is pretty useless because it is
 | Rolisteam |```!```| [Documentation](http://wiki.rolisteam.org/index.php/En:Dice) |
 | Discord  |```!```| To install DiceParser on your server [http://www.rolisteam.org/discord.html](http://www.rolisteam.org/discord.html)  |
 | Twitter  | ```#roll```  | Twit any message starting with #roll following by dice command (e.g: ```#roll 2d6```) |
-| IrcBot   |```!```|  |
-| webserver   | nothing |  No public published yet. Has dedicated text field |
 | dice   | nothing | dice is a command line application to roll dice: ```dice "2d6"``` |
 
 
@@ -1287,8 +1285,6 @@ The k operator to keeps as many dice as you roll is pretty useless because it is
 | Rolisteam | no support for comments yet. Rolisteam is a big software. You may not have all the most recent feature from diceparser. |
 | Discord  | If the command takes too much time. It is canceled |
 | Twitter  | Result should be short. No aliases |
-| IrcBot   | No aliases |
-| webserver| No aliases |
 | dice     |  |
 
 # Discord Bot

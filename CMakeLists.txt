@@ -11,7 +11,6 @@ enable_testing(true)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} result node)
 
 option(BUILD_CLI OFF)
-option(BUILD_IRC OFF)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -102,10 +101,6 @@ set_target_properties(diceparser_shared PROPERTIES SOVERSION 1)
 
 IF(BUILD_CLI)
     add_subdirectory(cli)
-ENDIF()
-
-IF(BUILD_IRC)
-    add_subdirectory(irc)
 ENDIF()
 
 if(TESTS)
