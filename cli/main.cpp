@@ -30,8 +30,8 @@
 #include <QRegularExpression>
 #include <QSettings>
 #include <QStringList>
-#include <QTextCodec>
 #include <QTextStream>
+#include <set>
 
 #ifdef PAINTER_OP
 #include <QGuiApplication>
@@ -39,11 +39,11 @@
 #include <QCoreApplication>
 #endif
 
-#include "dicealias.h"
-#include "diceparser.h"
+#include "diceparser/dicealias.h"
+#include "diceparser/diceparser.h"
+#include "diceparser/highlightdice.h"
+#include "diceparser/parsingtoolbox.h"
 #include "displaytoolbox.h"
-#include "highlightdice.h"
-#include "parsingtoolbox.h"
 
 /**
  * @page Dice
@@ -308,10 +308,9 @@ int startDiceParsing(QStringList& cmds, bool withColor, QString baseColor, EXPOR
     for(auto alias : array)
     {
         auto objAlias= alias.toObject();
-        auto dice
-            = new DiceAlias(objAlias["pattern"].toString(), objAlias["cmd"].toString(), !objAlias["regexp"].toBool());
-        dice->setComment(objAlias["comment"].toString());
-        parser.insertAlias(dice, i++);
+        parser.insertAlias(new DiceAlias(objAlias["pattern"].toString(), objAlias["cmd"].toString(),
+                                         objAlias["comment"].toString(), !objAlias["regexp"].toBool()),
+                           i++);
     }
 
     int rt= 0;
@@ -466,11 +465,9 @@ int main(int argc, char* argv[])
     QStringList commands;
     QString cmd;
     QString dotFileStr;
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     bool colorb= true;
     QSettings settings("rolisteam", "diceparser");
     QString formatColor;
-    out.setCodec("UTF-8");
     EXPORTFORMAT format= TERMINAL;
 
     QCommandLineParser optionParser;

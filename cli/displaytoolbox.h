@@ -4,7 +4,7 @@
 #include <QJsonArray>
 #include <QString>
 
-#include "diceparser.h"
+#include "diceparser/diceparser.h"
 
 class DisplayToolBox
 {
