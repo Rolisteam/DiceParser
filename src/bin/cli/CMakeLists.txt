@@ -13,9 +13,7 @@ set(CMAKE_AUTOMOC ON)
 set(EXECUTABLE_OUTPUT_PATH bin/)
 
 # Find the QtWidgets library
-set(QT_REQUIRED_VERSION "6.3.0")
-
-
+set(QT_REQUIRED_VERSION "6.2.0")
 
 IF(NO_PAINTER_OPERATOR)
     find_package(Qt6 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Svg LinguistTools)
@@ -25,12 +23,7 @@ else()
     add_definitions(-DPAINTER_OP)
 endif()
 
-
 set(MODE "cli")
-
-ADD_DEFINITIONS(
-    -std=c++11
-)
 
 set(dice_RESOURCES diceparser.qrc)
 find_package(Qt6LinguistTools)
@@ -46,10 +39,10 @@ ELSE()
     FILE(GLOB dice_TS "${CMAKE_CURRENT_SOURCE_DIR}/i18n/*.ts")
 ENDIF(UPDATE_TRANSLATIONS)
 
-if(Qt5Core_FOUND)
+if(Qt6Core_FOUND)
     MESSAGE(status  "find" ${dice_TS} ${translate_SRCS} )
-    QT5_ADD_RESOURCES(dice_RESOURCES_RCC ${dice_RESOURCES})
-    set(QT_PLUGINS_DIR "${Qt5Core_DIR}/../../../plugins")
+    QT_ADD_RESOURCES(dice_RESOURCES_RCC ${dice_RESOURCES})
+    set(QT_PLUGINS_DIR "${Qt6Core_DIR}/../../../plugins")
     get_target_property(QT_LIBRARY_DIR Qt6::Core LOCATION)
     get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
 endif()
@@ -59,11 +52,8 @@ SET( cli_sources
     displaytoolbox.cpp
 )
 
-set(documentation_files ../HelpMe.md ../README.md)
-
-add_executable( dice ${cli_sources} ${dice_QM} ${documentation_files})
+add_executable( dice ${cli_sources} ${dice_QM})
 set(diceparser_shared_INCLUDE_DIRS "../diceparser")
-target_include_directories(dice PRIVATE ../include ../ ../result ../node)
 link_directories(BEFORE ${CMAKE_BINARY_DIR})
 IF(NO_PAINTER_OPERATOR)
     target_link_libraries(dice PUBLIC Qt6::Core Qt6::Svg PRIVATE diceparser_shared)
