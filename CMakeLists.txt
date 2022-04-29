@@ -4,7 +4,7 @@ project(diceparser VERSION 1.9.0 DESCRIPTION "Parser of dice command")
 
 include(CTest)
 
-option(BUILD_CLI ON)
+option(NO_BUILD_CLI OFF)
 option(NO_PAINTER_OPERATOR OFF)
 
 IF(BUILD_TESTING)
