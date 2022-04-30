@@ -25,3 +25,7 @@ build*
 *hangs*
 *queue*
 *fuzzer0*
+po/*
+*.po
+*.pot
+enpo/*

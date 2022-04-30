@@ -127,12 +127,12 @@ void displayMarkdown(QString json)
     QString str("```Markdown\n");
     if(!error.isEmpty())
     {
-        str.append(QStringLiteral("Error: %1\n").arg(error));
+        str.append(QObject::tr("Error: %1\n").arg(error));
     }
     else
     {
         if(!warning.isEmpty())
-            str.append(QStringLiteral("Warning: %1\n").arg(warning));
+            str.append(QObject::tr("Warning: %1\n").arg(warning));
 
         if(!comment.isEmpty())
         {
@@ -145,7 +145,7 @@ void displayMarkdown(QString json)
         }
         else
         {
-            str.append(QStringLiteral("# %1\nDetails:[%3 (%2)]\n").arg(scalarText).arg(diceList).arg(cmd));
+            str.append(QObject::tr("# %1\nDetails:[%3 (%2)]\n").arg(scalarText).arg(diceList).arg(cmd));
         }
     }
     str.append(QStringLiteral("```"));
@@ -277,10 +277,10 @@ void displayCommandResult(QString json, bool withColor, QString color)
     QString str;
 
     if(withColor)
-        str= QString("Result: \e[0;%4;1m%1\e[0m - details:[%3 (%2)]")
+        str= QObject::tr("Result: \e[0;%4;1m%1\e[0m - details:[%3 (%2)]")
                  .arg(scalarText, diceList, cmd, DisplayToolBox::colorToIntCode(color));
     else
-        str= QString("Result: %1 - details:[%3 (%2)]").arg(scalarText, diceList, cmd);
+        str= QObject::tr("Result: %1 - details:[%3 (%2)]").arg(scalarText, diceList, cmd);
 
     if(!resultStr.isEmpty() && resultStr != scalarText)
     {

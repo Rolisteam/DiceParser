@@ -4,11 +4,13 @@
 #include "result/result.h"
 #include <diceparser/diceparserhelper.h>
 
+#include <QCoreApplication>
 /**
  * @brief The ExecutionNode class
  */
 class ExecutionNode
 {
+    Q_DECLARE_TR_FUNCTIONS(ExecutionNode)
 public:
     /**
      * @brief ExecutionNode

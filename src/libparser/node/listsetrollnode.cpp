@@ -68,7 +68,7 @@ void ListSetRollNode::run(ExecutionNode* previous)
             if(diceCount > static_cast<quint64>(m_values.size()) && m_unique)
             {
                 m_errors.insert(Dice::ERROR_CODE::TOO_MANY_DICE,
-                                QObject::tr("More unique values asked than possible values (L operator)"));
+                                tr("More unique values asked than possible values (L operator)"));
             }
             else
             {
