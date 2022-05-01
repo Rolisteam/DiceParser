@@ -76,7 +76,7 @@ bool DiceParser::parseLine(QString str, bool allowAlias)
     if(!value)
     {
         m_parsingToolbox->addError(Dice::ERROR_CODE::NOTHING_UNDERSTOOD,
-                                   QObject::tr("Nothing was understood. To roll dice: !1d6 - full documation: "
+                                   QObject::tr("Nothing was understood. To roll dice: !1d6 - full documentation: "
                                                "<a "
                                                "href=\"https://github.com/Rolisteam/DiceParser/blob/master/"
                                                "HelpMe.md\">https://github.com/"

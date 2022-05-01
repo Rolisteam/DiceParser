@@ -170,7 +170,7 @@ the number of instruction is not limited.
 * The first instruction rolls 8 (10 sided) dice
 * The second instruction counts how many dice are higher than 6.
 * The third instruction counts how many dice are equal to 1.
-* The fourth instruction subtracts the result of the third instruction to the result of seconde one.
+* The fourth instruction subtracts the result of the third instruction from the result of second one.
 
 
 ## List of operators
@@ -199,7 +199,7 @@ the number of instruction is not limited.
 kX
 ```
 
-The option sorts the resulting die list and select the X higher dice.
+The option sorts the resulting die list and selects the X higher dice.
 
 ### Explode and Keep
 
@@ -207,7 +207,7 @@ The option sorts the resulting die list and select the X higher dice.
 KX
 ```
 
-Dice explode if their value are at the die **maximum**, the option sorts the resulting die list, the it selects the X higher dice.
+Dices explode if their value are at the die **maximum**, the option sorts the resulting die list, then it selects the X higher dice.
 
 #### Examples
 
@@ -215,7 +215,7 @@ Dice explode if their value are at the die **maximum**, the option sorts the res
 6d10K4
 ```
 
-Roll 6 10-sided dices, each 10 explodes. So the value of exploded dices are greater than 10.
+Roll 6 10-sided dices, each 10 explodes. So the value of exploded dices is greater than 10.
 Result: 40 details: 23 [10,10,3],9,5,3,1,1
 
 Another way to write this command is:
@@ -248,7 +248,7 @@ In order to compute the number you want to keep, the k operator manages variable
 klX
 ```
 
-The option sorts the resulting die list, the it selects the X lowest dice.
+The option sorts the resulting die list, then it selects the X lowest dice.
 
 
 ### Sort
@@ -319,27 +319,27 @@ While the dice value is greater than 8, the dice is rolled again and its result 
 
 Reroll the die if its value fits the Validator and add the new value to the previous one. It does that only once.
 
-### Occurence
+### Occurrence
 
 ```
 10d10o
 ```
 
-Count and sort occurences of each value.
+Count and sort occurrences of each value.
 Result: `3x1,1x2,3x4,2x9,1x10 - [1,1,1,2,4,4,4,9,9,10]`
 
 ```
 10d10o2,7
 ```
 
-Count and sort occurence when they occur at least 2 times, the value is 7 or more.
+Count and sort occurrence when they occur at least 2 times, the value is 7 or more.
 Result: `2x8 - [1,2,3,5,6,7,8,8,9,10]`
 
 ```
 10d10o2[<6]
 ```
 
-Count and sort occurence when they occur at least 2 times, the value should respect the validator (here less than 6).
+Count and sort occurrence when they occur at least 2 times, the value should respect the validator (here less than 6).
 Result: `2x3,2x5 - [3,3,5,5,6,6,6,7,7,8]`
 
 
@@ -349,7 +349,7 @@ Result: `2x3,2x5 - [3,3,5,5,6,6,6,7,7,8]`
 10d10o[<6]
 ```
 
-This command is triggering a warning. As occurence operator can have 0 or 2 parameters. But only one validator is unsupported yet.
+This command is triggering a warning. As occurrence operator can have 0 or 2 parameters. But only one validator is unsupported yet.
 
 
 
@@ -381,14 +381,14 @@ Paint the two first dice in the list in blue.
 https://gist.github.com/obiwankennedy/62101383d411e55d205e44df78aa5299
 
 
-The amount of color is depending of client application of DiceParser.
+The amount of color is depending on the client application of DiceParser.
 - With Rolisteam, you may set any Qt color's name or set the Hexcode of your color: #ff28AC.
 - The cli application supports few colors: black, white, blue, red, black, green, yellow.
 
 
 ### Filter
 
-Filter operator allows you to ignore some dice result given a validator.
+Filter operator allows you to ignore some dice results given a validator.
 
 ```
 4d6f[!=6]
@@ -457,7 +457,7 @@ Build your own value list and apply any dice operator.
 [10,25,43,8]k1
 ```
 
-Get the higher score from several instruction:
+Get a higher score from several instructions:
 
 ```
 1d10;2d6+9;1d20;[$1,$2,$3,$4]k1
@@ -483,7 +483,7 @@ The if operator has 2 mandatory parameters:
 * The condition (see validator)
 * the instruction to do when it is true.
 
-There is also 2 optional parameters
+There are also 2 optional parameters
 * the compare method
 * the instruction to do when it is false.
 
@@ -515,7 +515,7 @@ If the value of the die is less than 4, the die value is 3. (So 1, 2 , 3 become 
 4d6e6i[=4]{-4}
 ```
 
-If die has 4 as value, it remove it. \[Kuro System\]
+If die has 4 as value, it removes it. \[Kuro System\]
 
 ```
 4d6i.[=6]{+1d6}
@@ -555,8 +555,8 @@ Group dices, then count the number of group (7th sea system).
 #### Complex output
 
 Group operator can take a parameter to active the complex output.
-This output will show the each group and any left aside values if any.
-To active this output, it is required to add a `s` just after the `g`. See example below:
+This output will show each group and any left aside values if any.
+To active this output, it is required to add a `s` just after the `g`. See the example below:
 
 #### Example
 
@@ -607,8 +607,8 @@ This mode is enabled when a `^` is following the `S`.
 ```
 
 Display "Sword attack" and the result of the two dice.
-DiceParser ignore everything after the \#. The whole part is treated as one comment.
-So DiceParser can answer question:
+DiceParser ignores everything after the \#. The whole part is treated as one comment.
+So DiceParser can answer the question:
 
 ```
 1L[yes,no] # Am I evil ?
@@ -621,7 +621,7 @@ yes
 ## Functions
 
 DiceParser provides function to deal with instructions.
-Some functions will come soon (e.g: max, min). It will allows to manage several commands at once.
+Some functions will come soon (e.g: max, min). It will allow to manage several commands at once.
 
 ### Repeat
 
@@ -897,11 +897,11 @@ There are five kinds of Validator:
 * Operation Condition
 * Composite
 
-Any operator which requires validator (such as `a,r,e,c`) can use those three kind.
+Any operator which requires validator (such as `a,r,e,c`) can use those three kinds.
 
 ### Scalar
 
-The scalar value sets the validator on eguality between the dice value and the validator
+The scalar value sets the validator on equality between the dice value and the validator
 
 ```
 4d10e10
@@ -930,10 +930,10 @@ The command counts how many dice are aboved 7.
 
 #### Compare Operator
 
-The Rolisteam Dice Parser allows you to use several logic operator:
-* Egual: `=`
-* Greater or egual:  `>=`
-* Lesser or egual: `<=`
+The Rolisteam Dice Parser allows you to use several logic operators:
+* Equal: `=`
+* Greater or equal:  `>=`
+* Lesser or equal: `<=`
 * Lesser: `<`
 * Greater: `>`
 * Different: `!=`
@@ -1264,7 +1264,7 @@ The merge operator is useful when you want to use dice operator on all rolled di
 1d20+1d10
 ```
 
-The k operator to keeps as many dice as you roll is pretty useless because it is the default behaviour.
+The k operator to keep as many dice as you roll is pretty useless because it is the default behaviour.
 
 ## Platform specific documentation
 
