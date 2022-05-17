@@ -322,6 +322,7 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd12") << "1D100a[>=95]a[>=96]a[>=97]a[>=98]a[>=99]e[>=100]";
     QTest::addRow("cmd13") << "3D100";
     QTest::addRow("cmd14") << "4k3";
+
     QTest::addRow("cmd15") << "10D10e[>=6]sc[>=6]";
     QTest::addRow("cmd16") << "10D10e10s";
     QTest::addRow("cmd17") << "10D10s";
@@ -392,6 +393,7 @@ void TestDice::commandsTest_data()
     QTest::addRow("cmd90") << "1L[-3,-2,2,3]+10;1L[-3,-2,2,3]";
     QTest::addRow("cmd91") << "1d20|3i:[>1]{\"Success\"}{\"Failure\"}";
     QTest::addRow("cmd92") << "4d10k3;4d10k3;4d10k3;[$1,$2,$3]s;\"Score @4\"";
+    QTest::addRow("cmd93") << "4d10e(10)10";
 }
 
 void TestDice::rangedCommandsTest()

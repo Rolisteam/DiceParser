@@ -183,9 +183,9 @@ bool ParsingToolBox::readDiceLogicOperator(QString& str, Dice::ConditionOperator
 bool ParsingToolBox::readArithmeticOperator(QString& str, Dice::ArithmeticOperator& op)
 {
 
-    auto it= std::find_if(m_arithmeticOperation.begin(), m_arithmeticOperation.end(),
-                          [str](const std::pair<QString, Dice::ArithmeticOperator>& pair)
-                          { return str.startsWith(pair.first); });
+    auto it= std::find_if(
+        m_arithmeticOperation.begin(), m_arithmeticOperation.end(),
+        [str](const std::pair<QString, Dice::ArithmeticOperator>& pair) { return str.startsWith(pair.first); });
     if(it == m_arithmeticOperation.end())
         return false;
 
@@ -714,13 +714,11 @@ QString ParsingToolBox::finalStringResult(std::function<QString(const QString&, 
     auto listFull= diceResultFromEachInstruction();
 
     QStringList resultWithPlaceHolder;
-    std::for_each(allStringlist.begin(), allStringlist.end(),
-                  [&resultWithPlaceHolder](const QString& sub)
-                  {
-                      QRegularExpression ex("%[1-3]?|\\$[1-9]+|@[1-9]+");
-                      if(sub.contains(ex))
-                          resultWithPlaceHolder.append(sub);
-                  });
+    std::for_each(allStringlist.begin(), allStringlist.end(), [&resultWithPlaceHolder](const QString& sub) {
+        QRegularExpression ex("%[1-3]?|\\$[1-9]+|@[1-9]+");
+        if(sub.contains(ex))
+            resultWithPlaceHolder.append(sub);
+    });
     auto stringResult= resultWithPlaceHolder.isEmpty() ? allStringlist.join(",") : resultWithPlaceHolder.join(",");
 
     auto pairScalar= finalScalarResult();
@@ -1241,8 +1239,7 @@ QString ParsingToolBox::replacePlaceHolderFromJson(const QString& source, const 
         instructionResult.push_back(map);
     }
     std::transform(std::begin(instructionResult), std::end(instructionResult), std::back_inserter(resultList),
-                   [](const std::vector<std::pair<int, QList<QStringList>>>& map)
-                   {
+                   [](const std::vector<std::pair<int, QList<QStringList>>>& map) {
                        QStringList valuesStr;
                        auto multiKey= (map.size() > 1);
                        for(auto item : map)
@@ -1290,21 +1287,18 @@ QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const Q
     QStringList resultList;
     std::transform(
         std::begin(list), std::end(list), std::back_inserter(resultList),
-        [removeUnhighlighted, colorize](const ExportedDiceResult& dice)
-        {
+        [removeUnhighlighted, colorize](const ExportedDiceResult& dice) {
             QStringList valuesStr;
             if(dice.size() == 1)
             {
                 auto values= dice.values();
                 std::transform(
                     std::begin(values), std::end(values), std::back_inserter(valuesStr),
-                    [removeUnhighlighted, colorize](const QList<ListDiceResult>& dice)
-                    {
+                    [removeUnhighlighted, colorize](const QList<ListDiceResult>& dice) {
                         QStringList textList;
                         std::transform(
                             std::begin(dice), std::end(dice), std::back_inserter(textList),
-                            [removeUnhighlighted, colorize](const ListDiceResult& dice)
-                            {
+                            [removeUnhighlighted, colorize](const ListDiceResult& dice) {
                                 QStringList list;
                                 ListDiceResult values= dice;
                                 if(removeUnhighlighted)
@@ -1315,8 +1309,9 @@ QString ParsingToolBox::replacePlaceHolderToValue(const QString& source, const Q
                                 }
 
                                 std::transform(std::begin(values), std::end(values), std::back_inserter(list),
-                                               [colorize](const HighLightDice& hl)
-                                               { return colorize(hl.getResultString(), {}, hl.isHighlighted()); });
+                                               [colorize](const HighLightDice& hl) {
+                                                   return colorize(hl.getResultString(), {}, hl.isHighlighted());
+                                               });
                                 return list.join(",");
                             });
                         textList.removeAll(QString());
@@ -1746,6 +1741,9 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                 break;
             case Explode:
             {
+                ExecutionNode* limit= nullptr;
+                auto hasLimit= readParameterNode(str, limit);
+
                 auto validatorList= readValidatorList(str);
                 if(nullptr != validatorList)
                 {
@@ -1756,6 +1754,11 @@ bool ParsingToolBox::readOption(QString& str, ExecutionNode* previous) //,
                                               .arg(validatorList->toString()));
                     }
                     ExplodeDiceNode* explodedNode= new ExplodeDiceNode();
+
+                    if(hasLimit)
+                    {
+                        explodedNode->setLimitNode(limit);
+                    }
                     explodedNode->setValidatorList(validatorList);
                     previous->setNextNode(explodedNode);
                     found= true;
@@ -1949,18 +1952,19 @@ ExplodeDiceNode* ParsingToolBox::addExplodeDiceNode(qint64 value, ExecutionNode*
 }
 bool ParsingToolBox::readParameterNode(QString& str, ExecutionNode*& node)
 {
-    if(str.startsWith("("))
+    if(!str.startsWith("("))
+        return false;
+
+    str= str.remove(0, 1);
+    if(readExpression(str, node))
     {
-        str= str.remove(0, 1);
-        if(readExpression(str, node))
+        if(str.startsWith(")"))
         {
-            if(str.startsWith(")"))
-            {
-                str= str.remove(0, 1);
-                return true;
-            }
+            str= str.remove(0, 1);
+            return true;
         }
     }
+
     return false;
 }
 

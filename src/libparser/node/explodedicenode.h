@@ -21,9 +21,12 @@ public:
 
     virtual ExecutionNode* getCopy() const;
 
+    void setLimitNode(ExecutionNode* limitNode);
+
 protected:
     DiceResult* m_diceResult;
-    ValidatorList* m_validatorList= nullptr;
+    ValidatorList* m_validatorList{nullptr};
+    ExecutionNode* m_limit{nullptr};
 };
 
 #endif // EXPLOSEDICENODE_H

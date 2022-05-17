@@ -32,14 +32,6 @@
 
 #include "diceparserhelper.h"
 #include "highlightdice.h"
-//#include "dicerollernode.h"
-//#include "executionnode.h"
-//#include "node/ifnode.h"
-//#include "node/paintnode.h"
-//#include "node/scalaroperatornode.h"
-//#include "operationcondition.h"
-//#include "range.h"
-//#include "validatorlist.h"
 
 #include <diceparser/diceparser_global.h>
 class Range;

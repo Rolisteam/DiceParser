@@ -297,6 +297,18 @@ Works like "Reroll", but continue to roll the dice until the condition is false.
 
 Explode while the value fits the Validator (See Validator for more details about syntax).
 
+```
+3D10e(3)[Validator]
+```
+
+Explode node can have a limit of how many times the die will explode.
+
+```
+3D10e(1d10)[Validator]
+```
+
+The limit is a expression.
+
 ### Examples
 
 ```
