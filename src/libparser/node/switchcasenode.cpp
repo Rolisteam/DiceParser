@@ -22,6 +22,7 @@
 #include "stringresult.h"
 #include <QDebug>
 #include <diceparser/parsingtoolbox.h>
+#include <memory>
 
 SwitchCaseNode::SwitchCaseNode() : m_stringResult(new StringResult)
 {
@@ -56,7 +57,6 @@ void SwitchCaseNode::run(ExecutionNode* previous)
 
     auto diceResult= dynamic_cast<DiceResult*>(previousResult);
 
-    QSet<QString> alreadyValidDice;
     QStringList finalResultList;
     if(diceResult)
     {
@@ -93,6 +93,41 @@ void SwitchCaseNode::run(ExecutionNode* previous)
             finalResultList << resultList;
         }
     }
+    else
+    {
+        auto scalar= previousResult->getResult(Dice::RESULT_TYPE::SCALAR).toReal();
+        for(auto const& info : qAsConst(m_branchList))
+        {
+            if(m_stopAtFirst && !finalResultList.isEmpty())
+                break;
+
+            if(info->validatorList)
+            {
+                auto die= std::make_unique<Die>();
+                die->insertRollValue(scalar);
+                if(info->validatorList->hasValid(die.get(), true))
+                {
+                    auto lastNode= ParsingToolBox::getLeafNode(info->node);
+                    if(lastNode && lastNode->getResult())
+                    {
+                        finalResultList << lastNode->getResult()->getStringResult();
+                    }
+                }
+            }
+            else if(finalResultList.isEmpty())
+            {
+                info->node->run(m_previousNode);
+                auto lastNode= ParsingToolBox::getLeafNode(info->node);
+                if(lastNode && lastNode->getResult())
+                {
+                    finalResultList << lastNode->getResult()->getStringResult();
+                }
+                else
+                    finalResultList << QString();
+            }
+        }
+    }
+
     for(auto const& str : qAsConst(finalResultList))
         m_stringResult->addText(str);
 
