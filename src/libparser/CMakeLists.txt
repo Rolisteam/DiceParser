@@ -66,12 +66,14 @@ SET( dice_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/node/replacevaluenode.cpp
 )
 
+include(install_helper)
 IF(STATIC_BUILD)
     add_library(diceparser_static STATIC ${dice_sources} )
     target_include_directories(diceparser_static PRIVATE include)
     target_link_libraries(diceparser_static PUBLIC Qt6::Core Qt6::Gui Qt6::Svg)
-    install(TARGETS diceparser_static
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    #   install(TARGETS diceparser_static
+    #   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    rinstallLib(diceparser_static rolisteam)
 endif()
 
 
@@ -97,10 +99,10 @@ include(GNUInstallDirs)
 
 configure_file(diceparser.pc.in diceparser.pc @ONLY)
 
-install(TARGETS diceparser_shared
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
+#install(TARGETS diceparser_shared
+#    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+rinstallLib(diceparser_shared rolisteam)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/diceparser.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
 if(Qt${QT_VERSION_MAJOR}Qml_FOUND)
@@ -122,9 +124,10 @@ if(Qt${QT_VERSION_MAJOR}Qml_FOUND)
             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 
-    install(TARGETS   diceparser_qobject
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        #install(TARGETS   diceparser_qobject
+        #LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        #        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        rinstallLib(diceparser_qobject rolisteam)
 endif()
 
 
