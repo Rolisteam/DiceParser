@@ -73,6 +73,5 @@ SET( diceserver_sources
 add_executable( diceserver ${diceserver_sources} )
 
 target_link_libraries(diceserver ${Qt5Core_LIBRARIES} ${Qt5Network_LIBRARIES} /home/renaud/application/mine/DiceParser/webserver/qhttp/xbin/libqhttp.so)
-INSTALL_TARGETS(/bin diceserver)
 
 #qt5_use_modules()

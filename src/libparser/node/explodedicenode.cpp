@@ -28,7 +28,7 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
         die->displayed();
     }
 
-    quint64 limit= -1;
+    qint64 limit= -1;
     if(m_limit)
     {
         m_limit->run(this);
@@ -39,8 +39,9 @@ void ExplodeDiceNode::run(ExecutionNode* previous)
     }
 
     bool hasExploded= false;
-    std::function<void(Die*, qint64)> f= [&hasExploded, this, limit](Die* die, qint64) {
-        static QHash<Die*, quint64> explodePerDice;
+    std::function<void(Die*, qint64)> f= [&hasExploded, this, limit](Die* die, qint64)
+    {
+        static QHash<Die*, qint64> explodePerDice;
         if(Dice::CONDITION_STATE::ALWAYSTRUE
            == m_validatorList->isValidRangeSize(std::make_pair<qint64, qint64>(die->getBase(), die->getMaxValue())))
         {

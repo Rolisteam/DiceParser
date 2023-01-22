@@ -104,6 +104,5 @@ qt5_add_resources(RESOURCE_ADDED mobile.qrc)
 add_executable( diceGui ${diceGui_sources} ${diceGui_QM} ${RESOURCE_ADDED} )
 
 target_link_libraries(diceGui ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Qml_LIBRARIES} ${Qt5Quick_LIBRARIES})
-INSTALL_TARGETS(/bin diceGui)
 
 #qt5_use_modules()

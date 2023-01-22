@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
+#project(dice)
 
 option(UPDATE_TRANSLATIONS "update Translation" OFF)
 option(NO_PAINTER_OPERATOR "No PAINTING" OFF)
 MESSAGE(STATUS "UPDATE TRANSLATIONS: ${UPDATE_TRANSLATIONS}")
 
-project(dice)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -60,4 +60,13 @@ IF(NO_PAINTER_OPERATOR)
 ELSE()
     target_link_libraries(dice PUBLIC Qt6::Core Qt6::Gui Qt6::Svg PRIVATE diceparser_shared)
 ENDIF()
-INSTALL_TARGETS(/bin dice)
+
+include(install_helper OPTIONAL RESULT_VARIABLE=installFound)
+
+
+if(installFound STREQUAL "NOTFOUND")
+  install(TARGETS dice RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT diceComp)
+else()
+  set(CPACK_OUTPUT_CONFIG_FILE "${CMAKE_BINARY_DIR}/CPackConfigDice.cmake")
+  rinstallRT(dice "diceComp")
+endif()

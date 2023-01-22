@@ -24,6 +24,8 @@
 
 DiceRoller::DiceRoller(QObject* parent) : QObject(parent) {}
 
+DiceRoller::~DiceRoller()= default;
+
 QString DiceRoller::diceList() const
 {
     return m_diceList;
@@ -61,21 +63,18 @@ void DiceRoller::readErrorAndWarning()
 
 void DiceRoller::start()
 {
-    auto future= QtConcurrent::run(
-        [this]()
+    auto future= QtConcurrent::run([this]() {
+        if(m_diceparser.parseLine(m_command))
         {
-            if(m_diceparser.parseLine(m_command))
-            {
-                m_diceparser.start();
-                readErrorAndWarning();
-                auto jsonstr
-                    = m_diceparser.resultAsJSon([](const QString& value, const QString&, bool) { return value; });
-                QJsonDocument doc= QJsonDocument::fromJson(jsonstr.toLocal8Bit());
-                auto json= doc.object();
-                m_result= json["scalar"].toString().toDouble();
-                emit resultChanged();
-            }
-        });
+            m_diceparser.start();
+            readErrorAndWarning();
+            auto jsonstr= m_diceparser.resultAsJSon([](const QString& value, const QString&, bool) { return value; });
+            QJsonDocument doc= QJsonDocument::fromJson(jsonstr.toLocal8Bit());
+            auto json= doc.object();
+            m_result= json["scalar"].toString().toDouble();
+            emit resultChanged();
+        }
+    });
 }
 
 QString DiceRoller::error() const

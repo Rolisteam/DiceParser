@@ -71,9 +71,7 @@ IF(STATIC_BUILD)
     add_library(diceparser_static STATIC ${dice_sources} )
     target_include_directories(diceparser_static PRIVATE include)
     target_link_libraries(diceparser_static PUBLIC Qt6::Core Qt6::Gui Qt6::Svg)
-    #   install(TARGETS diceparser_static
-    #   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-    rinstallLib(diceparser_static rolisteam)
+    rinstallLib(diceparser_static libraries)
 endif()
 
 
@@ -99,10 +97,7 @@ include(GNUInstallDirs)
 
 configure_file(diceparser.pc.in diceparser.pc @ONLY)
 
-#install(TARGETS diceparser_shared
-#    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-rinstallLib(diceparser_shared rolisteam)
+rinstallLib(diceparser_shared libraries)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/diceparser.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
 if(Qt${QT_VERSION_MAJOR}Qml_FOUND)
@@ -116,18 +111,13 @@ if(Qt${QT_VERSION_MAJOR}Qml_FOUND)
     set_target_properties(diceparser_qobject PROPERTIES PUBLIC_HEADER "${dice_header_qobject}")
     target_compile_definitions(diceparser_qobject PRIVATE DICEPARSER_QOBJECT_LIBRARY)
     target_link_libraries(diceparser_qobject PUBLIC Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Concurrent PRIVATE diceparser_shared)
-    message("Messages diceparser ${CMAKE_CURRENT_SOURCE_DIR}/include")
 
     target_include_directories(diceparser_qobject PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
         PUBLIC
             $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-
-        #install(TARGETS   diceparser_qobject
-        #LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        #        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-        rinstallLib(diceparser_qobject rolisteam)
+        rinstallLib(diceparser_qobject libraries)
 endif()
 
 

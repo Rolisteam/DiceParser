@@ -36,6 +36,7 @@ class DICEPARSER_QOBJECT_EXPORT DiceRoller : public QObject
 
 public:
     DiceRoller(QObject* parent= nullptr);
+    virtual ~DiceRoller();
 
     QString diceList() const;
     QString resultStr() const;
