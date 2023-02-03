@@ -61,12 +61,12 @@ ELSE()
     target_link_libraries(dice PUBLIC Qt6::Core Qt6::Gui Qt6::Svg PRIVATE diceparser_shared)
 ENDIF()
 
-include(install_helper OPTIONAL RESULT_VARIABLE=installFound)
+include(install_helper OPTIONAL RESULT_VARIABLE installFound)
 
 
 if(installFound STREQUAL "NOTFOUND")
-  install(TARGETS dice RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT diceComp)
+  install(TARGETS dice RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 else()
   set(CPACK_OUTPUT_CONFIG_FILE "${CMAKE_BINARY_DIR}/CPackConfigDice.cmake")
-  rinstallRT(dice "diceComp")
+  rinstallRT(dice diceComp)
 endif()
