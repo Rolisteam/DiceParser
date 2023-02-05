@@ -117,6 +117,7 @@ else()
 endif()
 
 if(Qt${QT_VERSION_MAJOR}Qml_FOUND)
+    message(STATUT "qml found")
     set(dice_header_qobject include/diceparser_qobject/diceparser_qobject_global.h include/diceparser_qobject/qmltypesregister.h include/diceparser_qobject/diceroller.h)
     set(dice_source_qobject qmltypesregister.cpp diceroller.cpp)
     set(CMAKE_AUTOMOC ON)
@@ -127,6 +128,8 @@ if(Qt${QT_VERSION_MAJOR}Qml_FOUND)
     set_target_properties(diceparser_qobject PROPERTIES PUBLIC_HEADER "${dice_header_qobject}")
     target_compile_definitions(diceparser_qobject PRIVATE DICEPARSER_QOBJECT_LIBRARY)
     target_link_libraries(diceparser_qobject PUBLIC Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui Qt${QT_VERSION_MAJOR}::Svg Qt${QT_VERSION_MAJOR}::Qml Qt${QT_VERSION_MAJOR}::Concurrent PRIVATE diceparser_shared)
+    set_target_properties(diceparser_qobject PROPERTIES VERSION ${PROJECT_VERSION})
+    set_target_properties(diceparser_qobject PROPERTIES SOVERSION 1)
 
     target_include_directories(diceparser_qobject
       PRIVATE
@@ -137,9 +140,11 @@ if(Qt${QT_VERSION_MAJOR}Qml_FOUND)
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 
-      if(HAS_INSTALL)
+      if(${HAS_INSTALL})
+        message(STATUT "Normal install " ${HAS_INSTALL})
         rinstallLib(diceparser_qobject libraries)
       else()
+        message(STATUT "Degraded install" ${HAS_INSTALL})
         install(TARGETS diceparser_qobject LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
       endif()
 endif()
