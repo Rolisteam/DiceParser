@@ -7,6 +7,8 @@ find_package(Qt${QT_VERSION_MAJOR} ${QT_REQUIRED_VERSION} CONFIG COMPONENTS Qml 
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} result node)
 
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 set(dice_header_path include/diceparser)
 
 set(dice_public_headers ${dice_header_path}/diceparser_global.h
