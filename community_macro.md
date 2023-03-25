@@ -94,3 +94,20 @@ Once you set up this macro just input !Xpp where X is the number of dice you are
 
 
 Author:darthgaul
+
+# [Ironsworn](https://www.ironswornrpg.com/)
+```
+!macro add iron\s*(-?[0-9]+) 1d6;$1+\1;1d10;1d10;$2S^[<=$3&<=$4]{"Miss :bomb:"}[<=$3|<=$4]{"Weak Hit :wrench:"}{"Strong Hit :star:"};"($1+\1)=$2 vs. $3 & $4 - $5" True
+```
+## Usage
+`iron 3` will roll your Move and two Challenge Dice
+* If Move is > both Challenge Dice => Strong Hit
+* If Move is > exactly 1 Challenge Die => Weak Hit
+* If Move is <= both Challenge Dice => Miss
+
+You can plug in any number (including negative numbers) for your rolls.
+If you want to add nothing, use an explicit 0 like this: `iron 0`. 
+Note: Whitespace is optional, so `iron5` should work just as well as `iron 5` or `iron             5` 
+
+Author: [Alex Hall](www.alexhall.org)
+
