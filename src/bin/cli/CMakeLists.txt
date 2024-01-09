@@ -16,10 +16,10 @@ set(EXECUTABLE_OUTPUT_PATH bin/)
 set(QT_REQUIRED_VERSION "6.2.0")
 
 IF(NO_PAINTER_OPERATOR)
-    find_package(Qt6 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Svg LinguistTools)
+    find_package(Qt6 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Svg)
 else()
     MESSAGE(STATUS "Compilation of operator Paint")
-    find_package(Qt6 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Gui Svg LinguistTools)
+    find_package(Qt6 ${QT_REQUIRED_VERSION} CONFIG REQUIRED COMPONENTS Core Gui Svg)
     add_definitions(-DPAINTER_OP)
 endif()
 
