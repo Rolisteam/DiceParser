@@ -117,3 +117,37 @@ Usage: /r [How many dice]wod[Target Number]
 Note that Target Number is used as Greater or Equal to.
 
 Author: [Eran "Sabre Runner" Arbel](eran.geek.co.il)
+
+# World of Darkness [PT-BR (Brazilian language)]
+```
+/macro add \s*vtm\s*([0-9]+)\s*([0-9]+) \1;\2;\1d10;$3c[?>=\2];$3c[?=1];$4-$5;$3c[?=10];$6i:[=0]{"(\1d10) [@3]\nFalha para dificuldade \2 [Total: $6][$5 falha(s), $4 sucesso(s)]\nQuantidade de 10 (para especialização): $7\nComando executado: /r vtm \1 \2"}{$6i:[>0]{"(\1d10) [@3]\nSucesso para dificuldade \2 [Total: $6][$4 sucesso(s), $5 falha(s)]\nQuantidade de 10 (para especialização): $7\nComando executado: /r vtm \1 \2"}{$4i:[=0]{"(\1d10) [@3]\nFalha Crítica para dificuldade \2 [Total: $6][$5 falha(s)]\nSucessos para dificuldade \2: $4\nComando executado: /r vtm \1 \2"}{"(\1d10) [@3]\nFalha para dificuldade \2 [Total: $6][$5 falha(s), $4 sucesso(s)]\nQuantidade de 10 (para especialização): $7\nComando executado: /r vtm \1 \2"}}} True
+```
+
+## Usage: 
+/r vtm [Quantidade de dados] [Dificuldade do teste]
+
+## Uso: 
+/r vtm 6 8 
+
+## Expected results:
+>(3d10) [10,10,8]<br>
+Sucesso para dificuldade 9 [Total: 2][2 sucesso(s), 0 falha(s)]<br>
+Quantidade de 10 (para especialização): 2<br>
+Comando executado: /r vtm 3 9
+
+>(3d10) [5,8,5]<br>
+Falha para dificuldade 9 [Total: 0][0 falha(s), 0 sucesso(s)]<br>
+Quantidade de 10 (para especialização): 0<br>
+Comando executado: /r vtm 3 9
+
+>(6d10) [1,5,10,5,2,7]<br>
+Falha para dificuldade 8 [Total: 0][1 falha(s), 1 sucesso(s)]<br>
+Quantidade de 10 (para especialização): 1<br>
+Comando executado: /r vtm 6 8
+
+>(3d10) [1,6,8]<br>
+Falha Crítica para dificuldade 9 [Total: -1][1 falha(s)]<br>
+Sucessos para dificuldade 9: 0<br>
+Comando executado: /r vtm 3 9
+
+Author: [Luke](https://www.instagram.com/luke.lucianogoncalves/)
