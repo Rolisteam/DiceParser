@@ -41,10 +41,8 @@
 
 #include "diceparser/dicealias.h"
 #include "diceparser/diceparser.h"
-#include "diceparser/highlightdice.h"
 #include "diceparser/parsingtoolbox.h"
 #include "displaytoolbox.h"
-
 /**
  * @page Dice
  * The cli for DiceParser the new dice system from rolisteam.
@@ -99,18 +97,18 @@ void displayMarkdown(QString json)
     auto comment= obj["comment"].toString();
     auto arrayInst= obj["instructions"].toArray();
     QStringList diceResults;
-    for(auto inst : arrayInst)
+    for(auto inst : std::as_const(arrayInst))
     {
         auto obj= inst.toObject();
         auto diceVals= obj["diceval"].toArray();
-        for(auto diceval : diceVals)
+        for(auto diceval : std::as_const(diceVals))
         {
             auto objval= diceval.toObject();
             auto resultStr= QString::number(objval["value"].toDouble());
 
             auto subvalues= objval["subvalues"].toArray();
             QStringList subValueStr;
-            for(auto sub : subvalues)
+            for(auto sub : std::as_const(subvalues))
             {
                 subValueStr << QString::number(sub.toDouble());
             }
@@ -145,7 +143,7 @@ void displayMarkdown(QString json)
         }
         else
         {
-            str.append(QObject::tr("# %1\nDetails:[%3 (%2)]\n").arg(scalarText).arg(diceList).arg(cmd));
+            str.append(QObject::tr("# %1\nDetails:[%3 (%2)]\n").arg(scalarText, diceList, cmd));
         }
     }
     str.append(QStringLiteral("```"));
@@ -160,11 +158,11 @@ QString displaySVG(QString json, bool withColor)
     auto comment= obj["warning"].toString();
     auto arrayInst= obj["instructions"].toArray();
     QStringList diceResults;
-    for(auto inst : arrayInst)
+    for(auto inst : std::as_const(arrayInst))
     {
         auto obj= inst.toObject();
         auto diceVals= obj["diceval"].toArray();
-        for(auto diceval : diceVals)
+        for(auto diceval : std::as_const(diceVals))
         {
             auto objval= diceval.toObject();
             auto resultStr= objval["string"].toString();
@@ -213,17 +211,13 @@ QString displaySVG(QString json, bool withColor)
                 str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%4\"><tspan "
                                           "fill=\"red\">%1</tspan>\n"
                                           "<tspan x=\"0\" y=\"%5\">details:</tspan>[%3 (%2)]</text>")
-                               .arg(scalarText)
-                               .arg(diceList)
-                               .arg(cmd)
+                               .arg(scalarText, diceList, cmd)
                                .arg(y)
                                .arg(y * 2));
             else
                 str.append(QStringLiteral("<text font-size=\"16\" x=\"0\" y=\"%4\"><tspan>%1</tspan>\n"
                                           "<tspan x=\"0\" y=\"%5\">details:</tspan>[%3 (%2)]</text>")
-                               .arg(scalarText)
-                               .arg(diceList)
-                               .arg(cmd)
+                               .arg(scalarText, diceList, cmd)
                                .arg(y)
                                .arg(y * 2));
         }
@@ -242,6 +236,7 @@ void displayImage(QString json, bool withColor)
 
 void displayCommandResult(QString json, bool withColor, QString color)
 {
+    using namespace Qt::Literals::StringLiterals;
     QJsonDocument doc= QJsonDocument::fromJson(json.toUtf8());
     auto obj= doc.object();
     auto error= obj["error"].toString();
@@ -277,8 +272,9 @@ void displayCommandResult(QString json, bool withColor, QString color)
     QString str;
 
     if(withColor)
-        str= QObject::tr("Result: \e[0;%4;1m%1\e[0m - details:[%3 (%2)]")
-                 .arg(scalarText, diceList, cmd, DisplayToolBox::colorToIntCode(color));
+        str= QObject::tr("Result: %4%1%5 - details:[%3 (%2)]")
+                 .arg(scalarText, diceList, cmd, DisplayToolBox::colorToTermCode(color),
+                      DisplayToolBox::colorToTermCode("reset"));
     else
         str= QObject::tr("Result: %1 - details:[%3 (%2)]").arg(scalarText, diceList, cmd);
 
@@ -291,7 +287,7 @@ void displayCommandResult(QString json, bool withColor, QString color)
     if(!comment.isEmpty())
     {
         if(withColor)
-            out << "\033[1m" << comment << "\033[0m\n";
+            out << DisplayToolBox::colorToTermCode("yellow") << comment << DisplayToolBox::colorToTermCode("reset");
         else
             out << comment << " ";
     }
@@ -368,7 +364,7 @@ int startDiceParsing(QStringList& cmds, bool withColor, QString baseColor, EXPOR
                                 style+= QStringLiteral("font-weight=\"bold\" ");
                             }
                             if(!style.isEmpty())
-                                result= QString("<tspan %2>%1</tspan>").arg(value).arg(style);
+                                result= QString("<tspan %2>%1</tspan>").arg(value, style);
                             return result;
                         });
                 }
@@ -391,7 +387,7 @@ int startDiceParsing(QStringList& cmds, bool withColor, QString baseColor, EXPOR
 
                         auto front= DisplayToolBox::colorToTermCode(trueColor);
                         auto end= front.isEmpty() ? "" : DisplayToolBox::colorToTermCode("reset");
-                        return hightlight ? QString("%1%2%3").arg(front).arg(result).arg(end) : result;
+                        return hightlight ? QString("%1%2%3").arg(front, result, end) : result;
                     });
             }
             else

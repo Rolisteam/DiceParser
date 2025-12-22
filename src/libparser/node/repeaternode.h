@@ -23,7 +23,6 @@
 #define REPEATER_NODE_H
 
 #include "node/executionnode.h"
-#include <memory>
 
 class RepeaterNode : public ExecutionNode
 {
@@ -39,8 +38,11 @@ public:
     void setTimeNode(ExecutionNode* times);
     void setSumAll(bool b);
 
+    virtual void generateDotTree(QString& s) override;
+
 private:
     std::vector<ExecutionNode*> m_cmd;
+    std::vector<std::vector<ExecutionNode*>> m_startingNodes;
     ExecutionNode* m_times= nullptr;
     bool m_sumAll= false;
 };

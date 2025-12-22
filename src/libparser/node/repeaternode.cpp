@@ -76,13 +76,13 @@ void RepeaterNode::run(ExecutionNode* previousNode)
     if(!times)
         return;
 
-    std::vector<InstructionSet> m_startingNodes;
+    std::vector<InstructionSet> startingNodes;
     auto timeCount= times->getResult(Dice::RESULT_TYPE::SCALAR).toInt();
     auto cmd= makeCopy(m_cmd);
     std::vector<Result*> resultVec;
     for(int i= 0; i < timeCount; ++i)
     {
-        m_startingNodes.push_back(cmd);
+        startingNodes.push_back(cmd);
         std::for_each(cmd.begin(), cmd.end(),
                       [this, &resultVec](ExecutionNode* node)
                       {
@@ -111,7 +111,7 @@ void RepeaterNode::run(ExecutionNode* previousNode)
         auto string= new StringResult();
 
         QStringList listOfStrResult;
-        for(auto instructions : m_startingNodes)
+        for(const auto& instructions : startingNodes)
         {
             ParsingToolBox parsingBox;
             parsingBox.setStartNodes(instructions);
@@ -127,13 +127,12 @@ void RepeaterNode::run(ExecutionNode* previousNode)
         // qDebug().noquote() << listOfStrResult.join('\n');
     }
 
-    /*if(nullptr != m_nextNode)
-        m_nextNode->run(this);*/
+    m_startingNodes= startingNodes;
 }
 
 QString RepeaterNode::toString(bool withLabel) const
 {
-    return withLabel ? QStringLiteral("") : QStringLiteral("");
+    return withLabel ? QStringLiteral("%1 [label=\"RepeaterNode\"]").arg(m_id) : m_id;
 }
 
 qint64 RepeaterNode::getPriority() const
@@ -159,4 +158,23 @@ void RepeaterNode::setTimeNode(ExecutionNode* time)
 void RepeaterNode::setSumAll(bool b)
 {
     m_sumAll= b;
+}
+
+void RepeaterNode::generateDotTree(QString& s)
+{
+    s.append(toString(true));
+    s.append(";\n");
+
+    for(auto const& commands : m_startingNodes)
+    {
+        ExecutionNode* previous= this;
+        for(auto const& cmd : commands)
+        {
+            s.append(previous->toString(false));
+            s.append(" -> ");
+            s.append(cmd->toString(false));
+            cmd->generateDotTree(s);
+            previous= cmd;
+        }
+    }
 }

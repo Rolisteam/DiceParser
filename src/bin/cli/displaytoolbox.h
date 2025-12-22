@@ -5,6 +5,7 @@
 #include <QString>
 
 #include "diceparser/diceparser.h"
+#include "rang.hpp"
 
 class DisplayToolBox
 {
@@ -20,7 +21,7 @@ public:
 #ifdef PAINTER_OP
     static QString makeImage(QByteArray svgCode);
 #endif
-    static QString colorToIntCode(QString str);
+    static rang::fg colorToIntCode(QString str);
     static QString colorToTermCode(QString str);
     static QString diceToSvg(QJsonArray array, bool withColor, bool allSameColor, bool allSameFaceCount);
     static QString diceResultToString(QJsonObject val, Output type, bool hasColor);

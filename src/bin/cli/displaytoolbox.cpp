@@ -2,6 +2,7 @@
 #include <QBuffer>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <sstream>
 
 #ifdef PAINTER_OP
 #include <QFont>
@@ -34,50 +35,25 @@ QString DisplayToolBox::makeImage(QByteArray svgCode)
 }
 #endif
 
-QString DisplayToolBox::colorToIntCode(QString str)
+rang::fg DisplayToolBox::colorToIntCode(QString str)
 {
-    if(str.isEmpty() || str == QStringLiteral("black"))
-    {
-        return QStringLiteral("0;31");
-    }
-    else if(str == QStringLiteral("white"))
-    {
-        return QStringLiteral("97");
-    }
-    else if(str == QStringLiteral("blue"))
-    {
-        return QStringLiteral("34");
-    }
-    else if(str == QStringLiteral("red"))
-    {
-        return QStringLiteral("31");
-    }
-    else if(str == QStringLiteral("black"))
-    {
-        return QStringLiteral("30");
-    }
-    else if(str == QStringLiteral("green"))
-    {
-        return QStringLiteral("32");
-    }
-    else if(str == QStringLiteral("yellow"))
-    {
-        return QStringLiteral("33");
-    }
-    else if(str == QStringLiteral("cyan"))
-    {
-        return QStringLiteral("36");
-    }
-    else if(str == QStringLiteral("reset"))
-    {
-        return QStringLiteral("0");
-    }
-    return {};
+    QHash<QString, rang::fg> data{
+        {"black", rang::fg::black},   {"red", rang::fg::red},   {"green", rang::fg::green},
+        {"yellow", rang::fg::yellow}, {"blue", rang::fg::blue}, {"magenta", rang::fg::magenta},
+        {"cyan", rang::fg::cyan},     {"gray", rang::fg::gray}, {"reset", rang::fg::reset}};
+
+    if(data.contains(str))
+        return data.value(str);
+
+    return rang::fg::black;
 }
 
 QString DisplayToolBox::colorToTermCode(QString str)
 {
-    return QStringLiteral("\e[").append(DisplayToolBox::colorToIntCode(str)).append("m");
+    rang::setControlMode(rang::control::Force);
+    std::stringstream s;
+    s << DisplayToolBox::colorToIntCode(str);
+    return QString::fromStdString(s.str());
 }
 
 QString DisplayToolBox::diceToSvg(QJsonArray array, bool withColor, bool allSameColor, bool allSameFaceCount)
@@ -91,7 +67,7 @@ QString DisplayToolBox::diceToSvg(QJsonArray array, bool withColor, bool allSame
             QStringList subResult;
             auto obj= item.toObject();
             auto values= obj["values"].toArray();
-            for(auto valRef : values)
+            for(auto valRef : std::as_const(values))
             {
                 subResult.append(diceResultToString(valRef.toObject(), Output::Svg, withColor));
             }
@@ -108,7 +84,7 @@ QString DisplayToolBox::diceToSvg(QJsonArray array, bool withColor, bool allSame
             auto obj= item.toObject();
             auto values= obj["values"].toArray();
 
-            for(auto valRef : values)
+            for(auto valRef : std::as_const(values))
             {
                 subResult.append(diceResultToString(valRef.toObject(), Output::Svg, withColor));
             }
@@ -139,7 +115,7 @@ QString DisplayToolBox::diceResultToString(QJsonObject val, Output type, bool ha
     auto subvalues= val["subvalues"].toArray();
     QStringList subStr;
 
-    for(auto subval : subvalues)
+    for(auto subval : std::as_const(subvalues))
     {
         subStr << QString::number(subval.toDouble());
     }
@@ -151,17 +127,13 @@ QString DisplayToolBox::diceResultToString(QJsonObject val, Output type, bool ha
     {
         if(type == Output::Terminal)
         {
-            total= QStringLiteral("%1%2%3")
-                       .arg(DisplayToolBox::colorToTermCode(color))
-                       .arg(total)
-                       .arg(DisplayToolBox::colorToTermCode(QStringLiteral("reset")));
+            total= QStringLiteral("%1%2%3").arg(DisplayToolBox::colorToTermCode(color), total,
+                                                DisplayToolBox::colorToTermCode(QStringLiteral("reset")));
         }
         else if(type == Output::Svg)
         {
-            total= QStringLiteral("%1%2%3")
-                       .arg(QStringLiteral("<tspan fill=\"%1\">").arg(color))
-                       .arg(total)
-                       .arg(QStringLiteral("</tspan>"));
+            total= QStringLiteral("%1%2%3").arg(QStringLiteral("<tspan fill=\"%1\">").arg(color), total,
+                                                QStringLiteral("</tspan>"));
         }
     }
     return total;

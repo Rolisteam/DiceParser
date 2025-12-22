@@ -126,12 +126,12 @@ QString makeReplament(const QString& pattern, const QString& command, QString cm
     return cmd;
 }
 
-DiceAlias::DiceAlias(QString pattern, QString command, QString comment, bool isReplace, bool isEnable)
+DiceAlias::DiceAlias(QString pattern, QString command, QString comment, bool isReplace, bool isDisable)
     : m_pattern(pattern)
     , m_command(command)
     , m_comment(comment)
     , m_type(isReplace ? REPLACE : REGEXP)
-    , m_disable(isEnable)
+    , m_disable(isDisable)
 {
 }
 
