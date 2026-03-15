@@ -21,7 +21,7 @@
  ***************************************************************************/
 #include "uniquenode.h"
 
-UniqueNode::UniqueNode() : m_diceResult(new DiceResult())
+UniqueNode::UniqueNode() : ExecutionNode("%1 [label=\"UniqueNode Node\"]"), m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
 }
@@ -58,17 +58,6 @@ void UniqueNode::run(ExecutionNode* previous)
     }
 }
 
-QString UniqueNode::toString(bool withLabel) const
-{
-    if(withLabel)
-    {
-        return QString("%1 [label=\"UniqueNode Node\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
 qint64 UniqueNode::getPriority() const
 {
     qint64 priority= 0;

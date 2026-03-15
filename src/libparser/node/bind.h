@@ -33,7 +33,6 @@ class BindNode : public ExecutionNode
 public:
     BindNode();
     void run(ExecutionNode* previous);
-    virtual QString toString(bool withLabel) const;
     virtual qint64 getPriority() const;
     virtual ExecutionNode* getCopy() const;
     std::vector<ExecutionNode*>* getStartList() const;

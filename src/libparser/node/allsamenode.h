@@ -13,11 +13,7 @@ public:
     //    virtual ~AllSameNode();
 
     virtual void run(ExecutionNode* previous);
-    /**
-     * @brief toString
-     * @return
-     */
-    virtual QString toString(bool withLabel) const;
+
     /**
      * @brief getPriority
      * @return

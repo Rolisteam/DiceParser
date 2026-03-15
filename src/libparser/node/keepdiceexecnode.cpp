@@ -23,7 +23,7 @@
 #include "diceparser/parsingtoolbox.h"
 #include "keepdiceexecnode.h"
 
-KeepDiceExecNode::KeepDiceExecNode() : m_diceResult(new DiceResult())
+KeepDiceExecNode::KeepDiceExecNode() : ExecutionNode("%1 [label=\"KeepDiceExecNode\"]"), m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
 }
@@ -89,18 +89,7 @@ void KeepDiceExecNode::setDiceKeepNumber(ExecutionNode* n)
 {
     m_numberOfDiceNode= n;
 }
-QString KeepDiceExecNode::toString(bool wl) const
-{
-    if(wl)
-    {
-        // auto param= m_numberOfDiceNode->toString(wl);
-        return QString("%1 [label=\"KeepDiceExecNode\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
+
 qint64 KeepDiceExecNode::getPriority() const
 {
     qint64 priority= 0;

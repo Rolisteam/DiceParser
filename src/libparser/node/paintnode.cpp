@@ -45,7 +45,7 @@ void ColorItem::setColor(const QString& color)
 /// @brief PainterNode::PainterNode
 ///////////////////////////////////
 
-PainterNode::PainterNode() : ExecutionNode()
+PainterNode::PainterNode() : ExecutionNode("%1 [label=\"PainterNode\"]")
 {
     m_nextNode= nullptr;
 }
@@ -84,18 +84,6 @@ void PainterNode::run(ExecutionNode* previous)
     }
     m_diceResult->setPrevious(previousResult);
     m_result= m_diceResult;
-}
-
-QString PainterNode::toString(bool wl) const
-{
-    if(wl)
-    {
-        return QString("%1 [label=\"PainterNode\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
 }
 
 qint64 PainterNode::getPriority() const

@@ -35,7 +35,6 @@ public:
 
     void run(ExecutionNode* previous= nullptr) override;
 
-    QString toString(bool withLabel) const override;
     qint64 getPriority() const override;
     ExecutionNode* getCopy() const override;
 

@@ -21,7 +21,7 @@
  ***************************************************************************/
 #include "splitnode.h"
 
-SplitNode::SplitNode() : m_diceResult(new DiceResult())
+SplitNode::SplitNode() : ExecutionNode("%1 [label=\"SplitNode Node\"]"), m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
 }
@@ -58,17 +58,6 @@ void SplitNode::run(ExecutionNode* previous)
     }
 }
 
-QString SplitNode::toString(bool withLabel) const
-{
-    if(withLabel)
-    {
-        return QString("%1 [label=\"SplitNode Node\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
 qint64 SplitNode::getPriority() const
 {
     qint64 priority= 0;

@@ -62,7 +62,10 @@ void DieGroup::setExceptedValue(qint64 exceptedValue)
 
 //---------------------
 GroupNode::GroupNode(bool complexOutput)
-    : m_scalarResult(new ScalarResult), m_stringResult(new StringResult), m_complexOutput(complexOutput)
+    : ExecutionNode("%1 [label=\"SplitNode Node\"]")
+    , m_scalarResult(new ScalarResult)
+    , m_stringResult(new StringResult)
+    , m_complexOutput(complexOutput)
 {
 }
 
@@ -75,6 +78,9 @@ void GroupNode::run(ExecutionNode* previous)
 
     m_previousNode= previous;
     if(isValid(!m_previousNode, Dice::ERROR_CODE::NO_PREVIOUS_ERROR, tr("No Previous node")))
+        return;
+
+    if(!m_result)
         return;
 
     m_result->setPrevious(previous->getResult());
@@ -130,17 +136,6 @@ void GroupNode::run(ExecutionNode* previous)
         m_stringResult->addText(QStringLiteral("%1 (%2)").arg(die.size()).arg(list.join(",")));
 }
 
-QString GroupNode::toString(bool withLabel) const
-{
-    if(withLabel)
-    {
-        return QString("%1 [label=\"SplitNode Node\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
 qint64 GroupNode::getPriority() const
 {
     qint64 priority= 0;

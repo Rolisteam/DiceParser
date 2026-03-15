@@ -21,7 +21,7 @@
 #include "jumpbackwardnode.h"
 #include <QDebug>
 
-JumpBackwardNode::JumpBackwardNode()
+JumpBackwardNode::JumpBackwardNode() : ExecutionNode("%1 [label=\"JumpBackwardNode\"]")
 {
     m_previousNode= nullptr;
     m_backwardNode= nullptr;
@@ -38,17 +38,7 @@ qint64 JumpBackwardNode::getPriority() const
 {
     return 4;
 }
-QString JumpBackwardNode::toString(bool wl) const
-{
-    if(wl)
-    {
-        return QString("%1 [label=\"JumpBackwardNode\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
+
 void JumpBackwardNode::generateDotTree(QString& s)
 {
     s.append(toString(true));

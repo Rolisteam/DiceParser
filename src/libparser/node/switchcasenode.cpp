@@ -24,7 +24,7 @@
 #include <diceparser/parsingtoolbox.h>
 #include <memory>
 
-SwitchCaseNode::SwitchCaseNode() : m_stringResult(new StringResult)
+SwitchCaseNode::SwitchCaseNode() : ExecutionNode("%1 [label=\"SwitchCaseNode\"]"), m_stringResult(new StringResult)
 {
     m_result= m_stringResult;
 }
@@ -129,18 +129,6 @@ void SwitchCaseNode::run(ExecutionNode* previous)
     if(isValid(m_stringResult->getText().isEmpty(), Dice::ERROR_CODE::NO_VALID_RESULT,
                tr("No value fits the Switch/Case operator")))
         return;
-}
-
-QString SwitchCaseNode::toString(bool withLabel) const
-{
-    if(withLabel)
-    {
-        return QString("%1 [label=\"SwitchCaseNode\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
 }
 
 qint64 SwitchCaseNode::getPriority() const

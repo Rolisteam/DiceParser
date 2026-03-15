@@ -2,7 +2,7 @@
 
 #include "variablenode.h"
 
-ValuesListNode::ValuesListNode() : m_diceResult(new DiceResult())
+ValuesListNode::ValuesListNode() : ExecutionNode("%1 [label=\"ValuesListNode list\"]"), m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
 }
@@ -39,17 +39,7 @@ ExecutionNode* ValuesListNode::getCopy() const
     }
     return node;
 }
-QString ValuesListNode::toString(bool wl) const
-{
-    if(wl)
-    {
-        return QString("%1 [label=\"ValuesListNode list:\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
+
 qint64 ValuesListNode::getPriority() const
 {
     qint64 priority= 4;

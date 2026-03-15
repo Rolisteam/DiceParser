@@ -1,7 +1,7 @@
 #include "filternode.h"
 #include "validatorlist.h"
 
-FilterNode::FilterNode() : m_diceResult(new DiceResult())
+FilterNode::FilterNode() : ExecutionNode("%1 [label=\"FilterNode\"]"), m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
 }
@@ -54,17 +54,6 @@ void FilterNode::run(ExecutionNode* previous)
     m_diceResult->setResultList(diceList2);
 }
 
-QString FilterNode::toString(bool wl) const
-{
-    if(wl)
-    {
-        return QString("%1 [label=\"FilterNode\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
 qint64 FilterNode::getPriority() const
 {
     qint64 priority= 0;

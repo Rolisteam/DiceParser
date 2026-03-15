@@ -21,7 +21,7 @@
  ***************************************************************************/
 #include "bind.h"
 
-BindNode::BindNode() : m_diceResult(new DiceResult())
+BindNode::BindNode() : ExecutionNode("%1 [label=\"Bind Node\"]"), m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
 }
@@ -80,17 +80,7 @@ ExecutionNode* BindNode::getLatestNode(ExecutionNode* node)
     }
     return next;
 }
-QString BindNode::toString(bool withLabel) const
-{
-    if(withLabel)
-    {
-        return QString("%1 [label=\"Bind Node\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
+
 qint64 BindNode::getPriority() const
 {
     qint64 priority= 0;

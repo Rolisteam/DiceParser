@@ -51,14 +51,9 @@ void HelpNode::run(ExecutionNode* previous)
 }
 QString HelpNode::toString(bool wl) const
 {
-    if(wl)
-    {
-        return QString("%1 [label=\"%3 : %2\"]").arg(m_id, m_path, tr("Rolisteam Dice Parser:\nFull documentation at"));
-    }
-    else
-    {
-        return m_id;
-    }
+    return wl ? QString("%1 [label=\"%3 : %2\"]")
+                    .arg(m_id, m_path, tr("Rolisteam Dice Parser:\nFull documentation at")) :
+                ExecutionNode::toString(wl);
 }
 
 qint64 HelpNode::getPriority() const

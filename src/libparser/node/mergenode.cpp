@@ -23,7 +23,8 @@
 
 #include <diceparser/parsingtoolbox.h>
 
-MergeNode::MergeNode(std::vector<ExecutionNode*>& startList) : m_startList(startList), m_diceResult(new DiceResult())
+MergeNode::MergeNode(std::vector<ExecutionNode*>& startList)
+    : ExecutionNode("%1 [label=\"Merge Node\"]"), m_startList(startList), m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
 }
@@ -111,17 +112,7 @@ ExecutionNode* MergeNode::getLatestNode(ExecutionNode* node)
     }
     return next;
 }
-QString MergeNode::toString(bool withLabel) const
-{
-    if(withLabel)
-    {
-        return QString("%1 [label=\"Merge Node\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
+
 qint64 MergeNode::getPriority() const
 {
     qint64 priority= 0;

@@ -124,14 +124,8 @@ void ExplodeDiceNode::setValidatorList(ValidatorList* val)
 }
 QString ExplodeDiceNode::toString(bool withlabel) const
 {
-    if(withlabel)
-    {
-        return QString("%1 [label=\"ExplodeDiceNode %2\"]").arg(m_id, m_validatorList->toString());
-    }
-    else
-    {
-        return m_id;
-    }
+    return withlabel ? QString("%1 [label=\"ExplodeDiceNode %2\"]").arg(m_id, m_validatorList->toString()) :
+                       ExecutionNode::toString(withlabel);
 }
 qint64 ExplodeDiceNode::getPriority() const
 {

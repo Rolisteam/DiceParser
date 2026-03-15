@@ -31,7 +31,6 @@ public:
     OccurenceCountNode();
 
     void run(ExecutionNode* previous= nullptr);
-    virtual QString toString(bool withLabel) const;
 
     ExecutionNode* getCopy() const;
     qint64 getPriority() const;

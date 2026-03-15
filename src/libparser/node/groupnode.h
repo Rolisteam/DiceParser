@@ -51,7 +51,6 @@ class GroupNode : public ExecutionNode
 public:
     GroupNode(bool complexOutput= false);
     void run(ExecutionNode* previous) override;
-    virtual QString toString(bool withLabel) const override;
     virtual qint64 getPriority() const override;
     virtual ExecutionNode* getCopy() const override;
 

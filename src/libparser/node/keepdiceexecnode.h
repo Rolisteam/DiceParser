@@ -35,7 +35,6 @@ public:
 
     virtual void run(ExecutionNode* previous);
     virtual void setDiceKeepNumber(ExecutionNode* valueNode);
-    virtual QString toString(bool) const;
     virtual qint64 getPriority() const;
     virtual ExecutionNode* getCopy() const;
 

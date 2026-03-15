@@ -39,12 +39,6 @@ public:
      * @param previous
      */
     virtual void run(ExecutionNode* previous= nullptr) override;
-
-    /**
-     * @brief toString
-     * @return
-     */
-    virtual QString toString(bool) const override;
     /**
      * @brief getPriority
      * @return

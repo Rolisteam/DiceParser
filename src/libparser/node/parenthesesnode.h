@@ -34,10 +34,9 @@ public:
     virtual void run(ExecutionNode* previous= nullptr);
 
     void setInternelNode(ExecutionNode* node);
-    virtual QString toString(bool) const;
-    virtual qint64 getPriority() const;
-    virtual ExecutionNode* getCopy() const;
-    virtual void generateDotTree(QString&);
+    virtual qint64 getPriority() const override;
+    virtual ExecutionNode* getCopy() const override;
+    virtual void generateDotTree(QString&) override;
 
 private:
     ExecutionNode* m_internalNode;

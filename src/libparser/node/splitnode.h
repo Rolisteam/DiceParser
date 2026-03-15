@@ -33,7 +33,6 @@ class SplitNode : public ExecutionNode
 public:
     SplitNode();
     void run(ExecutionNode* previous);
-    virtual QString toString(bool withLabel) const;
     virtual qint64 getPriority() const;
     virtual ExecutionNode* getCopy() const;
 

@@ -61,7 +61,7 @@ std::vector<ExecutionNode*> makeCopy(std::vector<ExecutionNode*> cmds)
     return copy;
 }
 
-RepeaterNode::RepeaterNode() {}
+RepeaterNode::RepeaterNode() : ExecutionNode("%1 [label=\"RepeaterNode\"]") {}
 
 void RepeaterNode::run(ExecutionNode* previousNode)
 {
@@ -128,11 +128,6 @@ void RepeaterNode::run(ExecutionNode* previousNode)
     }
 
     m_startingNodes= startingNodes;
-}
-
-QString RepeaterNode::toString(bool withLabel) const
-{
-    return withLabel ? QStringLiteral("%1 [label=\"RepeaterNode\"]").arg(m_id) : m_id;
 }
 
 qint64 RepeaterNode::getPriority() const

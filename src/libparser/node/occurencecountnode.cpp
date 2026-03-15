@@ -23,7 +23,7 @@
 #include "validatorlist.h"
 #include <QVector>
 
-OccurenceCountNode::OccurenceCountNode() : ExecutionNode() {}
+OccurenceCountNode::OccurenceCountNode() : ExecutionNode("%1 [label=\"OccurenceCountNode\"]") {}
 
 void OccurenceCountNode::run(ExecutionNode* previous)
 {
@@ -58,17 +58,7 @@ void OccurenceCountNode::run(ExecutionNode* previous)
     else
         runForDiceResult(mapOccurence);
 }
-QString OccurenceCountNode::toString(bool label) const
-{
-    if(label)
-    {
-        return QString("%1 [label=\"OccurenceCountNode %2\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
+
 ExecutionNode* OccurenceCountNode::getCopy() const
 {
     return nullptr;

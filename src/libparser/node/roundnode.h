@@ -18,7 +18,6 @@ public:
     // ExecutionNode interface
 public:
     void run(ExecutionNode* previous);
-    QString toString(bool withLabel) const;
     qint64 getPriority() const;
     ExecutionNode* getCopy() const;
     void setCommand(ExecutionNode* cmd);

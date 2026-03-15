@@ -46,11 +46,10 @@ class PainterNode : public ExecutionNode
 public:
     PainterNode();
     virtual ~PainterNode();
-    virtual void run(ExecutionNode* previous= nullptr);
-    virtual QString toString(bool) const;
-    virtual qint64 getPriority() const;
+    virtual void run(ExecutionNode* previous= nullptr) override;
+    virtual qint64 getPriority() const override;
     void insertColorItem(QString color, int value);
-    virtual ExecutionNode* getCopy() const;
+    virtual ExecutionNode* getCopy() const override;
 
 protected:
     QList<ColorItem> m_colors;

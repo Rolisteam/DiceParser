@@ -1,6 +1,6 @@
 #include "allsamenode.h"
 
-AllSameNode::AllSameNode() : m_diceResult(new DiceResult())
+AllSameNode::AllSameNode() : ExecutionNode("%1 [label=\"AllSameNode\"]"), m_diceResult(new DiceResult())
 {
     m_result= m_diceResult;
 }
@@ -49,18 +49,6 @@ void AllSameNode::run(ExecutionNode* previous)
                 allSame= false;
             ++i;
         }
-    }
-}
-
-QString AllSameNode::toString(bool withLabel) const
-{
-    if(withLabel)
-    {
-        return QString("%1 [label=\"AllSameNode\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
     }
 }
 

@@ -2,7 +2,10 @@
 
 #include <diceparser/parsingtoolbox.h>
 
-RoundNode::RoundNode(Mode mode) : m_scalarResult(new ScalarResult), m_mode(mode) {}
+RoundNode::RoundNode(Mode mode)
+    : ExecutionNode("%1 [label=\"RoundNode\"]"), m_scalarResult(new ScalarResult), m_mode(mode)
+{
+}
 
 void RoundNode::run(ExecutionNode* previous)
 {
@@ -36,12 +39,6 @@ void RoundNode::run(ExecutionNode* previous)
 
     m_scalarResult->setValue(resVal);
     m_result= m_scalarResult.get();
-}
-
-QString RoundNode::toString(bool withLabel) const
-{
-
-    return withLabel ? QString("%1 [label=\"RoundNode\"]").arg(m_id) : m_id;
 }
 
 qint64 RoundNode::getPriority() const

@@ -65,7 +65,7 @@ void RerollDiceNode::run(ExecutionNode* previous)
             maxVal= maxCondition->valueToScalar();
     }
 
-    for(auto const& die : list1)
+    for(auto const& die : std::as_const(list1))
     {
         if(!die)
             return;
@@ -143,16 +143,10 @@ void RerollDiceNode::setValidatorList(ValidatorList* val)
 }
 QString RerollDiceNode::toString(bool wl) const
 {
-    if(wl)
-    {
-        return QString("%1 [label=\"RerollDiceNode validatior: %2\"]").arg(m_id, m_validatorList->toString());
-    }
-    else
-    {
-        return m_id;
-    }
-    // return QString("RerollDiceNode [label=\"RerollDiceNode validatior:%1\"");
+    return wl ? QString("%1 [label=\"RerollDiceNode validatior: %2\"]").arg(m_id, m_validatorList->toString()) :
+                ExecutionNode::toString(wl);
 }
+
 qint64 RerollDiceNode::getPriority() const
 {
     qint64 priority= 0;

@@ -39,14 +39,8 @@ void CountExecuteNode::run(ExecutionNode* previous)
 }
 QString CountExecuteNode::toString(bool withlabel) const
 {
-    if(withlabel)
-    {
-        return QString("%1 [label=\"CountExecuteNode %2\"]").arg(m_id, m_validatorList->toString());
-    }
-    else
-    {
-        return m_id;
-    }
+    return withlabel ? QString("%1 [label=\"CountExecuteNode %2\"]").arg(m_id, m_validatorList->toString()) :
+                       ExecutionNode::toString(withlabel);
 }
 qint64 CountExecuteNode::getPriority() const
 {

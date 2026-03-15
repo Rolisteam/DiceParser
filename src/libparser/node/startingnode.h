@@ -38,11 +38,6 @@ public:
      */
     virtual void run(ExecutionNode*);
     /**
-     * @brief toString
-     * @return
-     */
-    virtual QString toString(bool withlabel) const;
-    /**
      * @brief getPriority
      * @return
      */

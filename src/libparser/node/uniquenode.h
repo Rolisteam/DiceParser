@@ -34,7 +34,6 @@ class UniqueNode : public ExecutionNode
 public:
     UniqueNode();
     void run(ExecutionNode* previous);
-    virtual QString toString(bool withLabel) const;
     virtual qint64 getPriority() const;
     virtual ExecutionNode* getCopy() const;
 

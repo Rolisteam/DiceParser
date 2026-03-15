@@ -66,16 +66,10 @@ std::pair<qint64, qint64> DiceRollerNode::getRange() const
 {
     return std::make_pair(m_min, m_max);
 }
-QString DiceRollerNode::toString(bool wl) const
+QString DiceRollerNode::toString(bool withlabel) const
 {
-    if(wl)
-    {
-        return QString("%1 [label=\"DiceRollerNode faces: %2\"]").arg(m_id).arg(getFaces());
-    }
-    else
-    {
-        return m_id;
-    }
+    return withlabel ? QString("%1 [label=\"DiceRollerNode faces: %2\"]").arg(m_id).arg(getFaces()) :
+                       ExecutionNode::toString(withlabel);
 }
 qint64 DiceRollerNode::getPriority() const
 {

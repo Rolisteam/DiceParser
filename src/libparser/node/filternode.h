@@ -19,11 +19,6 @@ public:
      */
     virtual void setValidatorList(ValidatorList*);
     /**
-     * @brief toString
-     * @return
-     */
-    virtual QString toString(bool withLabel) const;
-    /**
      * @brief getPriority
      * @return
      */

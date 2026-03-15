@@ -23,7 +23,7 @@
 #include <QDebug>
 #include <diceparser/parsingtoolbox.h>
 
-ReplaceValueNode::ReplaceValueNode() : m_diceResult(new DiceResult)
+ReplaceValueNode::ReplaceValueNode() : ExecutionNode("%1 [label=\"ReplaceValueNode\"]"), m_diceResult(new DiceResult)
 {
     m_result= m_diceResult;
 }
@@ -76,18 +76,6 @@ void ReplaceValueNode::run(ExecutionNode* previous)
             break;
         }
         m_diceResult->insertResult(die);
-    }
-}
-
-QString ReplaceValueNode::toString(bool withLabel) const
-{
-    if(withLabel)
-    {
-        return QString("%1 [label=\"ReplaceValueNode\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
     }
 }
 

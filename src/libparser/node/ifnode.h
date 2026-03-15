@@ -34,7 +34,6 @@ public:
     virtual void run(ExecutionNode* previous= nullptr) override;
     virtual qint64 getPriority() const override;
     virtual ExecutionNode* getCopy() const override;
-    virtual QString toString(bool withLabel) const override;
 
 private:
     DiceResult* m_diceResult;
@@ -71,11 +70,6 @@ public:
      * @brief setInstructionFalse
      */
     virtual void setInstructionFalse(ExecutionNode*);
-    /**
-     * @brief toString
-     * @return
-     */
-    virtual QString toString(bool) const;
     /**
      * @brief getPriority
      * @return

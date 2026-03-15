@@ -50,14 +50,8 @@ void NumberNode::setNumber(qint64 a)
 }
 QString NumberNode::toString(bool withLabel) const
 {
-    if(withLabel)
-    {
-        return QString("%1 [label=\"NumberNode %2\"]").arg(m_id).arg(m_number);
-    }
-    else
-    {
-        return m_id;
-    }
+    return withLabel ? QString("%1 [label=\"NumberNode %2\"]").arg(m_id).arg(m_number) :
+                       ExecutionNode::toString(withLabel);
 }
 qint64 NumberNode::getPriority() const
 {

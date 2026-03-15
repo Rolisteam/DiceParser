@@ -42,14 +42,8 @@ QStringList ListSetRollNode::getList() const
 }
 QString ListSetRollNode::toString(bool wl) const
 {
-    if(wl)
-    {
-        return QString("%1 [label=\"ListSetRoll list:%2\"]").arg(m_id, m_values.join(","));
-    }
-    else
-    {
-        return m_id;
-    }
+    return wl ? QString("%1 [label=\"ListSetRoll list:%2\"]").arg(m_id, m_values.join(",")) :
+                ExecutionNode::toString(wl);
 }
 qint64 ListSetRollNode::getPriority() const
 {

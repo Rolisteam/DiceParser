@@ -12,12 +12,13 @@ constexpr int WaitingTime{30 * 60 * 1000};
 
 } // namespace
 
-ExecutionNode::ExecutionNode()
+ExecutionNode::ExecutionNode(const QString& label)
     : m_previousNode(nullptr)
     , m_result(nullptr)
     , m_nextNode(nullptr)
     , m_errors(QMap<Dice::ERROR_CODE, QString>())
     , m_id(QString("\"%1\"").arg(QUuid::createUuid().toString()))
+    , m_label(label)
 {
 }
 ExecutionNode::~ExecutionNode()
@@ -46,6 +47,19 @@ void ExecutionNode::setPreviousNode(ExecutionNode* node)
 {
     m_previousNode= node;
 }
+
+QString ExecutionNode::toString(bool withLabel) const
+{
+    if(withLabel)
+    {
+        return m_label.arg(m_id);
+    }
+    else
+    {
+        return m_id;
+    }
+}
+
 ExecutionNode* ExecutionNode::getNextNode()
 {
     return m_nextNode;

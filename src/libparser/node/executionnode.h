@@ -17,7 +17,7 @@ public:
     /**
      * @brief ExecutionNode
      */
-    ExecutionNode();
+    ExecutionNode(const QString& label= QString());
     /**
      * @brief ~ExecutionNode
      */
@@ -53,7 +53,7 @@ public:
      * @brief toString
      * @return
      */
-    virtual QString toString(bool withLabel) const= 0;
+    virtual QString toString(bool withLabel) const;
     /**
      * @brief getPriority
      * @return
@@ -105,6 +105,7 @@ protected:
     QMap<Dice::ERROR_CODE, QString> m_errors;
     QMap<Dice::ERROR_CODE, QString> m_warnings;
     QString m_id;
+    QString m_label;
 };
 
 #endif // EXECUTIONNODE_H

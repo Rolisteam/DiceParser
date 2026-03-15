@@ -10,10 +10,8 @@ public:
     ValuesListNode();
 
     virtual void run(ExecutionNode* previous= nullptr) override;
-    virtual QString toString(bool) const override;
     virtual qint64 getPriority() const override;
     virtual ExecutionNode* getCopy() const override;
-
     void insertValue(ExecutionNode*);
 
 private:

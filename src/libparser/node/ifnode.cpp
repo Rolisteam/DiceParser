@@ -21,7 +21,8 @@
 #include "result/diceresult.h"
 #include "validatorlist.h"
 
-PartialDiceRollNode::PartialDiceRollNode() : m_diceResult(new DiceResult)
+PartialDiceRollNode::PartialDiceRollNode()
+    : ExecutionNode("%1 [label=\"PartialDiceRollNode \"]"), m_diceResult(new DiceResult)
 {
     m_result= m_diceResult;
 }
@@ -54,18 +55,6 @@ qint64 PartialDiceRollNode::getPriority() const
     return priority;
 }
 
-QString PartialDiceRollNode::toString(bool withLabel) const
-{
-    if(withLabel)
-    {
-        return QString("%1 [label=\"PartialDiceRollNode \"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
-
 DiceResult* getFirstDiceResult(Result* result)
 {
     DiceResult* found= nullptr;
@@ -81,7 +70,8 @@ DiceResult* getFirstDiceResult(Result* result)
     return found;
 }
 
-IfNode::IfNode() : m_conditionType(Dice::AllOfThem), m_true(nullptr), m_false(nullptr)
+IfNode::IfNode()
+    : ExecutionNode("%1 [label=\"IfNode\"]"), m_conditionType(Dice::AllOfThem), m_true(nullptr), m_false(nullptr)
 {
     // m_result = new DiceResult();
 }
@@ -289,18 +279,6 @@ void IfNode::generateDotTree(QString& s)
             s.append(" [label=\"Result\"];\n");
             m_result->generateDotTree(s);
         }
-    }
-}
-
-QString IfNode::toString(bool wl) const
-{
-    if(wl)
-    {
-        return QString("%1 [label=\"IfNode\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
     }
 }
 

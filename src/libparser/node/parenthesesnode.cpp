@@ -21,7 +21,7 @@
  ***************************************************************************/
 #include "parenthesesnode.h"
 
-ParenthesesNode::ParenthesesNode() : m_internalNode(nullptr) {}
+ParenthesesNode::ParenthesesNode() : ExecutionNode("%1 [label=\"ParenthesesNode\"]"), m_internalNode(nullptr) {}
 void ParenthesesNode::setInternelNode(ExecutionNode* node)
 {
     m_internalNode= node;
@@ -55,17 +55,7 @@ void ParenthesesNode::run(ExecutionNode* previous)
         m_nextNode= nullptr;
     }
 }
-QString ParenthesesNode::toString(bool b) const
-{
-    if(b)
-    {
-        return QString("%1 [label=\"ParenthesesNode\"]").arg(m_id);
-    }
-    else
-    {
-        return m_id;
-    }
-}
+
 qint64 ParenthesesNode::getPriority() const
 {
     qint64 priority= 3;
