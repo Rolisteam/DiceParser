@@ -43,18 +43,6 @@
 #include "diceparser/diceparser.h"
 #include "diceparser/parsingtoolbox.h"
 #include "displaytoolbox.h"
-/**
- * @page Dice
- * The cli for DiceParser the new dice system from rolisteam.
- * @section Build and install
- * To build this program, type these command:
- * - mkdir build
- * - cd build
- * - cmake ../
- * - make
- * - make install
- * @return
- */
 
 QTextStream out(stdout, QIODevice::WriteOnly);
 QTextStream err(stderr, QIODevice::WriteOnly);

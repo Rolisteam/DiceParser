@@ -1,6 +1,6 @@
-Here you may find macro made by the community:
+# List of macro 
 
-# Legend of the 5 rings, 4th edition
+## Legend of the 5 rings, 4th edition
 
 * Nine-again and reroll 1: `!macro add KNS d10r1e[>8]k False`
 * Nine-again: `!macro add KN d10e[>8]k False`
@@ -10,7 +10,7 @@ Here you may find macro made by the community:
 
 Author: Obi
 
-# Legend of the 5 rings, 4th edition [For French-speaking Users]
+## Legend of the 5 rings, 4th edition [For French-speaking Users]
 
 * Nine-again and reroll 1: `!macro add GNS d10r1e[>8]k False`
 * Nine-again: `!macro add GN d10e[>8]k False`
@@ -20,7 +20,7 @@ Author: Obi
 
 Author: Obi
 
-# Spire/Heart by Rowan, Rook and Deckard
+## Spire/Heart by Rowan, Rook and Deckard
 
 ```
 !macro add s([1-5])d([0-2]) "\1-\2;$1i:[<=0]{1}{$1};$1i:[<=0]{\2+1-\1}{0};$2d10s;$4k1;$4c10;$5i:[=10]{5-$3}{$5i:[>=8]{4-$3}{$5i:[>=6]{3-$3}{$5i:[>=2]{2-$3}{$5i:[=1]{1}}}}};$7i:[=5]{\"\n# Critical Success ($6 extra stress)\n[%2]\"}{$7i:[=4]{\"\n# Success\n[%2]\"}{$7i:[=3]{\"\n# Success at a cost\n[%2]\"}{$7i:[=2]{\"\n# Failure\n[%2]\"}{$7i:[<=1]{\"\n# Critical Failure\n[%2]\"}}}}}" True
@@ -28,7 +28,7 @@ Author: Obi
 
 Author: GreaterGerardon
 
-# Earthdawn, 3th and 4th editions
+## Earthdawn, 3th and 4th editions
 
 * Niveau 1: `!macro add n01 ((d4e4)-2) False`
 * Niveau 2: `!macro add n02 ((d4e4)-1) False`
@@ -73,7 +73,7 @@ Author: GreaterGerardon
 
 Author: DorDeDor
 
-# Pathfinder 1e / D&D3.5e
+## Pathfinder 1e / D&D3.5e
 ```
 !macro add ([0-9]+)th([0-9]+)d([0-9]+)\+([0-9])crit([0-9]+) d20;$1+\1;$1i:[>=\5]{+1d20-$1};$3+\1;\2d\3+\4;\2d\3+\4;$1i:[>=\5]{+$6+$5-$1};$1i:[>=\5]{"Critical Hit: $1+\1=$2\nConfirm Hit: $3+\1=$4 \nIf confirms Damage: [@5]+\4+[@6]+\4=$7 \nIf doesn't confirm Damage: [@5]+\4=$5"}{"To Hit: [$1]+\1=$2 \nDamage: [@5]+\4=$5"} True
 ```
@@ -82,7 +82,7 @@ Usage: [To hit modifier]th[# of damage dice]d[size of damage dice]+[size of stat
 
 Author:tyjo99
 
-# Prowlers and Paragons
+## Prowlers and Paragons
 Once you set up this macro just input !Xpp where X is the number of dice you are rolling. These will count one success on a 2 and 4, and count two successes on a 6. If roll in just one die it will only count a success on a roll of a six. 
 
 ```
@@ -91,11 +91,11 @@ Once you set up this macro just input !Xpp where X is the number of dice you are
 
 Author:darthgaul
 
-# [Ironsworn](https://www.ironswornrpg.com/)
+## [Ironsworn](https://www.ironswornrpg.com/)
 ```
 !macro add iron\s*(-?[0-9]+) 1d6;$1+\1;1d10;1d10;$2S^[<=$3&<=$4]{"Miss :bomb:"}[<=$3|<=$4]{"Weak Hit :wrench:"}{"Strong Hit :star:"};"($1+\1)=$2 vs. $3 & $4 - $5" True
 ```
-## Usage
+### Usage
 `iron 3` will roll your Move and two Challenge Dice
 * If Move is > both Challenge Dice => Strong Hit
 * If Move is > exactly 1 Challenge Die => Weak Hit
@@ -107,7 +107,7 @@ Note: Whitespace is optional, so `iron5` should work just as well as `iron 5` or
 
 Author: [Alex Hall](www.alexhall.org)
 
-# [World of Darkness](https://www.paradoxinteractive.com/games/world-of-darkness/about)
+## [World of Darkness](https://www.paradoxinteractive.com/games/world-of-darkness/about)
 ```
 /macro add ([0-9]+)wod([0-9]+) \1d10e10;$1c[>=\2];$1c1;$2-$3;"Dice: @1\nYou have $2 Successes (>=\2) and $3 Failures so the total is $4" True
 ```
@@ -118,18 +118,22 @@ Note that Target Number is used as Greater or Equal to.
 
 Author: [Eran "Sabre Runner" Arbel](eran.geek.co.il)
 
-# World of Darkness [PT-BR (Brazilian language)]
+## World of Darkness [PT-BR (Brazilian language)]
 ```
 /macro add \s*vtm\s*([0-9]+)\s*([0-9]+) \1;\2;\1d10;$3c[?>=\2];$3c[?=1];$4-$5;$3c[?=10];$6i:[=0]{"(\1d10) [@3]\nFalha para dificuldade \2 [Total: $6][$5 falha(s), $4 sucesso(s)]\nQuantidade de 10 (para especialização): $7\nComando executado: /r vtm \1 \2"}{$6i:[>0]{"(\1d10) [@3]\nSucesso para dificuldade \2 [Total: $6][$4 sucesso(s), $5 falha(s)]\nQuantidade de 10 (para especialização): $7\nComando executado: /r vtm \1 \2"}{$4i:[=0]{"(\1d10) [@3]\nFalha Crítica para dificuldade \2 [Total: $6][$5 falha(s)]\nSucessos para dificuldade \2: $4\nComando executado: /r vtm \1 \2"}{"(\1d10) [@3]\nFalha para dificuldade \2 [Total: $6][$5 falha(s), $4 sucesso(s)]\nQuantidade de 10 (para especialização): $7\nComando executado: /r vtm \1 \2"}}} True
 ```
 
-## Usage: 
+### Usage: 
+```
 /r vtm [Quantidade de dados] [Dificuldade do teste]
+```
 
-## Uso: 
+### Uso: 
+```
 /r vtm 6 8 
+```
 
-## Expected results:
+### Expected results:
 >(3d10) [10,10,8]<br>
 Sucesso para dificuldade 9 [Total: 2][2 sucesso(s), 0 falha(s)]<br>
 Quantidade de 10 (para especialização): 2<br>

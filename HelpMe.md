@@ -1,6 +1,8 @@
-[![Logo](https://raw.githubusercontent.com/Rolisteam/rolisteam/master/resources/logo/1000-rolisteam.png)](http://www.rolisteam.org)
+# DiceParser Manual
 
-# Table of Contents
+![Logo](https://invent.kde.org/rolisteam/rolisteam/-/raw/master/resources/rolisteam/logo/256-icone.png)
+
+## Table of Contents
 
 * [Roll a die](#how-to-roll-a-die)
 * [Roll a range](#roll-dice-in-range)
